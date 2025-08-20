@@ -91,7 +91,7 @@ final class ColorPaletteService
     public function getAllColorSchemesWithMetadata(): array
     {
         $schemes = [];
-        
+
         foreach (ColorScheme::cases() as $colorScheme) {
             $schemes[$colorScheme->value] = [
                 'id' => $colorScheme->value,
@@ -100,7 +100,7 @@ final class ColorPaletteService
                 'colors' => $this->getColorPalette($colorScheme),
             ];
         }
-        
+
         return $schemes;
     }
 
@@ -112,24 +112,23 @@ final class ColorPaletteService
     public function getAllColorSchemes(): array
     {
         $schemes = [];
-        
+
         foreach (ColorScheme::cases() as $colorScheme) {
             $schemes[$colorScheme->value] = $this->getColorPalette($colorScheme);
         }
-        
+
         return $schemes;
     }
 
     /**
      * Get color palette for a specific scheme.
      *
-     * @param ColorScheme|string $colorScheme
      * @return array<string, string>
      */
     public function getColorPalette(ColorScheme|string $colorScheme): array
     {
         if (is_string($colorScheme)) {
-            if (!ColorScheme::exists($colorScheme)) {
+            if (! ColorScheme::exists($colorScheme)) {
                 throw new InvalidArgumentException("Invalid color scheme: {$colorScheme}");
             }
             $colorScheme = ColorScheme::from($colorScheme);
@@ -144,7 +143,7 @@ final class ColorPaletteService
     public function getDisplayName(ColorScheme|string $colorScheme): string
     {
         if (is_string($colorScheme)) {
-            if (!ColorScheme::exists($colorScheme)) {
+            if (! ColorScheme::exists($colorScheme)) {
                 throw new InvalidArgumentException("Invalid color scheme: {$colorScheme}");
             }
             $colorScheme = ColorScheme::from($colorScheme);
@@ -159,7 +158,7 @@ final class ColorPaletteService
     public function getDescription(ColorScheme|string $colorScheme): string
     {
         if (is_string($colorScheme)) {
-            if (!ColorScheme::exists($colorScheme)) {
+            if (! ColorScheme::exists($colorScheme)) {
                 throw new InvalidArgumentException("Invalid color scheme: {$colorScheme}");
             }
             $colorScheme = ColorScheme::from($colorScheme);
@@ -171,13 +170,12 @@ final class ColorPaletteService
     /**
      * Get palette colors as a simple array.
      *
-     * @param ColorScheme|string $colorScheme
      * @return array<string>
      */
     public function getPaletteColorsAsArray(ColorScheme|string $colorScheme): array
     {
         $palette = $this->getColorPalette($colorScheme);
-        
+
         return array_values($palette);
     }
 

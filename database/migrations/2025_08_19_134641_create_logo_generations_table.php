@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('business_name');
             $table->text('business_description')->nullable();
             $table->enum('status', ['pending', 'processing', 'completed', 'failed'])
-                  ->default('pending')
-                  ->index();
+                ->default('pending')
+                ->index();
             $table->integer('total_logos_requested')->default(12);
             $table->integer('logos_completed')->default(0);
             $table->string('api_provider', 50)->default('openai');

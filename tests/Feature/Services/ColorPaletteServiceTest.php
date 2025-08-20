@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Services\ColorPaletteService;
 use App\Enums\ColorScheme;
+use App\Services\ColorPaletteService;
 
 beforeEach(function (): void {
     $this->service = app(ColorPaletteService::class);
@@ -17,7 +17,7 @@ describe('Color Palette Service', function (): void {
             ->and($schemes)->toHaveKeys([
                 'monochrome', 'ocean_blue', 'forest_green', 'warm_sunset',
                 'royal_purple', 'corporate_navy', 'earthy_tones', 'tech_blue',
-                'vibrant_pink', 'charcoal_gold'
+                'vibrant_pink', 'charcoal_gold',
             ]);
     });
 

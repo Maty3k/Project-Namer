@@ -16,10 +16,10 @@ return new class extends Migration
         Schema::create('generated_logos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('logo_generation_id')
-                  ->constrained('logo_generations')
-                  ->onDelete('cascade');
+                ->constrained('logo_generations')
+                ->onDelete('cascade');
             $table->enum('style', ['minimalist', 'modern', 'playful', 'corporate'])
-                  ->index();
+                ->index();
             $table->integer('variation_number')->default(1);
             $table->text('prompt_used');
             $table->string('original_file_path', 500);

@@ -30,11 +30,27 @@ use Illuminate\Support\Str;
  * @property string|null $api_image_url
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LogoColorVariant> $colorVariants
+ * @property-read int|null $color_variants_count
+ * @property-read \App\Models\LogoGeneration $logoGeneration
  *
- * @method static Builder<static>|GeneratedLogo ofStyle(string $style)
  * @method static Builder<static>|GeneratedLogo newModelQuery()
  * @method static Builder<static>|GeneratedLogo newQuery()
+ * @method static Builder<static>|GeneratedLogo ofStyle(string $style)
  * @method static Builder<static>|GeneratedLogo query()
+ * @method static Builder<static>|GeneratedLogo whereApiImageUrl($value)
+ * @method static Builder<static>|GeneratedLogo whereCreatedAt($value)
+ * @method static Builder<static>|GeneratedLogo whereFileSize($value)
+ * @method static Builder<static>|GeneratedLogo whereGenerationTimeMs($value)
+ * @method static Builder<static>|GeneratedLogo whereId($value)
+ * @method static Builder<static>|GeneratedLogo whereImageHeight($value)
+ * @method static Builder<static>|GeneratedLogo whereImageWidth($value)
+ * @method static Builder<static>|GeneratedLogo whereLogoGenerationId($value)
+ * @method static Builder<static>|GeneratedLogo whereOriginalFilePath($value)
+ * @method static Builder<static>|GeneratedLogo wherePromptUsed($value)
+ * @method static Builder<static>|GeneratedLogo whereStyle($value)
+ * @method static Builder<static>|GeneratedLogo whereUpdatedAt($value)
+ * @method static Builder<static>|GeneratedLogo whereVariationNumber($value)
  *
  * @mixin \Eloquent
  */
@@ -117,12 +133,12 @@ final class GeneratedLogo extends Model
     {
         $bytes = $this->file_size;
         $units = ['B', 'KB', 'MB', 'GB'];
-        
+
         for ($i = 0; $bytes >= 1024 && $i < count($units) - 1; $i++) {
             $bytes /= 1024;
         }
-        
-        return round($bytes, 1) . ' ' . $units[$i];
+
+        return round($bytes, 1).' '.$units[$i];
     }
 
     /**
@@ -133,15 +149,15 @@ final class GeneratedLogo extends Model
         $businessName = Str::slug($this->logoGeneration->business_name);
         $style = $this->style;
         $variation = $this->variation_number;
-        
+
         $filename = "{$businessName}-{$style}-{$variation}";
-        
+
         if ($colorScheme) {
             $filename .= "-{$colorScheme}";
         }
-        
+
         $extension = $format ?: $this->getFileExtension();
-        
+
         return "{$filename}.{$extension}";
     }
 

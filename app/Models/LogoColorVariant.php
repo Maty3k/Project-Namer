@@ -23,12 +23,19 @@ use Illuminate\Support\Str;
  * @property int $file_size
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\GeneratedLogo $generatedLogo
  *
- * @method static Builder<static>|LogoColorVariant withColorScheme(string $colorScheme)
- * @method static LogoColorVariant|null findByLogoAndScheme(int $generatedLogoId, string $colorScheme)
  * @method static Builder<static>|LogoColorVariant newModelQuery()
  * @method static Builder<static>|LogoColorVariant newQuery()
  * @method static Builder<static>|LogoColorVariant query()
+ * @method static Builder<static>|LogoColorVariant whereColorScheme($value)
+ * @method static Builder<static>|LogoColorVariant whereCreatedAt($value)
+ * @method static Builder<static>|LogoColorVariant whereFilePath($value)
+ * @method static Builder<static>|LogoColorVariant whereFileSize($value)
+ * @method static Builder<static>|LogoColorVariant whereGeneratedLogoId($value)
+ * @method static Builder<static>|LogoColorVariant whereId($value)
+ * @method static Builder<static>|LogoColorVariant whereUpdatedAt($value)
+ * @method static Builder<static>|LogoColorVariant withColorScheme(string $colorScheme)
  *
  * @mixin \Eloquent
  */
@@ -87,12 +94,12 @@ final class LogoColorVariant extends Model
     {
         $bytes = $this->file_size;
         $units = ['B', 'KB', 'MB', 'GB'];
-        
+
         for ($i = 0; $bytes >= 1024 && $i < count($units) - 1; $i++) {
             $bytes /= 1024;
         }
-        
-        return round($bytes, 1) . ' ' . $units[$i];
+
+        return round($bytes, 1).' '.$units[$i];
     }
 
     /**
@@ -112,9 +119,9 @@ final class LogoColorVariant extends Model
         $style = $this->generatedLogo->style;
         $variation = $this->generatedLogo->variation_number;
         $colorScheme = $this->color_scheme;
-        
+
         $extension = $format ?: $this->getFileExtension();
-        
+
         return "{$businessName}-{$style}-{$variation}-{$colorScheme}.{$extension}";
     }
 

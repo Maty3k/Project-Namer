@@ -26,15 +26,29 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $error_message
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GeneratedLogo> $generatedLogos
+ * @property-read int|null $generated_logos_count
  *
- * @method static Builder<static>|LogoGeneration forSession(string $sessionId)
- * @method static Builder<static>|LogoGeneration pending()
- * @method static Builder<static>|LogoGeneration processing()
  * @method static Builder<static>|LogoGeneration completed()
  * @method static Builder<static>|LogoGeneration failed()
+ * @method static Builder<static>|LogoGeneration forSession(string $sessionId)
  * @method static Builder<static>|LogoGeneration newModelQuery()
  * @method static Builder<static>|LogoGeneration newQuery()
+ * @method static Builder<static>|LogoGeneration pending()
+ * @method static Builder<static>|LogoGeneration processing()
  * @method static Builder<static>|LogoGeneration query()
+ * @method static Builder<static>|LogoGeneration whereApiProvider($value)
+ * @method static Builder<static>|LogoGeneration whereBusinessDescription($value)
+ * @method static Builder<static>|LogoGeneration whereBusinessName($value)
+ * @method static Builder<static>|LogoGeneration whereCostCents($value)
+ * @method static Builder<static>|LogoGeneration whereCreatedAt($value)
+ * @method static Builder<static>|LogoGeneration whereErrorMessage($value)
+ * @method static Builder<static>|LogoGeneration whereId($value)
+ * @method static Builder<static>|LogoGeneration whereLogosCompleted($value)
+ * @method static Builder<static>|LogoGeneration whereSessionId($value)
+ * @method static Builder<static>|LogoGeneration whereStatus($value)
+ * @method static Builder<static>|LogoGeneration whereTotalLogosRequested($value)
+ * @method static Builder<static>|LogoGeneration whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */
@@ -139,7 +153,7 @@ final class LogoGeneration extends Model
      */
     public function isComplete(): bool
     {
-        return $this->status === 'completed' || 
+        return $this->status === 'completed' ||
                $this->logos_completed >= $this->total_logos_requested;
     }
 

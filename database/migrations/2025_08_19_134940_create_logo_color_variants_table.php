@@ -16,12 +16,12 @@ return new class extends Migration
         Schema::create('logo_color_variants', function (Blueprint $table) {
             $table->id();
             $table->foreignId('generated_logo_id')
-                  ->constrained('generated_logos')
-                  ->onDelete('cascade');
+                ->constrained('generated_logos')
+                ->onDelete('cascade');
             $table->enum('color_scheme', [
-                'monochrome', 'ocean_blue', 'forest_green', 'warm_sunset', 
+                'monochrome', 'ocean_blue', 'forest_green', 'warm_sunset',
                 'royal_purple', 'corporate_navy', 'earthy_tones', 'tech_blue',
-                'vibrant_pink', 'charcoal_gold'
+                'vibrant_pink', 'charcoal_gold',
             ])->index();
             $table->string('file_path', 500);
             $table->integer('file_size');

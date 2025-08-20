@@ -10,8 +10,8 @@ describe('ColorScheme Enum', function (): void {
 
         expect($cases)->toHaveCount(10);
 
-        $values = array_map(fn($case) => $case->value, $cases);
-        
+        $values = array_map(fn ($case) => $case->value, $cases);
+
         expect($values)->toContain('monochrome')
             ->and($values)->toContain('ocean_blue')
             ->and($values)->toContain('forest_green')
