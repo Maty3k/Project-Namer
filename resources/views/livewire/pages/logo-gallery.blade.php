@@ -40,30 +40,24 @@ new class extends Component {
         
         return $logoGeneration->generatedLogos
             ->groupBy('style')
-            ->map(function ($logos, $style) {
-                return [
-                    'style' => $style,
-                    'display_name' => ucwords($style),
-                    'logos' => $logos->map(function ($logo) {
-                        return [
-                            'id' => $logo->id,
-                            'style' => $logo->style,
-                            'variation_number' => $logo->variation_number,
-                            'original_file_path' => $logo->original_file_path,
-                            'preview_url' => $logo->original_file_path ? asset('storage/' . $logo->original_file_path) : null,
-                            'file_size' => $logo->file_size,
-                            'color_variants' => $logo->colorVariants->map(function ($variant) {
-                                return [
-                                    'color_scheme' => $variant->color_scheme,
-                                    'display_name' => $this->getColorSchemeDisplayName($variant->color_scheme),
-                                    'file_path' => $variant->file_path,
-                                    'preview_url' => asset('storage/' . $variant->file_path),
-                                ];
-                            })->toArray(),
-                        ];
-                    })->toArray(),
-                ];
-            })->values()->toArray();
+            ->map(fn($logos, $style) => [
+                'style' => $style,
+                'display_name' => ucwords((string) $style),
+                'logos' => $logos->map(fn($logo) => [
+                    'id' => $logo->id,
+                    'style' => $logo->style,
+                    'variation_number' => $logo->variation_number,
+                    'original_file_path' => $logo->original_file_path,
+                    'preview_url' => $logo->original_file_path ? asset('storage/' . $logo->original_file_path) : null,
+                    'file_size' => $logo->file_size,
+                    'color_variants' => $logo->colorVariants->map(fn($variant) => [
+                        'color_scheme' => $variant->color_scheme,
+                        'display_name' => $this->getColorSchemeDisplayName($variant->color_scheme),
+                        'file_path' => $variant->file_path,
+                        'preview_url' => asset('storage/' . $variant->file_path),
+                    ])->toArray(),
+                ])->toArray(),
+            ])->values()->toArray();
     }
 
     public function getColorSchemeDisplayName(string $colorScheme): string
@@ -170,7 +164,7 @@ new class extends Component {
                     $logo->colorVariants()->create([
                         'color_scheme' => $this->selectedColorScheme,
                         'file_path' => $customizedPath,
-                        'file_size' => strlen($customizedContent),
+                        'file_size' => strlen((string) $customizedContent),
                     ]);
 
                     $customizedCount++;

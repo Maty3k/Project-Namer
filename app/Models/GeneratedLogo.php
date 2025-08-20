@@ -156,8 +156,8 @@ final class GeneratedLogo extends Model
     /**
      * Scope to get logos of a specific style.
      *
-     * @param  Builder<GeneratedLogo>  $query
-     * @return Builder<GeneratedLogo>
+     * @param  Builder<GeneratedLogo<TFactory>>  $query
+     * @return Builder<GeneratedLogo<TFactory>>
      */
     public function scopeOfStyle(Builder $query, string $style): Builder
     {

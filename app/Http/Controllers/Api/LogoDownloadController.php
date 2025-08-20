@@ -23,6 +23,9 @@ class LogoDownloadController extends Controller
 {
     /**
      * Download an individual logo file.
+     *
+     * @param  LogoGeneration<\Database\Factories\LogoGenerationFactory>  $logoGeneration
+     * @param  GeneratedLogo<\Database\Factories\GeneratedLogoFactory>  $generatedLogo
      */
     public function download(Request $request, LogoGeneration $logoGeneration, GeneratedLogo $generatedLogo): Response
     {
@@ -72,6 +75,8 @@ class LogoDownloadController extends Controller
 
     /**
      * Download all logos as a ZIP file.
+     *
+     * @param  LogoGeneration<\Database\Factories\LogoGenerationFactory>  $logoGeneration
      */
     public function downloadBatch(Request $request, LogoGeneration $logoGeneration): JsonResponse|StreamedResponse
     {

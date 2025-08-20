@@ -53,6 +53,8 @@ final class GenerateLogosJob implements ShouldQueue
 
     /**
      * Create a new job instance.
+     *
+     * @param  LogoGeneration<\Database\Factories\LogoGenerationFactory>  $logoGeneration
      */
     public function __construct(
         public LogoGeneration $logoGeneration
@@ -215,6 +217,7 @@ final class GenerateLogosJob implements ShouldQueue
      * Create a database record for the generated logo.
      *
      * @param  array<string, mixed>  $apiResult
+     * @return GeneratedLogo<\Database\Factories\GeneratedLogoFactory>
      */
     private function createLogoRecord(array $apiResult, string $style, int $variation): GeneratedLogo
     {
@@ -233,6 +236,7 @@ final class GenerateLogosJob implements ShouldQueue
     /**
      * Download image from URL and store locally.
      *
+     * @param  GeneratedLogo<\Database\Factories\GeneratedLogoFactory>  $logo
      * @return array<string, mixed>
      */
     private function downloadAndStoreImage(string $imageUrl, GeneratedLogo $logo): array
@@ -285,6 +289,8 @@ final class GenerateLogosJob implements ShouldQueue
 
     /**
      * Generate a unique filename for the logo.
+     *
+     * @param  GeneratedLogo<\Database\Factories\GeneratedLogoFactory>  $logo
      */
     private function generateFileName(GeneratedLogo $logo): string
     {

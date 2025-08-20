@@ -73,8 +73,8 @@ final class LogoColorVariant extends Model
     /**
      * Scope to get variants with a specific color scheme.
      *
-     * @param  Builder<LogoColorVariant>  $query
-     * @return Builder<LogoColorVariant>
+     * @param  Builder<LogoColorVariant<TFactory>>  $query
+     * @return Builder<LogoColorVariant<TFactory>>
      */
     public function scopeWithColorScheme(Builder $query, string $colorScheme): Builder
     {

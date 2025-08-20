@@ -143,8 +143,8 @@ final class LogoGeneration extends Model
     /**
      * Scope to get generations for a specific session.
      *
-     * @param  Builder<LogoGeneration>  $query
-     * @return Builder<LogoGeneration>
+     * @param  Builder<LogoGeneration<TFactory>>  $query
+     * @return Builder<LogoGeneration<TFactory>>
      */
     public function scopeForSession(Builder $query, string $sessionId): Builder
     {
@@ -154,8 +154,8 @@ final class LogoGeneration extends Model
     /**
      * Scope to get pending generations.
      *
-     * @param  Builder<LogoGeneration>  $query
-     * @return Builder<LogoGeneration>
+     * @param  Builder<LogoGeneration<TFactory>>  $query
+     * @return Builder<LogoGeneration<TFactory>>
      */
     public function scopePending(Builder $query): Builder
     {
@@ -165,8 +165,8 @@ final class LogoGeneration extends Model
     /**
      * Scope to get processing generations.
      *
-     * @param  Builder<LogoGeneration>  $query
-     * @return Builder<LogoGeneration>
+     * @param  Builder<LogoGeneration<TFactory>>  $query
+     * @return Builder<LogoGeneration<TFactory>>
      */
     public function scopeProcessing(Builder $query): Builder
     {
@@ -176,8 +176,8 @@ final class LogoGeneration extends Model
     /**
      * Scope to get completed generations.
      *
-     * @param  Builder<LogoGeneration>  $query
-     * @return Builder<LogoGeneration>
+     * @param  Builder<LogoGeneration<TFactory>>  $query
+     * @return Builder<LogoGeneration<TFactory>>
      */
     public function scopeCompleted(Builder $query): Builder
     {
@@ -187,8 +187,8 @@ final class LogoGeneration extends Model
     /**
      * Scope to get failed generations.
      *
-     * @param  Builder<LogoGeneration>  $query
-     * @return Builder<LogoGeneration>
+     * @param  Builder<LogoGeneration<TFactory>>  $query
+     * @return Builder<LogoGeneration<TFactory>>
      */
     public function scopeFailed(Builder $query): Builder
     {

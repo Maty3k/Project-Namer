@@ -52,6 +52,8 @@ class LogoGenerationController extends Controller
 
     /**
      * Get generation status and progress.
+     *
+     * @param  LogoGeneration<\Database\Factories\LogoGenerationFactory>  $logoGeneration
      */
     public function status(LogoGeneration $logoGeneration): JsonResponse
     {
@@ -88,6 +90,8 @@ class LogoGenerationController extends Controller
 
     /**
      * Get generated logos with color scheme information.
+     *
+     * @param  LogoGeneration<\Database\Factories\LogoGenerationFactory>  $logoGeneration
      */
     public function show(LogoGeneration $logoGeneration): JsonResponse
     {
@@ -136,6 +140,8 @@ class LogoGenerationController extends Controller
 
     /**
      * Apply color customization to logos.
+     *
+     * @param  LogoGeneration<\Database\Factories\LogoGenerationFactory>  $logoGeneration
      */
     public function customize(CustomizeLogosRequest $request, LogoGeneration $logoGeneration): JsonResponse
     {
@@ -218,6 +224,9 @@ class LogoGenerationController extends Controller
 
     /**
      * Format logo generation response.
+     *
+     * @param  LogoGeneration<\Database\Factories\LogoGenerationFactory>  $logoGeneration
+     * @return array<string, mixed>
      */
     private function formatLogoGenerationResponse(LogoGeneration $logoGeneration): array
     {
@@ -236,6 +245,8 @@ class LogoGenerationController extends Controller
 
     /**
      * Get available color schemes.
+     *
+     * @return array<int, array<string, mixed>>
      */
     private function getAvailableColorSchemes(): array
     {
@@ -254,6 +265,9 @@ class LogoGenerationController extends Controller
 
     /**
      * Format color variant response.
+     *
+     * @param  \App\Models\LogoColorVariant  $colorVariant
+     * @return array<string, mixed>
      */
     private function formatColorVariantResponse($colorVariant): array
     {
