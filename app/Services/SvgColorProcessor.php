@@ -7,7 +7,6 @@ namespace App\Services;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
-use Exception;
 
 /**
  * SVG color processor service.
@@ -75,7 +74,7 @@ final class SvgColorProcessor
         // Suppress warnings from malformed SVG
         $previousUseErrors = libxml_use_internal_errors(true);
 
-        $this->document = new DOMDocument();
+        $this->document = new DOMDocument;
         $result = $this->document->loadXML($svg);
 
         // Get any errors that occurred
@@ -96,6 +95,7 @@ final class SvgColorProcessor
         $root = $this->document->documentElement;
         if ($root === null || $root->nodeName !== 'svg') {
             $this->errors[] = 'Invalid SVG: root element must be svg';
+
             return false;
         }
 
@@ -219,7 +219,7 @@ final class SvgColorProcessor
 
         // Handle hex colors
         if (preg_match('/^#([0-9A-Fa-f]{6})$/i', $color, $matches)) {
-            return '#' . strtoupper($matches[1]);
+            return '#'.strtoupper($matches[1]);
         }
 
         // Handle RGB format
@@ -227,22 +227,20 @@ final class SvgColorProcessor
             $r = (int) $matches[1];
             $g = (int) $matches[2];
             $b = (int) $matches[3];
+
             return sprintf('#%02X%02X%02X', $r, $g, $b);
         }
 
         // Handle CSS color names
         $lowerColor = strtolower($color);
-        if (isset(self::CSS_COLORS[$lowerColor])) {
-            return self::CSS_COLORS[$lowerColor];
-        }
 
-        return null;
+        return self::CSS_COLORS[$lowerColor] ?? null;
     }
 
     /**
      * Replace colors in the SVG with a new palette.
      *
-     * @param array<string, string> $palette
+     * @param  array<string, string>  $palette
      */
     public function replaceColors(array $palette): string
     {
@@ -265,7 +263,7 @@ final class SvgColorProcessor
     /**
      * Create intelligent color mapping based on luminance.
      *
-     * @param array<string, string> $palette
+     * @param  array<string, string>  $palette
      * @return array<string, string>
      */
     public function createColorMapping(array $palette): array
@@ -288,7 +286,7 @@ final class SvgColorProcessor
         ];
 
         // Sort palette by actual luminance to ensure correct ordering
-        usort($paletteColors, fn($a, $b) => $this->calculateLuminance($a) <=> $this->calculateLuminance($b));
+        usort($paletteColors, fn ($a, $b) => $this->calculateLuminance($a) <=> $this->calculateLuminance($b));
 
         // Map detected colors to palette colors based on luminance order
         $detectedColorsSorted = array_keys($colorsWithLuminance);
@@ -340,7 +338,7 @@ final class SvgColorProcessor
     /**
      * Replace colors in a DOM document.
      *
-     * @param array<string, string> $colorMapping
+     * @param  array<string, string>  $colorMapping
      */
     private function replaceColorsInDocument(DOMDocument $document, array $colorMapping): void
     {
@@ -395,7 +393,7 @@ final class SvgColorProcessor
     /**
      * Replace colors in a style attribute.
      *
-     * @param array<string, string> $colorMapping
+     * @param  array<string, string>  $colorMapping
      */
     private function replaceColorsInStyle(string $style, array $colorMapping): string
     {
@@ -408,7 +406,7 @@ final class SvgColorProcessor
                 $normalizedColor = $this->normalizeColor($colorValue);
 
                 if ($normalizedColor !== null && isset($colorMapping[$normalizedColor])) {
-                    return $property . ': ' . $colorMapping[$normalizedColor];
+                    return $property.': '.$colorMapping[$normalizedColor];
                 }
 
                 return $matches[0];
@@ -422,7 +420,7 @@ final class SvgColorProcessor
     /**
      * Process SVG with a new color palette.
      *
-     * @param array<string, string> $palette
+     * @param  array<string, string>  $palette
      * @return array<string, mixed>
      */
     public function processSvg(string $svg, array $palette): array

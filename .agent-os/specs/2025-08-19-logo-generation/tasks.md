@@ -34,15 +34,15 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 3.6 Add SVG validation and error handling for malformed files
   - [x] 3.7 Verify SVG color manipulation tests pass and produce valid output
 
-- [ ] 4. OpenAI DALL-E Integration
-  - [ ] 4.1 Write tests for OpenAI API service with mocked responses
-  - [ ] 4.2 Create OpenAILogoService for DALL-E 3 API integration
-  - [ ] 4.3 Implement logo prompt generation for each style (minimalist, modern, playful, corporate)
-  - [ ] 4.4 Add API authentication and request formatting
-  - [ ] 4.5 Implement response parsing and image URL extraction
-  - [ ] 4.6 Add retry logic and error handling for API failures
-  - [ ] 4.7 Implement cost tracking and rate limiting functionality
-  - [ ] 4.8 Verify OpenAI integration tests pass with proper error handling
+- [x] 4. OpenAI DALL-E Integration
+  - [x] 4.1 Write tests for OpenAI API service with mocked responses
+  - [x] 4.2 Create OpenAILogoService for DALL-E 3 API integration
+  - [x] 4.3 Implement logo prompt generation for each style (minimalist, modern, playful, corporate)
+  - [x] 4.4 Add API authentication and request formatting
+  - [x] 4.5 Implement response parsing and image URL extraction
+  - [x] 4.6 Add retry logic and error handling for API failures
+  - [x] 4.7 Implement cost tracking and rate limiting functionality
+  - [x] 4.8 Verify OpenAI integration tests pass with proper error handling
 
 - [ ] 5. Logo Generation Job Queue
   - [ ] 5.1 Write tests for GenerateLogosJob with various scenarios
