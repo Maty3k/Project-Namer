@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
@@ -41,6 +42,8 @@ use Illuminate\Support\Str;
  */
 final class LogoColorVariant extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'generated_logo_id',
         'color_scheme',
@@ -59,7 +62,7 @@ final class LogoColorVariant extends Model
     /**
      * Get the generated logo that owns this color variant.
      *
-     * @return BelongsTo<GeneratedLogo, LogoColorVariant>
+     * @return BelongsTo<GeneratedLogo, $this>
      */
     public function generatedLogo(): BelongsTo
     {

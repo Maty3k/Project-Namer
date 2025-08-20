@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -30,6 +31,49 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read int|null $generated_logos_count
  *
  * @method static Builder<static>|LogoGeneration completed()
+ * @method static \Database\Factories\LogoGenerationFactory factory($count = null, $state = [])
+ * @method static Builder<static>|LogoGeneration failed()
+ * @method static Builder<static>|LogoGeneration forSession(string $sessionId)
+ * @method static Builder<static>|LogoGeneration newModelQuery()
+ * @method static Builder<static>|LogoGeneration newQuery()
+ * @method static Builder<static>|LogoGeneration pending()
+ * @method static Builder<static>|LogoGeneration processing()
+ * @method static Builder<static>|LogoGeneration query()
+ * @method static Builder<static>|LogoGeneration whereApiProvider($value)
+ * @method static Builder<static>|LogoGeneration whereBusinessDescription($value)
+ * @method static Builder<static>|LogoGeneration whereBusinessName($value)
+ * @method static Builder<static>|LogoGeneration whereCostCents($value)
+ * @method static Builder<static>|LogoGeneration whereCreatedAt($value)
+ * @method static Builder<static>|LogoGeneration whereErrorMessage($value)
+ * @method static Builder<static>|LogoGeneration whereId($value)
+ * @method static Builder<static>|LogoGeneration whereLogosCompleted($value)
+ * @method static Builder<static>|LogoGeneration whereSessionId($value)
+ * @method static Builder<static>|LogoGeneration whereStatus($value)
+ * @method static Builder<static>|LogoGeneration whereTotalLogosRequested($value)
+ * @method static Builder<static>|LogoGeneration whereUpdatedAt($value)
+ *
+ * @mixin \Eloquent
+ */
+/**
+ * @template TFactory of \Database\Factories\LogoGenerationFactory
+ *
+ * @property int $id
+ * @property string $session_id
+ * @property string $business_name
+ * @property string|null $business_description
+ * @property string $status
+ * @property int $total_logos_requested
+ * @property int $logos_completed
+ * @property string $api_provider
+ * @property int $cost_cents
+ * @property string|null $error_message
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GeneratedLogo> $generatedLogos
+ * @property-read int|null $generated_logos_count
+ *
+ * @method static Builder<static>|LogoGeneration completed()
+ * @method static \Database\Factories\LogoGenerationFactory factory($count = null, $state = [])
  * @method static Builder<static>|LogoGeneration failed()
  * @method static Builder<static>|LogoGeneration forSession(string $sessionId)
  * @method static Builder<static>|LogoGeneration newModelQuery()
@@ -54,6 +98,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 final class LogoGeneration extends Model
 {
+    /** @use HasFactory<TFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'session_id',
         'business_name',
@@ -86,7 +133,7 @@ final class LogoGeneration extends Model
     /**
      * Get the generated logos for this generation request.
      *
-     * @return HasMany<GeneratedLogo>
+     * @return HasMany<GeneratedLogo, $this>
      */
     public function generatedLogos(): HasMany
     {

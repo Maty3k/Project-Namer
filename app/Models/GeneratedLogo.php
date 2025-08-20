@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -34,6 +35,48 @@ use Illuminate\Support\Str;
  * @property-read int|null $color_variants_count
  * @property-read \App\Models\LogoGeneration $logoGeneration
  *
+ * @method static \Database\Factories\GeneratedLogoFactory factory(?int $count = null, array<string, mixed> $state = [])
+ * @method static Builder<static>|GeneratedLogo newModelQuery()
+ * @method static Builder<static>|GeneratedLogo newQuery()
+ * @method static Builder<static>|GeneratedLogo ofStyle(string $style)
+ * @method static Builder<static>|GeneratedLogo query()
+ * @method static Builder<static>|GeneratedLogo whereApiImageUrl($value)
+ * @method static Builder<static>|GeneratedLogo whereCreatedAt($value)
+ * @method static Builder<static>|GeneratedLogo whereFileSize($value)
+ * @method static Builder<static>|GeneratedLogo whereGenerationTimeMs($value)
+ * @method static Builder<static>|GeneratedLogo whereId($value)
+ * @method static Builder<static>|GeneratedLogo whereImageHeight($value)
+ * @method static Builder<static>|GeneratedLogo whereImageWidth($value)
+ * @method static Builder<static>|GeneratedLogo whereLogoGenerationId($value)
+ * @method static Builder<static>|GeneratedLogo whereOriginalFilePath($value)
+ * @method static Builder<static>|GeneratedLogo wherePromptUsed($value)
+ * @method static Builder<static>|GeneratedLogo whereStyle($value)
+ * @method static Builder<static>|GeneratedLogo whereUpdatedAt($value)
+ * @method static Builder<static>|GeneratedLogo whereVariationNumber($value)
+ *
+ * @mixin \Eloquent
+ */
+/**
+ * @template TFactory of \Database\Factories\GeneratedLogoFactory
+ *
+ * @property int $id
+ * @property int $logo_generation_id
+ * @property string $style
+ * @property int $variation_number
+ * @property string $prompt_used
+ * @property string $original_file_path
+ * @property int $file_size
+ * @property int $image_width
+ * @property int $image_height
+ * @property int $generation_time_ms
+ * @property string|null $api_image_url
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LogoColorVariant> $colorVariants
+ * @property-read int|null $color_variants_count
+ * @property-read \App\Models\LogoGeneration $logoGeneration
+ *
+ * @method static \Database\Factories\GeneratedLogoFactory factory($count = null, $state = [])
  * @method static Builder<static>|GeneratedLogo newModelQuery()
  * @method static Builder<static>|GeneratedLogo newQuery()
  * @method static Builder<static>|GeneratedLogo ofStyle(string $style)
@@ -56,6 +99,9 @@ use Illuminate\Support\Str;
  */
 final class GeneratedLogo extends Model
 {
+    /** @use HasFactory<TFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'logo_generation_id',
         'style',
@@ -90,7 +136,7 @@ final class GeneratedLogo extends Model
     /**
      * Get the logo generation request that owns this generated logo.
      *
-     * @return BelongsTo<LogoGeneration, GeneratedLogo>
+     * @return BelongsTo<LogoGeneration, $this>
      */
     public function logoGeneration(): BelongsTo
     {
@@ -100,7 +146,7 @@ final class GeneratedLogo extends Model
     /**
      * Get the color variants for this generated logo.
      *
-     * @return HasMany<LogoColorVariant>
+     * @return HasMany<LogoColorVariant, $this>
      */
     public function colorVariants(): HasMany
     {

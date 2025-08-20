@@ -62,6 +62,7 @@ final class OpenAILogoService
      * Rate limiting configuration.
      */
     private int $rateLimitRequests = 50;
+
     private int $rateLimitWindowSeconds = 3600; // 1 hour
 
     /**
@@ -72,30 +73,30 @@ final class OpenAILogoService
     public function generateLogo(string $businessIdea, string $style): array
     {
         $this->validateInputs($businessIdea, $style);
-        
+
         if (! $this->checkRateLimit()) {
             return $this->errorResponse('Rate limit exceeded', 'rate_limit_local');
         }
 
         $prompt = $this->generateLogoPrompt($businessIdea, $style);
-        
+
         return $this->makeApiRequest($prompt, $style);
     }
 
     /**
      * Generate multiple logos in different styles.
      *
-     * @param array<string> $styles
+     * @param  array<string>  $styles
      * @return array<string, array<string, mixed>>
      */
     public function generateMultipleLogos(string $businessIdea, array $styles): array
     {
         $results = [];
-        
+
         foreach ($styles as $style) {
             $results[$style] = $this->generateLogo($businessIdea, $style);
         }
-        
+
         return $results;
     }
 
@@ -110,13 +111,13 @@ final class OpenAILogoService
 
         $styleConfig = self::LOGO_STYLES[$style];
         $sanitizedIdea = $this->sanitizeBusinessIdea($businessIdea);
-        
+
         $prompt = "Create a {$style} logo design for: {$sanitizedIdea}. ";
         $prompt .= "Style requirements: {$styleConfig['description']}. ";
         $prompt .= "Include elements: {$styleConfig['keywords']}. ";
         $prompt .= "Avoid: {$styleConfig['avoid']}. ";
-        $prompt .= "The logo should be professional, scalable, and work well in SVG format. ";
-        $prompt .= "Use a clean white background. The design should be distinctive and memorable.";
+        $prompt .= 'The logo should be professional, scalable, and work well in SVG format. ';
+        $prompt .= 'Use a clean white background. The design should be distinctive and memorable.';
 
         return $prompt;
     }
@@ -137,17 +138,18 @@ final class OpenAILogoService
     {
         try {
             $apiKey = $this->getApiKey();
-            
+
             $response = Http::withHeaders([
                 'Authorization' => "Bearer {$apiKey}",
                 'Content-Type' => 'application/json',
             ])
-            ->timeout(10)
-            ->get('https://api.openai.com/v1/models');
+                ->timeout(10)
+                ->get('https://api.openai.com/v1/models');
 
             return $response->successful() && $response->json('data') !== null;
         } catch (\Exception $e) {
             Log::warning('OpenAI API health check failed', ['error' => $e->getMessage()]);
+
             return false;
         }
     }
@@ -164,20 +166,20 @@ final class OpenAILogoService
 
         while ($attemptCount < self::MAX_RETRY_ATTEMPTS) {
             $attemptCount++;
-            
+
             try {
                 $response = Http::withHeaders([
                     'Authorization' => "Bearer {$apiKey}",
                     'Content-Type' => 'application/json',
                 ])
-                ->timeout(120) // DALL-E can take a while
-                ->post('https://api.openai.com/v1/images/generations', [
-                    'model' => 'dall-e-3',
-                    'prompt' => $prompt,
-                    'size' => '1024x1024',
-                    'quality' => 'standard',
-                    'n' => 1,
-                ]);
+                    ->timeout(120) // DALL-E can take a while
+                    ->post('https://api.openai.com/v1/images/generations', [
+                        'model' => 'dall-e-3',
+                        'prompt' => $prompt,
+                        'size' => '1024x1024',
+                        'quality' => 'standard',
+                        'n' => 1,
+                    ]);
 
                 if ($response->successful()) {
                     return $this->processSuccessfulResponse($response->json(), $style);
@@ -189,7 +191,8 @@ final class OpenAILogoService
 
                 // Retry on transient errors
                 if ($this->shouldRetry($response->status()) && $attemptCount < self::MAX_RETRY_ATTEMPTS) {
-                    sleep(pow(2, $attemptCount)); // Exponential backoff
+                    sleep(2 ** $attemptCount); // Exponential backoff
+
                     continue;
                 }
 
@@ -203,7 +206,8 @@ final class OpenAILogoService
                 ]);
 
                 if ($attemptCount < self::MAX_RETRY_ATTEMPTS) {
-                    sleep(pow(2, $attemptCount));
+                    sleep(2 ** $attemptCount);
+
                     continue;
                 }
 
@@ -217,19 +221,19 @@ final class OpenAILogoService
     /**
      * Process successful API response.
      *
-     * @param array<string, mixed> $responseData
+     * @param  array<string, mixed>  $responseData
      * @return array<string, mixed>
      */
     private function processSuccessfulResponse(array $responseData, string $style): array
     {
         $data = $responseData['data'] ?? [];
-        
+
         if (empty($data)) {
             return $this->errorResponse('No images generated in API response', 'api_response');
         }
 
         $imageData = $data[0];
-        
+
         return [
             'success' => true,
             'style' => $style,
@@ -282,7 +286,7 @@ final class OpenAILogoService
     private function getApiKey(): string
     {
         $apiKey = Config::get('services.openai.api_key');
-        
+
         if (empty($apiKey)) {
             throw new InvalidArgumentException('OpenAI API key is not configured');
         }
@@ -306,7 +310,7 @@ final class OpenAILogoService
 
         // Limit length and clean up
         $sanitized = trim(substr($sanitized ?? '', 0, 200));
-        
+
         // Remove excessive whitespace
         return preg_replace('/\s+/', ' ', $sanitized) ?? $businessIdea;
     }
@@ -341,13 +345,13 @@ final class OpenAILogoService
     {
         $key = 'openai_api_requests';
         $requests = Cache::get($key, 0);
-        
+
         if ($requests >= $this->rateLimitRequests) {
             return false;
         }
-        
+
         Cache::put($key, $requests + 1, $this->rateLimitWindowSeconds);
-        
+
         return true;
     }
 }
