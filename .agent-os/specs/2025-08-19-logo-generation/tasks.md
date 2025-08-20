@@ -54,26 +54,26 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 5.7 Implement file cleanup for failed generations
   - [x] 5.8 Verify job tests pass and handle all edge cases
 
-- [ ] 6. API Endpoints
-  - [ ] 6.1 Write tests for all logo generation API endpoints
-  - [ ] 6.2 Create LogoGenerationController with generate action
-  - [ ] 6.3 Implement logo status endpoint for real-time progress updates
-  - [ ] 6.4 Create logo listing endpoint with color scheme information
-  - [ ] 6.5 Implement color customization endpoint for applying palettes
-  - [ ] 6.6 Create LogoDownloadController for file downloads
-  - [ ] 6.7 Add batch download functionality with ZIP file creation
-  - [ ] 6.8 Implement rate limiting for all endpoints
-  - [ ] 6.9 Verify all API endpoint tests pass with proper validation
+- [x] 6. API Endpoints
+  - [x] 6.1 Write tests for all logo generation API endpoints
+  - [x] 6.2 Create LogoGenerationController with generate action
+  - [x] 6.3 Implement logo status endpoint for real-time progress updates
+  - [x] 6.4 Create logo listing endpoint with color scheme information
+  - [x] 6.5 Implement color customization endpoint for applying palettes
+  - [x] 6.6 Create LogoDownloadController for file downloads
+  - [x] 6.7 Add batch download functionality with ZIP file creation
+  - [x] 6.8 Implement rate limiting for all endpoints
+  - [x] 6.9 Verify all API endpoint tests pass with proper validation
 
-- [ ] 7. Frontend Gallery Interface
-  - [ ] 7.1 Write tests for logo gallery Livewire component
-  - [ ] 7.2 Create LogoGallery Livewire component with grid layout
-  - [ ] 7.3 Implement color scheme selector interface using FluxUI Pro
-  - [ ] 7.4 Add real-time color preview functionality
-  - [ ] 7.5 Create logo download buttons with format selection
-  - [ ] 7.6 Implement loading states during generation and color processing
-  - [ ] 7.7 Add error handling and user feedback for failed operations
-  - [ ] 7.8 Verify frontend component tests pass and UI works correctly
+- [x] 7. Frontend Gallery Interface
+  - [x] 7.1 Write tests for logo gallery Livewire component
+  - [x] 7.2 Create LogoGallery Livewire component with grid layout
+  - [x] 7.3 Implement color scheme selector interface using FluxUI Pro
+  - [x] 7.4 Add real-time color preview functionality
+  - [x] 7.5 Create logo download buttons with format selection
+  - [x] 7.6 Implement loading states during generation and color processing
+  - [x] 7.7 Add error handling and user feedback for failed operations
+  - [x] 7.8 Verify frontend component tests pass and UI works correctly
 
 - [ ] 8. Integration with Name Generation Flow
   - [ ] 8.1 Write tests for logo generation trigger from name results

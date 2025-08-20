@@ -94,34 +94,30 @@ class LogoGenerationController extends Controller
         $logos = $logoGeneration->generatedLogos()
             ->with('colorVariants')
             ->get()
-            ->map(function ($logo) {
-                return [
-                    'id' => $logo->id,
-                    'style' => $logo->style,
-                    'variation_number' => $logo->variation_number,
-                    'prompt_used' => $logo->prompt_used,
-                    'original_file_path' => $logo->original_file_path,
-                    'file_size' => $logo->file_size,
-                    'image_width' => $logo->image_width,
-                    'image_height' => $logo->image_height,
+            ->map(fn ($logo) => [
+                'id' => $logo->id,
+                'style' => $logo->style,
+                'variation_number' => $logo->variation_number,
+                'prompt_used' => $logo->prompt_used,
+                'original_file_path' => $logo->original_file_path,
+                'file_size' => $logo->file_size,
+                'image_width' => $logo->image_width,
+                'image_height' => $logo->image_height,
+                'download_url' => route('api.logos.download', [
+                    'logoGeneration' => $logo->logo_generation_id,
+                    'generatedLogo' => $logo->id,
+                ]),
+                'preview_url' => $logo->original_file_path ? asset('storage/'.$logo->original_file_path) : null,
+                'color_variants' => $logo->colorVariants->map(fn ($variant) => [
+                    'color_scheme' => $variant->color_scheme,
+                    'file_path' => $variant->file_path,
                     'download_url' => route('api.logos.download', [
-                        'logoGeneration' => $logo->logo_generation_id,
-                        'generatedLogo' => $logo->id,
+                        'logoGeneration' => $variant->generatedLogo->logo_generation_id,
+                        'generatedLogo' => $variant->generated_logo_id,
+                        'color_scheme' => $variant->color_scheme,
                     ]),
-                    'preview_url' => $logo->original_file_path ? asset('storage/'.$logo->original_file_path) : null,
-                    'color_variants' => $logo->colorVariants->map(function ($variant) {
-                        return [
-                            'color_scheme' => $variant->color_scheme,
-                            'file_path' => $variant->file_path,
-                            'download_url' => route('api.logos.download', [
-                                'logoGeneration' => $variant->generatedLogo->logo_generation_id,
-                                'generatedLogo' => $variant->generated_logo_id,
-                                'color_scheme' => $variant->color_scheme,
-                            ]),
-                        ];
-                    }),
-                ];
-            });
+                ]),
+            ]);
 
         $data = [
             'id' => $logoGeneration->id,
@@ -198,7 +194,7 @@ class LogoGenerationController extends Controller
                 $colorVariant = $logo->colorVariants()->create([
                     'color_scheme' => $colorScheme,
                     'file_path' => $customizedPath,
-                    'file_size' => strlen($customizedContent),
+                    'file_size' => strlen((string) $customizedContent),
                 ]);
 
                 $customizedLogos[] = $this->formatColorVariantResponse($colorVariant);
@@ -245,17 +241,15 @@ class LogoGenerationController extends Controller
     {
         $schemes = $this->colorPaletteService->getAllColorSchemesWithMetadata();
 
-        return array_values(array_map(function ($scheme, $id) {
-            return [
-                'name' => $id,
-                'display_name' => $scheme['name'],
-                'colors' => [
-                    'primary' => $scheme['colors']['primary'],
-                    'secondary' => $scheme['colors']['secondary'],
-                    'accent' => $scheme['colors']['accent'],
-                ],
-            ];
-        }, $schemes, array_keys($schemes)));
+        return array_values(array_map(fn ($scheme, $id) => [
+            'name' => $id,
+            'display_name' => $scheme['name'],
+            'colors' => [
+                'primary' => $scheme['colors']['primary'],
+                'secondary' => $scheme['colors']['secondary'],
+                'accent' => $scheme['colors']['accent'],
+            ],
+        ], $schemes, array_keys($schemes)));
     }
 
     /**

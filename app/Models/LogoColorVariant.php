@@ -26,6 +26,7 @@ use Illuminate\Support\Str;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\GeneratedLogo $generatedLogo
  *
+ * @method static \Database\Factories\LogoColorVariantFactory factory($count = null, $state = [])
  * @method static Builder<static>|LogoColorVariant newModelQuery()
  * @method static Builder<static>|LogoColorVariant newQuery()
  * @method static Builder<static>|LogoColorVariant query()
