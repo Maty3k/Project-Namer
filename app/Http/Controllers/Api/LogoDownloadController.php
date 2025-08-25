@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Exceptions\LogoGenerationException;
 use App\Http\Controllers\Controller;
 use App\Models\GeneratedLogo;
 use App\Models\LogoGeneration;
@@ -27,11 +28,11 @@ class LogoDownloadController extends Controller
      * @param  LogoGeneration<\Database\Factories\LogoGenerationFactory>  $logoGeneration
      * @param  GeneratedLogo<\Database\Factories\GeneratedLogoFactory>  $generatedLogo
      */
-    public function download(Request $request, LogoGeneration $logoGeneration, GeneratedLogo $generatedLogo): Response
+    public function download(Request $request, LogoGeneration $logoGeneration, GeneratedLogo $generatedLogo): Response|JsonResponse
     {
         // Verify the logo belongs to the generation
         if ($generatedLogo->logo_generation_id !== $logoGeneration->id) {
-            abort(404, 'Logo not found in this generation');
+            throw LogoGenerationException::fileNotFound();
         }
 
         $colorScheme = $request->query('color_scheme');
@@ -43,11 +44,11 @@ class LogoDownloadController extends Controller
                 ->first();
 
             if (! $colorVariant) {
-                abort(404, 'Customized logo not found for this color scheme');
+                throw LogoGenerationException::fileNotFound();
             }
 
             if (! Storage::disk('public')->exists($colorVariant->file_path)) {
-                abort(404, 'Logo file not found');
+                throw LogoGenerationException::fileNotFound();
             }
 
             $content = Storage::disk('public')->get($colorVariant->file_path);
@@ -61,7 +62,7 @@ class LogoDownloadController extends Controller
 
         // Return original logo
         if (! $generatedLogo->original_file_path || ! Storage::disk('public')->exists($generatedLogo->original_file_path)) {
-            abort(404, 'Original logo file not found');
+            throw LogoGenerationException::fileNotFound();
         }
 
         $content = Storage::disk('public')->get($generatedLogo->original_file_path);
@@ -111,9 +112,7 @@ class LogoDownloadController extends Controller
         }
 
         if ($zip->open($zipPath, ZipArchive::CREATE) !== true) {
-            return response()->json([
-                'message' => 'Could not create ZIP file',
-            ], 500);
+            throw LogoGenerationException::downloadFailed();
         }
 
         // Add logos to ZIP

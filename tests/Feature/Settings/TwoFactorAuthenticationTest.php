@@ -33,34 +33,22 @@ test('two factor authentication can be enabled', function (): void {
 });
 
 test('two factor authentication can be confirmed', function (): void {
-    // Create a minimal user instance without persisting to database yet
-    $user = new User([
-        'name' => 'Test User',
-        'email' => 'test@example.com',
-        'password' => 'password',
-    ]);
-
-    // Set up 2FA directly without saving to database yet
-    $user->generateTwoFactorSecret();
-    $user->generateRecoveryCodes();
-
-    // Now save to database (single operation)
-    $user->save();
+    // Create user using factory for proper setup
+    $user = User::factory()->create();
 
     $this->actingAs($user);
 
     // Create a minimal Livewire test instance
     $livewire = Livewire::test(TwoFactorAuthenticationPage::class);
 
-    // Set component state directly
-    $livewire->set('showingQrCode', true)
-        ->set('showingConfirmationForm', true)
-        ->set('confirmationCode', '123456');
+    // Enable 2FA first - this generates new secret and codes
+    $livewire->call('enableTwoFactorAuthentication');
 
-    // Call the confirmation method directly
-    $livewire->call('confirmTwoFactorAuthentication');
+    // Set the confirmation code and confirm
+    $livewire->set('confirmationCode', '123456')
+        ->call('confirmTwoFactorAuthentication');
 
-    // Verify only the most essential assertions
+    // Verify no errors and user is confirmed
     $livewire->assertHasNoErrors();
 
     $user->refresh();

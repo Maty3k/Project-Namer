@@ -15,49 +15,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * Represents a user request to generate logos for a business name,
  * tracking the generation status and progress.
  *
- * @property int $id
- * @property string $session_id
- * @property string $business_name
- * @property string|null $business_description
- * @property string $status
- * @property int $total_logos_requested
- * @property int $logos_completed
- * @property string $api_provider
- * @property int $cost_cents
- * @property string|null $error_message
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GeneratedLogo> $generatedLogos
- * @property-read int|null $generated_logos_count
- *
- * @method static Builder<static>|LogoGeneration completed()
- * @method static \Database\Factories\LogoGenerationFactory factory($count = null, $state = [])
- * @method static Builder<static>|LogoGeneration failed()
- * @method static Builder<static>|LogoGeneration forSession(string $sessionId)
- * @method static Builder<static>|LogoGeneration newModelQuery()
- * @method static Builder<static>|LogoGeneration newQuery()
- * @method static Builder<static>|LogoGeneration pending()
- * @method static Builder<static>|LogoGeneration processing()
- * @method static Builder<static>|LogoGeneration query()
- * @method static Builder<static>|LogoGeneration whereApiProvider($value)
- * @method static Builder<static>|LogoGeneration whereBusinessDescription($value)
- * @method static Builder<static>|LogoGeneration whereBusinessName($value)
- * @method static Builder<static>|LogoGeneration whereCostCents($value)
- * @method static Builder<static>|LogoGeneration whereCreatedAt($value)
- * @method static Builder<static>|LogoGeneration whereErrorMessage($value)
- * @method static Builder<static>|LogoGeneration whereId($value)
- * @method static Builder<static>|LogoGeneration whereLogosCompleted($value)
- * @method static Builder<static>|LogoGeneration whereSessionId($value)
- * @method static Builder<static>|LogoGeneration whereStatus($value)
- * @method static Builder<static>|LogoGeneration whereTotalLogosRequested($value)
- * @method static Builder<static>|LogoGeneration whereUpdatedAt($value)
- *
- * @mixin \Eloquent
- */
-/**
  * @template TFactory of \Database\Factories\LogoGenerationFactory
  *
  * @property int $id
+ * @property int|null $user_id
  * @property string $session_id
  * @property string $business_name
  * @property string|null $business_description
@@ -69,30 +30,41 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $error_message
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GeneratedLogo> $generatedLogos
+ * @property int $share_count
+ * @property string|null $last_shared_at
+ * @property int|null $progress
+ * @property \Illuminate\Support\Carbon|null $started_at
+ * @property \Illuminate\Support\Carbon|null $estimated_completion
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GeneratedLogo<\Database\Factories\GeneratedLogoFactory>> $generatedLogos
  * @property-read int|null $generated_logos_count
  *
- * @method static Builder<static>|LogoGeneration completed()
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> completed()
  * @method static \Database\Factories\LogoGenerationFactory factory($count = null, $state = [])
- * @method static Builder<static>|LogoGeneration failed()
- * @method static Builder<static>|LogoGeneration forSession(string $sessionId)
- * @method static Builder<static>|LogoGeneration newModelQuery()
- * @method static Builder<static>|LogoGeneration newQuery()
- * @method static Builder<static>|LogoGeneration pending()
- * @method static Builder<static>|LogoGeneration processing()
- * @method static Builder<static>|LogoGeneration query()
- * @method static Builder<static>|LogoGeneration whereApiProvider($value)
- * @method static Builder<static>|LogoGeneration whereBusinessDescription($value)
- * @method static Builder<static>|LogoGeneration whereBusinessName($value)
- * @method static Builder<static>|LogoGeneration whereCostCents($value)
- * @method static Builder<static>|LogoGeneration whereCreatedAt($value)
- * @method static Builder<static>|LogoGeneration whereErrorMessage($value)
- * @method static Builder<static>|LogoGeneration whereId($value)
- * @method static Builder<static>|LogoGeneration whereLogosCompleted($value)
- * @method static Builder<static>|LogoGeneration whereSessionId($value)
- * @method static Builder<static>|LogoGeneration whereStatus($value)
- * @method static Builder<static>|LogoGeneration whereTotalLogosRequested($value)
- * @method static Builder<static>|LogoGeneration whereUpdatedAt($value)
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> failed()
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> forSession(string $sessionId)
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> newModelQuery()
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> newQuery()
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> pending()
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> processing()
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> query()
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> whereApiProvider($value)
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> whereBusinessDescription($value)
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> whereBusinessName($value)
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> whereCostCents($value)
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> whereCreatedAt($value)
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> whereErrorMessage($value)
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> whereEstimatedCompletion($value)
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> whereId($value)
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> whereLastSharedAt($value)
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> whereLogosCompleted($value)
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> whereProgress($value)
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> whereSessionId($value)
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> whereShareCount($value)
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> whereStartedAt($value)
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> whereStatus($value)
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> whereTotalLogosRequested($value)
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> whereUpdatedAt($value)
+ * @method static Builder<static>|\App\Models\LogoGeneration<TFactory> whereUserId($value)
  *
  * @mixin \Eloquent
  */
@@ -108,9 +80,12 @@ final class LogoGeneration extends Model
         'status',
         'total_logos_requested',
         'logos_completed',
+        'progress',
         'api_provider',
         'cost_cents',
         'error_message',
+        'started_at',
+        'estimated_completion',
     ];
 
     protected $attributes = [
@@ -126,17 +101,21 @@ final class LogoGeneration extends Model
         return [
             'total_logos_requested' => 'integer',
             'logos_completed' => 'integer',
+            'progress' => 'integer',
             'cost_cents' => 'integer',
+            'started_at' => 'datetime',
+            'estimated_completion' => 'datetime',
         ];
     }
 
     /**
      * Get the generated logos for this generation request.
      *
-     * @return HasMany<GeneratedLogo, $this>
+     * @return HasMany<GeneratedLogo<\Database\Factories\GeneratedLogoFactory>, $this>
      */
     public function generatedLogos(): HasMany
     {
+        /** @phpstan-ignore-next-line - Laravel relationship generic type resolution */
         return $this->hasMany(GeneratedLogo::class);
     }
 

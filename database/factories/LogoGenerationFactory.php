@@ -27,6 +27,7 @@ final class LogoGenerationFactory extends Factory
     public function definition(): array
     {
         return [
+            'user_id' => \App\Models\User::factory(),
             'session_id' => $this->faker->uuid(),
             'business_name' => $this->faker->sentence(6),
             'status' => 'pending',

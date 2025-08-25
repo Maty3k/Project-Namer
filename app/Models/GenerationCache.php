@@ -113,10 +113,16 @@ final class GenerationCache extends Model
      */
     public static function generateHash(string $businessDescription, string $mode, bool $deepThinking): string
     {
-        return hash('sha256', json_encode([
+        $data = json_encode([
             'business_description' => trim(strtolower($businessDescription)),
             'mode' => $mode,
             'deep_thinking' => $deepThinking,
-        ]));
+        ]);
+
+        if ($data === false) {
+            throw new \RuntimeException('Failed to encode cache key data');
+        }
+
+        return hash('sha256', $data);
     }
 }

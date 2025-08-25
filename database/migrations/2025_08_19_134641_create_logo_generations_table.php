@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('logo_generations', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->string('session_id')->index();
             $table->string('business_name');
             $table->text('business_description')->nullable();

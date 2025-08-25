@@ -5,6 +5,7 @@ use App\Models\GeneratedLogo;
 use App\Models\LogoColorVariant;
 use App\Services\ColorPaletteService;
 use App\Services\SvgColorProcessor;
+use App\Services\LogoVariantCacheService;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Volt\Component;
 use function Livewire\Volt\{state, computed, mount, on};
@@ -25,7 +26,10 @@ new class extends Component {
 
     public function getLogoGeneration()
     {
-        return LogoGeneration::with(['generatedLogos.colorVariants'])
+        $cacheService = app(LogoVariantCacheService::class);
+        $cached = $cacheService->getCachedLogoGeneration($this->logoGenerationId);
+        
+        return $cached ?: LogoGeneration::with(['generatedLogos.colorVariants'])
             ->findOrFail($this->logoGenerationId);
     }
 
@@ -36,28 +40,8 @@ new class extends Component {
 
     public function getLogosByStyle()
     {
-        $logoGeneration = $this->getLogoGeneration();
-        
-        return $logoGeneration->generatedLogos
-            ->groupBy('style')
-            ->map(fn($logos, $style) => [
-                'style' => $style,
-                'display_name' => ucwords((string) $style),
-                'logos' => $logos->map(fn($logo) => [
-                    'id' => $logo->id,
-                    'style' => $logo->style,
-                    'variation_number' => $logo->variation_number,
-                    'original_file_path' => $logo->original_file_path,
-                    'preview_url' => $logo->original_file_path ? asset('storage/' . $logo->original_file_path) : null,
-                    'file_size' => $logo->file_size,
-                    'color_variants' => $logo->colorVariants->map(fn($variant) => [
-                        'color_scheme' => $variant->color_scheme,
-                        'display_name' => $this->getColorSchemeDisplayName($variant->color_scheme),
-                        'file_path' => $variant->file_path,
-                        'preview_url' => asset('storage/' . $variant->file_path),
-                    ])->toArray(),
-                ])->toArray(),
-            ])->values()->toArray();
+        $cacheService = app(LogoVariantCacheService::class);
+        return $cacheService->getLogosByStyle($this->logoGenerationId);
     }
 
     public function getColorSchemeDisplayName(string $colorScheme): string
@@ -128,12 +112,11 @@ new class extends Component {
 
             foreach ($logos as $logo) {
                 try {
-                    // Check if customization already exists
-                    $existingVariant = $logo->colorVariants()
-                        ->where('color_scheme', $this->selectedColorScheme)
-                        ->first();
+                    // Check if customization already exists using cache
+                    $cacheService = app(LogoVariantCacheService::class);
+                    $variantExists = $cacheService->variantExists($logo->id, $this->selectedColorScheme);
 
-                    if ($existingVariant) {
+                    if ($variantExists) {
                         $customizedCount++;
                         continue;
                     }
@@ -161,11 +144,14 @@ new class extends Component {
                     Storage::disk('public')->put($customizedPath, $customizedContent);
 
                     // Create color variant record
-                    $logo->colorVariants()->create([
+                    $variant = $logo->colorVariants()->create([
                         'color_scheme' => $this->selectedColorScheme,
                         'file_path' => $customizedPath,
                         'file_size' => strlen((string) $customizedContent),
                     ]);
+
+                    // Invalidate cache after creating new variant
+                    $cacheService->invalidateLogoCache($logo->id);
 
                     $customizedCount++;
 

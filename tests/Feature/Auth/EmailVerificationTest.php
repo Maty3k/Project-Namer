@@ -23,7 +23,7 @@ test('email can be verified', function (): void {
     Event::fake();
 
     $verificationUrl = URL::temporarySignedRoute(
-        'verification.verify',
+        'custom.verification.verify',
         now()->addMinutes(60),
         ['id' => $user->id, 'hash' => sha1($user->email)]
     );
@@ -40,7 +40,7 @@ test('email is not verified with invalid hash', function (): void {
     $user = User::factory()->unverified()->create();
 
     $verificationUrl = URL::temporarySignedRoute(
-        'verification.verify',
+        'custom.verification.verify',
         now()->addMinutes(60),
         ['id' => $user->id, 'hash' => sha1('wrong-email')]
     );
