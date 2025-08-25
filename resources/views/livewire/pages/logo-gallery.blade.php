@@ -164,10 +164,18 @@ new class extends Component {
                 }
             }
 
-            $this->dispatch('toast', message: "{$customizedCount} logos customized successfully");
+            $this->dispatch('toast', 
+                message: "{$customizedCount} logos customized successfully",
+                type: 'success',
+                duration: 4000
+            );
 
         } catch (\Exception $e) {
-            $this->dispatch('toast', message: 'Failed to customize logos. Please try again.');
+            $this->dispatch('toast', 
+                message: 'Failed to customize logos. Please try again.',
+                type: 'error',
+                duration: 8000
+            );
             \Log::error('Logo customization failed in gallery', [
                 'error' => $e->getMessage(),
                 'selected_logos' => $this->selectedLogos,
@@ -196,7 +204,15 @@ new class extends Component {
         }
 
         if (!Storage::disk('public')->exists($filePath)) {
-            $this->dispatch('toast', message: 'File not found.');
+            $this->dispatch('toast', 
+                message: 'File not found. It may have been removed or is being regenerated.',
+                type: 'error',
+                duration: 6000,
+                actions: [
+                    ['label' => 'Regenerate Logos', 'action' => 'regenerate'],
+                    ['label' => 'Go Back', 'action' => 'back_to_gallery']
+                ]
+            );
             return;
         }
 
@@ -210,12 +226,91 @@ new class extends Component {
         $logoGeneration = $this->getLogoGeneration();
         
         if ($logoGeneration->generatedLogos->isEmpty()) {
-            $this->dispatch('toast', message: 'No logos available for download.');
+            $this->dispatch('toast', 
+                message: 'No logos available for download.',
+                type: 'warning',
+                duration: 5000
+            );
             return;
         }
 
         // Redirect to batch download API endpoint
         $this->redirect("/api/logos/{$logoGeneration->id}/download-batch");
+    }
+
+    public function retryGeneration(): void
+    {
+        try {
+            $logoGeneration = $this->getLogoGeneration();
+            
+            $response = \Http::post("/api/logos/{$logoGeneration->id}/retry");
+            
+            if ($response->successful()) {
+                $this->dispatch('toast', 
+                    message: 'Logo generation restarted successfully',
+                    type: 'info',
+                    duration: 4000
+                );
+                
+                // Refresh the component to show updated status
+                $this->dispatch('$refresh');
+            } else {
+                throw new \Exception('Retry request failed');
+            }
+            
+        } catch (\Exception) {
+            $this->dispatch('toast', 
+                message: 'Unable to retry generation. Please try again later.',
+                type: 'error',
+                duration: 6000
+            );
+        }
+    }
+
+    public function completeGeneration(): void
+    {
+        try {
+            $logoGeneration = $this->getLogoGeneration();
+            
+            $response = \Http::post("/api/logos/{$logoGeneration->id}/complete");
+            
+            if ($response->successful()) {
+                $this->dispatch('toast', 
+                    message: 'Completing logo generation...',
+                    type: 'info',
+                    duration: 4000
+                );
+                
+                // Refresh the component to show updated status
+                $this->dispatch('$refresh');
+            } else {
+                throw new \Exception('Complete request failed');
+            }
+            
+        } catch (\Exception) {
+            $this->dispatch('toast', 
+                message: 'Unable to complete generation. Please try again later.',
+                type: 'error',
+                duration: 6000
+            );
+        }
+    }
+
+    public function useCurrentLogos(): void
+    {
+        $this->dispatch('toast', 
+            message: 'Using currently generated logos. You can still try to generate the remaining ones later.',
+            type: 'info',
+            duration: 5000
+        );
+        
+        // Just refresh to hide the partial status message
+        $this->dispatch('$refresh');
+    }
+
+    public function goToNameGenerator(): void
+    {
+        $this->redirect(route('home'));
     }
 }; ?>
 
@@ -277,50 +372,91 @@ new class extends Component {
             </div>
         </div>
 
-        {{-- Status Section --}}
+        {{-- Status Section with Enhanced Progress --}}
         @if($logoGeneration->status === 'processing')
-            <div class="mt-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                <div class="flex items-center">
-                    <flux:icon.arrow-path class="w-5 h-5 text-blue-600 dark:text-blue-400 animate-spin mr-3" />
-                    <div class="flex-1">
-                        <h3 class="text-sm font-medium text-blue-800 dark:text-blue-200">
-                            Generating logos...
-                        </h3>
-                        <p class="text-sm text-blue-600 dark:text-blue-400 mt-1">
-                            {{ $logoGeneration->logos_completed }} of {{ $logoGeneration->total_logos_requested }} completed
-                            ({{ $logoGeneration->total_logos_requested > 0 ? round(($logoGeneration->logos_completed / $logoGeneration->total_logos_requested) * 100) : 0 }}%)
-                        </p>
-                    </div>
-                    <flux:button
-                        wire:click="refreshStatus"
-                        variant="ghost"
-                        size="sm"
-                    >
-                        Refresh
-                    </flux:button>
-                </div>
-                
-                {{-- Progress Bar --}}
-                <div class="mt-3 w-full bg-blue-100 dark:bg-blue-800 rounded-full h-2">
-                    <div 
-                        class="bg-blue-600 dark:bg-blue-400 h-2 rounded-full transition-all duration-300"
-                        style="width: {{ $logoGeneration->total_logos_requested > 0 ? round(($logoGeneration->logos_completed / $logoGeneration->total_logos_requested) * 100) : 0 }}%"
-                    ></div>
-                </div>
+            <div class="mt-6">
+                <x-logo-generation-progress :logo-generation="$logoGeneration" />
             </div>
         @elseif($logoGeneration->status === 'failed')
             <div class="mt-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-                <div class="flex items-center">
-                    <flux:icon.exclamation-circle class="w-5 h-5 text-red-600 dark:text-red-400 mr-3" />
-                    <div>
-                        <h3 class="text-sm font-medium text-red-800 dark:text-red-200">
-                            Generation failed
-                        </h3>
-                        @if($logoGeneration->error_message)
-                            <p class="text-sm text-red-600 dark:text-red-400 mt-1">
-                                {{ $logoGeneration->error_message }}
+                <div class="flex items-start justify-between">
+                    <div class="flex items-start">
+                        <flux:icon.exclamation-circle class="w-5 h-5 text-red-600 dark:text-red-400 mr-3 mt-0.5" />
+                        <div>
+                            <h3 class="text-sm font-medium text-red-800 dark:text-red-200">
+                                Logo generation failed
+                            </h3>
+                            @if($logoGeneration->error_message)
+                                <p class="text-sm text-red-600 dark:text-red-400 mt-1">
+                                    {{ $logoGeneration->error_message }}
+                                </p>
+                            @endif
+                            <p class="text-xs text-red-500 dark:text-red-400 mt-2">
+                                This usually resolves quickly. You can try generating again or contact support if the issue persists.
                             </p>
-                        @endif
+                        </div>
+                    </div>
+                    
+                    {{-- Recovery Actions --}}
+                    <div class="flex gap-2 ml-4">
+                        <flux:button
+                            wire:click="retryGeneration"
+                            variant="outline"
+                            size="sm"
+                            class="border-red-300 text-red-700 hover:bg-red-100 dark:border-red-600 dark:text-red-300 dark:hover:bg-red-900/30"
+                        >
+                            <flux:icon.arrow-path class="w-4 h-4 mr-1" />
+                            Try Again
+                        </flux:button>
+                        
+                        <flux:button
+                            wire:click="goToNameGenerator"
+                            variant="ghost"
+                            size="sm"
+                            class="text-red-600 hover:text-red-700 dark:text-red-400"
+                        >
+                            Start Over
+                        </flux:button>
+                    </div>
+                </div>
+            </div>
+        @elseif($logoGeneration->status === 'partial')
+            <div class="mt-6 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-start">
+                        <flux:icon.exclamation-triangle class="w-5 h-5 text-amber-600 dark:text-amber-400 mr-3 mt-0.5" />
+                        <div>
+                            <h3 class="text-sm font-medium text-amber-800 dark:text-amber-200">
+                                Partial generation completed
+                            </h3>
+                            <p class="text-sm text-amber-600 dark:text-amber-400 mt-1">
+                                Generated {{ $logoGeneration->logos_completed }} of {{ $logoGeneration->total_logos_requested }} logos successfully. 
+                                Some logos failed to generate.
+                            </p>
+                            <p class="text-xs text-amber-600 dark:text-amber-400 mt-2">
+                                You can use the generated logos or try to complete the remaining ones.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    {{-- Completion Actions --}}
+                    <div class="flex gap-2 ml-4">
+                        <flux:button
+                            wire:click="completeGeneration"
+                            variant="primary"
+                            size="sm"
+                        >
+                            <flux:icon.plus class="w-4 h-4 mr-1" />
+                            Complete
+                        </flux:button>
+                        
+                        <flux:button
+                            wire:click="useCurrentLogos"
+                            variant="outline"
+                            size="sm"
+                        >
+                            Use Current
+                        </flux:button>
                     </div>
                 </div>
             </div>
@@ -580,10 +716,7 @@ new class extends Component {
 
     {{-- Auto-refresh for processing status --}}
     @if($logoGeneration->status === 'processing')
-        <script>
-            setTimeout(() => {
-                @this.call('refreshStatus');
-            }, 5000); // Refresh every 5 seconds
-        </script>
+        <div wire:poll.5000ms="refreshStatus" class="hidden"></div>
     @endif
 </div>
+
