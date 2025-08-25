@@ -14,8 +14,6 @@ final class SharePolicy
 {
     /**
      * Determine if the user can view the share.
-     *
-     * @param  Share<\Database\Factories\ShareFactory>  $share
      */
     public function view(User $user, Share $share): bool
     {
@@ -24,8 +22,6 @@ final class SharePolicy
 
     /**
      * Determine if the user can update the share.
-     *
-     * @param  Share<\Database\Factories\ShareFactory>  $share
      */
     public function update(User $user, Share $share): bool
     {
@@ -34,8 +30,6 @@ final class SharePolicy
 
     /**
      * Determine if the user can delete the share.
-     *
-     * @param  Share<\Database\Factories\ShareFactory>  $share
      */
     public function delete(User $user, Share $share): bool
     {

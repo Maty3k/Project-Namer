@@ -10,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * ExportResource formats Export model data for API responses.
  *
- * @property-read \App\Models\Export<\Database\Factories\ExportFactory> $resource
+ * @property-read \App\Models\Export $resource
  */
 final class ExportResource extends JsonResource
 {

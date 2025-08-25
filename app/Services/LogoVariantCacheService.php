@@ -27,7 +27,7 @@ final class LogoVariantCacheService
     /**
      * Get cached color variants for a specific logo and color scheme.
      *
-     * @return Collection<int, LogoColorVariant<\Database\Factories\LogoColorVariantFactory>>
+     * @return Collection<int, LogoColorVariant>
      */
     public function getLogoVariants(int $logoId, ?string $colorScheme = null): Collection
     {
@@ -47,7 +47,7 @@ final class LogoVariantCacheService
     /**
      * Get cached color variants for an entire logo generation.
      *
-     * @return Collection<int, LogoColorVariant<\Database\Factories\LogoColorVariantFactory>>
+     * @return Collection<int, LogoColorVariant>
      */
     public function getGenerationVariants(int $generationId): Collection
     {
@@ -62,8 +62,6 @@ final class LogoVariantCacheService
 
     /**
      * Get cached logo generation with all its logos and variants efficiently.
-     *
-     * @return LogoGeneration<\Database\Factories\LogoGenerationFactory>|null
      */
     public function getCachedLogoGeneration(int $generationId): ?LogoGeneration
     {

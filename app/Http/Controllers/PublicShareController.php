@@ -42,7 +42,7 @@ final class PublicShareController extends Controller
             abort(404, $validation['error']);
         }
 
-        /** @var Share<\Database\Factories\ShareFactory> $share */
+        /** @var Share $share */
         $share = $validation['share'];
 
         // Handle password protection
@@ -92,7 +92,7 @@ final class PublicShareController extends Controller
             ]);
         }
 
-        /** @var Share<\Database\Factories\ShareFactory> $share */
+        /** @var Share $share */
         $share = $validation['share'];
 
         // Set session flag for authentication
@@ -103,8 +103,6 @@ final class PublicShareController extends Controller
 
     /**
      * Show password authentication form.
-     *
-     * @param  Share<\Database\Factories\ShareFactory>  $share
      */
     private function showPasswordForm(Share $share): Response
     {
@@ -118,8 +116,6 @@ final class PublicShareController extends Controller
 
     /**
      * Return JSON response for API requests.
-     *
-     * @param  Share<\Database\Factories\ShareFactory>  $share
      */
     private function jsonResponse(Share $share): JsonResponse
     {
@@ -139,8 +135,6 @@ final class PublicShareController extends Controller
 
     /**
      * Return web response for browser requests.
-     *
-     * @param  Share<\Database\Factories\ShareFactory>  $share
      */
     private function webResponse(Share $share): Response
     {
@@ -165,7 +159,6 @@ final class PublicShareController extends Controller
     /**
      * Get formatted shareable data.
      *
-     * @param  Share<\Database\Factories\ShareFactory>  $share
      * @return array<string, mixed>
      */
     private function getShareableData(Share $share): array

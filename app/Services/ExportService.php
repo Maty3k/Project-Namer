@@ -32,7 +32,6 @@ final class ExportService
      * Create a new export with validation and file generation.
      *
      * @param  array<string, mixed>  $exportData
-     * @return Export<\Database\Factories\ExportFactory>
      *
      * @throws ValidationException
      * @throws ExportGenerationException
@@ -75,8 +74,6 @@ final class ExportService
 
     /**
      * Serve export file as download with proper headers and tracking.
-     *
-     * @param  Export<\Database\Factories\ExportFactory>  $export
      */
     public function serveDownload(Export $export): StreamedResponse
     {
@@ -158,7 +155,6 @@ final class ExportService
     /**
      * Generate the actual export file based on type.
      *
-     * @param  Export<\Database\Factories\ExportFactory>  $export
      * @param  array<string, mixed>  $validated
      */
     private function generateExportFile(Export $export, array $validated): void
@@ -181,7 +177,6 @@ final class ExportService
     /**
      * Generate PDF export using DomPDF.
      *
-     * @param  Export<\Database\Factories\ExportFactory>  $export
      * @param  mixed  $exportable
      * @param  array<string, mixed>  $validated
      */
@@ -218,7 +213,6 @@ final class ExportService
     /**
      * Generate CSV export with proper formatting.
      *
-     * @param  Export<\Database\Factories\ExportFactory>  $export
      * @param  mixed  $exportable
      * @param  array<string, mixed>  $validated
      */
@@ -260,7 +254,6 @@ final class ExportService
     /**
      * Generate JSON export with complete data structure.
      *
-     * @param  Export<\Database\Factories\ExportFactory>  $export
      * @param  mixed  $exportable
      * @param  array<string, mixed>  $validated
      */

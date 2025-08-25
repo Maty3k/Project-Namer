@@ -17,8 +17,6 @@ use Illuminate\Support\Str;
  * Represents a color-customized version of a generated logo,
  * with a specific color scheme applied.
  *
- * @template TFactory of \Database\Factories\LogoColorVariantFactory
- *
  * @property int $id
  * @property int $generated_logo_id
  * @property string $color_scheme
@@ -26,26 +24,26 @@ use Illuminate\Support\Str;
  * @property int $file_size
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\GeneratedLogo<\Database\Factories\GeneratedLogoFactory> $generatedLogo
+ * @property-read \App\Models\GeneratedLogo $generatedLogo
  *
  * @method static \Database\Factories\LogoColorVariantFactory factory($count = null, $state = [])
- * @method static Builder<static>|\App\Models\LogoColorVariant<TFactory> newModelQuery()
- * @method static Builder<static>|\App\Models\LogoColorVariant<TFactory> newQuery()
- * @method static Builder<static>|\App\Models\LogoColorVariant<TFactory> query()
- * @method static Builder<static>|\App\Models\LogoColorVariant<TFactory> whereColorScheme($value)
- * @method static Builder<static>|\App\Models\LogoColorVariant<TFactory> whereCreatedAt($value)
- * @method static Builder<static>|\App\Models\LogoColorVariant<TFactory> whereFilePath($value)
- * @method static Builder<static>|\App\Models\LogoColorVariant<TFactory> whereFileSize($value)
- * @method static Builder<static>|\App\Models\LogoColorVariant<TFactory> whereGeneratedLogoId($value)
- * @method static Builder<static>|\App\Models\LogoColorVariant<TFactory> whereId($value)
- * @method static Builder<static>|\App\Models\LogoColorVariant<TFactory> whereUpdatedAt($value)
- * @method static Builder<static>|\App\Models\LogoColorVariant<TFactory> withColorScheme(string $colorScheme)
+ * @method static Builder<static>|LogoColorVariant newModelQuery()
+ * @method static Builder<static>|LogoColorVariant newQuery()
+ * @method static Builder<static>|LogoColorVariant query()
+ * @method static Builder<static>|LogoColorVariant whereColorScheme($value)
+ * @method static Builder<static>|LogoColorVariant whereCreatedAt($value)
+ * @method static Builder<static>|LogoColorVariant whereFilePath($value)
+ * @method static Builder<static>|LogoColorVariant whereFileSize($value)
+ * @method static Builder<static>|LogoColorVariant whereGeneratedLogoId($value)
+ * @method static Builder<static>|LogoColorVariant whereId($value)
+ * @method static Builder<static>|LogoColorVariant whereUpdatedAt($value)
+ * @method static Builder<static>|LogoColorVariant withColorScheme(string $colorScheme)
  *
  * @mixin \Eloquent
  */
 final class LogoColorVariant extends Model
 {
-    /** @use HasFactory<TFactory> */
+    /** @use HasFactory<\Database\Factories\LogoColorVariantFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -66,19 +64,18 @@ final class LogoColorVariant extends Model
     /**
      * Get the generated logo that owns this color variant.
      *
-     * @return BelongsTo<GeneratedLogo<\Database\Factories\GeneratedLogoFactory>, $this>
+     * @return BelongsTo<GeneratedLogo, $this>
      */
     public function generatedLogo(): BelongsTo
     {
-        /** @phpstan-ignore-next-line - Laravel relationship generic type resolution */
         return $this->belongsTo(GeneratedLogo::class);
     }
 
     /**
      * Scope to get variants with a specific color scheme.
      *
-     * @param  Builder<LogoColorVariant<TFactory>>  $query
-     * @return Builder<LogoColorVariant<TFactory>>
+     * @param  Builder<LogoColorVariant>  $query
+     * @return Builder<LogoColorVariant>
      */
     public function scopeWithColorScheme(Builder $query, string $colorScheme): Builder
     {
@@ -87,8 +84,6 @@ final class LogoColorVariant extends Model
 
     /**
      * Find a color variant by logo and color scheme.
-     *
-     * @return LogoColorVariant<\Database\Factories\LogoColorVariantFactory>|null
      */
     public static function findByLogoAndScheme(int $generatedLogoId, string $colorScheme): ?self
     {

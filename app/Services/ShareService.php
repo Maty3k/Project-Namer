@@ -28,7 +28,6 @@ final class ShareService
      * Create a new share with validation and rate limiting.
      *
      * @param  array<string, mixed>  $shareData
-     * @return Share<\Database\Factories\ShareFactory>
      *
      * @throws ValidationException
      * @throws ThrottleRequestsException
@@ -91,7 +90,6 @@ final class ShareService
     /**
      * Record access to a share with analytics data.
      *
-     * @param  Share<\Database\Factories\ShareFactory>  $share
      * @param  array<string, mixed>  $accessData
      */
     public function recordShareAccess(Share $share, array $accessData = []): void
@@ -106,7 +104,6 @@ final class ShareService
     /**
      * Generate social media metadata for a share.
      *
-     * @param  Share<\Database\Factories\ShareFactory>  $share
      * @return array<string, string>
      */
     public function generateSocialMediaMetadata(Share $share): array
@@ -139,9 +136,7 @@ final class ShareService
     /**
      * Update an existing share with new data.
      *
-     * @param  Share<\Database\Factories\ShareFactory>  $share
      * @param  array<string, mixed>  $updateData
-     * @return Share<\Database\Factories\ShareFactory>
      */
     public function updateShare(Share $share, array $updateData): Share
     {
@@ -154,8 +149,6 @@ final class ShareService
 
     /**
      * Deactivate a share (soft delete).
-     *
-     * @param  Share<\Database\Factories\ShareFactory>  $share
      */
     public function deactivateShare(Share $share): void
     {
@@ -208,7 +201,6 @@ final class ShareService
     /**
      * Get analytics data for a share.
      *
-     * @param  Share<\Database\Factories\ShareFactory>  $share
      * @return array<string, mixed>
      */
     public function getShareAnalytics(Share $share): array
@@ -275,7 +267,6 @@ final class ShareService
     /**
      * Get the day with the most accesses for a share.
      *
-     * @param  Share<\Database\Factories\ShareFactory>  $share
      * @return array<string, mixed>
      */
     private function getPeakAccessDay(Share $share): array
@@ -296,7 +287,6 @@ final class ShareService
     /**
      * Get referrer statistics for a share.
      *
-     * @param  Share<\Database\Factories\ShareFactory>  $share
      * @return array<array<string, mixed>>
      */
     private function getReferrerStats(Share $share): array

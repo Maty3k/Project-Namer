@@ -96,8 +96,6 @@ final class ExportController extends Controller
 
     /**
      * Show a specific export.
-     *
-     * @param  Export<\Database\Factories\ExportFactory>  $export
      */
     public function show(Request $request, Export $export): JsonResponse
     {
@@ -136,8 +134,6 @@ final class ExportController extends Controller
 
     /**
      * Delete an export and its associated file.
-     *
-     * @param  Export<\Database\Factories\ExportFactory>  $export
      */
     public function destroy(Request $request, Export $export): JsonResponse
     {

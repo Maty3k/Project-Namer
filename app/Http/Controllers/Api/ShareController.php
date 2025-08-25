@@ -80,8 +80,6 @@ final class ShareController extends Controller
 
     /**
      * Show a specific share.
-     *
-     * @param  Share<\Database\Factories\ShareFactory>  $share
      */
     public function show(Request $request, Share $share): JsonResponse
     {
@@ -96,8 +94,6 @@ final class ShareController extends Controller
 
     /**
      * Update a share.
-     *
-     * @param  Share<\Database\Factories\ShareFactory>  $share
      */
     public function update(Request $request, Share $share): JsonResponse
     {
@@ -121,8 +117,6 @@ final class ShareController extends Controller
 
     /**
      * Deactivate a share (soft delete).
-     *
-     * @param  Share<\Database\Factories\ShareFactory>  $share
      */
     public function destroy(Request $request, Share $share): JsonResponse
     {
@@ -137,8 +131,6 @@ final class ShareController extends Controller
 
     /**
      * Get analytics for a specific share.
-     *
-     * @param  Share<\Database\Factories\ShareFactory>  $share
      */
     public function analytics(Request $request, Share $share): JsonResponse
     {
@@ -153,8 +145,6 @@ final class ShareController extends Controller
 
     /**
      * Get social media metadata for a share.
-     *
-     * @param  Share<\Database\Factories\ShareFactory>  $share
      */
     public function metadata(Request $request, Share $share): JsonResponse
     {

@@ -18,8 +18,6 @@ use Illuminate\Support\Str;
  * Provides functionality for creating public and password-protected shares
  * of name generation results with analytics tracking and expiration support.
  *
- * @template TFactory of \Database\Factories\ShareFactory
- *
  * @property int $id
  * @property string $uuid
  * @property string $shareable_type
@@ -36,41 +34,41 @@ use Illuminate\Support\Str;
  * @property array<array-key, mixed>|null $settings
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ShareAccess<\Database\Factories\ShareAccessFactory>> $accesses
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ShareAccess> $accesses
  * @property-read int|null $accesses_count
  * @property-write string|null $password
  * @property-read \Illuminate\Database\Eloquent\Model $shareable
  * @property-read \App\Models\User|null $user
  *
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> accessible()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> active()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share accessible()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share active()
  * @method static \Database\Factories\ShareFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> ofType(string $type)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> whereExpiresAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> whereIsActive($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> whereLastViewedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> wherePasswordHash($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> whereSettings($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> whereShareType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> whereShareableId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> whereShareableType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> whereUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> whereUuid($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Share<TFactory> whereViewCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share ofType(string $type)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereExpiresAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereLastViewedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share wherePasswordHash($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereSettings($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereShareType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereShareableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereShareableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereViewCount($value)
  *
  * @mixin \Eloquent
  */
 final class Share extends Model
 {
-    /** @use HasFactory<TFactory> */
+    /** @use HasFactory<\Database\Factories\ShareFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -134,11 +132,10 @@ final class Share extends Model
     /**
      * Share access records for analytics.
      *
-     * @return HasMany<ShareAccess<\Database\Factories\ShareAccessFactory>, $this>
+     * @return HasMany<ShareAccess, $this>
      */
     public function accesses(): HasMany
     {
-        /** @phpstan-ignore-next-line - Laravel relationship generic type resolution */
         return $this->hasMany(ShareAccess::class);
     }
 
@@ -196,8 +193,8 @@ final class Share extends Model
     /**
      * Scope to active shares only.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<Share<TFactory>>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<Share<TFactory>>
+     * @param  \Illuminate\Database\Eloquent\Builder<Share>  $query
+     * @return \Illuminate\Database\Eloquent\Builder<Share>
      */
     public function scopeActive(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
@@ -211,8 +208,8 @@ final class Share extends Model
     /**
      * Scope to accessible shares (active and not expired).
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<Share<TFactory>>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<Share<TFactory>>
+     * @param  \Illuminate\Database\Eloquent\Builder<Share>  $query
+     * @return \Illuminate\Database\Eloquent\Builder<Share>
      */
     public function scopeAccessible(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
@@ -222,8 +219,8 @@ final class Share extends Model
     /**
      * Scope by share type.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<Share<TFactory>>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<Share<TFactory>>
+     * @param  \Illuminate\Database\Eloquent\Builder<Share>  $query
+     * @return \Illuminate\Database\Eloquent\Builder<Share>
      */
     public function scopeOfType(\Illuminate\Database\Eloquent\Builder $query, string $type): \Illuminate\Database\Eloquent\Builder
     {

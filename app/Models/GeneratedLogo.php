@@ -18,8 +18,6 @@ use Illuminate\Support\Str;
  * Represents an individual generated logo with its style, file path,
  * and metadata from the AI generation process.
  *
- * @template TFactory of \Database\Factories\GeneratedLogoFactory
- *
  * @property int $id
  * @property int $logo_generation_id
  * @property string $style
@@ -33,34 +31,34 @@ use Illuminate\Support\Str;
  * @property string|null $api_image_url
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LogoColorVariant<\Database\Factories\LogoColorVariantFactory>> $colorVariants
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LogoColorVariant> $colorVariants
  * @property-read int|null $color_variants_count
- * @property-read \App\Models\LogoGeneration<\Database\Factories\LogoGenerationFactory> $logoGeneration
+ * @property-read \App\Models\LogoGeneration $logoGeneration
  *
  * @method static \Database\Factories\GeneratedLogoFactory factory($count = null, $state = [])
- * @method static Builder<static>|\App\Models\GeneratedLogo<TFactory> newModelQuery()
- * @method static Builder<static>|\App\Models\GeneratedLogo<TFactory> newQuery()
- * @method static Builder<static>|\App\Models\GeneratedLogo<TFactory> ofStyle(string $style)
- * @method static Builder<static>|\App\Models\GeneratedLogo<TFactory> query()
- * @method static Builder<static>|\App\Models\GeneratedLogo<TFactory> whereApiImageUrl($value)
- * @method static Builder<static>|\App\Models\GeneratedLogo<TFactory> whereCreatedAt($value)
- * @method static Builder<static>|\App\Models\GeneratedLogo<TFactory> whereFileSize($value)
- * @method static Builder<static>|\App\Models\GeneratedLogo<TFactory> whereGenerationTimeMs($value)
- * @method static Builder<static>|\App\Models\GeneratedLogo<TFactory> whereId($value)
- * @method static Builder<static>|\App\Models\GeneratedLogo<TFactory> whereImageHeight($value)
- * @method static Builder<static>|\App\Models\GeneratedLogo<TFactory> whereImageWidth($value)
- * @method static Builder<static>|\App\Models\GeneratedLogo<TFactory> whereLogoGenerationId($value)
- * @method static Builder<static>|\App\Models\GeneratedLogo<TFactory> whereOriginalFilePath($value)
- * @method static Builder<static>|\App\Models\GeneratedLogo<TFactory> wherePromptUsed($value)
- * @method static Builder<static>|\App\Models\GeneratedLogo<TFactory> whereStyle($value)
- * @method static Builder<static>|\App\Models\GeneratedLogo<TFactory> whereUpdatedAt($value)
- * @method static Builder<static>|\App\Models\GeneratedLogo<TFactory> whereVariationNumber($value)
+ * @method static Builder<static>|GeneratedLogo newModelQuery()
+ * @method static Builder<static>|GeneratedLogo newQuery()
+ * @method static Builder<static>|GeneratedLogo ofStyle(string $style)
+ * @method static Builder<static>|GeneratedLogo query()
+ * @method static Builder<static>|GeneratedLogo whereApiImageUrl($value)
+ * @method static Builder<static>|GeneratedLogo whereCreatedAt($value)
+ * @method static Builder<static>|GeneratedLogo whereFileSize($value)
+ * @method static Builder<static>|GeneratedLogo whereGenerationTimeMs($value)
+ * @method static Builder<static>|GeneratedLogo whereId($value)
+ * @method static Builder<static>|GeneratedLogo whereImageHeight($value)
+ * @method static Builder<static>|GeneratedLogo whereImageWidth($value)
+ * @method static Builder<static>|GeneratedLogo whereLogoGenerationId($value)
+ * @method static Builder<static>|GeneratedLogo whereOriginalFilePath($value)
+ * @method static Builder<static>|GeneratedLogo wherePromptUsed($value)
+ * @method static Builder<static>|GeneratedLogo whereStyle($value)
+ * @method static Builder<static>|GeneratedLogo whereUpdatedAt($value)
+ * @method static Builder<static>|GeneratedLogo whereVariationNumber($value)
  *
  * @mixin \Eloquent
  */
 final class GeneratedLogo extends Model
 {
-    /** @use HasFactory<TFactory> */
+    /** @use HasFactory<\Database\Factories\GeneratedLogoFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -97,30 +95,28 @@ final class GeneratedLogo extends Model
     /**
      * Get the logo generation request that owns this generated logo.
      *
-     * @return BelongsTo<LogoGeneration<\Database\Factories\LogoGenerationFactory>, $this>
+     * @return BelongsTo<LogoGeneration, $this>
      */
     public function logoGeneration(): BelongsTo
     {
-        /** @phpstan-ignore-next-line - Laravel relationship generic type resolution */
         return $this->belongsTo(LogoGeneration::class);
     }
 
     /**
      * Get the color variants for this generated logo.
      *
-     * @return HasMany<LogoColorVariant<\Database\Factories\LogoColorVariantFactory>, $this>
+     * @return HasMany<LogoColorVariant, $this>
      */
     public function colorVariants(): HasMany
     {
-        /** @phpstan-ignore-next-line - Laravel relationship generic type resolution */
         return $this->hasMany(LogoColorVariant::class);
     }
 
     /**
      * Scope to get logos of a specific style.
      *
-     * @param  Builder<GeneratedLogo<TFactory>>  $query
-     * @return Builder<GeneratedLogo<TFactory>>
+     * @param  Builder<GeneratedLogo>  $query
+     * @return Builder<GeneratedLogo>
      */
     public function scopeOfStyle(Builder $query, string $style): Builder
     {

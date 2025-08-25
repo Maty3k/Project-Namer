@@ -81,7 +81,6 @@ final class FileManagementService
     /**
      * Store original logo file.
      *
-     * @param  GeneratedLogo<\Database\Factories\GeneratedLogoFactory>  $generatedLogo
      * @return array<string, mixed>
      */
     public function storeOriginalLogo(GeneratedLogo $generatedLogo, UploadedFile $file): array
@@ -130,7 +129,6 @@ final class FileManagementService
     /**
      * Store customized logo file with color scheme.
      *
-     * @param  LogoColorVariant<\Database\Factories\LogoColorVariantFactory>  $colorVariant
      * @return array<string, mixed>
      */
     public function storeCustomizedLogo(LogoColorVariant $colorVariant, UploadedFile $file): array
@@ -220,8 +218,6 @@ final class FileManagementService
 
     /**
      * Generate filename for original logo.
-     *
-     * @param  GeneratedLogo<\Database\Factories\GeneratedLogoFactory>  $generatedLogo
      */
     public function generateOriginalFilename(GeneratedLogo $generatedLogo, string $extension): string
     {
@@ -240,8 +236,6 @@ final class FileManagementService
 
     /**
      * Generate filename for customized logo with color scheme.
-     *
-     * @param  LogoColorVariant<\Database\Factories\LogoColorVariantFactory>  $colorVariant
      */
     public function generateCustomizedFilename(LogoColorVariant $colorVariant, string $extension): string
     {
@@ -408,7 +402,6 @@ final class FileManagementService
     /**
      * Clean up failed generation files.
      *
-     * @param  LogoGeneration<\Database\Factories\LogoGenerationFactory>  $logoGeneration
      * @return array<string, mixed>
      */
     public function cleanupFailedGeneration(LogoGeneration $logoGeneration): array
@@ -658,8 +651,6 @@ final class FileManagementService
 
     /**
      * Generate secure download URL with expiration.
-     *
-     * @param  GeneratedLogo<\Database\Factories\GeneratedLogoFactory>  $generatedLogo
      */
     public function generateSecureDownloadUrl(GeneratedLogo $generatedLogo, int $expiresInSeconds = 3600): string
     {
@@ -743,8 +734,6 @@ final class FileManagementService
 
     /**
      * Track download statistics.
-     *
-     * @param  GeneratedLogo<\Database\Factories\GeneratedLogoFactory>  $generatedLogo
      */
     public function trackDownload(GeneratedLogo $generatedLogo, string $format, string $ipAddress): void
     {

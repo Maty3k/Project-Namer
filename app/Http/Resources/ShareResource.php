@@ -10,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * ShareResource formats Share model data for API responses.
  *
- * @property-read \App\Models\Share<\Database\Factories\ShareFactory> $resource
+ * @property-read \App\Models\Share $resource
  */
 final class ShareResource extends JsonResource
 {

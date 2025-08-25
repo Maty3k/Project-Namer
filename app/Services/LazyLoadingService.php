@@ -300,8 +300,6 @@ final readonly class LazyLoadingService
      *
      * @param  \Illuminate\Database\Eloquent\Collection<int, GeneratedLogo>|\Illuminate\Support\Collection<int, GeneratedLogo>|array<int, GeneratedLogo>  $logos
      * @return array<int, array<string, mixed>>
-     *
-     * @phpstan-ignore-next-line
      */
     private function formatLogosForDisplay($logos): array
     {

@@ -17,8 +17,6 @@ use Illuminate\Support\Str;
  * Handles creation and management of exported files in various formats
  * (PDF, CSV, JSON) with download tracking and expiration support.
  *
- * @template TFactory of \Database\Factories\ExportFactory
- *
  * @property int $id
  * @property string $uuid
  * @property string $exportable_type
@@ -34,31 +32,31 @@ use Illuminate\Support\Str;
  * @property-read \Illuminate\Database\Eloquent\Model $exportable
  * @property-read \App\Models\User|null $user
  *
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Export<TFactory> active()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Export active()
  * @method static \Database\Factories\ExportFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Export<TFactory> newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Export<TFactory> newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Export<TFactory> ofType(string $type)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Export<TFactory> query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Export<TFactory> recent(int $days = 30)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Export<TFactory> whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Export<TFactory> whereDownloadCount($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Export<TFactory> whereExpiresAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Export<TFactory> whereExportType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Export<TFactory> whereExportableId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Export<TFactory> whereExportableType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Export<TFactory> whereFilePath($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Export<TFactory> whereFileSize($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Export<TFactory> whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Export<TFactory> whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Export<TFactory> whereUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Export<TFactory> whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Export newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Export newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Export ofType(string $type)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Export query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Export recent(int $days = 30)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereDownloadCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereExpiresAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereExportType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereExportableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereExportableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereFilePath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereFileSize($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereUuid($value)
  *
  * @mixin \Eloquent
  */
 final class Export extends Model
 {
-    /** @use HasFactory<TFactory> */
+    /** @use HasFactory<\Database\Factories\ExportFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -199,8 +197,8 @@ final class Export extends Model
     /**
      * Scope to active (non-expired) exports.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<Export<TFactory>>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<Export<TFactory>>
+     * @param  \Illuminate\Database\Eloquent\Builder<Export>  $query
+     * @return \Illuminate\Database\Eloquent\Builder<Export>
      */
     public function scopeActive($query)
     {
@@ -213,8 +211,8 @@ final class Export extends Model
     /**
      * Scope by export type.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<Export<TFactory>>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<Export<TFactory>>
+     * @param  \Illuminate\Database\Eloquent\Builder<Export>  $query
+     * @return \Illuminate\Database\Eloquent\Builder<Export>
      */
     public function scopeOfType($query, string $type)
     {
@@ -224,8 +222,8 @@ final class Export extends Model
     /**
      * Scope to recent exports.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<Export<TFactory>>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<Export<TFactory>>
+     * @param  \Illuminate\Database\Eloquent\Builder<Export>  $query
+     * @return \Illuminate\Database\Eloquent\Builder<Export>
      */
     public function scopeRecent($query, int $days = 30)
     {

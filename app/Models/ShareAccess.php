@@ -14,35 +14,33 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * Records each access to a shared resource with IP address,
  * user agent, and referrer information for analytics purposes.
  *
- * @template TFactory of \Database\Factories\ShareAccessFactory
- *
  * @property int $id
  * @property int $share_id
  * @property string|null $ip_address
  * @property string|null $user_agent
  * @property string|null $referrer
  * @property \Illuminate\Support\Carbon $accessed_at
- * @property-read \App\Models\Share<\Database\Factories\ShareFactory> $share
+ * @property-read \App\Models\Share $share
  *
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\ShareAccess<TFactory> betweenDates(\Carbon\Carbon $startDate, \Carbon\Carbon $endDate)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ShareAccess betweenDates(\Carbon\Carbon $startDate, \Carbon\Carbon $endDate)
  * @method static \Database\Factories\ShareAccessFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\ShareAccess<TFactory> fromIp(string $ipAddress)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\ShareAccess<TFactory> newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\ShareAccess<TFactory> newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\ShareAccess<TFactory> query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\ShareAccess<TFactory> recent(int $days = 30)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\ShareAccess<TFactory> whereAccessedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\ShareAccess<TFactory> whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\ShareAccess<TFactory> whereIpAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\ShareAccess<TFactory> whereReferrer($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\ShareAccess<TFactory> whereShareId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\ShareAccess<TFactory> whereUserAgent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ShareAccess fromIp(string $ipAddress)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ShareAccess newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ShareAccess newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ShareAccess query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ShareAccess recent(int $days = 30)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ShareAccess whereAccessedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ShareAccess whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ShareAccess whereIpAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ShareAccess whereReferrer($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ShareAccess whereShareId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ShareAccess whereUserAgent($value)
  *
  * @mixin \Eloquent
  */
 final class ShareAccess extends Model
 {
-    /** @use HasFactory<TFactory> */
+    /** @use HasFactory<\Database\Factories\ShareAccessFactory> */
     use HasFactory;
 
     public $timestamps = false;
@@ -68,19 +66,18 @@ final class ShareAccess extends Model
     /**
      * Share that was accessed.
      *
-     * @return BelongsTo<Share<\Database\Factories\ShareFactory>, $this>
+     * @return BelongsTo<Share, $this>
      */
     public function share(): BelongsTo
     {
-        /** @phpstan-ignore-next-line - Laravel relationship generic type resolution */
         return $this->belongsTo(Share::class);
     }
 
     /**
      * Scope to recent accesses within specified days.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<ShareAccess<TFactory>>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<ShareAccess<TFactory>>
+     * @param  \Illuminate\Database\Eloquent\Builder<ShareAccess>  $query
+     * @return \Illuminate\Database\Eloquent\Builder<ShareAccess>
      */
     public function scopeRecent(\Illuminate\Database\Eloquent\Builder $query, int $days = 30): \Illuminate\Database\Eloquent\Builder
     {
@@ -90,8 +87,8 @@ final class ShareAccess extends Model
     /**
      * Scope by IP address.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<ShareAccess<TFactory>>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<ShareAccess<TFactory>>
+     * @param  \Illuminate\Database\Eloquent\Builder<ShareAccess>  $query
+     * @return \Illuminate\Database\Eloquent\Builder<ShareAccess>
      */
     public function scopeFromIp(\Illuminate\Database\Eloquent\Builder $query, string $ipAddress): \Illuminate\Database\Eloquent\Builder
     {
@@ -101,8 +98,8 @@ final class ShareAccess extends Model
     /**
      * Scope by date range.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<ShareAccess<TFactory>>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<ShareAccess<TFactory>>
+     * @param  \Illuminate\Database\Eloquent\Builder<ShareAccess>  $query
+     * @return \Illuminate\Database\Eloquent\Builder<ShareAccess>
      */
     public function scopeBetweenDates(\Illuminate\Database\Eloquent\Builder $query, \Carbon\Carbon $startDate, \Carbon\Carbon $endDate): \Illuminate\Database\Eloquent\Builder
     {

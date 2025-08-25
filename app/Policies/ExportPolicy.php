@@ -14,8 +14,6 @@ final class ExportPolicy
 {
     /**
      * Determine if the user can view the export.
-     *
-     * @param  Export<\Database\Factories\ExportFactory>  $export
      */
     public function view(User $user, Export $export): bool
     {
@@ -24,8 +22,6 @@ final class ExportPolicy
 
     /**
      * Determine if the user can download the export.
-     *
-     * @param  Export<\Database\Factories\ExportFactory>  $export
      */
     public function download(User $user, Export $export): bool
     {
@@ -34,8 +30,6 @@ final class ExportPolicy
 
     /**
      * Determine if the user can delete the export.
-     *
-     * @param  Export<\Database\Factories\ExportFactory>  $export
      */
     public function delete(User $user, Export $export): bool
     {
