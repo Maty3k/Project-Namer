@@ -246,7 +246,6 @@ class LogoGallery extends Component
         }
 
         $downloadUrl = route('api.logos.download-batch', $this->logoGenerationId);
-
         if ($colorScheme) {
             $downloadUrl .= "?color_scheme={$colorScheme}";
         }
@@ -322,6 +321,10 @@ class LogoGallery extends Component
      */
     public function getLogoGenerationProperty(): ?LogoGeneration
     {
+        if (! $this->logoGeneration && $this->logoGenerationId) {
+            $this->loadLogoGeneration();
+        }
+
         return $this->logoGeneration;
     }
 

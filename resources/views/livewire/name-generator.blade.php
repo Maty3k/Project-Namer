@@ -160,7 +160,7 @@ new class extends Component {
                             Log::info("NameGenerator domain check result for {$domain}", [
                                 'availability_structure' => is_array($availability) ? array_keys($availability) : gettype($availability),
                                 'checked_at_type' => isset($availability['checked_at']) ? gettype($availability['checked_at']) : 'not_set',
-                                'checked_at_class' => isset($availability['checked_at']) && is_object($availability['checked_at']) ? get_class($availability['checked_at']) : 'not_object'
+                                'checked_at_class' => isset($availability['checked_at']) && is_object($availability['checked_at']) ? $availability['checked_at']::class : 'not_object'
                             ]);
                             
                             $this->domainResults[$index]['domains'][$domain] = [
@@ -503,9 +503,7 @@ new class extends Component {
             {{-- Deep Thinking Toggle --}}
             <div>
                 <flux:field>
-                    <flux:checkbox wire:model="deepThinking">
-                        Enable Deep Thinking Mode (slower but more thoughtful results)
-                    </flux:checkbox>
+                    <flux:checkbox wire:model="deepThinking" label="Enable Deep Thinking Mode (slower but more thoughtful results)" />
                 </flux:field>
             </div>
 

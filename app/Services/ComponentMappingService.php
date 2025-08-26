@@ -13,6 +13,8 @@ class ComponentMappingService
 {
     /**
      * Component mapping configuration with upgrade paths
+     *
+     * @var array<string, array<string, mixed>>
      */
     private array $componentMapping = [
         // High Priority Components (Core functionality)
@@ -64,7 +66,7 @@ class ComponentMappingService
             'dependencies' => ['input', 'textarea', 'select', 'checkbox'],
             'notes' => 'Enhanced field wrapper with better validation',
         ],
-        
+
         // Medium Priority Components (Enhanced functionality)
         'table' => [
             'pro_variant' => 'table',
@@ -122,7 +124,7 @@ class ComponentMappingService
             'dependencies' => ['button'],
             'notes' => 'Enhanced pagination with more options',
         ],
-        
+
         // Low Priority Components (Styling and layout)
         'separator' => [
             'pro_variant' => 'separator',
@@ -212,7 +214,7 @@ class ComponentMappingService
             'dependencies' => ['button'],
             'notes' => 'Enhanced positioning and trigger options',
         ],
-        
+
         // Layout Components
         'main' => [
             'pro_variant' => 'main',
@@ -222,7 +224,7 @@ class ComponentMappingService
             'dependencies' => [],
             'notes' => 'Layout wrapper with semantic HTML',
         ],
-        
+
         // New Pro-only components to consider
         'accordion' => [
             'pro_variant' => 'accordion',
@@ -276,27 +278,29 @@ class ComponentMappingService
 
     /**
      * Identify Flux components in Blade content
+     *
+     * @return array<int, array<string, mixed>>
      */
     public function identifyFluxComponents(string $bladeContent): array
     {
         $components = [];
-        
+
         // Pattern to match flux: components (including nested components like icon.chevron-down)
         $pattern = '/<flux:([a-z-]+(?:\.[a-z-]+)?)(?:\s+([^>]*?))?(?:\s*\/\s*>|>(?:(.*?)<\/flux:\1>))/s';
-        
+
         if (preg_match_all($pattern, $bladeContent, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
                 $name = $match[1];
                 $attributeString = $match[2] ?? '';
                 $content = $match[3] ?? '';
                 $isSelfClosing = str_ends_with($match[0], '/>');
-                
+
                 // Parse attributes
                 $attributes = $this->parseAttributes($attributeString);
-                
+
                 // Extract base component name (remove sub-component like .chevron-down)
                 $baseComponentName = explode('.', $name)[0];
-                
+
                 $components[] = [
                     'name' => $baseComponentName,
                     'full_name' => $name,
@@ -306,25 +310,27 @@ class ComponentMappingService
                 ];
             }
         }
-        
+
         return $components;
     }
 
     /**
      * Parse HTML attributes from string
+     *
+     * @return array<string, string>
      */
     private function parseAttributes(string $attributeString): array
     {
         $attributes = [];
         $attributeString = trim($attributeString);
-        
+
         if (empty($attributeString)) {
             return $attributes;
         }
-        
+
         // Enhanced attribute parsing (handles wire:model, x-data, etc.)
         $pattern = '/([a-zA-Z:.-]+)(?:\s*=\s*["\']([^"\']*)["\'])?/';
-        
+
         if (preg_match_all($pattern, $attributeString, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
                 $key = $match[1];
@@ -332,12 +338,14 @@ class ComponentMappingService
                 $attributes[$key] = $value;
             }
         }
-        
+
         return $attributes;
     }
 
     /**
      * Get complete component mapping
+     *
+     * @return array<string, array<string, mixed>>
      */
     public function getComponentMapping(): array
     {
@@ -354,6 +362,8 @@ class ComponentMappingService
 
     /**
      * Get dependencies for a component
+     *
+     * @return array<int, string>
      */
     public function getComponentDependencies(string $componentName): array
     {
@@ -362,26 +372,28 @@ class ComponentMappingService
 
     /**
      * Scan directory for Flux components using native PHP functions
+     *
+     * @return array<int, array<string, mixed>>
      */
     public function scanDirectoryForComponents(string $directory): array
     {
         $results = [];
-        
-        if (!is_dir($directory)) {
+
+        if (! is_dir($directory)) {
             return $results;
         }
-        
+
         // Use native PHP recursive directory iterator instead of File facade
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS)
         );
-        
+
         foreach ($iterator as $file) {
             if ($file instanceof SplFileInfo && $file->getExtension() === 'php') {
                 $content = file_get_contents($file->getPathname());
                 $components = $this->identifyFluxComponents($content);
-                
-                if (!empty($components)) {
+
+                if (! empty($components)) {
                     $results[] = [
                         'file' => $file->getPathname(),
                         'components' => $components,
@@ -389,37 +401,40 @@ class ComponentMappingService
                 }
             }
         }
-        
+
         return $results;
     }
 
     /**
      * Generate upgrade suggestions for a component
+     *
+     * @param  array<string, string>  $currentAttributes
+     * @return array<string, mixed>
      */
     public function generateUpgradeSuggestions(string $componentName, array $currentAttributes = []): array
     {
         $mapping = $this->componentMapping[$componentName] ?? null;
-        
-        if (!$mapping) {
+
+        if (! $mapping) {
             return [
                 'recommended_attributes' => [],
                 'notes' => ['Component not found in mapping'],
             ];
         }
-        
+
         $suggestions = [
             'recommended_attributes' => [],
             'notes' => [],
         ];
-        
+
         // Add component-specific notes
-        if (!empty($mapping['notes'])) {
+        if (! empty($mapping['notes'])) {
             $suggestions['notes'][] = $mapping['notes'];
         }
-        
+
         // Add pro-specific attribute suggestions
         foreach ($mapping['new_attributes'] as $attribute) {
-            if (!array_key_exists($attribute, $currentAttributes)) {
+            if (! array_key_exists($attribute, $currentAttributes)) {
                 switch ($attribute) {
                     case 'variant':
                         if ($componentName === 'button') {
@@ -446,38 +461,40 @@ class ComponentMappingService
                         $suggestions['recommended_attributes'][] = 'filterable="true"';
                         break;
                     default:
-                        $suggestions['recommended_attributes'][] = $attribute . '="default"';
+                        $suggestions['recommended_attributes'][] = $attribute.'="default"';
                         break;
                 }
             }
         }
-        
+
         // Add general upgrade notes
         if ($mapping['upgrade_priority'] === 'high') {
             $suggestions['notes'][] = 'High priority upgrade - enhanced functionality available';
         }
-        
+
         return $suggestions;
     }
 
     /**
      * Get all applications Flux components with their locations (using File facade for production)
+     *
+     * @return array<string, mixed>
      */
     public function auditApplicationComponents(): array
     {
         $basePath = base_path('resources/views');
-        
+
         // Try to use File facade if available, otherwise fall back to native PHP
         try {
             $files = File::allFiles($basePath);
             $results = [];
-            
+
             foreach ($files as $file) {
                 if ($file->getExtension() === 'php') {
                     $content = file_get_contents($file->getPathname());
                     $components = $this->identifyFluxComponents($content);
-                    
-                    if (!empty($components)) {
+
+                    if (! empty($components)) {
                         $results[] = [
                             'file' => $file->getPathname(),
                             'components' => $components,
@@ -485,21 +502,21 @@ class ComponentMappingService
                     }
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             // Fallback to native PHP scanning
             $results = $this->scanDirectoryForComponents($basePath);
         }
-        
+
         // Group by component type
         $componentsByType = [];
         $totalUsage = 0;
-        
+
         foreach ($results as $fileResult) {
             foreach ($fileResult['components'] as $component) {
                 $name = $component['name'];
                 $totalUsage++;
-                
-                if (!isset($componentsByType[$name])) {
+
+                if (! isset($componentsByType[$name])) {
                     $componentsByType[$name] = [
                         'count' => 0,
                         'locations' => [],
@@ -507,7 +524,7 @@ class ComponentMappingService
                         'upgrade_notes' => $this->componentMapping[$name]['notes'] ?? '',
                     ];
                 }
-                
+
                 $componentsByType[$name]['count']++;
                 $componentsByType[$name]['locations'][] = [
                     'file' => $fileResult['file'],
@@ -516,28 +533,28 @@ class ComponentMappingService
                 ];
             }
         }
-        
+
         // Sort by upgrade priority and usage count
         uasort($componentsByType, function ($a, $b) {
             $priorityOrder = ['high' => 0, 'medium' => 1, 'low' => 2];
             $aPriority = $priorityOrder[$a['upgrade_priority']] ?? 1;
             $bPriority = $priorityOrder[$b['upgrade_priority']] ?? 1;
-            
+
             if ($aPriority === $bPriority) {
                 return $b['count'] - $a['count']; // Higher usage first
             }
-            
+
             return $aPriority - $bPriority; // Higher priority first
         });
-        
+
         return [
             'summary' => [
                 'total_components' => $totalUsage,
                 'unique_component_types' => count($componentsByType),
                 'files_scanned' => count($results),
-                'high_priority_count' => count(array_filter($componentsByType, fn($c) => $c['upgrade_priority'] === 'high')),
-                'medium_priority_count' => count(array_filter($componentsByType, fn($c) => $c['upgrade_priority'] === 'medium')),
-                'low_priority_count' => count(array_filter($componentsByType, fn($c) => $c['upgrade_priority'] === 'low')),
+                'high_priority_count' => count(array_filter($componentsByType, fn ($c) => $c['upgrade_priority'] === 'high')),
+                'medium_priority_count' => count(array_filter($componentsByType, fn ($c) => $c['upgrade_priority'] === 'medium')),
+                'low_priority_count' => count(array_filter($componentsByType, fn ($c) => $c['upgrade_priority'] === 'low')),
             ],
             'components' => $componentsByType,
         ];
@@ -545,12 +562,14 @@ class ComponentMappingService
 
     /**
      * Generate comprehensive upgrade report
+     *
+     * @return array<string, mixed>
      */
     public function generateUpgradeReport(): array
     {
         $audit = $this->auditApplicationComponents();
         $upgradeReport = [];
-        
+
         foreach ($audit['components'] as $componentName => $data) {
             $upgradeReport[$componentName] = [
                 'current_usage' => $data['count'],
@@ -559,7 +578,7 @@ class ComponentMappingService
                 'file_count' => count($data['locations']),
                 'suggestions' => [],
             ];
-            
+
             // Generate suggestions for common attribute patterns
             $attributePatterns = [];
             foreach ($data['locations'] as $location) {
@@ -567,14 +586,14 @@ class ComponentMappingService
                     $attributePatterns[$attr] = ($attributePatterns[$attr] ?? 0) + 1;
                 }
             }
-            
+
             $upgradeReport[$componentName]['common_attributes'] = $attributePatterns;
-            
+
             // Generate sample upgrade suggestion
-            $sampleAttributes = !empty($data['locations']) ? $data['locations'][0]['attributes'] : [];
+            $sampleAttributes = ! empty($data['locations']) ? $data['locations'][0]['attributes'] : [];
             $upgradeReport[$componentName]['sample_upgrade'] = $this->generateUpgradeSuggestions($componentName, $sampleAttributes);
         }
-        
+
         return [
             'summary' => $audit['summary'],
             'components' => $upgradeReport,

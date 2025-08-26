@@ -25,38 +25,34 @@ class ComponentAuditCommand extends Command
      */
     public function handle(): int
     {
-        $service = new ComponentMappingService();
+        $service = new ComponentMappingService;
         $format = $this->option('format');
-        
+
         $this->info('🔍 Auditing FluxUI components...');
         $this->newLine();
-        
+
         $auditResults = $service->auditApplicationComponents();
-        
+
         // Display summary
         $this->displaySummary($auditResults['summary']);
-        
-        switch ($format) {
-            case 'json':
-                $this->displayJson($auditResults);
-                break;
-            case 'markdown':
-                $this->displayMarkdown($auditResults);
-                break;
-            default:
-                $this->displayTable($auditResults);
-                break;
-        }
-        
+
+        match ($format) {
+            'json' => $this->displayJson($auditResults),
+            'markdown' => $this->displayMarkdown($auditResults),
+            default => $this->displayTable($auditResults),
+        };
+
         // Show upgrade recommendations
         $this->newLine();
         $this->displayUpgradeRecommendations($auditResults['components']);
-        
+
         return Command::SUCCESS;
     }
 
     /**
      * Display audit summary
+     *
+     * @param  array<string, mixed>  $summary
      */
     private function displaySummary(array $summary): void
     {
@@ -72,11 +68,13 @@ class ComponentAuditCommand extends Command
 
     /**
      * Display results as a table
+     *
+     * @param  array<string, mixed>  $auditResults
      */
     private function displayTable(array $auditResults): void
     {
         $this->info('📋 <fg=cyan>Component Usage Details</fg=cyan>');
-        
+
         $tableData = [];
         foreach ($auditResults['components'] as $name => $data) {
             $tableData[] = [
@@ -87,18 +85,20 @@ class ComponentAuditCommand extends Command
                 'Upgrade Notes' => Str::limit($data['upgrade_notes'], 50),
             ];
         }
-        
+
         $this->table([
             'Component',
-            'Usage Count', 
+            'Usage Count',
             'Files',
             'Priority',
-            'Upgrade Notes'
+            'Upgrade Notes',
         ], $tableData);
     }
 
     /**
      * Display results as JSON
+     *
+     * @param  array<string, mixed>  $auditResults
      */
     private function displayJson(array $auditResults): void
     {
@@ -107,15 +107,17 @@ class ComponentAuditCommand extends Command
 
     /**
      * Display results as Markdown
+     *
+     * @param  array<string, mixed>  $auditResults
      */
     private function displayMarkdown(array $auditResults): void
     {
         $this->info('📝 <fg=cyan>Markdown Report</fg=cyan>');
         $this->newLine();
-        
+
         $this->line('# FluxUI Component Audit Report');
         $this->line('');
-        
+
         // Summary
         $summary = $auditResults['summary'];
         $this->line('## Summary');
@@ -127,16 +129,16 @@ class ComponentAuditCommand extends Command
         $this->line("- **Medium Priority:** {$summary['medium_priority_count']}");
         $this->line("- **Low Priority:** {$summary['low_priority_count']}");
         $this->line('');
-        
+
         // Component details
         $this->line('## Component Details');
         $this->line('');
-        
+
         foreach ($auditResults['components'] as $name => $data) {
             $this->line("### {$name}");
             $this->line('');
             $this->line("- **Usage Count:** {$data['count']}");
-            $this->line("- **Files:** " . count($data['locations']));
+            $this->line('- **Files:** '.count($data['locations']));
             $this->line("- **Priority:** {$data['upgrade_priority']}");
             $this->line("- **Notes:** {$data['upgrade_notes']}");
             $this->line('');
@@ -145,34 +147,36 @@ class ComponentAuditCommand extends Command
 
     /**
      * Display upgrade recommendations
+     *
+     * @param  array<string, mixed>  $components
      */
     private function displayUpgradeRecommendations(array $components): void
     {
         $this->info('🚀 <fg=cyan>Upgrade Recommendations</fg=cyan>');
-        
+
         // Filter and sort by priority
-        $highPriority = array_filter($components, fn($c) => $c['upgrade_priority'] === 'high');
-        $mediumPriority = array_filter($components, fn($c) => $c['upgrade_priority'] === 'medium');
-        
-        if (!empty($highPriority)) {
+        $highPriority = array_filter($components, fn ($c) => $c['upgrade_priority'] === 'high');
+        $mediumPriority = array_filter($components, fn ($c) => $c['upgrade_priority'] === 'medium');
+
+        if (! empty($highPriority)) {
             $this->warn('⚡ High Priority Upgrades:');
             foreach ($highPriority as $name => $data) {
                 $this->line("  • <fg=red>{$name}</fg=red> ({$data['count']} usages) - {$data['upgrade_notes']}");
             }
             $this->newLine();
         }
-        
-        if (!empty($mediumPriority)) {
+
+        if (! empty($mediumPriority)) {
             $this->warn('⚠️  Medium Priority Upgrades:');
             foreach ($mediumPriority as $name => $data) {
                 $this->line("  • <fg=yellow>{$name}</fg=yellow> ({$data['count']} usages) - {$data['upgrade_notes']}");
             }
             $this->newLine();
         }
-        
-        $totalHighMediumUsage = array_sum(array_map(fn($c) => $c['count'], 
+
+        $totalHighMediumUsage = array_sum(array_map(fn ($c) => $c['count'],
             array_merge($highPriority, $mediumPriority)));
-        
+
         if ($totalHighMediumUsage > 0) {
             $this->info("💡 <fg=green>Focus on upgrading {$totalHighMediumUsage} high/medium priority component usages first.</fg=green>");
         } else {

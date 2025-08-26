@@ -14,10 +14,10 @@ use App\Services\OpenAINameService;
 use App\Services\ShareService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
-use Illuminate\Support\Facades\Log;
 use ReflectionClass;
 
 /**
@@ -425,34 +425,37 @@ class Dashboard extends Component
     /**
      * Debug serialization issues using Livewire v3 lifecycle hooks
      */
-    public function dehydrateBusinessIdea($value)
+    public function dehydrateBusinessIdea(mixed $value): mixed
     {
         $this->debugProperty('businessIdea', $value);
+
         return $value;
     }
 
-    public function dehydrateDomainResults($value)
+    public function dehydrateDomainResults(mixed $value): mixed
     {
         $this->debugProperty('domainResults', $value);
+
         return $value;
     }
 
-    public function dehydrateSearchHistory($value)
+    public function dehydrateSearchHistory(mixed $value): mixed
     {
         $this->debugProperty('searchHistory', $value);
+
         return $value;
     }
 
-    private function debugProperty($key, $value)
+    private function debugProperty(string $key, mixed $value): void
     {
         try {
-            json_encode($value);
-        } catch (\Exception $e) {
+            json_encode($value, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
             Log::error("Dashboard serialization error for property: {$key}", [
                 'property' => $key,
                 'type' => gettype($value),
                 'error' => $e->getMessage(),
-                'value_preview' => is_object($value) ? get_class($value) : (is_array($value) ? 'Array[' . count($value) . ']' : substr((string)$value, 0, 100))
+                'value_preview' => is_object($value) ? $value::class : (is_array($value) ? 'Array['.count($value).']' : substr((string) $value, 0, 100)),
             ]);
         }
     }
@@ -460,33 +463,33 @@ class Dashboard extends Component
     /**
      * Add a toJSON method to prevent the toJSON error.
      */
-    public function toJSON()
+    public function toJSON(): string
     {
-        Log::error("Dashboard toJSON method called - this indicates a serialization issue", [
-            'backtrace' => debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 5)
+        Log::error('Dashboard toJSON method called - this indicates a serialization issue', [
+            'backtrace' => debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 5),
         ]);
-        
+
         // Return component state for JSON serialization
         $reflection = new ReflectionClass($this);
         $properties = [];
-        
+
         foreach ($reflection->getProperties() as $property) {
-            if ($property->isPublic() && !$property->isStatic()) {
+            if ($property->isPublic() && ! $property->isStatic()) {
                 $name = $property->getName();
                 try {
                     $value = $this->{$name};
-                    json_encode($value); // Test if serializable
+                    json_encode($value, JSON_THROW_ON_ERROR); // Test if serializable
                     $properties[$name] = $value;
-                } catch (\Exception $e) {
+                } catch (\JsonException $e) {
                     Log::error("Dashboard property {$name} not serializable", [
                         'error' => $e->getMessage(),
-                        'type' => gettype($this->{$name})
+                        'type' => gettype($this->{$name}),
                     ]);
-                    $properties[$name] = is_object($this->{$name}) ? get_class($this->{$name}) : 'NOT_SERIALIZABLE';
+                    $properties[$name] = is_object($this->{$name}) ? $this->{$name}::class : 'NOT_SERIALIZABLE';
                 }
             }
         }
-        
+
         return json_encode($properties);
     }
 

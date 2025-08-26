@@ -1,4 +1,4 @@
-# Spec Requirements Document
+anamariaradulescu@Mati-mac Project-Namer % claude --dangerously-skip-permissions# Spec Requirements Document
 
 > Spec: Enhanced UI/UX with FluxUI Pro
 > Created: 2025-08-26

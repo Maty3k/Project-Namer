@@ -230,12 +230,10 @@
                                     <tr>
                                         <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                             <div class="flex items-center gap-2">
-                                                <input 
-                                                    type="checkbox" 
-                                                    class="rounded"
+                                                <flux:checkbox 
                                                     wire:click="$toggle('selectAll')"
-                                                    @if(count($selectedNamesForLogos) === count($generatedNames)) checked @endif
-                                                >
+                                                    :checked="count($selectedNamesForLogos) === count($generatedNames)"
+                                                />
                                                 Business Name
                                             </div>
                                         </th>
@@ -253,12 +251,10 @@
                                             {{-- Name with Selection --}}
                                             <td class="px-6 py-4">
                                                 <div class="flex items-center gap-3">
-                                                    <input 
-                                                        type="checkbox" 
-                                                        class="rounded"
+                                                    <flux:checkbox 
                                                         wire:click="toggleNameSelection('{{ $name }}')"
-                                                        @if(in_array($name, $selectedNamesForLogos)) checked @endif
-                                                    >
+                                                        :checked="in_array('{{ $name }}', $selectedNamesForLogos)"
+                                                    />
                                                     <div class="flex flex-col">
                                                         <span class="font-medium text-gray-900 dark:text-white text-lg">
                                                             {{ $name }}
