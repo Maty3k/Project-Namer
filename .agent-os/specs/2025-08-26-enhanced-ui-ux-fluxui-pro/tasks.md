@@ -14,20 +14,20 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 1.4 Document component upgrade priority and dependencies
   - [x] 1.5 Verify all tests pass for component mapping functionality
 
-- [ ] 2. Implement Core Component Migration
-  - [ ] 2.1 Write tests for basic component upgrades (buttons, inputs, layouts)
-  - [ ] 2.2 Upgrade fundamental UI elements to FluxUI Pro variants
-  - [ ] 2.3 Ensure backward compatibility and existing Alpine.js interactions
-  - [ ] 2.4 Test responsive behavior of upgraded components
-  - [ ] 2.5 Verify all tests pass for core component migration
+- [x] 2. Implement Core Component Migration
+  - [x] 2.1 Write tests for basic component upgrades (buttons, inputs, layouts)
+  - [x] 2.2 Upgrade fundamental UI elements to FluxUI Pro variants
+  - [x] 2.3 Ensure backward compatibility and existing Alpine.js interactions
+  - [x] 2.4 Test responsive behavior of upgraded components
+  - [x] 2.5 Verify all tests pass for core component migration
 
-- [ ] 3. Develop Advanced Table Features
-  - [ ] 3.1 Write tests for sortable table functionality
-  - [ ] 3.2 Implement client-side sorting for name results columns
-  - [ ] 3.3 Write tests for table filtering capabilities
-  - [ ] 3.4 Add filtering options for domain status and name characteristics
-  - [ ] 3.5 Integrate enhanced tables with existing pagination systems
-  - [ ] 3.6 Verify all tests pass for advanced table features
+- [x] 3. Develop Advanced Table Features
+  - [x] 3.1 Write tests for sortable table functionality
+  - [x] 3.2 Implement client-side sorting for name results columns
+  - [x] 3.3 Write tests for table filtering capabilities
+  - [x] 3.4 Add filtering options for domain status and name characteristics
+  - [x] 3.5 Integrate enhanced tables with existing pagination systems
+  - [x] 3.6 Verify all tests pass for advanced table features
 
 - [ ] 4. Create Modal Dialog System
   - [ ] 4.1 Write tests for modal component creation and behavior

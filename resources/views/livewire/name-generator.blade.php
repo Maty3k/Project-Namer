@@ -34,6 +34,13 @@ new class extends Component {
         'tech-focused' => 'Tech-focused',
     ];
 
+    // Table sorting and filtering properties
+    public array $currentSort = ['column' => null, 'direction' => null];
+    public array $activeFilters = [];
+    public array $sortedDomainResults = [];
+    public array $filteredDomainResults = [];
+    public array $processedDomainResults = [];
+
     public function updatedBusinessDescription(): void
     {
         $this->errorMessage = '';
@@ -460,6 +467,309 @@ new class extends Component {
         }
         return $value;
     }
+
+    /**
+     * Sort table by specified column and direction
+     */
+    public function sortTable(string $column, string $direction): void
+    {
+        $this->currentSort = ['column' => $column, 'direction' => $direction];
+        $this->applySorting();
+    }
+
+    /**
+     * Apply current sorting to domain results
+     */
+    public function applySorting(): void
+    {
+        $this->processFiltersAndSort();
+    }
+
+    /**
+     * Get sort value for a result based on column
+     */
+    private function getSortValue(array $result, string $column): mixed
+    {
+        return match ($column) {
+            'name' => strtolower($result['name']),
+            'length' => strlen($result['name']),
+            'availability' => $this->getDomainAvailabilityScore($result),
+            default => $result['name']
+        };
+    }
+
+    /**
+     * Compare two sort values
+     */
+    private function compareSortValues(mixed $a, mixed $b, string $column): int
+    {
+        if ($column === 'name') {
+            return strcmp((string)$a, (string)$b);
+        }
+        
+        if (is_numeric($a) && is_numeric($b)) {
+            return $a <=> $b;
+        }
+        
+        return strcmp((string)$a, (string)$b);
+    }
+
+    /**
+     * Get domain availability score for sorting
+     */
+    private function getDomainAvailabilityScore(array $result): int
+    {
+        $domains = $result['domains'] ?? [];
+        $availableCount = 0;
+        $totalCount = count($domains);
+        
+        foreach ($domains as $domain) {
+            if (($domain['status'] ?? '') === 'available' && ($domain['available'] ?? false)) {
+                $availableCount++;
+            }
+        }
+        
+        // Higher score = more available domains
+        return $totalCount > 0 ? (int)round(($availableCount / $totalCount) * 100) : 0;
+    }
+
+    /**
+     * Filter table by specified criteria
+     */
+    public function filterTable(string $filterType, string $filterValue): void
+    {
+        $this->activeFilters[$filterType] = $filterValue;
+        $this->applyFilters();
+    }
+
+    /**
+     * Apply current filters to domain results
+     */
+    public function applyFilters(): void
+    {
+        $results = $this->domainResults;
+        
+        foreach ($this->activeFilters as $filterType => $filterValue) {
+            $results = array_filter($results, function ($result) use ($filterType, $filterValue) {
+                return $this->passesFilter($result, $filterType, $filterValue);
+            });
+        }
+        
+        $this->filteredDomainResults = array_values($results);
+        $this->processFiltersAndSort();
+    }
+
+    /**
+     * Check if result passes a specific filter
+     */
+    private function passesFilter(array $result, string $filterType, string $filterValue): bool
+    {
+        return match ($filterType) {
+            'domain_status' => $this->passesStatusFilter($result, $filterValue),
+            'name_length' => $this->passesLengthFilter($result, $filterValue),
+            default => true
+        };
+    }
+
+    /**
+     * Check if result passes domain status filter
+     */
+    private function passesStatusFilter(array $result, string $filterValue): bool
+    {
+        $domains = $result['domains'] ?? [];
+        
+        return match ($filterValue) {
+            'com_available' => $this->isDomainAvailable($domains, 'com'),
+            'net_available' => $this->isDomainAvailable($domains, 'net'), 
+            'org_available' => $this->isDomainAvailable($domains, 'org'),
+            'all_available' => $this->areAllDomainsAvailable($domains),
+            'any_available' => $this->isAnyDomainAvailable($domains),
+            default => true
+        };
+    }
+
+    /**
+     * Check if specific TLD domain is available
+     */
+    private function isDomainAvailable(array $domains, string $tld): bool
+    {
+        foreach ($domains as $domain => $data) {
+            if (str_ends_with($domain, ".{$tld}")) {
+                return ($data['status'] ?? '') === 'available' && ($data['available'] ?? false);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if all domains are available
+     */
+    private function areAllDomainsAvailable(array $domains): bool
+    {
+        if (empty($domains)) {
+            return false;
+        }
+        
+        foreach ($domains as $data) {
+            if (($data['status'] ?? '') !== 'available' || !($data['available'] ?? false)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Check if any domain is available
+     */
+    private function isAnyDomainAvailable(array $domains): bool
+    {
+        foreach ($domains as $data) {
+            if (($data['status'] ?? '') === 'available' && ($data['available'] ?? false)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if result passes name length filter
+     */
+    private function passesLengthFilter(array $result, string $filterValue): bool
+    {
+        $length = strlen($result['name']);
+        
+        return match ($filterValue) {
+            'short' => $length <= 10,
+            'medium' => $length > 10 && $length <= 20,
+            'long' => $length > 20,
+            default => true
+        };
+    }
+
+    /**
+     * Clear all active filters
+     */
+    public function clearFilters(): void
+    {
+        $this->activeFilters = [];
+        $this->filteredDomainResults = [];
+        $this->currentFilter = '';
+        $this->processFiltersAndSort();
+    }
+
+    /**
+     * Process filters and sorting to get final results
+     */
+    private function processFiltersAndSort(): void
+    {
+        // Start with the right base dataset
+        if (!empty($this->activeFilters)) {
+            $results = $this->filteredDomainResults;
+        } else {
+            $results = $this->domainResults;
+        }
+
+        // Apply sorting to the filtered (or unfiltered) results
+        if ($this->currentSort['column']) {
+            $column = $this->currentSort['column'];
+            $direction = $this->currentSort['direction'];
+
+            usort($results, function ($a, $b) use ($column, $direction) {
+                $valueA = $this->getSortValue($a, $column);
+                $valueB = $this->getSortValue($b, $column);
+
+                $comparison = $this->compareSortValues($valueA, $valueB, $column);
+                
+                return $direction === 'asc' ? $comparison : -$comparison;
+            });
+        }
+
+        $this->processedDomainResults = $results;
+    }
+
+    /**
+     * Update processed results when domain results change
+     */
+    public function updatedDomainResults(): void
+    {
+        $this->applySorting();
+    }
+
+    // UI Control properties
+    public string $currentSortColumn = '';
+    public string $currentFilter = '';
+
+    /**
+     * Handle sort change from UI dropdown
+     */
+    public function handleSortChange(): void
+    {
+        if (!$this->currentSortColumn) {
+            $this->currentSort = ['column' => null, 'direction' => null];
+            $this->applySorting();
+            return;
+        }
+
+        $parts = explode('_', $this->currentSortColumn);
+        $column = $parts[0];
+        $direction = isset($parts[1]) && $parts[1] === 'desc' ? 'desc' : 'asc';
+        
+        $this->sortTable($column, $direction);
+    }
+
+    /**
+     * Handle filter change from UI dropdown
+     */
+    public function handleFilterChange(): void
+    {
+        if (!$this->currentFilter) {
+            $this->clearFilters();
+            return;
+        }
+
+        // Determine filter type based on filter value
+        if (in_array($this->currentFilter, ['com_available', 'net_available', 'org_available', 'all_available', 'any_available'])) {
+            $this->filterTable('domain_status', $this->currentFilter);
+        } elseif (in_array($this->currentFilter, ['short', 'medium', 'long'])) {
+            $this->filterTable('name_length', $this->currentFilter);
+        }
+    }
+
+    /**
+     * Remove specific filter
+     */
+    public function removeFilter(string $filterType): void
+    {
+        unset($this->activeFilters[$filterType]);
+        
+        // Update UI dropdown
+        if ($filterType === 'domain_status' && in_array($this->currentFilter, ['com_available', 'net_available', 'org_available', 'all_available', 'any_available'])) {
+            $this->currentFilter = '';
+        } elseif ($filterType === 'name_length' && in_array($this->currentFilter, ['short', 'medium', 'long'])) {
+            $this->currentFilter = '';
+        }
+        
+        $this->applyFilters();
+    }
+
+    /**
+     * Get display name for filter
+     */
+    public function getFilterDisplayName(string $filterType, string $filterValue): string
+    {
+        return match ($filterValue) {
+            'com_available' => '.com Available',
+            'net_available' => '.net Available',
+            'org_available' => '.org Available',
+            'all_available' => 'All TLDs Available',
+            'any_available' => 'Any Available',
+            'short' => 'Short Names (≤10 chars)',
+            'medium' => 'Medium Names (11-20 chars)',
+            'long' => 'Long Names (>20 chars)',
+            default => ucfirst(str_replace('_', ' ', $filterValue))
+        };
+    }
+
 } ?>
 
 <div class="mx-auto max-w-4xl p-6">
@@ -713,6 +1023,88 @@ new class extends Component {
                     @endif
                 </div>
 
+                {{-- Table Controls --}}
+                <div class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+                    {{-- Sorting Controls --}}
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Sort by:</span>
+                        <flux:select 
+                            wire:model.live="currentSortColumn" 
+                            wire:change="handleSortChange"
+                            size="sm"
+                            class="w-32">
+                            <option value="">Default</option>
+                            <option value="name">Name A-Z</option>
+                            <option value="name_desc">Name Z-A</option>
+                            <option value="length">Length ↑</option>
+                            <option value="length_desc">Length ↓</option>
+                            <option value="availability">Availability ↑</option>
+                            <option value="availability_desc">Availability ↓</option>
+                        </flux:select>
+                    </div>
+
+                    {{-- Filtering Controls --}}
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Filter:</span>
+                        <flux:select 
+                            wire:model.live="currentFilter" 
+                            wire:change="handleFilterChange"
+                            size="sm"
+                            class="w-40">
+                            <option value="">All Results</option>
+                            <option value="com_available">.com Available</option>
+                            <option value="net_available">.net Available</option>
+                            <option value="org_available">.org Available</option>
+                            <option value="all_available">All TLDs Available</option>
+                            <option value="any_available">Any Available</option>
+                            <option value="short">Short Names (≤10 chars)</option>
+                            <option value="medium">Medium Names (11-20 chars)</option>
+                            <option value="long">Long Names (>20 chars)</option>
+                        </flux:select>
+                        
+                        @if(!empty($activeFilters))
+                            <flux:button 
+                                wire:click="clearFilters" 
+                                variant="outline"
+                                size="sm"
+                                class="text-red-600 hover:text-red-700">
+                                Clear Filters
+                            </flux:button>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Active Filters Display --}}
+                @if(!empty($activeFilters))
+                    <div class="mb-4 flex items-center space-x-2">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Active filters:</span>
+                        @foreach($activeFilters as $filterType => $filterValue)
+                            <flux:badge 
+                                variant="outline" 
+                                class="active-filter bg-blue-50 text-blue-700 border-blue-200">
+                                {{ $this->getFilterDisplayName($filterType, $filterValue) }}
+                                <button 
+                                    wire:click="removeFilter('{{ $filterType }}')"
+                                    class="ml-1 text-blue-500 hover:text-blue-700"
+                                    aria-label="Remove filter">
+                                    ×
+                                </button>
+                            </flux:badge>
+                        @endforeach
+                    </div>
+                @endif
+
+                {{-- Results Count --}}
+                <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+                    Showing {{ count($processedDomainResults ?: $domainResults) }} of {{ count($domainResults) }} results
+                    @if($currentSort['column'])
+                        <span class="sort-indicator sort-{{ $currentSort['direction'] }} ml-2">
+                            (sorted by {{ ucfirst($currentSort['column']) }} 
+                            {{ $currentSort['direction'] === 'asc' ? '↑' : '↓' }})
+                        </span>
+                    @endif
+                </div>
+
                 {{-- Domain Results Table --}}
                 <flux:table class="w-full">
                     <flux:table.columns>
@@ -723,7 +1115,7 @@ new class extends Component {
                     </flux:table.columns>
 
                     <flux:table.rows>
-                        @foreach($domainResults as $result)
+                        @forelse(($processedDomainResults ?: $domainResults) as $result)
                             <flux:table.row>
                                 <flux:table.cell class="font-semibold">
                                     <div class="flex items-center justify-between">
@@ -776,7 +1168,19 @@ new class extends Component {
                                     </flux:table.cell>
                                 @endforeach
                             </flux:table.row>
-                        @endforeach
+                        @empty
+                            <flux:table.row>
+                                <flux:table.cell colspan="4" class="text-center py-8 text-gray-500 dark:text-gray-400">
+                                    <div>
+                                        <svg class="w-12 h-12 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        <p>No results found</p>
+                                        <p class="text-sm mt-1">Try adjusting your filters or generate new names</p>
+                                    </div>
+                                </flux:table.cell>
+                            </flux:table.row>
+                        @endforelse
                     </flux:table.rows>
                 </flux:table>
 
