@@ -360,6 +360,6 @@ final readonly class ShareService
             'views' => (int) $item->getAttribute('count'),
         ]);
 
-        return $mapped->toArray();
+        return $mapped->all();
     }
 }

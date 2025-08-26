@@ -77,7 +77,7 @@ final class LogoColorVariant extends Model
      * @param  Builder<LogoColorVariant>  $query
      * @return Builder<LogoColorVariant>
      */
-    public function scopeWithColorScheme(Builder $query, string $colorScheme): Builder
+    protected function scopeWithColorScheme(Builder $query, string $colorScheme): Builder
     {
         return $query->where('color_scheme', $colorScheme);
     }

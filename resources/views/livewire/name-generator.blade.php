@@ -7,6 +7,8 @@ use App\Services\DomainCheckService;
 use App\Models\LogoGeneration;
 use App\Jobs\GenerateLogosJob;
 use Livewire\Volt\Component;
+use Livewire\Attributes\On;
+use Illuminate\Support\Facades\Log;
 
 new class extends Component {
     public string $businessDescription = '';
@@ -154,6 +156,13 @@ new class extends Component {
                         try {
                             $availability = $domainService->checkDomain($domain);
                             
+                            // Debug: Log what we're getting from domain service
+                            Log::info("NameGenerator domain check result for {$domain}", [
+                                'availability_structure' => is_array($availability) ? array_keys($availability) : gettype($availability),
+                                'checked_at_type' => isset($availability['checked_at']) ? gettype($availability['checked_at']) : 'not_set',
+                                'checked_at_class' => isset($availability['checked_at']) && is_object($availability['checked_at']) ? get_class($availability['checked_at']) : 'not_object'
+                            ]);
+                            
                             $this->domainResults[$index]['domains'][$domain] = [
                                 'status' => 'checked',
                                 'available' => $availability['available']
@@ -268,6 +277,22 @@ new class extends Component {
     public function clearHistory(): void
     {
         $this->dispatch('confirmClearHistory');
+    }
+
+    #[On('update-search-history')]
+    public function updateSearchHistory(array $history): void
+    {
+        $this->searchHistory = $history;
+    }
+
+    #[On('reload-search-entry')]
+    public function reloadSearchEntry(array $entry): void
+    {
+        $this->businessDescription = $entry['businessDescription'] ?? '';
+        $this->mode = $entry['mode'] ?? 'creative';
+        $this->deepThinking = $entry['deepThinking'] ?? false;
+        $this->generatedNames = $entry['generatedNames'] ?? [];
+        $this->domainResults = $entry['domainResults'] ?? [];
     }
 
     public function toggleHistory(): void
@@ -396,13 +421,44 @@ new class extends Component {
 
             // Redirect to logo gallery to show progress
             if (!app()->environment('testing')) {
-                redirect()->to("/logo-gallery/{$logoGeneration->id}");
+                redirect()->to(route('logo-gallery', $logoGeneration->id));
             }
         } catch (\Exception) {
             $this->errorMessage = 'Failed to start logo generation. Please try again.';
         } finally {
             $this->isGeneratingLogos = false;
         }
+    }
+    
+    /**
+     * Debug serialization issues using Livewire v3 dehydration hooks
+     */
+    public function dehydrateDomainResults($value)
+    {
+        try {
+            json_encode($value);
+        } catch (\Exception $e) {
+            Log::error("NameGenerator serialization error for domainResults", [
+                'type' => gettype($value),
+                'error' => $e->getMessage(),
+                'value_preview' => is_array($value) ? 'Array[' . count($value) . ']' : substr((string)$value, 0, 100)
+            ]);
+        }
+        return $value;
+    }
+
+    public function dehydrateSearchHistory($value)
+    {
+        try {
+            json_encode($value);
+        } catch (\Exception $e) {
+            Log::error("NameGenerator serialization error for searchHistory", [
+                'type' => gettype($value),
+                'error' => $e->getMessage(),
+                'value_preview' => is_array($value) ? 'Array[' . count($value) . ']' : substr((string)$value, 0, 100)
+            ]);
+        }
+        return $value;
     }
 } ?>
 
@@ -551,11 +607,11 @@ new class extends Component {
                     x-init="
                         // Load search history from localStorage
                         searchHistory = JSON.parse(localStorage.getItem('nameGeneratorHistory') || '[]');
-                        $wire.set('searchHistory', searchHistory);
+                        $dispatch('update-search-history', searchHistory);
                     "
                     @load-search-history.window="
                         searchHistory = JSON.parse(localStorage.getItem('nameGeneratorHistory') || '[]');
-                        $wire.set('searchHistory', searchHistory);
+                        $dispatch('update-search-history', searchHistory);
                     "
                     @save-to-history.window="
                         let history = JSON.parse(localStorage.getItem('nameGeneratorHistory') || '[]');
@@ -563,24 +619,20 @@ new class extends Component {
                         history = history.slice(0, 50); // Keep only last 50 entries
                         localStorage.setItem('nameGeneratorHistory', JSON.stringify(history));
                         searchHistory = history;
-                        $wire.set('searchHistory', history);
+                        $dispatch('update-search-history', history);
                     "
                     @reload-search.window="
                         let history = JSON.parse(localStorage.getItem('nameGeneratorHistory') || '[]');
                         let entry = history.find(h => h.id === $event.detail);
                         if (entry) {
-                            $wire.set('businessDescription', entry.businessDescription);
-                            $wire.set('mode', entry.mode);
-                            $wire.set('deepThinking', entry.deepThinking);
-                            $wire.set('generatedNames', entry.generatedNames);
-                            $wire.set('domainResults', entry.domainResults);
+                            $dispatch('reload-search-entry', entry);
                         }
                     "
                     @confirm-clear-history.window="
                         if (confirm('Are you sure you want to clear your search history? This action cannot be undone.')) {
                             localStorage.removeItem('nameGeneratorHistory');
                             searchHistory = [];
-                            $wire.set('searchHistory', []);
+                            $dispatch('update-search-history', []);
                         }
                     ">
 

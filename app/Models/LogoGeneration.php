@@ -122,7 +122,7 @@ final class LogoGeneration extends Model
      * @param  Builder<LogoGeneration>  $query
      * @return Builder<LogoGeneration>
      */
-    public function scopeForSession(Builder $query, string $sessionId): Builder
+    protected function scopeForSession(Builder $query, string $sessionId): Builder
     {
         return $query->where('session_id', $sessionId);
     }
@@ -133,7 +133,7 @@ final class LogoGeneration extends Model
      * @param  Builder<LogoGeneration>  $query
      * @return Builder<LogoGeneration>
      */
-    public function scopePending(Builder $query): Builder
+    protected function scopePending(Builder $query): Builder
     {
         return $query->where('status', 'pending');
     }
@@ -144,7 +144,7 @@ final class LogoGeneration extends Model
      * @param  Builder<LogoGeneration>  $query
      * @return Builder<LogoGeneration>
      */
-    public function scopeProcessing(Builder $query): Builder
+    protected function scopeProcessing(Builder $query): Builder
     {
         return $query->where('status', 'processing');
     }
@@ -155,7 +155,7 @@ final class LogoGeneration extends Model
      * @param  Builder<LogoGeneration>  $query
      * @return Builder<LogoGeneration>
      */
-    public function scopeCompleted(Builder $query): Builder
+    protected function scopeCompleted(Builder $query): Builder
     {
         return $query->where('status', 'completed');
     }
@@ -166,7 +166,7 @@ final class LogoGeneration extends Model
      * @param  Builder<LogoGeneration>  $query
      * @return Builder<LogoGeneration>
      */
-    public function scopeFailed(Builder $query): Builder
+    protected function scopeFailed(Builder $query): Builder
     {
         return $query->where('status', 'failed');
     }

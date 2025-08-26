@@ -237,7 +237,7 @@ class LogoGenerationController extends Controller
                 'business_name' => $generation->business_name,
                 'business_description' => $generation->business_description,
                 'status' => $generation->status,
-                'logos' => $logos->toArray(),
+                'logos' => $logos->all(),
                 'color_schemes' => $this->getAvailableColorSchemes(),
                 'created_at' => $generation->created_at->toISOString(),
                 'updated_at' => $generation->updated_at->toISOString(),

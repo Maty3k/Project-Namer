@@ -421,19 +421,19 @@
         // Auto-refresh logo status when on logos tab
         let logoRefreshInterval;
         
-        $wire.on('toast', (event) => {
-            // Handle toast notifications - you can integrate with your preferred toast library
-            console.log('Toast:', event.message, event.type);
+        window.addEventListener('toast', (event) => {
+            // Handle toast notifications - dispatch to livewire toast system
+            Livewire.dispatch('show-toast', event.detail);
         });
         
-        $wire.on('copy-to-clipboard', (event) => {
-            navigator.clipboard.writeText(event.url).then(() => {
-                console.log('Copied to clipboard:', event.url);
+        window.addEventListener('copy-to-clipboard', (event) => {
+            navigator.clipboard.writeText(event.detail.url).then(() => {
+                console.log('Copied to clipboard:', event.detail.url);
             });
         });
         
-        $wire.on('download-file', (event) => {
-            window.open(event.url, '_blank');
+        window.addEventListener('download-file', (event) => {
+            window.open(event.detail.url, '_blank');
         });
         
         // Auto-refresh logo generation status handled by wire:poll in template instead

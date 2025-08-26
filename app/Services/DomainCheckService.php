@@ -44,7 +44,7 @@ final class DomainCheckService
                 'available' => $cached->available,
                 'status' => $cached->available ? 'available' : 'taken',
                 'cached' => true,
-                'checked_at' => $cached->checked_at,
+                'checked_at' => $cached->checked_at->toISOString(),
             ];
         }
 

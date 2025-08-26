@@ -27,6 +27,10 @@ Route::get('dashboard', App\Livewire\Dashboard::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+Route::get('logo-gallery/{logoGeneration}', App\Livewire\LogoGallery::class)
+    ->middleware(['auth', 'verified'])
+    ->name('logo-gallery');
+
 Route::middleware(['auth'])->group(function (): void {
     Route::redirect('settings', 'settings/profile');
 

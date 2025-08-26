@@ -16,7 +16,7 @@ trait TwoFactorAuthenticatable
     /**
      * Get the two factor authentication enabled status.
      */
-    public function getTwoFactorEnabledAttribute(): bool
+    protected function getTwoFactorEnabledAttribute(): bool
     {
         return ! is_null($this->two_factor_confirmed_at);
     }

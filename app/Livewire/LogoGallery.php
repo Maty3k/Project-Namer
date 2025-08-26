@@ -238,7 +238,8 @@ class LogoGallery extends Component
      */
     public function downloadBatch(?string $colorScheme = null): void
     {
-        if (! $this->logoGeneration || $this->logoGeneration->generatedLogos->isEmpty()) {
+        $logoGeneration = $this->getLogoGenerationProperty();
+        if (! $logoGeneration || $logoGeneration->generatedLogos->isEmpty()) {
             $this->dispatch('toast', message: 'No logos available for download', type: 'error');
 
             return;

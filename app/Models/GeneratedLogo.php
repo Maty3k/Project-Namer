@@ -118,7 +118,7 @@ final class GeneratedLogo extends Model
      * @param  Builder<GeneratedLogo>  $query
      * @return Builder<GeneratedLogo>
      */
-    public function scopeOfStyle(Builder $query, string $style): Builder
+    protected function scopeOfStyle(Builder $query, string $style): Builder
     {
         return $query->where('style', $style);
     }

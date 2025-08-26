@@ -5,7 +5,7 @@ use App\Services\ExportService;
 use Livewire\Volt\Component;
 
 new class extends Component {
-    public LogoGeneration $logoGeneration;
+    protected LogoGeneration $logoGeneration;
     public bool $showModal = false;
     public string $exportType = 'pdf';
     public bool $includeDomains = true;
@@ -21,6 +21,11 @@ new class extends Component {
     public function mount(LogoGeneration $logoGeneration): void
     {
         $this->logoGeneration = $logoGeneration;
+    }
+
+    public function getLogoGenerationProperty(): LogoGeneration
+    {
+        return $this->logoGeneration;
     }
 
     public function openModal(): void

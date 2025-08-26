@@ -203,7 +203,7 @@ final class Share extends Model
      * @param  \Illuminate\Database\Eloquent\Builder<Share>  $query
      * @return \Illuminate\Database\Eloquent\Builder<Share>
      */
-    public function scopeActive(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    protected function scopeActive(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('is_active', true)
             ->where(function ($q): void {
@@ -218,7 +218,7 @@ final class Share extends Model
      * @param  \Illuminate\Database\Eloquent\Builder<Share>  $query
      * @return \Illuminate\Database\Eloquent\Builder<Share>
      */
-    public function scopeAccessible(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    protected function scopeAccessible(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->active();
     }
@@ -229,7 +229,7 @@ final class Share extends Model
      * @param  \Illuminate\Database\Eloquent\Builder<Share>  $query
      * @return \Illuminate\Database\Eloquent\Builder<Share>
      */
-    public function scopeOfType(\Illuminate\Database\Eloquent\Builder $query, string $type): \Illuminate\Database\Eloquent\Builder
+    protected function scopeOfType(\Illuminate\Database\Eloquent\Builder $query, string $type): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('share_type', $type);
     }

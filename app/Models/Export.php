@@ -203,7 +203,7 @@ final class Export extends Model
      * @param  \Illuminate\Database\Eloquent\Builder<Export>  $query
      * @return \Illuminate\Database\Eloquent\Builder<Export>
      */
-    public function scopeActive($query)
+    protected function scopeActive($query)
     {
         return $query->where(function ($q): void {
             $q->whereNull('expires_at')
@@ -217,7 +217,7 @@ final class Export extends Model
      * @param  \Illuminate\Database\Eloquent\Builder<Export>  $query
      * @return \Illuminate\Database\Eloquent\Builder<Export>
      */
-    public function scopeOfType($query, string $type)
+    protected function scopeOfType($query, string $type)
     {
         return $query->where('export_type', $type);
     }
@@ -228,7 +228,7 @@ final class Export extends Model
      * @param  \Illuminate\Database\Eloquent\Builder<Export>  $query
      * @return \Illuminate\Database\Eloquent\Builder<Export>
      */
-    public function scopeRecent($query, int $days = 30)
+    protected function scopeRecent($query, int $days = 30)
     {
         return $query->where('created_at', '>=', now()->subDays($days));
     }

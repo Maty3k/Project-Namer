@@ -306,10 +306,10 @@ describe('Dashboard Component', function (): void {
         // Since currentLogoGeneration is now protected, we test the refresh method directly
         $component = Livewire::actingAs($this->user)
             ->test(Dashboard::class);
-        
+
         // Call refreshLogoStatus method which is what the dispatch actually triggers
         $component->call('refreshLogoStatus');
-        
+
         $component->assertOk();
     });
 

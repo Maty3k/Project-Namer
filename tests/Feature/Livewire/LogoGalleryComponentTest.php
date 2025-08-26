@@ -165,12 +165,21 @@ describe('LogoGallery Component', function (): void {
 
     it('can download batch of logos', function (): void {
         $logoGeneration = LogoGeneration::factory()->create(['status' => 'completed']);
-        GeneratedLogo::factory()->count(3)->create([
+        $logos = GeneratedLogo::factory()->count(3)->create([
             'logo_generation_id' => $logoGeneration->id,
         ]);
 
-        Livewire::actingAs($this->user)
-            ->test(LogoGallery::class, ['logoGenerationId' => $logoGeneration->id])
+        // Verify the relationship is working
+        expect($logoGeneration->refresh()->generatedLogos)->toHaveCount(3);
+
+        $component = Livewire::actingAs($this->user)
+            ->test(LogoGallery::class, ['logoGenerationId' => $logoGeneration->id]);
+
+        // Check that the component has loaded the logo generation
+        expect($component->get('logoGeneration'))->not->toBeNull();
+        expect($component->get('logoGeneration')->generatedLogos)->toHaveCount(3);
+
+        $component
             ->call('downloadBatch')
             ->assertDispatched('download-file')
             ->assertDispatched('toast', message: 'Download started!');

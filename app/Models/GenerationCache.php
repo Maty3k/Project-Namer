@@ -68,7 +68,7 @@ final class GenerationCache extends Model
      * @param  Builder<GenerationCache>  $query
      * @return Builder<GenerationCache>
      */
-    public function scopeFresh(Builder $query): Builder
+    protected function scopeFresh(Builder $query): Builder
     {
         return $query->where('cached_at', '>=', now()->subHours(24));
     }
@@ -79,7 +79,7 @@ final class GenerationCache extends Model
      * @param  Builder<GenerationCache>  $query
      * @return Builder<GenerationCache>
      */
-    public function scopeExpired(Builder $query): Builder
+    protected function scopeExpired(Builder $query): Builder
     {
         return $query->where('cached_at', '<', now()->subHours(24));
     }
