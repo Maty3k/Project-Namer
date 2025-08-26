@@ -5,6 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     </head>
     <body class="min-h-screen bg-white dark:bg-zinc-800 fade-in">
+        <!-- Skip to main content link for accessibility -->
+        <a href="#main-content" class="skip-link">Skip to main content</a>
         <flux:sidebar sticky stashable class="glass shadow-soft-lg border-e border-zinc-200/50 bg-white/80 dark:border-zinc-700/50 dark:bg-zinc-900/90 backdrop-blur-xl
                                                 xs:w-full
                                                 sm:w-72
@@ -42,7 +44,12 @@
 
         <x-mobile-user-menu/>
 
-        {{ $slot }}
+        <main id="main-content" role="main">
+            {{ $slot }}
+        </main>
+
+        <!-- Mobile Bottom Action Bar -->
+        <x-mobile-bottom-bar />
 
         <!-- Toast Notifications -->
         <x-toast-container />
