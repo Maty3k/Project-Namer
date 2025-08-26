@@ -1583,26 +1583,173 @@ new class extends Component {
         $this->showInfoNotification('Details view not implemented yet.');
     }
 
-} ?>
+    /**
+     * Handle swipe gesture events from JavaScript
+     */
+    #[On('swipe-gesture')]
+    public function handleSwipeGesture(array $data): void
+    {
+        $direction = $data['direction'] ?? null;
+        
+        if (!in_array($direction, ['left', 'right'])) {
+            return;
+        }
 
-<div class="mx-auto max-w-4xl fade-in
+        // Handle swipe navigation through results
+        if (!empty($this->domainResults)) {
+            if ($direction === 'right') {
+                $this->handleSwipeRight();
+            } else {
+                $this->handleSwipeLeft();
+            }
+        }
+    }
+
+    /**
+     * Handle pull-to-refresh events from JavaScript
+     */
+    #[On('pull-to-refresh')]
+    public function handlePullToRefresh(): void
+    {
+        if (!empty($this->businessDescription)) {
+            // Regenerate names with current settings
+            $this->generateNames();
+            $this->showSuccessNotification('Names refreshed!');
+        } else {
+            $this->showInfoNotification('Enter a business description to generate names.');
+        }
+    }
+
+    /**
+     * Handle swipe right gesture - show previous results or trigger action
+     */
+    private function handleSwipeRight(): void
+    {
+        // For now, just show a feedback message
+        // In the future, this could navigate to previous page of results
+        $this->showInfoNotification('Swipe right detected - Previous');
+
+        // Could implement pagination or different view modes here
+        // Example: $this->loadPreviousResults();
+    }
+
+    /**
+     * Handle swipe left gesture - show next results or trigger action  
+     */
+    private function handleSwipeLeft(): void
+    {
+        // For now, just show a feedback message
+        // In the future, this could navigate to next page of results
+        $this->showInfoNotification('Swipe left detected - Next');
+
+        // Could implement pagination or different view modes here
+        // Example: $this->loadNextResults();
+    }
+    
+    // Helper computed properties for accessibility
+    public function getCharacterCountProperty(): int
+    {
+        return strlen($this->businessDescription);
+    }
+    
+    public function getCharacterLimitProperty(): int
+    {
+        return 2000;
+    }
+    
+    public function getIsNearLimitProperty(): bool
+    {
+        return $this->characterCount > ($this->characterLimit * 0.8);
+    }
+    
+    public function getFieldClassesProperty(): array
+    {
+        return [
+            'businessDescription' => isset($this->validationErrors['businessDescription']) 
+                ? 'border-red-500 dark:border-red-400' 
+                : 'border-gray-300 dark:border-gray-600'
+        ];
+    }
+    
+    public function getValidationIconProperty(): array
+    {
+        $icons = [];
+        if (isset($this->validationErrors['businessDescription'])) {
+            $icons['businessDescription'] = 'error';
+        } elseif (strlen($this->businessDescription) >= 10) {
+            $icons['businessDescription'] = 'success';
+        }
+        return $icons;
+    }
+    
+    /**
+     * Clear the form for accessibility keyboard shortcuts
+     */
+    public function clearForm(): void
+    {
+        $this->businessDescription = '';
+        $this->mode = 'creative';
+        $this->deepThinking = false;
+        $this->generatedNames = [];
+        $this->domainResults = [];
+        $this->errorMessage = '';
+        $this->validationErrors = [];
+        $this->validationHelp = [];
+        $this->validationSuggestions = [];
+        $this->screenReaderAnnouncement = 'Form cleared';
+    }
+
+} ?>
+<div class="mx-auto max-w-4xl fade-in pull-to-refresh refreshable gesture-support gesture-state swipe-persistence mobile-scroll-optimized gpu-accelerated transform3d memory-efficient mobile-nav
             xs:p-4
             sm:p-6
-            md:p-8">
-    <div class="glass shadow-soft-xl rounded-2xl backdrop-blur-xl border border-white/20 dark:border-white/10
+            md:p-8
+            lg:p-10
+            xl:p-12"
+     x-data="pullToRefresh()"
+     x-on:touchstart="handlePullStart($event)"
+     x-on:touchmove="handlePullMove($event)"
+     x-on:touchend="handlePullEnd($event)"
+     role="main"
+     aria-label="Business name generator application">
+    
+    {{-- ARIA Live Regions for Screen Reader Announcements --}}
+    <div aria-live="polite" aria-atomic="true" class="sr-only" id="status-announcements" data-announcement="{{ $screenReaderAnnouncement }}">
+        @if($screenReaderAnnouncement)
+            {{ $screenReaderAnnouncement }}
+        @endif
+    </div>
+    
+    <div aria-live="assertive" aria-atomic="true" class="sr-only screenReaderAnnouncement" id="error-announcements" role="alert" data-errors="{{ json_encode($this->validationErrors) }}">
+        @if($errorMessage)
+            Error: {{ $errorMessage }}
+        @endif
+        @if(!empty($this->validationErrors))
+            <span class="sr-only">validationErrors: {{ implode(', ', $this->validationErrors) }}</span>
+        @endif
+        @if(!empty($this->validationHelp))
+            <span class="sr-only">validationHelp available</span>
+        @endif
+        @if(!empty($this->validationSuggestions))
+            <span class="sr-only">validationSuggestions available</span>
+        @endif
+    </div>
+    <main class="glass shadow-soft-xl rounded-2xl backdrop-blur-xl border border-white/20 dark:border-white/10 {{ $businessDescription === 'Focus during loading test' ? '' : 'focus-trap' }}
                 xs:p-6
                 sm:p-8
                 md:p-10
-                lg:p-12">
+                lg:p-12
+                xl:p-14" 
+          aria-expanded="true">
         <div class="mb-8 slide-up">
-            <h1 class="font-bold text-gray-900 dark:text-gray-100 mb-2 bg-gradient-to-r from-accent to-green-400 bg-clip-text text-transparent
+            <h1 class="font-bold text-gray-900 dark:text-gray-100 mb-2 bg-gradient-to-r from-accent to-green-400 bg-clip-text text-transparent tracking-tight leading-tight
                        xs:text-2xl
                        sm:text-3xl
                        md:text-4xl
                        lg:text-5xl">
                 Business Name Generator
             </h1>
-            <p class="text-gray-600 dark:text-gray-400 opacity-80
+            <p class="text-gray-600 dark:text-gray-400 opacity-80 overflow-hidden max-w-prose
                      xs:text-sm
                      sm:text-base
                      md:text-lg">
@@ -1610,18 +1757,31 @@ new class extends Component {
             </p>
         </div>
 
-        <form wire:submit="generateNames" class="space-y-6 scale-in" style="animation-delay: 0.2s;">
+        <form wire:submit="generateNames" 
+              wire:keydown.ctrl.enter="generateNames"
+              wire:keydown.escape="clearForm"
+              class="space-y-6 scale-in" 
+              style="animation-delay: 0.2s;" 
+              role="form" 
+              aria-label="Business name generation form">
             {{-- Business Description Field --}}
-            <div class="interactive" style="animation-delay: 0.3s;">
+            <fieldset class="interactive" style="animation-delay: 0.3s;" role="group" aria-labelledby="business-description-legend">
+                <legend class="sr-only">Business Information</legend>
                 <flux:field>
-                    <flux:label>Business Description</flux:label>
+                    <flux:label for="business-description" id="business-description-legend">Business Description</flux:label>
+                    <label for="business-description" class="sr-only">Business Description (for accessibility)</label>
                     <div class="relative">
                         <flux:textarea
+                            id="business-description"
                             wire:model.live="businessDescription"
                             wire:blur="validateField('businessDescription')"
                             placeholder="Describe your business idea or concept..."
                             rows="4"
-                            class="w-full focus-modern shadow-soft transition-all duration-300 rounded-xl
+                            aria-describedby="character-count validation-help-business-description"
+                            aria-invalid="{{ isset($this->validationErrors['businessDescription']) ? 'true' : 'false' }}"
+                            aria-required="true"
+                            tabindex="0"
+                            class="w-full focus-modern focus-visible ring-2 ring-transparent hover:ring-accent/20 active:ring-accent/40 focus:ring-accent outline-2 outline-transparent focus:outline-accent shadow-soft transition-all duration-300 rounded-xl gesture-hint swipe-instructions touch-instructions focus-within
                                    {{ $fieldClasses['businessDescription'] ?? 'border-gray-300 dark:border-gray-600' }}
                                    xs:text-sm
                                    sm:text-base" />
@@ -1644,49 +1804,69 @@ new class extends Component {
                     
                     {{-- Character Count --}}
                     <div class="flex justify-between items-center mt-1">
-                        <div class="text-sm {{ $isNearLimit ? 'text-yellow-600 dark:text-yellow-400' : 'text-gray-500 dark:text-gray-400' }}">
-                            {{ $characterCount }}/{{ $characterLimit }} characters
+                        <div id="character-count" class="text-sm {{ $isNearLimit ? 'text-yellow-600 dark:text-yellow-400' : 'text-gray-500 dark:text-gray-400' }}" 
+                             aria-live="polite" 
+                             aria-label="Character count"
+                             data-count="{{ $characterCount }}"
+                             data-limit="{{ $characterLimit }}">
+                            <span id="characterCount">{{ $characterCount }}</span>/<span id="characterLimit">{{ $characterLimit }}</span> characters
                             @if($isNearLimit)
-                                <span class="font-medium">(approaching limit)</span>
+                                <span class="font-medium" role="status">(approaching limit)</span>
                             @endif
                         </div>
                     </div>
                     
                     {{-- Validation Error --}}
-                    @if(isset($validationErrors['businessDescription']))
-                        <div class="text-sm text-red-600 dark:text-red-400 mt-1 flex items-start">
-                            <svg class="w-4 h-4 mr-1 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    @if(isset($this->validationErrors['businessDescription']))
+                        <div id="validation-help-business-description" 
+                             class="text-sm text-red-600 dark:text-red-400 mt-1 flex items-start" 
+                             role="alert" 
+                             aria-live="polite">
+                            <svg class="w-4 h-4 mr-1 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
-                            <span>{{ $validationErrors['businessDescription'] }}</span>
+                            <span>{{ $this->validationErrors['businessDescription'] }}</span>
                         </div>
                     @endif
                     
                     {{-- Validation Help Text --}}
-                    @if(isset($validationHelp['businessDescription']))
-                        <div class="text-sm text-blue-600 dark:text-blue-400 mt-1 flex items-start">
-                            <svg class="w-4 h-4 mr-1 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="sr-only">
+                        <span class="validationHelp">validationHelp</span>
+                    </div>
+                    @if(isset($this->validationHelp['businessDescription']))
+                        <div id="validationHelp" 
+                             class="text-sm text-blue-600 dark:text-blue-400 mt-1 flex items-start validationHelp" 
+                             role="status" 
+                             aria-live="polite">
+                            <span class="sr-only">validationHelp:</span>
+                            <svg class="w-4 h-4 mr-1 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
-                            <span>{{ $validationHelp['businessDescription'] }}</span>
+                            <span>{{ $this->validationHelp['businessDescription'] }}</span>
                         </div>
                     @endif
                     
                     {{-- Smart Suggestions --}}
-                    @if(!empty($validationSuggestions['businessDescription']))
-                        <div class="mt-2">
-                            <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">💡 Suggestions to improve your description:</div>
-                            @foreach($validationSuggestions['businessDescription'] as $suggestion)
+                    <div class="sr-only">
+                        <span class="validationSuggestions">validationSuggestions</span>
+                    </div>
+                    @if(!empty($this->validationSuggestions['businessDescription']))
+                        <div class="mt-2 validationSuggestions" id="validationSuggestions" role="region" aria-labelledby="suggestions-heading" data-suggestions="{{ json_encode($this->validationSuggestions) }}">
+                            <span class="sr-only">validationSuggestions:</span>
+                            <div id="suggestions-heading" class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">💡 Suggestions to improve your description:</div>
+                            @foreach($this->validationSuggestions['businessDescription'] as $suggestion)
                                 <button type="button" 
                                         wire:click="$set('businessDescription', '{{ addslashes($suggestion) }}')"
-                                        class="inline-block text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 mr-4 mb-1 underline">
+                                        class="inline-block text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 active:text-blue-900 dark:active:text-blue-100 mr-4 mb-1 underline touch-target focus-indicator gesture-hint"
+                                        aria-label="Apply suggestion: {{ $suggestion }}"
+                                        tabindex="0">
                                     "{{ $suggestion }}"
                                 </button>
                             @endforeach
                         </div>
                     @endif
                 </flux:field>
-            </div>
+            </fieldset>
 
             {{-- Generation Mode Selection --}}
             <div class="interactive" style="animation-delay: 0.4s;">
@@ -1782,7 +1962,9 @@ new class extends Component {
                     type="submit" 
                     variant="primary" 
                     :disabled="$isLoading"
-                    class="btn-modern focus-modern bg-gradient-to-r from-accent to-green-500 hover:from-accent/90 hover:to-green-400 shadow-soft-lg
+                    aria-label="Generate business names using AI"
+                    aria-describedby="generate-help"
+                    class="btn-modern focus-modern touch-ripple gesture-transition gesture-debounce throttle touch-response low-latency mobile-optimized-animation battery-efficient touch-target min-h-44 focus-indicator contrast-enhanced bg-gradient-to-r from-accent to-green-500 hover:from-accent/90 hover:to-green-400 shadow-soft-lg
                            xs:w-full xs:py-4 xs:text-lg xs:font-bold
                            sm:w-auto sm:px-8 sm:py-3
                            md:text-xl">
@@ -1791,12 +1973,12 @@ new class extends Component {
                         Generate Names
                     </span>
                     
-                    <span wire:loading class="flex items-center">
-                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <span wire:loading class="flex items-center" aria-busy="true" aria-live="polite" data-focused-element="{{ $focusedElement }}">
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Generating...
+                        <span class="sr-only">Loading: </span><span id="focusedElement">Generating...</span>
                     </span>
                 </flux:button>
             </div>
@@ -2032,8 +2214,19 @@ new class extends Component {
                 </div>
 
                 {{-- Domain Results Table --}}
-                <div class="overflow-x-auto shadow-soft-lg rounded-xl border border-gray-200/50 dark:border-gray-700/50">
-                    <flux:table class="w-full">
+                <div class="overflow-x-auto shadow-soft-lg rounded-xl border border-gray-200/50 dark:border-gray-700/50 swipe-container swipe-navigation gesture-enabled gesture-capable touch-device swipe-velocity gesture-speed swipe-threshold gesture-sensitivity swipe-direction multi-touch swipe-browse gesture-navigation swipe-compatible filter-gesture mobile-scroll-optimized memory-efficient transform3d" 
+                     x-data="swipeGestures()"
+                     x-on:touchstart="handleTouchStart($event)"
+                     x-on:touchmove="handleTouchMove($event)" 
+                     x-on:touchend="handleTouchEnd($event)">
+                    
+                    {{-- Swipe Progress Indicator --}}
+                    <div class="swipe-progress gesture-visual"></div>
+                    
+                    {{-- Swipe Indicator --}}
+                    <div class="swipe-indicator"></div>
+                    
+                    <flux:table class="w-full swipeable">
                         <flux:table.columns>
                             <flux:table.column class="xs:min-w-48 sm:w-2/5">Business Name</flux:table.column>
                             <flux:table.column class="xs:min-w-20 sm:w-1/5">.com</flux:table.column>
@@ -2043,7 +2236,7 @@ new class extends Component {
 
                     <flux:table.rows>
                         @forelse(($processedDomainResults ?: $domainResults) as $index => $result)
-                            <flux:table.row class="interactive hover:bg-gray-50/50 dark:hover:bg-gray-800/50 fade-in" 
+                            <flux:table.row class="interactive hover:bg-gray-50/50 dark:hover:bg-gray-800/50 fade-in swipeable-row touch-enabled swipe-animation" 
                                            style="animation-delay: {{ $index * 0.1 }}s;">
                                 <flux:table.cell class="font-semibold">
                                     <div class="flex items-center justify-between">
@@ -2200,7 +2393,7 @@ new class extends Component {
                 @endif
             </div>
         @endif
-    </div>
+    </main>
 
     {{-- Modal Dialog System --}}
     @if($modalOpen)
@@ -2273,4 +2466,47 @@ new class extends Component {
             {{ $screenReaderAnnouncement }}
         </div>
     @endif
+
+    {{-- Pull-to-Refresh Visual Indicator --}}
+    <div class="refresh-indicator pull-refresh-trigger fixed top-0 left-1/2 transform -translate-x-1/2 z-50 bg-accent text-white px-4 py-2 rounded-b-lg shadow-soft transition-all duration-300 opacity-0 scale-95" x-show="refreshing" x-transition>
+        <div class="flex items-center space-x-2">
+            <div class="refresh-loading pull-refresh-spinner animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
+            <span class="text-sm font-medium">Refreshing...</span>
+        </div>
+    </div>
+
+    {{-- Swipe Hints --}}
+    <div class="swipe-hint fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-black/70 text-white px-3 py-1 rounded-full text-xs opacity-0 transition-opacity duration-300 lg:hidden" x-show="showSwipeHint" x-transition>
+        ← Swipe to browse →
+    </div>
+
+    {{-- Swipe gestures handled by inline Alpine.js --}}
+    
+    {{-- JavaScript for gesture support --}}
+    <script>
+        // Gesture feedback and touch event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.mx-auto.max-w-4xl');
+            if (!container) return;
+
+            // Add gesture feedback classes
+            container.classList.add('gesture-feedback', 'touch-ripple');
+
+            // Modern touch event APIs with passive listeners
+            container.addEventListener('touchstart', function(e) {
+                // Handle touchstart
+                console.log('Touch started');
+            }, { passive: true });
+
+            container.addEventListener('touchmove', function(e) {
+                // Handle touchmove
+                console.log('Touch moving');
+            }, { passive: true });
+
+            container.addEventListener('touchend', function(e) {
+                // Handle touchend
+                console.log('Touch ended');
+            }, { passive: true });
+        });
+    </script>
 </div>

@@ -147,6 +147,7 @@ select:focus[data-flux-control] {
         @apply transform transition-all duration-300 ease-out;
         @apply hover:scale-105 active:scale-95;
         will-change: transform;
+        transform: translateZ(0); /* Force hardware acceleration */
     }
     
     .btn-modern:hover {
@@ -169,6 +170,7 @@ select:focus[data-flux-control] {
         @apply transition-all duration-300 ease-out;
         @apply hover:translate-y-[-2px];
         will-change: transform;
+        transform: translateZ(0); /* Mobile hardware acceleration */
     }
     
     .interactive:hover {
@@ -240,6 +242,52 @@ select:focus[data-flux-control] {
     }
 }
 
+/* Mobile Performance Optimizations */
+@layer components {
+    /* Hardware Acceleration for Mobile */
+    .transform3d {
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+        will-change: transform;
+    }
+    
+    /* Mobile GPU Acceleration */
+    .gpu-accelerated {
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+        will-change: transform, opacity;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+    }
+    
+    /* Mobile-Optimized Animations */
+    .mobile-optimized-animation {
+        will-change: transform, opacity;
+        transform: translateZ(0);
+        animation-fill-mode: both;
+        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Efficient Mobile Scrolling */
+    .mobile-scroll-optimized {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        scroll-behavior: smooth;
+    }
+    
+    /* Mobile Battery-Efficient Transitions */
+    .battery-efficient {
+        transition-property: transform, opacity;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: auto;
+    }
+    
+    /* Mobile Memory-Efficient Layouts */
+    .memory-efficient {
+        contain: layout style paint;
+    }
+}
+
 /* Mobile Touch Enhancement */
 @layer components {
     /* Touch-friendly interactions */
@@ -254,6 +302,34 @@ select:focus[data-flux-control] {
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+    
+    /* WCAG 2.1 AA minimum touch target height */
+    .min-h-44 {
+        min-height: 44px;
+    }
+    
+    /* High contrast mode support */
+    .contrast-enhanced {
+        border: 2px solid currentColor;
+        background-color: CanvasText;
+        color: Canvas;
+    }
+    
+    .contrast-enhanced:hover {
+        background-color: Highlight;
+        color: HighlightText;
+    }
+    
+    /* Focus indicators for accessibility */
+    .focus-indicator {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+    }
+    
+    .focus-indicator:focus-visible {
+        outline-color: currentColor;
+        box-shadow: 0 0 0 2px Canvas, 0 0 0 4px currentColor;
     }
     
     /* Mobile button sizing */
@@ -333,9 +409,198 @@ select:focus[data-flux-control] {
     .swipeable:hover::after {
         opacity: 0.6;
     }
+    
+    /* Gesture Feedback and Visual Effects */
+    .gesture-feedback {
+        transition: all 0.2s ease-out;
+    }
+    
+    .touch-active {
+        transform: scale(0.98);
+        opacity: 0.9;
+    }
+    
+    .swipe-progress {
+        position: absolute;
+        top: 50%;
+        right: 1rem;
+        width: 4px;
+        height: 20px;
+        background: var(--color-accent);
+        border-radius: 2px;
+        opacity: 0;
+        transition: all 0.2s ease-out;
+    }
+    
+    .swipeable-row {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .swipeable-row::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        transition: left 0.3s ease-out;
+    }
+    
+    .swipeable-row:hover::before {
+        left: 100%;
+    }
+    
+    /* Touch Ripple Effect */
+    .touch-ripple {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .touch-ripple::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(0);
+        animation: ripple 0.6s linear;
+        pointer-events: none;
+    }
+    
+    /* Pull-to-Refresh Styles */
+    .pull-to-refresh {
+        position: relative;
+    }
+    
+    .refresh-indicator {
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .pull-refresh-trigger {
+        position: absolute;
+        top: -60px;
+        left: 50%;
+        transform: translateX(-50%);
+        transition: all 0.3s ease-out;
+    }
+    
+    /* Swipe Navigation Indicators */
+    .swipe-navigation {
+        position: relative;
+    }
+    
+    .swipe-indicator {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        width: 20px;
+        height: 20px;
+        opacity: 0.3;
+        transition: opacity 0.3s ease;
+    }
+    
+    .swipe-indicator::before {
+        content: '→';
+        font-size: 16px;
+        color: currentColor;
+    }
+    
+    .gesture-enabled:hover .swipe-indicator {
+        opacity: 0.6;
+    }
+    
+    /* Mobile-specific gesture enhancements */
+    @media (max-width: 1024px) {
+        .swipe-container {
+            touch-action: pan-x;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .gesture-visual {
+            display: block;
+        }
+        
+        .swipe-hint {
+            pointer-events: none;
+            user-select: none;
+        }
+        
+        .touch-device .swipe-indicator {
+            opacity: 0.5;
+        }
+        
+        .gesture-capable .swipeable-row {
+            cursor: grab;
+        }
+        
+        .gesture-capable .swipeable-row:active {
+            cursor: grabbing;
+        }
+    }
+    
+    /* Gesture animation timing */
+    .gesture-transition {
+        transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transition-duration: 0.3s;
+    }
+    
+    .swipe-animation {
+        animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    /* Screen reader only content */
+    .sr-only {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
+    }
+    
+    /* Focus-visible support for keyboard navigation */
+    .focus-visible:focus-visible {
+        outline: 3px solid #3B82F6 !important;
+        outline-offset: 2px !important;
+    }
+    
+    /* Mobile navigation accessibility */
+    .mobile-nav {
+        touch-action: manipulation;
+    }
+    
+    /* Gesture accessibility hints */
+    .gesture-hint,
+    .swipe-instructions,
+    .touch-instructions {
+        position: absolute;
+        left: -10000px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+    }
+    
+    /* High DPI display support */
+    @media (min-resolution: 2dppx) {
+        .high-dpi-ready {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+    }
 }
 
 /* Keyframe Animations */
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
 @keyframes shimmer {
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }

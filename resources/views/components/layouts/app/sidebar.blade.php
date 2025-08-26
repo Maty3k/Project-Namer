@@ -44,7 +44,12 @@
 
         <x-mobile-user-menu/>
 
-        <main id="main-content" role="main">
+        <main id="main-content" role="main" class="p-6
+                                                            xs:p-4
+                                                            sm:ms-72 sm:p-6
+                                                            md:ms-80 md:p-8
+                                                            lg:ms-72 lg:p-6
+                                                            xl:p-8">
             {{ $slot }}
         </main>
 
