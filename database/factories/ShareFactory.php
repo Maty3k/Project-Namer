@@ -29,19 +29,19 @@ final class ShareFactory extends Factory
             'shareable_type' => LogoGeneration::class,
             'shareable_id' => LogoGeneration::factory(),
             'user_id' => User::factory(),
-            'title' => $this->faker->words(4, true),
-            'description' => $this->faker->optional(0.7)->paragraph(),
-            'share_type' => $this->faker->randomElement(['public', 'password_protected']),
+            'title' => fake()->words(4, true),
+            'description' => fake()->optional(0.7)->paragraph(),
+            'share_type' => fake()->randomElement(['public', 'password_protected']),
             'password_hash' => null,
-            'expires_at' => $this->faker->optional(0.3)->dateTimeBetween('now', '+30 days'),
-            'view_count' => $this->faker->numberBetween(0, 100),
-            'last_viewed_at' => $this->faker->optional(0.8)->dateTimeBetween('-30 days', 'now'),
+            'expires_at' => fake()->optional(0.3)->dateTimeBetween('now', '+30 days'),
+            'view_count' => fake()->numberBetween(0, 100),
+            'last_viewed_at' => fake()->optional(0.8)->dateTimeBetween('-30 days', 'now'),
             'is_active' => true,
-            'settings' => $this->faker->optional(0.5)->randomElements([
-                'theme' => $this->faker->randomElement(['light', 'dark']),
-                'layout' => $this->faker->randomElement(['list', 'grid']),
-                'show_domains' => $this->faker->boolean(),
-            ], $this->faker->numberBetween(1, 3)),
+            'settings' => fake()->optional(0.5)->randomElements([
+                'theme' => fake()->randomElement(['light', 'dark']),
+                'layout' => fake()->randomElement(['list', 'grid']),
+                'show_domains' => fake()->boolean(),
+            ], fake()->numberBetween(1, 3)),
         ];
     }
 
@@ -73,7 +73,7 @@ final class ShareFactory extends Factory
     public function expired(): static
     {
         return $this->state(fn (array $attributes): array => [
-            'expires_at' => $this->faker->dateTimeBetween('-30 days', '-1 day'),
+            'expires_at' => fake()->dateTimeBetween('-30 days', '-1 day'),
         ]);
     }
 
@@ -93,8 +93,8 @@ final class ShareFactory extends Factory
     public function recentlyAccessed(): static
     {
         return $this->state(fn (array $attributes): array => [
-            'view_count' => $this->faker->numberBetween(5, 50),
-            'last_viewed_at' => $this->faker->dateTimeBetween('-7 days', 'now'),
+            'view_count' => fake()->numberBetween(5, 50),
+            'last_viewed_at' => fake()->dateTimeBetween('-7 days', 'now'),
         ]);
     }
 

@@ -52,70 +52,78 @@ Route::middleware('api')->group(function (): void {
             ->name('api.logos.download-batch');
     });
 
-    // Sharing API Routes
-    Route::prefix('shares')->middleware('auth')->group(function (): void {
-        // List user's shares with filtering and pagination
+    // Sharing API Routes - CSRF protected state-changing operations
+    Route::prefix('shares')->middleware(['auth', 'web'])->group(function (): void {
+        // List user's shares with filtering and pagination (read-only, no CSRF needed)
         Route::get('/', [ShareController::class, 'index'])
+            ->withoutMiddleware('web')
             ->name('api.shares.index');
 
-        // Create a new share
+        // Create a new share (state-changing, requires CSRF)
         Route::post('/', [ShareController::class, 'store'])
             ->middleware('throttle.shares')
             ->name('api.shares.store');
 
-        // Show specific share
+        // Show specific share (read-only, no CSRF needed)
         Route::get('{share}', [ShareController::class, 'show'])
+            ->withoutMiddleware('web')
             ->name('api.shares.show');
 
-        // Update share
+        // Update share (state-changing, requires CSRF)
         Route::put('{share}', [ShareController::class, 'update'])
             ->name('api.shares.update');
 
-        // Deactivate share
+        // Deactivate share (state-changing, requires CSRF)
         Route::delete('{share}', [ShareController::class, 'destroy'])
             ->name('api.shares.destroy');
 
-        // Get share analytics
+        // Get share analytics (read-only, no CSRF needed)
         Route::get('{share}/analytics', [ShareController::class, 'analytics'])
+            ->withoutMiddleware('web')
             ->name('api.shares.analytics');
 
-        // Get social media metadata
+        // Get social media metadata (read-only, no CSRF needed)
         Route::get('{share}/metadata', [ShareController::class, 'metadata'])
+            ->withoutMiddleware('web')
             ->name('api.shares.metadata');
     });
 
-    // Export API Routes
+    // Export API Routes - CSRF protected state-changing operations
     Route::prefix('exports')->group(function (): void {
-        // Authenticated export routes
-        Route::middleware('auth')->group(function (): void {
-            // List user's exports with filtering and pagination
+        // Authenticated export routes with CSRF protection for state changes
+        Route::middleware(['auth', 'web'])->group(function (): void {
+            // List user's exports with filtering and pagination (read-only, no CSRF needed)
             Route::get('/', [ExportController::class, 'index'])
+                ->withoutMiddleware('web')
                 ->name('api.exports.index');
 
-            // Create a new export
+            // Create a new export (state-changing, requires CSRF)
             Route::post('/', [ExportController::class, 'store'])
                 ->middleware('throttle.exports')
                 ->name('api.exports.store');
 
-            // Show specific export
+            // Get export analytics (read-only, no CSRF needed)
+            Route::get('analytics', [ExportController::class, 'analytics'])
+                ->withoutMiddleware('web')
+                ->name('api.exports.analytics');
+
+            // Cleanup expired exports (state-changing, requires CSRF)
+            Route::delete('cleanup', [ExportController::class, 'cleanup'])
+                ->name('api.exports.cleanup');
+
+            // Show specific export (read-only, no CSRF needed)
             Route::get('{export}', [ExportController::class, 'show'])
+                ->withoutMiddleware('web')
                 ->name('api.exports.show');
 
-            // Delete export
+            // Delete export (state-changing, requires CSRF)
             Route::delete('{export}', [ExportController::class, 'destroy'])
                 ->name('api.exports.destroy');
 
-            // Get export analytics
-            Route::get('analytics', [ExportController::class, 'analytics'])
-                ->name('api.exports.analytics');
-
-            // Authenticated download
+            // Authenticated download (read-only, no CSRF needed)
             Route::get('{uuid}/download', [ExportController::class, 'download'])
+                ->withoutMiddleware('web')
                 ->name('api.exports.download');
-
-            // Cleanup expired exports (admin/system)
-            Route::delete('cleanup', [ExportController::class, 'cleanup'])
-                ->name('api.exports.cleanup');
         });
     });
 

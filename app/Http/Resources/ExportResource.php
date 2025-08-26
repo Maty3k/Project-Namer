@@ -31,8 +31,8 @@ final class ExportResource extends JsonResource
             'download_url' => $this->resource->getDownloadUrl(),
             'is_expired' => $this->resource->isExpired(),
             'expires_at' => $this->resource->expires_at?->toISOString(),
-            'created_at' => $this->resource->created_at->toISOString(),
-            'updated_at' => $this->resource->updated_at->toISOString(),
+            'created_at' => $this->resource->created_at?->toISOString(),
+            'updated_at' => $this->resource->updated_at?->toISOString(),
 
             // Conditional fields based on download count
             'has_been_downloaded' => $this->resource->download_count > 0,

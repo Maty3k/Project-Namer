@@ -53,12 +53,12 @@ describe('Share Model', function (): void {
 
     it('handles password-protected shares with proper hashing', function (): void {
         $user = User::factory()->create();
-        $nameGeneration = NameGeneration::factory()->create(['user_id' => $user->id]);
+        $logoGeneration = LogoGeneration::factory()->create(['user_id' => $user->id]);
         $password = 'secret123';
 
         $share = Share::create([
-            'shareable_type' => NameGeneration::class,
-            'shareable_id' => $nameGeneration->id,
+            'shareable_type' => LogoGeneration::class,
+            'shareable_id' => $logoGeneration->id,
             'user_id' => $user->id,
             'share_type' => 'password_protected',
             'password' => $password,
@@ -72,11 +72,11 @@ describe('Share Model', function (): void {
 
     it('belongs to a user', function (): void {
         $user = User::factory()->create();
-        $nameGeneration = NameGeneration::factory()->create(['user_id' => $user->id]);
+        $logoGeneration = LogoGeneration::factory()->create(['user_id' => $user->id]);
 
         $share = Share::factory()->create([
-            'shareable_type' => NameGeneration::class,
-            'shareable_id' => $nameGeneration->id,
+            'shareable_type' => LogoGeneration::class,
+            'shareable_id' => $logoGeneration->id,
             'user_id' => $user->id,
         ]);
 
@@ -86,25 +86,25 @@ describe('Share Model', function (): void {
 
     it('has polymorphic relationship to shareable models', function (): void {
         $user = User::factory()->create();
-        $nameGeneration = NameGeneration::factory()->create(['user_id' => $user->id]);
+        $logoGeneration = LogoGeneration::factory()->create(['user_id' => $user->id]);
 
         $share = Share::factory()->create([
-            'shareable_type' => NameGeneration::class,
-            'shareable_id' => $nameGeneration->id,
+            'shareable_type' => LogoGeneration::class,
+            'shareable_id' => $logoGeneration->id,
             'user_id' => $user->id,
         ]);
 
-        expect($share->shareable)->toBeInstanceOf(NameGeneration::class);
-        expect($share->shareable->id)->toBe($nameGeneration->id);
+        expect($share->shareable)->toBeInstanceOf(LogoGeneration::class);
+        expect($share->shareable->id)->toBe($logoGeneration->id);
     });
 
     it('has many share accesses for analytics', function (): void {
         $user = User::factory()->create();
-        $nameGeneration = NameGeneration::factory()->create(['user_id' => $user->id]);
+        $logoGeneration = LogoGeneration::factory()->create(['user_id' => $user->id]);
 
         $share = Share::factory()->create([
-            'shareable_type' => NameGeneration::class,
-            'shareable_id' => $nameGeneration->id,
+            'shareable_type' => LogoGeneration::class,
+            'shareable_id' => $logoGeneration->id,
             'user_id' => $user->id,
         ]);
 
@@ -121,7 +121,7 @@ describe('Share Model', function (): void {
 
         $url = $share->getShareUrl();
 
-        expect($url)->toContain('/shared/');
+        expect($url)->toContain('/share/');
         expect($url)->toContain($share->uuid);
         expect($url)->toStartWith('http');
     });
@@ -158,7 +158,10 @@ describe('Share Model', function (): void {
     });
 
     it('records share access and updates view count', function (): void {
-        $share = Share::factory()->create(['view_count' => 5]);
+        $share = Share::factory()->create([
+            'view_count' => 5,
+            'last_viewed_at' => null,
+        ]);
 
         $share->recordAccess('192.168.1.1', 'Mozilla/5.0', 'https://example.com');
 
@@ -221,7 +224,7 @@ describe('Share Model', function (): void {
     it('has proper fillable attributes', function (): void {
         $fillable = [
             'uuid', 'shareable_type', 'shareable_id', 'user_id', 'title',
-            'description', 'share_type', 'password', 'expires_at', 'settings',
+            'description', 'share_type', 'password', 'expires_at', 'is_active', 'settings', 'last_viewed_at',
         ];
 
         $share = new Share;

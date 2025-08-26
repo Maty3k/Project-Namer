@@ -26,6 +26,9 @@
 
         {{ $slot }}
 
+        <!-- Toast Notifications -->
+        <x-toast-container />
+
         @fluxScripts
     </body>
 </html>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ShareRequest;
 use App\Http\Resources\ShareResource;
 use App\Models\Share;
 use App\Services\ShareService;
@@ -50,18 +51,9 @@ final class ShareController extends Controller
     /**
      * Create a new share.
      */
-    public function store(Request $request): JsonResponse
+    public function store(ShareRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'shareable_type' => ['required', 'string'],
-            'shareable_id' => ['required', 'integer', 'exists:logo_generations,id'],
-            'title' => ['nullable', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:1000'],
-            'share_type' => ['required', 'in:public,password_protected'],
-            'password' => ['required_if:share_type,password_protected', 'string', 'min:6'],
-            'expires_at' => ['nullable', 'date', 'after:now'],
-            'settings' => ['nullable', 'array'],
-        ]);
+        $validated = $request->getSanitizedData();
 
         try {
             $share = $this->shareService->createShare($request->user(), $validated);
@@ -95,17 +87,11 @@ final class ShareController extends Controller
     /**
      * Update a share.
      */
-    public function update(Request $request, Share $share): JsonResponse
+    public function update(ShareRequest $request, Share $share): JsonResponse
     {
         Gate::authorize('update', $share);
 
-        $validated = $request->validate([
-            'title' => ['sometimes', 'string', 'max:255'],
-            'description' => ['sometimes', 'string', 'max:1000'],
-            'expires_at' => ['sometimes', 'nullable', 'date', 'after:now'],
-            'is_active' => ['sometimes', 'boolean'],
-            'settings' => ['sometimes', 'array'],
-        ]);
+        $validated = $request->getSanitizedData();
 
         $updatedShare = $this->shareService->updateShare($share, $validated);
 

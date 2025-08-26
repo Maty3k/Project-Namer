@@ -182,8 +182,8 @@ describe('Export Model', function (): void {
 
         foreach ($validTypes as $type) {
             $export = Export::create([
-                'exportable_type' => NameGeneration::class,
-                'exportable_id' => $nameGeneration->id,
+                'exportable_type' => LogoGeneration::class,
+                'exportable_id' => $logoGeneration->id,
                 'user_id' => $user->id,
                 'export_type' => $type,
             ]);
@@ -203,17 +203,22 @@ describe('Export Model', function (): void {
     });
 
     it('generates appropriate filename based on export type', function (): void {
-        $nameGeneration = NameGeneration::factory()->create(['business_idea' => 'My Startup Idea']);
+        $user = User::factory()->create();
+        $logoGeneration = LogoGeneration::factory()->create([
+            'user_id' => $user->id,
+            'business_name' => 'minimalist-company',
+        ]);
 
         $pdfExport = Export::factory()->create([
-            'exportable_type' => NameGeneration::class,
-            'exportable_id' => $nameGeneration->id,
+            'exportable_type' => LogoGeneration::class,
+            'exportable_id' => $logoGeneration->id,
             'export_type' => 'pdf',
+            'user_id' => $user->id,
         ]);
 
         $filename = $pdfExport->generateFilename();
 
-        expect($filename)->toContain('my-startup-idea');
+        expect($filename)->toContain('minimalist-company');
         expect($filename)->toEndWith('.pdf');
         expect($filename)->toMatch('/^\d{4}-\d{2}-\d{2}_/'); // Date prefix
     });
@@ -221,7 +226,7 @@ describe('Export Model', function (): void {
     it('has proper fillable attributes', function (): void {
         $fillable = [
             'uuid', 'exportable_type', 'exportable_id', 'user_id', 'export_type',
-            'file_path', 'file_size', 'expires_at',
+            'file_path', 'file_size', 'expires_at', 'last_downloaded_at',
         ];
 
         $export = new Export;

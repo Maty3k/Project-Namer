@@ -48,6 +48,7 @@ describe('Error Handling and User Experience', function (): void {
                 ->postJson('/api/logos/generate', [
                     'business_name' => 'TechCorp',
                     'business_description' => 'Software company',
+                    'session_id' => 'test-session',
                 ]);
 
             $response->assertStatus(503)
@@ -63,6 +64,7 @@ describe('Error Handling and User Experience', function (): void {
                 ->postJson('/api/logos/generate', [
                     'business_name' => 'TechCorp',
                     'business_description' => 'Software company',
+                    'session_id' => 'test-session',
                     'use_fallback' => true,
                 ]);
 
@@ -111,6 +113,7 @@ describe('Error Handling and User Experience', function (): void {
                 ->postJson('/api/logos/generate', [
                     'business_name' => str_repeat('a', 256),
                     'business_description' => 'Short',
+                    'session_id' => 'test-session',
                 ]);
 
             $response->assertStatus(422)
@@ -125,6 +128,7 @@ describe('Error Handling and User Experience', function (): void {
                 ->postJson('/api/logos/generate', [
                     'business_name' => 'TechCorp',
                     'business_description' => 'A technology company',
+                    'session_id' => 'test-session',
                     'style' => 'invalid_style',
                 ]);
 
@@ -204,6 +208,7 @@ describe('Error Handling and User Experience', function (): void {
                 ->postJson('/api/logos/generate', [
                     'business_name' => 'TechCorp',
                     'business_description' => 'Software development company',
+                    'session_id' => 'test-session',
                 ]);
 
             $response->assertStatus(202);
@@ -300,6 +305,7 @@ describe('Error Handling and User Experience', function (): void {
                 ->postJson('/api/logos/generate', [
                     'business_name' => 'TechCorp',
                     'business_description' => 'Software company',
+                    'session_id' => 'test-session',
                     'use_fallback' => true,
                 ]);
 
@@ -389,6 +395,7 @@ describe('Error Handling and User Experience', function (): void {
                 ->postJson('/api/logos/generate', [
                     'business_name' => 'TechCorp',
                     'business_description' => 'Software company',
+                    'session_id' => 'test-session',
                 ]);
 
             $response->assertStatus(503)
@@ -406,6 +413,7 @@ describe('Error Handling and User Experience', function (): void {
                 ->postJson('/api/logos/generate', [
                     'business_name' => 'TechCorp',
                     'business_description' => 'Software company',
+                    'session_id' => 'test-session',
                     'count' => 10,
                 ]);
 
@@ -423,6 +431,7 @@ describe('Error Handling and User Experience', function (): void {
             $response = $this->actingAs($this->user)
                 ->postJson('/api/logos/generate', [
                     'business_name' => '',
+                    'session_id' => 'test-session',
                 ]);
 
             $response->assertStatus(422)
@@ -441,6 +450,7 @@ describe('Error Handling and User Experience', function (): void {
             $response = $this->actingAs($this->user)
                 ->postJson('/api/logos/generate', [
                     'business_name' => 'a',
+                    'session_id' => 'test-session',
                 ]);
 
             $response->assertStatus(422)

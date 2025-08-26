@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\GeneratedLogo;
-use App\Models\LogoColorVariant;
+use App\Http\Requests\SharePasswordRequest;
 use App\Models\Share;
 use App\Services\ShareService;
 use Illuminate\Http\JsonResponse;
@@ -78,16 +77,14 @@ final class PublicShareController extends Controller
     /**
      * Authenticate password-protected share.
      */
-    public function authenticate(Request $request, string $uuid): RedirectResponse
+    public function authenticate(SharePasswordRequest $request, string $uuid): RedirectResponse
     {
-        $request->validate([
-            'password' => ['required', 'string'],
-        ]);
+        $password = $request->getSanitizedPassword();
 
-        $validation = $this->shareService->validateShareAccess($uuid, $request->password);
+        $validation = $this->shareService->validateShareAccess($uuid, $password);
 
         if (! $validation['success']) {
-            return back()->withErrors([
+            return redirect()->route('public-share.show', $uuid)->withErrors([
                 'password' => $validation['error'],
             ]);
         }
@@ -168,7 +165,7 @@ final class PublicShareController extends Controller
         }
 
         $data = [
-            'type' => class_basename($share->shareable_type),
+            'type' => \Illuminate\Support\Str::snake(class_basename($share->shareable_type)),
             'id' => $share->shareable_id,
         ];
 
@@ -187,21 +184,41 @@ final class PublicShareController extends Controller
             if ($logoGeneration->generatedLogos()->exists()) {
                 $logoGeneration->load('generatedLogos.colorVariants');
 
-                $data['generated_logos'] = $logoGeneration->generatedLogos->map(fn (GeneratedLogo $logo) => [
-                    'id' => $logo->id,
-                    'style' => $logo->style,
-                    'prompt' => $logo->prompt_used,
-                    'local_path' => $logo->original_file_path,
-                    'color_variants' => $logo->colorVariants->map(fn (LogoColorVariant $variant) => [
-                        'id' => $variant->id,
-                        'color_scheme' => $variant->color_scheme,
-                        'file_path' => $variant->file_path,
-                        'is_original' => $variant->color_scheme === 'original',
-                    ]),
-                ]);
+                $logos = [];
+                foreach ($logoGeneration->generatedLogos as $logo) {
+                    $colorVariants = [];
+                    foreach ($logo->colorVariants as $variant) {
+                        $colorVariants[] = [
+                            'id' => $variant->id,
+                            'color_scheme' => $variant->color_scheme,
+                            'preview_url' => $this->getAssetUrl($variant->file_path),
+                            'download_url' => $this->getAssetUrl($variant->file_path),
+                            'is_original' => $variant->color_scheme === 'original',
+                        ];
+                    }
+
+                    $logos[] = [
+                        'id' => $logo->id,
+                        'style' => $logo->style,
+                        'prompt' => $logo->prompt_used,
+                        'preview_url' => $this->getAssetUrl($logo->original_file_path),
+                        'download_url' => $this->getAssetUrl($logo->original_file_path),
+                        'color_variants' => $colorVariants,
+                    ];
+                }
+
+                $data['logos'] = $logos;
             }
         }
 
         return $data;
+    }
+
+    /**
+     * Get asset URL for a file path, handling nullable paths.
+     */
+    private function getAssetUrl(?string $filePath): ?string
+    {
+        return $filePath !== null ? asset("storage/{$filePath}") : null;
     }
 }

@@ -81,11 +81,18 @@ final class Share extends Model
         'share_type',
         'password',
         'expires_at',
+        'is_active',
         'settings',
+        'last_viewed_at',
     ];
 
     protected $hidden = [
         'password_hash',
+    ];
+
+    protected $attributes = [
+        'is_active' => true,
+        'view_count' => 0,
     ];
 
     protected static function boot(): void

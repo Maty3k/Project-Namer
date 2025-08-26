@@ -13,7 +13,7 @@
             </flux:tab>
         @endif
         
-        @if($showLogoGeneration && $currentLogoGeneration)
+        @if($showLogoGeneration && $this->currentLogoGeneration)
             <flux:tab name="logos" class="flex items-center gap-2">
                 <flux:icon.photo class="size-4" />
                 Logos
@@ -365,12 +365,12 @@
         @endif
 
         {{-- Logo Generation Tab --}}
-        @if($showLogoGeneration && $currentLogoGeneration)
+        @if($showLogoGeneration && $this->currentLogoGeneration)
             <flux:tab.panel name="logos" class="flex-1">
-                @if($activeTab === 'logos' && $currentLogoGeneration->status === 'processing')
+                @if($activeTab === 'logos' && $this->currentLogoGeneration->status === 'processing')
                     <div wire:poll.5000ms="refreshLogoStatus" class="hidden"></div>
                 @endif
-                <livewire:logo-gallery :logoGenerationId="$currentLogoGeneration->id" />
+                <livewire:logo-gallery :logoGenerationId="$this->currentLogoGeneration->id" />
             </flux:tab.panel>
         @endif
 

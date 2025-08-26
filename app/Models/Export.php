@@ -29,6 +29,7 @@ use Illuminate\Support\Str;
  * @property \Illuminate\Support\Carbon|null $expires_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $last_downloaded_at
  * @property-read \Illuminate\Database\Eloquent\Model $exportable
  * @property-read \App\Models\User|null $user
  *
@@ -48,6 +49,7 @@ use Illuminate\Support\Str;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereFilePath($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereFileSize($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereLastDownloadedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereUuid($value)
@@ -68,6 +70,7 @@ final class Export extends Model
         'file_path',
         'file_size',
         'expires_at',
+        'last_downloaded_at',
     ];
 
     protected $attributes = [
@@ -234,6 +237,7 @@ final class Export extends Model
     {
         return [
             'expires_at' => 'datetime',
+            'last_downloaded_at' => 'datetime',
             'file_size' => 'integer',
             'download_count' => 'integer',
             'exportable_id' => 'integer',

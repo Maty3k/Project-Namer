@@ -25,13 +25,15 @@ return Application::configure(basePath: dirname(__DIR__))
         // Handle custom logo generation exceptions
         $exceptions->render(function (\App\Exceptions\LogoGenerationException $e, $request) {
             if ($request->expectsJson() || str_contains((string) $request->path(), 'api/')) {
-                $response = [
-                    'message' => $e->getMessage(),
-                    'error_code' => $e->getErrorCode(),
-                ];
+                $response = $e->toArray();
 
-                if ($e->getRetryAfter()) {
-                    $response['retry_after'] = $e->getRetryAfter();
+                // Add request context for debugging
+                if (app()->environment(['local', 'testing'])) {
+                    $response['debug'] = [
+                        'path' => $request->path(),
+                        'method' => $request->method(),
+                        'user_agent' => $request->userAgent(),
+                    ];
                 }
 
                 return response()->json($response, $e->getCode());
