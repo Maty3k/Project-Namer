@@ -11,6 +11,9 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
+    /* Custom Responsive Breakpoints */
+    --breakpoint-xs: 400px;
+
     --color-zinc-50: #fafafa;
     --color-zinc-100: #f5f5f5;
     --color-zinc-200: #e5e5e5;
@@ -50,6 +53,14 @@
     --color-accent: var(--color-green-600);
     --color-accent-content: var(--color-green-600);
     --color-accent-foreground: var(--color-white);
+
+    /* Modern Animation Framework */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --duration-fast: 200ms;
+    --duration-normal: 300ms;
+    --duration-slow: 500ms;
 }
 
 @layer theme {
@@ -69,6 +80,27 @@
     ::file-selector-button {
         border-color: var(--color-gray-200, currentColor);
     }
+
+    /* Modern Animation Base */
+    * {
+        transition-timing-function: var(--ease-out);
+        transition-duration: var(--duration-fast);
+    }
+
+    /* Respect user motion preferences */
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        ::before,
+        ::after {
+            animation-delay: -1ms !important;
+            animation-duration: 1ms !important;
+            animation-iteration-count: 1 !important;
+            background-attachment: initial !important;
+            scroll-behavior: auto !important;
+            transition-duration: 0s !important;
+            transition-delay: 0s !important;
+        }
+    }
 }
 
 [data-flux-field]:not(ui-radio, ui-checkbox) {
@@ -83,6 +115,189 @@ input:focus[data-flux-control],
 textarea:focus[data-flux-control],
 select:focus[data-flux-control] {
     @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
+}
+
+/* Modern UI Components */
+@layer components {
+    
+    /* Glass Morphism Effects */
+    .glass {
+        @apply backdrop-blur-xl bg-white/10 border border-white/20;
+    }
+    
+    .glass-dark {
+        @apply backdrop-blur-xl bg-black/10 border border-white/10;
+    }
+
+    /* Soft Shadows System */
+    .shadow-soft {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .shadow-soft-lg {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+    
+    .shadow-soft-xl {
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Modern Button Animations */
+    .btn-modern {
+        @apply transform transition-all duration-300 ease-out;
+        @apply hover:scale-105 active:scale-95;
+        will-change: transform;
+    }
+    
+    .btn-modern:hover {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Loading States */
+    .loading-skeleton {
+        @apply animate-pulse bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200;
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+    }
+    
+    .dark .loading-skeleton {
+        @apply from-gray-800 via-gray-700 to-gray-800;
+    }
+
+    /* Micro-interactions */
+    .interactive {
+        @apply transition-all duration-300 ease-out;
+        @apply hover:translate-y-[-2px];
+        will-change: transform;
+    }
+    
+    .interactive:hover {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Focus States */
+    .focus-modern {
+        @apply focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-offset-2;
+        @apply focus:ring-offset-white dark:focus:ring-offset-gray-900;
+        transition: box-shadow var(--duration-fast) var(--ease-out);
+    }
+
+    /* Fade In Animations */
+    .fade-in {
+        animation: fadeIn var(--duration-normal) var(--ease-out) forwards;
+    }
+    
+    .slide-up {
+        animation: slideUp var(--duration-normal) var(--ease-out) forwards;
+    }
+    
+    .scale-in {
+        animation: scaleIn var(--duration-normal) var(--ease-bounce) forwards;
+    }
+}
+
+/* Mobile Touch Enhancement */
+@layer components {
+    /* Touch-friendly interactions */
+    .touch-action-manipulation {
+        touch-action: manipulation;
+    }
+    
+    /* WCAG 44px minimum touch target */
+    .touch-target {
+        min-height: 44px;
+        min-width: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Mobile button sizing */
+    @media (max-width: 640px) {
+        .btn-mobile {
+            min-height: 48px;
+            padding: 12px 24px;
+            font-size: 16px;
+            line-height: 1.2;
+        }
+        
+        .btn-mobile-sm {
+            min-height: 44px;
+            padding: 10px 20px;
+            font-size: 14px;
+            line-height: 1.2;
+        }
+    }
+    
+    /* Mobile-specific animations */
+    @media (max-width: 640px) {
+        .mobile-scale {
+            transform: scale(1.05);
+            transition: transform 0.2s ease-out;
+        }
+        
+        .mobile-scale:active {
+            transform: scale(0.98);
+        }
+    }
+    
+    /* Swipe gesture indicators */
+    .swipeable {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .swipeable::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: 1rem;
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border-left: 6px solid currentColor;
+        border-top: 4px solid transparent;
+        border-bottom: 4px solid transparent;
+        opacity: 0.3;
+        transition: opacity 0.3s ease;
+    }
+    
+    .swipeable:hover::after {
+        opacity: 0.6;
+    }
+}
+
+/* Keyframe Animations */
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from { 
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to { 
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 /* \[:where(&)\]:size-4 {

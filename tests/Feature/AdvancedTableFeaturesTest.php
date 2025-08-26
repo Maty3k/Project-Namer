@@ -19,20 +19,20 @@ describe('Advanced Table Features', function (): void {
                         'name' => 'Zebra Corp',
                         'domains' => [
                             'zebracorp.com' => ['status' => 'available', 'available' => true],
-                        ]
+                        ],
                     ],
                     [
                         'name' => 'Alpha Solutions',
                         'domains' => [
                             'alphasolutions.com' => ['status' => 'available', 'available' => true],
-                        ]
+                        ],
                     ],
                     [
                         'name' => 'Beta Industries',
                         'domains' => [
                             'betaindustries.com' => ['status' => 'unavailable', 'available' => false],
-                        ]
-                    ]
+                        ],
+                    ],
                 ]);
 
             $component->call('sortTable', 'name', 'asc');
@@ -52,20 +52,20 @@ describe('Advanced Table Features', function (): void {
                         'name' => 'Alpha Solutions',
                         'domains' => [
                             'alphasolutions.com' => ['status' => 'available', 'available' => true],
-                        ]
+                        ],
                     ],
                     [
                         'name' => 'Beta Industries',
                         'domains' => [
                             'betaindustries.com' => ['status' => 'unavailable', 'available' => false],
-                        ]
+                        ],
                     ],
                     [
                         'name' => 'Zebra Corp',
                         'domains' => [
                             'zebracorp.com' => ['status' => 'available', 'available' => true],
-                        ]
-                    ]
+                        ],
+                    ],
                 ]);
 
             $component->call('sortTable', 'name', 'desc');
@@ -85,20 +85,20 @@ describe('Advanced Table Features', function (): void {
                         'name' => 'Very Long Business Name Corp',
                         'domains' => [
                             'verylongbusinessnamecorp.com' => ['status' => 'available', 'available' => true],
-                        ]
+                        ],
                     ],
                     [
                         'name' => 'Short',
                         'domains' => [
                             'short.com' => ['status' => 'unavailable', 'available' => false],
-                        ]
+                        ],
                     ],
                     [
                         'name' => 'Medium Name',
                         'domains' => [
                             'mediumname.com' => ['status' => 'available', 'available' => true],
-                        ]
-                    ]
+                        ],
+                    ],
                 ]);
 
             $component->call('sortTable', 'length', 'asc');
@@ -120,7 +120,7 @@ describe('Advanced Table Features', function (): void {
                             'availablecorp.com' => ['status' => 'available', 'available' => true],
                             'availablecorp.net' => ['status' => 'available', 'available' => true],
                             'availablecorp.org' => ['status' => 'available', 'available' => true],
-                        ]
+                        ],
                     ],
                     [
                         'name' => 'Unavailable Inc',
@@ -128,7 +128,7 @@ describe('Advanced Table Features', function (): void {
                             'unavailableinc.com' => ['status' => 'unavailable', 'available' => false],
                             'unavailableinc.net' => ['status' => 'unavailable', 'available' => false],
                             'unavailableinc.org' => ['status' => 'unavailable', 'available' => false],
-                        ]
+                        ],
                     ],
                     [
                         'name' => 'Mixed Domains',
@@ -136,8 +136,8 @@ describe('Advanced Table Features', function (): void {
                             'mixeddomains.com' => ['status' => 'available', 'available' => true],
                             'mixeddomains.net' => ['status' => 'unavailable', 'available' => false],
                             'mixeddomains.org' => ['status' => 'available', 'available' => true],
-                        ]
-                    ]
+                        ],
+                    ],
                 ]);
 
             $component->call('sortTable', 'availability', 'desc');
@@ -154,20 +154,20 @@ describe('Advanced Table Features', function (): void {
                 ->set('domainResults', [
                     [
                         'name' => 'Zebra Corp',
-                        'domains' => ['zebracorp.com' => ['status' => 'available', 'available' => true]]
+                        'domains' => ['zebracorp.com' => ['status' => 'available', 'available' => true]],
                     ],
                     [
                         'name' => 'Alpha Solutions',
-                        'domains' => ['alphasolutions.com' => ['status' => 'available', 'available' => true]]
-                    ]
+                        'domains' => ['alphasolutions.com' => ['status' => 'available', 'available' => true]],
+                    ],
                 ]);
 
             $component->call('sortTable', 'name', 'asc');
-            
+
             // Add new result
             $component->set('domainResults', array_merge($component->get('domainResults'), [[
                 'name' => 'Beta Industries',
-                'domains' => ['betaindustries.com' => ['status' => 'available', 'available' => true]]
+                'domains' => ['betaindustries.com' => ['status' => 'available', 'available' => true]],
             ]]));
 
             $component->call('applySorting');
@@ -189,22 +189,22 @@ describe('Advanced Table Features', function (): void {
                         'domains' => [
                             'availablecorp.com' => ['status' => 'available', 'available' => true],
                             'availablecorp.net' => ['status' => 'unavailable', 'available' => false],
-                        ]
+                        ],
                     ],
                     [
                         'name' => 'Unavailable Inc',
                         'domains' => [
                             'unavailableinc.com' => ['status' => 'unavailable', 'available' => false],
                             'unavailableinc.net' => ['status' => 'available', 'available' => true],
-                        ]
+                        ],
                     ],
                     [
                         'name' => 'Mixed Domains',
                         'domains' => [
                             'mixeddomains.com' => ['status' => 'available', 'available' => true],
                             'mixeddomains.net' => ['status' => 'available', 'available' => true],
-                        ]
-                    ]
+                        ],
+                    ],
                 ]);
 
             $component->call('filterTable', 'domain_status', 'com_available');
@@ -222,16 +222,16 @@ describe('Advanced Table Features', function (): void {
                 ->set('domainResults', [
                     [
                         'name' => 'Short',
-                        'domains' => ['short.com' => ['status' => 'available', 'available' => true]]
+                        'domains' => ['short.com' => ['status' => 'available', 'available' => true]],
                     ],
                     [
                         'name' => 'Medium Length Name',
-                        'domains' => ['mediumlengthname.com' => ['status' => 'available', 'available' => true]]
+                        'domains' => ['mediumlengthname.com' => ['status' => 'available', 'available' => true]],
                     ],
                     [
                         'name' => 'Very Long Business Name Corporation',
-                        'domains' => ['verylongbusinessnamecorporation.com' => ['status' => 'available', 'available' => true]]
-                    ]
+                        'domains' => ['verylongbusinessnamecorporation.com' => ['status' => 'available', 'available' => true]],
+                    ],
                 ]);
 
             $component->call('filterTable', 'name_length', 'short'); // 1-10 chars
@@ -258,7 +258,7 @@ describe('Advanced Table Features', function (): void {
                             'tripleavailable.com' => ['status' => 'available', 'available' => true],
                             'tripleavailable.net' => ['status' => 'available', 'available' => true],
                             'tripleavailable.org' => ['status' => 'available', 'available' => true],
-                        ]
+                        ],
                     ],
                     [
                         'name' => 'Com Only',
@@ -266,7 +266,7 @@ describe('Advanced Table Features', function (): void {
                             'comonly.com' => ['status' => 'available', 'available' => true],
                             'comonly.net' => ['status' => 'unavailable', 'available' => false],
                             'comonly.org' => ['status' => 'unavailable', 'available' => false],
-                        ]
+                        ],
                     ],
                     [
                         'name' => 'None Available',
@@ -274,8 +274,8 @@ describe('Advanced Table Features', function (): void {
                             'noneavailable.com' => ['status' => 'unavailable', 'available' => false],
                             'noneavailable.net' => ['status' => 'unavailable', 'available' => false],
                             'noneavailable.org' => ['status' => 'unavailable', 'available' => false],
-                        ]
-                    ]
+                        ],
+                    ],
                 ]);
 
             $component->call('filterTable', 'domain_status', 'all_available');
@@ -292,16 +292,16 @@ describe('Advanced Table Features', function (): void {
                 ->set('domainResults', [
                     [
                         'name' => 'Zebra Available',
-                        'domains' => ['zebraavailable.com' => ['status' => 'available', 'available' => true]]
+                        'domains' => ['zebraavailable.com' => ['status' => 'available', 'available' => true]],
                     ],
                     [
                         'name' => 'Alpha Available',
-                        'domains' => ['alphaavailable.com' => ['status' => 'available', 'available' => true]]
+                        'domains' => ['alphaavailable.com' => ['status' => 'available', 'available' => true]],
                     ],
                     [
                         'name' => 'Beta Unavailable',
-                        'domains' => ['betaunavailable.com' => ['status' => 'unavailable', 'available' => false]]
-                    ]
+                        'domains' => ['betaunavailable.com' => ['status' => 'unavailable', 'available' => false]],
+                    ],
                 ]);
 
             $component->call('filterTable', 'domain_status', 'com_available');
@@ -320,12 +320,12 @@ describe('Advanced Table Features', function (): void {
                 ->set('domainResults', [
                     [
                         'name' => 'Test Name 1',
-                        'domains' => ['testname1.com' => ['status' => 'available', 'available' => true]]
+                        'domains' => ['testname1.com' => ['status' => 'available', 'available' => true]],
                     ],
                     [
                         'name' => 'Test Name 2',
-                        'domains' => ['testname2.com' => ['status' => 'unavailable', 'available' => false]]
-                    ]
+                        'domains' => ['testname2.com' => ['status' => 'unavailable', 'available' => false]],
+                    ],
                 ]);
 
             $component->call('filterTable', 'domain_status', 'com_available');
@@ -343,7 +343,7 @@ describe('Advanced Table Features', function (): void {
                 ->set('businessDescription', 'test business')
                 ->set('mode', 'creative')
                 ->set('domainResults', [
-                    ['name' => 'Test Name', 'domains' => ['test.com' => ['status' => 'available', 'available' => true]]]
+                    ['name' => 'Test Name', 'domains' => ['test.com' => ['status' => 'available', 'available' => true]]],
                 ])
                 ->call('sortTable', 'name', 'asc');
 
@@ -357,7 +357,7 @@ describe('Advanced Table Features', function (): void {
                 ->set('businessDescription', 'test business')
                 ->set('mode', 'creative')
                 ->set('domainResults', [
-                    ['name' => 'Test Name', 'domains' => ['test.com' => ['status' => 'available', 'available' => true]]]
+                    ['name' => 'Test Name', 'domains' => ['test.com' => ['status' => 'available', 'available' => true]]],
                 ])
                 ->call('filterTable', 'domain_status', 'com_available');
 
@@ -371,7 +371,7 @@ describe('Advanced Table Features', function (): void {
                 ->set('businessDescription', 'test business')
                 ->set('mode', 'creative')
                 ->set('domainResults', [
-                    ['name' => 'Test Name', 'domains' => ['test.com' => ['status' => 'available', 'available' => true]]]
+                    ['name' => 'Test Name', 'domains' => ['test.com' => ['status' => 'available', 'available' => true]]],
                 ]);
 
             $component->call('sortTable', 'name', 'desc');
@@ -402,8 +402,8 @@ describe('Advanced Table Features', function (): void {
                 $largeDataset[] = [
                     'name' => "Business Name {$i}",
                     'domains' => [
-                        "businessname{$i}.com" => ['status' => $i % 2 === 0 ? 'available' : 'unavailable', 'available' => $i % 2 === 0]
-                    ]
+                        "businessname{$i}.com" => ['status' => $i % 2 === 0 ? 'available' : 'unavailable', 'available' => $i % 2 === 0],
+                    ],
                 ];
             }
 
