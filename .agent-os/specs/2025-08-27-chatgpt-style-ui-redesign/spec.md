@@ -1,54 +1,54 @@
 # Spec Requirements Document
 
-> Spec: ChatGPT-Style UI Redesign
+> Spec: Dashboard Textarea & ChatGPT-Style Sidebar
 > Created: 2025-08-27
 > Status: Planning
 
 ## Overview
 
-Implement a complete UI redesign following a ChatGPT-style interface pattern with persistent sidebar navigation, session-based idea management, and streamlined workflow. The interface will provide a familiar, intuitive experience where users can create new ideas, iterate on them, and easily navigate between past sessions through a persistent left sidebar.
+Fix the dashboard to actually show a textarea where users can immediately type in their business idea, and implement ChatGPT-style sidebar navigation for managing multiple ideas. The dashboard must be ready for input the moment it loads, with the textarea auto-focused and prominently displayed.
 
 ## User Stories
 
-### New User Journey
+### Dashboard Input Flow
 
-As a new user, I want to land on a dashboard that's immediately ready for input, so that I can start generating names without any friction.
+As a user, I want to land on a dashboard with a prominent textarea ready for my input, so that I can immediately start typing my business idea.
 
-When I visit the application for the first time, I'm presented with a clean interface featuring a focused textarea for entering my business idea. The textarea is automatically focused on page load, inviting me to begin typing immediately. After submitting my idea, a new "session" is created with an auto-generated slug, and I'm redirected to a dedicated page for that idea where I can generate names, create logos, and iterate on the concept. This page becomes the permanent home for this idea, allowing me to return at any time to continue where I left off.
+The dashboard page shows a large, centered textarea with placeholder text like "Describe your business idea..." that is automatically focused when the page loads. No clicking required - I can just start typing. When I submit my idea (via Enter key or button), a new idea record is created with an auto-generated slug, and I'm taken to that idea's dedicated page where I can generate names, create logos, and iterate.
 
-### Returning User Workflow
+### Sidebar Navigation Flow  
 
-As a returning user with existing ideas, I want to easily navigate between my past ideas and create new ones, so that I can manage multiple naming projects efficiently.
+As a user with multiple ideas, I want a ChatGPT-style sidebar on the left that shows all my past ideas, so I can easily switch between them.
 
-The left sidebar displays all my previous ideas in a scrollable list, similar to ChatGPT's conversation history. Each idea shows a preview title derived from the initial input. I can click any past idea to return to its dedicated page with all previous generations and results intact. When I want to start fresh, I click the prominent "New Idea" button at the top of the sidebar, which takes me back to the clean dashboard input interface.
+The sidebar lists all my ideas chronologically (newest first) with a title preview. Clicking any idea in the sidebar takes me to its dedicated page with all previous work intact. At the top of the sidebar is a "New Idea" button that returns me to the dashboard with a fresh, empty, auto-focused textarea.
 
-### Power User Session Management
+### Persistent Idea Pages
 
-As a power user with many ideas, I want efficient session management capabilities, so that I can organize and navigate my extensive idea history.
+As a user, I want each idea to have its own permanent page that maintains all my work, so I can pick up where I left off.
 
-The sidebar supports infinite scrolling to accommodate unlimited ideas. I can search through my ideas, rename them for better organization, and potentially archive or delete old sessions. The interface remains performant even with hundreds of saved ideas, using virtualization techniques similar to modern chat applications.
+Each idea page (accessible via /idea/{slug}) preserves all generated names, logos, and other work. The page shows the idea description at the top with options to generate names, generate logos, etc. All previous generations are displayed and remain available when I return to the page later.
 
 ## Spec Scope
 
-1. **Dashboard with Auto-Focus Input** - Clean landing page with textarea that auto-focuses on load, ready for immediate idea input
-2. **Session-Based Idea Management** - Each submitted idea creates a persistent session with auto-generated slug and dedicated page
-3. **ChatGPT-Style Sidebar Navigation** - Left sidebar showing all past ideas with infinite scroll, search, and session management
-4. **Dedicated Idea Pages** - Persistent pages for each idea maintaining state for name generation, logo creation, and all iterations
-5. **Seamless Navigation Flow** - "New Idea" button for returning to dashboard, click-to-navigate for past sessions
+1. **Working Dashboard Textarea** - A prominent, centered textarea on the dashboard that auto-focuses on page load and accepts idea input
+2. **Idea Submission & Redirect** - Form submission creates an idea with auto-generated slug and redirects to the idea's page
+3. **ChatGPT-Style Sidebar** - Left sidebar listing all ideas with "New Idea" button at top, clicking ideas navigates to their pages
+4. **Dedicated Idea Pages** - Individual pages at /idea/{slug} that show the idea and all generation options/history
+5. **Persistent State** - Each idea page maintains all previous work (generated names, logos, etc.)
 
 ## Out of Scope
 
-- User authentication and multi-user support (maintaining current single-user approach)
-- Real-time collaboration features
-- Mobile app or native application development
-- Import/export of ideas from external sources
-- Advanced analytics or reporting on idea performance
+- Mobile-specific optimizations (FluxUI handles responsive design)
+- Accessibility features (handled by FluxUI and Laravel starter)
+- Complex performance optimizations (framework handles this)
+- Real-time features or WebSockets
+- Multi-user support
 
 ## Expected Deliverable
 
-1. Fully functional ChatGPT-style interface with persistent sidebar showing all past ideas and supporting infinite scroll
-2. Dashboard page that auto-focuses textarea on load and accepts new idea submissions
-3. Individual idea pages with stable URLs that preserve all generation history and allow continued iteration on return visits
+1. Dashboard at `/` with a working textarea that auto-focuses on load and allows users to type in their business idea
+2. Submission of the textarea creates an idea record and redirects to `/idea/{slug}`
+3. Left sidebar showing all created ideas with a "New Idea" button that returns to the dashboard
 
 ## Spec Documentation
 

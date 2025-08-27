@@ -7,82 +7,57 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
 
 ## Tasks
 
-- [ ] 1. Database Schema & Models
-  - [ ] 1.1 Write tests for Idea, IdeaGeneration, and IdeaFavorite models
-  - [ ] 1.2 Create migration for ideas, idea_generations, and idea_favorites tables
-  - [ ] 1.3 Create Idea model with relationships and scopes
-  - [ ] 1.4 Create IdeaGeneration model with relationships
-  - [ ] 1.5 Create IdeaFavorite model with relationships
-  - [ ] 1.6 Create model factories for testing
-  - [ ] 1.7 Create database seeders for development
-  - [ ] 1.8 Verify all model tests pass
+- [ ] 1. Dashboard Textarea Implementation (PRIORITY)
+  - [ ] 1.1 Write tests for dashboard textarea functionality
+  - [ ] 1.2 Create/update dashboard route to show textarea page
+  - [ ] 1.3 Create dashboard.blade.php with prominent centered textarea
+  - [ ] 1.4 Add auto-focus to textarea on page load
+  - [ ] 1.5 Add placeholder text "Describe your business idea..."
+  - [ ] 1.6 Implement character counter (2000 limit)
+  - [ ] 1.7 Create IdeaCreator Livewire component for form handling
+  - [ ] 1.8 Verify dashboard loads with working, focused textarea
 
-- [ ] 2. Core Layout & Navigation Structure
-  - [ ] 2.1 Write tests for layout components and navigation
-  - [ ] 2.2 Create AppLayout blade component with sidebar structure
-  - [ ] 2.3 Create IdeaSidebar Livewire component
-  - [ ] 2.4 Implement sidebar item display with titles and timestamps
-  - [ ] 2.5 Add "New Idea" button at top of sidebar
-  - [ ] 2.6 Implement responsive sidebar (collapsible on mobile)
-  - [ ] 2.7 Style sidebar with FluxUI Pro components
-  - [ ] 2.8 Verify all layout tests pass
+- [ ] 2. Database Setup for Ideas
+  - [ ] 2.1 Write tests for Idea model
+  - [ ] 2.2 Create migration for ideas table (id, slug, title, description, session_id, timestamps)
+  - [ ] 2.3 Create Idea model with slug generation
+  - [ ] 2.4 Create factory for testing
+  - [ ] 2.5 Implement title extraction from description
+  - [ ] 2.6 Verify all model tests pass
 
-- [ ] 3. Dashboard & Idea Creation
-  - [ ] 3.1 Write tests for dashboard and idea creation flow
-  - [ ] 3.2 Create DashboardController with index method
-  - [ ] 3.3 Create dashboard blade view with auto-focus textarea
-  - [ ] 3.4 Create IdeaCreator Livewire component
-  - [ ] 3.5 Implement idea submission with validation
-  - [ ] 3.6 Generate unique slugs for ideas
-  - [ ] 3.7 Implement redirect to idea detail page after creation
-  - [ ] 3.8 Verify all dashboard tests pass
+- [ ] 3. Idea Submission & Redirect
+  - [ ] 3.1 Write tests for idea creation flow
+  - [ ] 3.2 Implement form submission in IdeaCreator component
+  - [ ] 3.3 Generate unique slug on submission
+  - [ ] 3.4 Save idea to database
+  - [ ] 3.5 Redirect to /idea/{slug} after creation
+  - [ ] 3.6 Verify submission creates idea and redirects correctly
 
-- [ ] 4. Idea Detail Pages
-  - [ ] 4.1 Write tests for idea detail page functionality
-  - [ ] 4.2 Create IdeaController with show method
-  - [ ] 4.3 Create idea detail blade view
-  - [ ] 4.4 Create IdeaSession Livewire component
-  - [ ] 4.5 Integrate existing name generation functionality
-  - [ ] 4.6 Integrate existing logo generation functionality
-  - [ ] 4.7 Implement inline title editing
-  - [ ] 4.8 Add last_accessed_at timestamp updates
-  - [ ] 4.9 Verify all idea detail tests pass
+- [ ] 4. ChatGPT-Style Sidebar
+  - [ ] 4.1 Write tests for sidebar display
+  - [ ] 4.2 Update app layout to include left sidebar
+  - [ ] 4.3 Create IdeaSidebar Livewire component
+  - [ ] 4.4 Display all ideas in reverse chronological order
+  - [ ] 4.5 Add "New Idea" button at top linking to dashboard
+  - [ ] 4.6 Make idea items clickable to navigate
+  - [ ] 4.7 Style with FluxUI components
+  - [ ] 4.8 Verify sidebar shows all ideas and navigation works
 
-- [ ] 5. Sidebar Advanced Features
-  - [ ] 5.1 Write tests for infinite scroll and search
-  - [ ] 5.2 Implement infinite scroll in sidebar
-  - [ ] 5.3 Add search functionality to filter ideas
-  - [ ] 5.4 Implement starred/favorite system
-  - [ ] 5.5 Add keyboard navigation (arrow keys)
-  - [ ] 5.6 Implement session persistence for anonymous users
-  - [ ] 5.7 Add loading states and skeletons
-  - [ ] 5.8 Verify all advanced feature tests pass
+- [ ] 5. Individual Idea Pages
+  - [ ] 5.1 Write tests for idea detail pages
+  - [ ] 5.2 Create IdeaController with show method
+  - [ ] 5.3 Create idea/show.blade.php view
+  - [ ] 5.4 Display idea description at top of page
+  - [ ] 5.5 Integrate existing NameGenerator component
+  - [ ] 5.6 Integrate existing LogoGenerator component
+  - [ ] 5.7 Ensure all previous generations are displayed
+  - [ ] 5.8 Verify idea pages load and maintain state
 
-- [ ] 6. API Endpoints (Optional Enhancement)
-  - [ ] 6.1 Write tests for all API endpoints
-  - [ ] 6.2 Create API routes for ideas CRUD
-  - [ ] 6.3 Implement IdeaApiController
-  - [ ] 6.4 Add rate limiting middleware
-  - [ ] 6.5 Implement pagination and filtering
-  - [ ] 6.6 Add API documentation
-  - [ ] 6.7 Verify all API tests pass
-
-- [ ] 7. Performance & Polish
-  - [ ] 7.1 Write performance tests
-  - [ ] 7.2 Implement caching for frequently accessed ideas
-  - [ ] 7.3 Add database query optimization
-  - [ ] 7.4 Implement virtual scrolling for large idea lists
-  - [ ] 7.5 Add loading states and transitions
-  - [ ] 7.6 Implement error handling and user feedback
-  - [ ] 7.7 Add keyboard shortcuts (Cmd+K for search, Cmd+N for new)
-  - [ ] 7.8 Verify all performance benchmarks are met
-
-- [ ] 8. Final Integration & Testing
-  - [ ] 8.1 Run full test suite
-  - [ ] 8.2 Perform manual testing of all user flows
-  - [ ] 8.3 Test on mobile devices and different browsers
-  - [ ] 8.4 Check accessibility compliance
-  - [ ] 8.5 Performance audit with Lighthouse
-  - [ ] 8.6 Fix any remaining issues
-  - [ ] 8.7 Update documentation
-  - [ ] 8.8 Verify all tests pass with 90%+ coverage
+- [ ] 6. Polish & Testing
+  - [ ] 6.1 Test complete user flow: dashboard → create idea → redirect → sidebar navigation
+  - [ ] 6.2 Add loading states for form submission
+  - [ ] 6.3 Add validation error display
+  - [ ] 6.4 Test with multiple ideas (10+)
+  - [ ] 6.5 Ensure FluxUI styling is consistent
+  - [ ] 6.6 Run full test suite
+  - [ ] 6.7 Manual testing of all features
