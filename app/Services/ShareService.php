@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Models\Share;
 use App\Models\User;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -18,11 +19,15 @@ use Illuminate\Validation\ValidationException;
  * Provides functionality for creating public and password-protected shares,
  * validating access, recording analytics, and generating social media metadata.
  */
-final class ShareService
+final readonly class ShareService
 {
     private const RATE_LIMIT_MAX_ATTEMPTS = 10;
 
     private const RATE_LIMIT_DECAY_MINUTES = 60;
+
+    public function __construct(
+        private ShareMonitoringService $monitoringService
+    ) {}
 
     /**
      * Create a new share with validation and rate limiting.
@@ -59,11 +64,38 @@ final class ShareService
 
     /**
      * Validate share access with password authentication if required.
+     * Includes caching for frequently accessed shares.
      *
      * @return array<string, mixed>
      */
     public function validateShareAccess(string $uuid, ?string $password = null): array
     {
+        $cacheKey = "share_access:{$uuid}";
+
+        // For public shares, cache the validation result
+        if ($password === null) {
+            $cachedResult = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($uuid) {
+                $share = Share::where('uuid', $uuid)->first();
+
+                if (! $share) {
+                    return ['success' => false, 'error' => 'Share not found'];
+                }
+
+                if (! $share->is_active) {
+                    return ['success' => false, 'error' => 'Share not found or inactive'];
+                }
+
+                if ($share->isExpired()) {
+                    return ['success' => false, 'error' => 'Share has expired'];
+                }
+
+                return ['success' => true, 'share' => $share];
+            });
+
+            return $cachedResult;
+        }
+
+        // For password-protected shares, don't cache but still validate normally
         $share = Share::where('uuid', $uuid)->first();
 
         if (! $share) {
@@ -79,7 +111,8 @@ final class ShareService
         }
 
         if ($share->share_type === 'password_protected') {
-            if (! $password || ! $share->validatePassword($password)) {
+            // At this point, $password should not be null since we handled null case above
+            if (! $share->validatePassword($password ?: '')) {
                 return ['success' => false, 'error' => 'Invalid password'];
             }
         }
@@ -88,53 +121,66 @@ final class ShareService
     }
 
     /**
-     * Record access to a share with analytics data.
+     * Record access to a share with analytics data and monitoring.
      *
      * @param  array<string, mixed>  $accessData
      */
     public function recordShareAccess(Share $share, array $accessData = []): void
     {
+        // Record the access in the database
         $share->recordAccess(
             $accessData['ip_address'] ?? null,
             $accessData['user_agent'] ?? null,
             $accessData['referrer'] ?? null
         );
+
+        // Monitor the access for security patterns
+        $this->monitoringService->monitorAccess($share, $accessData);
     }
 
     /**
      * Generate social media metadata for a share.
+     * Caches metadata for frequently requested shares.
      *
      * @return array<string, string>
      */
     public function generateSocialMediaMetadata(Share $share): array
     {
-        $title = $share->title ?: 'Shared Logo Designs';
-        $description = $share->description ?: 'Check out these amazing logo designs created with our AI-powered generator.';
-        $url = $share->getShareUrl();
+        $cacheKey = "share_metadata:{$share->uuid}";
 
-        return [
-            // Open Graph tags
-            'og:title' => $title,
-            'og:description' => $description,
-            'og:url' => $url,
-            'og:type' => 'website',
-            'og:site_name' => config('app.name'),
-            'og:locale' => 'en_US',
+        return Cache::remember($cacheKey, now()->addHour(), function () use ($share) {
+            $showTitle = $share->settings['show_title'] ?? true;
+            $showDescription = $share->settings['show_description'] ?? true;
 
-            // Twitter Card tags
-            'twitter:card' => 'summary_large_image',
-            'twitter:title' => $title,
-            'twitter:description' => $description,
-            'twitter:url' => $url,
+            $title = $showTitle ? ($share->title ?: 'Shared Logo Designs') : 'Shared Logo Designs';
+            $description = $showDescription ? ($share->description ?: 'Check out these amazing logo designs created with our AI-powered generator.') : 'Check out these amazing logo designs created with our AI-powered generator.';
+            $url = $share->getShareUrl();
 
-            // Additional meta tags
-            'description' => $description,
-            'author' => $share->user->name ?? 'Anonymous',
-        ];
+            return [
+                // Open Graph tags
+                'og:title' => $title,
+                'og:description' => $description,
+                'og:url' => $url,
+                'og:type' => 'website',
+                'og:site_name' => config('app.name'),
+                'og:locale' => 'en_US',
+
+                // Twitter Card tags
+                'twitter:card' => 'summary_large_image',
+                'twitter:title' => $title,
+                'twitter:description' => $description,
+                'twitter:url' => $url,
+
+                // Additional meta tags
+                'description' => $description,
+                'author' => $share->user->name ?? 'Anonymous',
+            ];
+        });
     }
 
     /**
      * Update an existing share with new data.
+     * Clears related cache entries.
      *
      * @param  array<string, mixed>  $updateData
      */
@@ -144,15 +190,24 @@ final class ShareService
 
         $share->update($validated);
 
+        // Clear cache for this share
+        Cache::forget("share_access:{$share->uuid}");
+        Cache::forget("share_metadata:{$share->uuid}");
+
         return $share->fresh();
     }
 
     /**
      * Deactivate a share (soft delete).
+     * Clears related cache entries.
      */
     public function deactivateShare(Share $share): void
     {
         $share->update(['is_active' => false]);
+
+        // Clear cache for this share
+        Cache::forget("share_access:{$share->uuid}");
+        Cache::forget("share_metadata:{$share->uuid}");
     }
 
     /**
@@ -305,6 +360,6 @@ final class ShareService
             'views' => (int) $item->getAttribute('count'),
         ]);
 
-        return $mapped->toArray();
+        return $mapped->all();
     }
 }

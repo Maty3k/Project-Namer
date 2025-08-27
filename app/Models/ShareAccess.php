@@ -79,7 +79,7 @@ final class ShareAccess extends Model
      * @param  \Illuminate\Database\Eloquent\Builder<ShareAccess>  $query
      * @return \Illuminate\Database\Eloquent\Builder<ShareAccess>
      */
-    public function scopeRecent(\Illuminate\Database\Eloquent\Builder $query, int $days = 30): \Illuminate\Database\Eloquent\Builder
+    protected function scopeRecent(\Illuminate\Database\Eloquent\Builder $query, int $days = 30): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('accessed_at', '>=', now()->subDays($days));
     }
@@ -90,7 +90,7 @@ final class ShareAccess extends Model
      * @param  \Illuminate\Database\Eloquent\Builder<ShareAccess>  $query
      * @return \Illuminate\Database\Eloquent\Builder<ShareAccess>
      */
-    public function scopeFromIp(\Illuminate\Database\Eloquent\Builder $query, string $ipAddress): \Illuminate\Database\Eloquent\Builder
+    protected function scopeFromIp(\Illuminate\Database\Eloquent\Builder $query, string $ipAddress): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('ip_address', $ipAddress);
     }
@@ -101,7 +101,7 @@ final class ShareAccess extends Model
      * @param  \Illuminate\Database\Eloquent\Builder<ShareAccess>  $query
      * @return \Illuminate\Database\Eloquent\Builder<ShareAccess>
      */
-    public function scopeBetweenDates(\Illuminate\Database\Eloquent\Builder $query, \Carbon\Carbon $startDate, \Carbon\Carbon $endDate): \Illuminate\Database\Eloquent\Builder
+    protected function scopeBetweenDates(\Illuminate\Database\Eloquent\Builder $query, \Carbon\Carbon $startDate, \Carbon\Carbon $endDate): \Illuminate\Database\Eloquent\Builder
     {
         return $query->whereBetween('accessed_at', [$startDate, $endDate]);
     }

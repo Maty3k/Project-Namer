@@ -39,7 +39,7 @@ describe('Logo Generation API', function (): void {
                 'session_id' => 'test-session-123',
             ]);
 
-            $response->assertStatus(201)
+            $response->assertStatus(202)
                 ->assertJsonStructure([
                     'data' => [
                         'id',

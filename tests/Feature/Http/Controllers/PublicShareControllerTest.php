@@ -37,20 +37,26 @@ describe('PublicShareController', function (): void {
             'title' => 'Private Logos',
         ]);
 
-        $response = $this->post("/share/{$share->uuid}/authenticate", [
-            'password' => 'secret123',
-        ]);
+        $response = $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)
+            ->post("/share/{$share->uuid}/authenticate", [
+                'password' => 'secret123',
+            ]);
 
-        $response->assertSuccessful()
+        $response->assertRedirect("/share/{$share->uuid}");
+
+        // Follow the redirect and check the content
+        $followUpResponse = $this->get("/share/{$share->uuid}");
+        $followUpResponse->assertSuccessful()
             ->assertSee('Private Logos');
     });
 
     it('rejects invalid passwords', function (): void {
         $share = Share::factory()->passwordProtected('secret123')->create();
 
-        $response = $this->post("/share/{$share->uuid}/authenticate", [
-            'password' => 'wrong-password',
-        ]);
+        $response = $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)
+            ->post("/share/{$share->uuid}/authenticate", [
+                'password' => 'wrong-password',
+            ]);
 
         $response->assertSessionHasErrors(['password'])
             ->assertRedirect("/share/{$share->uuid}");
@@ -113,10 +119,13 @@ describe('PublicShareController', function (): void {
     });
 
     it('handles shares with missing shareable models gracefully', function (): void {
-        $share = Share::factory()->create();
+        $share = Share::factory()->public()->create();
 
         // Delete the associated shareable model
         $share->shareable->delete();
+
+        // Refresh the share to clear any cached relationships
+        $share->refresh();
 
         $response = $this->get("/share/{$share->uuid}");
 
@@ -202,10 +211,19 @@ describe('PublicShareController', function (): void {
     it('provides download links when available', function (): void {
         Storage::fake('local');
 
-        $share = Share::factory()->create();
+        $logoGeneration = \App\Models\LogoGeneration::factory()->create();
+        $share = Share::factory()->public()->create([
+            'shareable_type' => \App\Models\LogoGeneration::class,
+            'shareable_id' => $logoGeneration->id,
+        ]);
 
-        // Create a mock logo generation with files
-        $logoGeneration = $share->shareable;
+        // Create a generated logo with file
+        $logo = \App\Models\GeneratedLogo::factory()->create([
+            'logo_generation_id' => $logoGeneration->id,
+            'original_file_path' => 'logos/test-logo.svg',
+            'style' => 'modern',
+        ]);
+
         Storage::put('logos/test-logo.svg', '<svg>test</svg>');
 
         $response = $this->get("/share/{$share->uuid}");

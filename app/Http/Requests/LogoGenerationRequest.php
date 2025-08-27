@@ -26,6 +26,7 @@ class LogoGenerationRequest extends FormRequest
         return [
             'business_name' => ['required', 'string', 'max:255'],
             'business_description' => ['required', 'string', 'min:10', 'max:1000'],
+            'session_id' => ['required', 'string', 'min:1'],
             'style' => ['sometimes', 'string', 'in:minimalist,modern,playful,corporate'],
             'count' => ['sometimes', 'integer', 'min:1', 'max:10'],
             'use_fallback' => ['sometimes', 'boolean'],
@@ -45,6 +46,8 @@ class LogoGenerationRequest extends FormRequest
             'business_description.required' => 'Please describe your business to help us create relevant logos',
             'business_description.min' => 'Please provide at least 10 characters to describe your business',
             'business_description.max' => 'Business description must be less than 1000 characters',
+            'session_id.required' => 'Session ID is required',
+            'session_id.min' => 'Session ID cannot be empty',
             'style.in' => 'Please select a valid style: minimalist, modern, playful, or corporate',
             'count.min' => 'Please generate at least 1 logo',
             'count.max' => 'You can generate up to 10 logos at once',

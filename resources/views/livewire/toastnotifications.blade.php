@@ -14,7 +14,7 @@ new class extends Component {
             'message' => $data['message'] ?? 'Operation completed',
             'type' => $data['type'] ?? 'info', // success, error, warning, info
             'duration' => $data['duration'] ?? 5000,
-            'timestamp' => now()
+            'timestamp' => now()->toDateTimeString()
         ];
         
         $this->toasts[] = $toast;
@@ -46,7 +46,7 @@ new class extends Component {
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
             x-init="setTimeout(() => show = false, {{ $toast['duration'] }})"
-            @auto-remove-toast.window="if ($event.detail.id === '{{ $toast['id'] }}') setTimeout(() => $wire.removeToast('{{ $toast['id'] }}'), $event.detail.duration)"
+            @auto-remove-toast.window="if ($event.detail.id === '{{ $toast['id'] }}') setTimeout(() => { Livewire.find('{{ $_instance->id }}').call('removeToast', '{{ $toast['id'] }}') }, $event.detail.duration)"
             class="relative w-full max-w-sm mx-auto bg-white rounded-lg shadow-lg overflow-hidden
                 @if($toast['type'] === 'success') border-l-4 border-green-500 @endif
                 @if($toast['type'] === 'error') border-l-4 border-red-500 @endif
@@ -84,7 +84,7 @@ new class extends Component {
                         
                         @if($toast['timestamp'])
                             <p class="text-xs text-gray-500 mt-1">
-                                {{ $toast['timestamp']->format('g:i A') }}
+                                {{ \Carbon\Carbon::parse($toast['timestamp'])->format('g:i A') }}
                             </p>
                         @endif
                     </div>

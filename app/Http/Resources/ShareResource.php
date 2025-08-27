@@ -31,8 +31,8 @@ final class ShareResource extends JsonResource
             'is_active' => $this->resource->is_active,
             'view_count' => $this->resource->view_count,
             'expires_at' => $this->resource->expires_at?->toISOString(),
-            'created_at' => $this->resource->created_at->toISOString(),
-            'updated_at' => $this->resource->updated_at->toISOString(),
+            'created_at' => $this->resource->created_at?->toISOString(),
+            'updated_at' => $this->resource->updated_at?->toISOString(),
 
             // Conditional fields
             'settings' => $this->when($this->resource->settings !== null, $this->resource->settings),

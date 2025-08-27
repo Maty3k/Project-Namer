@@ -36,7 +36,7 @@ describe('Logo API Response Caching', function (): void {
         expect($cachedRequestTime)->toBeLessThan($firstRequestTime);
         $cachedResponse->assertOk()
             ->assertJsonPath('data.status', 'completed')
-            ->assertJsonPath('data.progress_percentage', 100);
+            ->assertJsonPath('data.progress', 100);
     });
 
     it('uses shorter cache time for processing logo generations', function (): void {
@@ -50,7 +50,7 @@ describe('Logo API Response Caching', function (): void {
 
         $response->assertOk()
             ->assertJsonPath('data.status', 'processing')
-            ->assertJsonPath('data.progress_percentage', 42); // 5/12 * 100 rounded
+            ->assertJsonPath('data.progress', 42); // 5/12 * 100 rounded
 
         // Verify cache exists but with shorter TTL
         expect(Cache::has("logo_status:{$logoGeneration->id}"))->toBeTrue();

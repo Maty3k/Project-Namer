@@ -56,7 +56,7 @@ class LogoGenerationController extends Controller
 
         try {
             $logoGeneration = LogoGeneration::create([
-                'session_id' => session()->getId(),
+                'session_id' => $request->validated('session_id'),
                 'business_name' => $request->validated('business_name'),
                 'business_description' => $request->validated('business_description'),
                 'status' => 'pending',
@@ -145,9 +145,12 @@ class LogoGenerationController extends Controller
                 'status' => $logoGeneration->status,
                 'message' => $message,
                 'progress' => $logoGeneration->progress ?? $progressPercentage,
+                'progress_percentage' => $progressPercentage,
                 'logos_completed' => $logoGeneration->logos_completed,
                 'total_logos_requested' => $logoGeneration->total_logos_requested,
                 'cost_cents' => $logoGeneration->cost_cents,
+                'error_message' => $logoGeneration->error_message,
+                'estimated_completion_time' => null,
                 'created_at' => $logoGeneration->created_at->toISOString(),
                 'updated_at' => $logoGeneration->updated_at->toISOString(),
             ];
@@ -164,6 +167,7 @@ class LogoGenerationController extends Controller
                     }
                 }
                 $data['estimated_completion'] = $estimatedCompletionTime?->toISOString();
+                $data['estimated_completion_time'] = $estimatedCompletionTime?->toISOString();
             }
 
             // Add error information for failed generations
@@ -233,7 +237,7 @@ class LogoGenerationController extends Controller
                 'business_name' => $generation->business_name,
                 'business_description' => $generation->business_description,
                 'status' => $generation->status,
-                'logos' => $logos->toArray(),
+                'logos' => $logos->all(),
                 'color_schemes' => $this->getAvailableColorSchemes(),
                 'created_at' => $generation->created_at->toISOString(),
                 'updated_at' => $generation->updated_at->toISOString(),

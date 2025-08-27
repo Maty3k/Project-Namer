@@ -58,7 +58,7 @@ final class DomainCache extends Model
      * @param  Builder<DomainCache>  $query
      * @return Builder<DomainCache>
      */
-    public function scopeFresh(Builder $query): Builder
+    protected function scopeFresh(Builder $query): Builder
     {
         return $query->where('checked_at', '>=', now()->subHours(24));
     }
@@ -69,7 +69,7 @@ final class DomainCache extends Model
      * @param  Builder<DomainCache>  $query
      * @return Builder<DomainCache>
      */
-    public function scopeExpired(Builder $query): Builder
+    protected function scopeExpired(Builder $query): Builder
     {
         return $query->where('checked_at', '<', now()->subHours(24));
     }

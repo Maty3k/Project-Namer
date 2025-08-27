@@ -83,7 +83,7 @@ describe('LogoGallery Component', function (): void {
         Volt::test('pages.logo-gallery', ['logoGenerationId' => $logoGeneration->id])
             ->assertOk()
             ->assertSee('Generating logos...')
-            ->assertSee('6 of 12 completed')
+            ->assertSee('6/12')
             ->assertSee('50%');
     });
 
@@ -213,7 +213,7 @@ describe('LogoGallery Component', function (): void {
 
         Volt::test('pages.logo-gallery', ['logoGenerationId' => $logoGeneration->id])
             ->assertOk()
-            ->assertSee('Generation failed')
+            ->assertSee('Logo generation failed')
             ->assertSee('API quota exceeded');
     });
 

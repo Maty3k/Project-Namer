@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ExportRequest;
 use App\Http\Resources\ExportResource;
 use App\Models\Export;
 use App\Services\ExportService;
@@ -64,20 +65,9 @@ final class ExportController extends Controller
     /**
      * Create a new export.
      */
-    public function store(Request $request): JsonResponse
+    public function store(ExportRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'exportable_type' => ['required', 'string'],
-            'exportable_id' => ['required', 'integer', 'exists:logo_generations,id'],
-            'export_type' => ['required', 'in:pdf,csv,json'],
-            'expires_in_days' => ['sometimes', 'integer', 'min:1', 'max:30'],
-            'include_domains' => ['sometimes', 'boolean'],
-            'include_metadata' => ['sometimes', 'boolean'],
-            'include_logos' => ['sometimes', 'boolean'],
-            'include_branding' => ['sometimes', 'boolean'],
-            'template' => ['sometimes', 'string', 'in:default,professional'],
-            'settings' => ['sometimes', 'array'],
-        ]);
+        $validated = $request->getValidatedData();
 
         try {
             $export = $this->exportService->createExport($request->user(), $validated);

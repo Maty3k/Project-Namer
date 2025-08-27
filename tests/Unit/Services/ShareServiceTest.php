@@ -106,7 +106,9 @@ describe('ShareService', function (): void {
     });
 
     it('records share access with analytics', function (): void {
-        $share = Share::factory()->public()->create();
+        $share = Share::factory()->public()->create([
+            'view_count' => 0,
+        ]);
 
         $this->shareService->recordShareAccess($share, [
             'ip_address' => '192.168.1.1',
@@ -210,7 +212,7 @@ describe('ShareService', function (): void {
     });
 
     it('gets user shares with pagination and filtering', function (): void {
-        Share::factory()->count(15)->create(['user_id' => $this->user->id]);
+        Share::factory()->count(15)->create(['user_id' => $this->user->id, 'share_type' => 'public']);
         Share::factory()->count(5)->create(['user_id' => $this->user->id, 'share_type' => 'password_protected']);
 
         $result = $this->shareService->getUserShares($this->user, [
@@ -225,13 +227,22 @@ describe('ShareService', function (): void {
     });
 
     it('generates share analytics data', function (): void {
-        $share = Share::factory()->recentlyAccessed()->create();
+        $share = Share::factory()->create([
+            'view_count' => 0,
+        ]);
 
-        // Create some access records
-        $share->accesses()->createMany([
-            ['ip_address' => '192.168.1.1', 'accessed_at' => now()],
-            ['ip_address' => '192.168.1.2', 'accessed_at' => now()->subHours(2)],
-            ['ip_address' => '192.168.1.1', 'accessed_at' => now()->subDays(1)],
+        // Record some access through the service (which updates view_count)
+        $this->shareService->recordShareAccess($share, [
+            'ip_address' => '192.168.1.1',
+            'user_agent' => 'Test Browser',
+        ]);
+        $this->shareService->recordShareAccess($share, [
+            'ip_address' => '192.168.1.2',
+            'user_agent' => 'Test Browser',
+        ]);
+        $this->shareService->recordShareAccess($share, [
+            'ip_address' => '192.168.1.1',
+            'user_agent' => 'Test Browser',
         ]);
 
         $analytics = $this->shareService->getShareAnalytics($share);

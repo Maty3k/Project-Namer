@@ -28,8 +28,8 @@ final class LogoGenerationFactory extends Factory
     {
         return [
             'user_id' => \App\Models\User::factory(),
-            'session_id' => $this->faker->uuid(),
-            'business_name' => $this->faker->sentence(6),
+            'session_id' => fake()->uuid(),
+            'business_name' => fake()->company(),
             'status' => 'pending',
             'total_logos_requested' => 12,
             'logos_completed' => 0,
@@ -57,7 +57,7 @@ final class LogoGenerationFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'status' => 'processing',
-            'logos_completed' => $this->faker->numberBetween(1, $attributes['total_logos_requested'] - 1),
+            'logos_completed' => fake()->numberBetween(1, $attributes['total_logos_requested'] - 1),
         ]);
     }
 
@@ -68,7 +68,7 @@ final class LogoGenerationFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'status' => 'failed',
-            'logos_completed' => $this->faker->numberBetween(0, $attributes['total_logos_requested'] / 2),
+            'logos_completed' => fake()->numberBetween(0, (int) ($attributes['total_logos_requested'] / 2)),
         ]);
     }
 }

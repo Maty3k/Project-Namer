@@ -1,5 +1,5 @@
-<flux:header {{ $attributes->class(['lg:hidden']) }}>
-    <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left"/>
+<flux:header {{ $attributes->class(['lg:hidden', 'glass', 'shadow-soft', 'backdrop-blur-xl', 'border-b', 'border-white/20', 'dark:border-white/10']) }}>
+    <flux:sidebar.toggle class="lg:hidden btn-modern focus-modern touch-action-manipulation" icon="bars-2" inset="left"/>
 
     <flux:spacer/>
 
