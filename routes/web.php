@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\ExportController;
+use App\Http\Controllers\PublicShareController;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
@@ -9,6 +11,17 @@ use App\Livewire\Settings\TwoFactorAuthenticationPage;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => view('welcome'))->name('home');
+
+// Public share routes
+Route::get('/share/{uuid}', [PublicShareController::class, 'show'])
+    ->name('public-share.show');
+
+Route::post('/share/{uuid}/authenticate', [PublicShareController::class, 'authenticate'])
+    ->name('public-share.authenticate');
+
+// Public export download
+Route::get('/downloads/{uuid}', [ExportController::class, 'publicDownload'])
+    ->name('public-download');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Services\OpenAINameService;
 use App\Services\DomainCheckService;
+use App\Models\LogoGeneration;
+use App\Jobs\GenerateLogosJob;
 use Livewire\Volt\Component;
 
 new class extends Component {
@@ -20,6 +22,8 @@ new class extends Component {
     public bool $showHistory = false;
     public ?int $lastApiCallTime = null;
     public int $rateLimitCooldown = 30; // seconds
+    public string $sessionId = '';
+    public bool $isGeneratingLogos = false;
 
     public array $modes = [
         'creative' => 'Creative',
@@ -229,6 +233,7 @@ new class extends Component {
     public function mount(): void
     {
         $this->loadSearchHistory();
+        $this->sessionId = session()->getId();
     }
 
     public function loadSearchHistory(): void
@@ -350,6 +355,54 @@ new class extends Component {
     public function retryGeneration(): void
     {
         $this->generateNames();
+    }
+
+    /**
+     * Generate logos for a selected business name.
+     */
+    public function generateLogos(string $selectedName): void
+    {
+        $this->validate([
+            'businessDescription' => 'required|string|min:10|max:2000',
+        ], [
+            'businessDescription.required' => 'Business description is required to generate logos.',
+            'businessDescription.min' => 'Please provide a more detailed business description (at least 10 characters).',
+        ]);
+
+        // Validate that the selected name is in the generated names
+        if (!in_array($selectedName, $this->generatedNames)) {
+            $this->errorMessage = 'Invalid business name selected.';
+            return;
+        }
+
+        $this->isGeneratingLogos = true;
+        $this->errorMessage = '';
+
+        try {
+            // Create logo generation request
+            $logoGeneration = LogoGeneration::create([
+                'session_id' => $this->sessionId,
+                'business_name' => $selectedName,
+                'business_description' => $this->businessDescription,
+                'status' => 'pending',
+                'total_logos_requested' => 12,
+                'logos_completed' => 0,
+                'api_provider' => 'openai',
+                'cost_cents' => 0,
+            ]);
+
+            // Dispatch the logo generation job
+            GenerateLogosJob::dispatch($logoGeneration);
+
+            // Redirect to logo gallery to show progress
+            if (!app()->environment('testing')) {
+                redirect()->to("/logo-gallery/{$logoGeneration->id}");
+            }
+        } catch (\Exception) {
+            $this->errorMessage = 'Failed to start logo generation. Please try again.';
+        } finally {
+            $this->isGeneratingLogos = false;
+        }
     }
 } ?>
 
@@ -613,17 +666,41 @@ new class extends Component {
                 {{-- Domain Results Table --}}
                 <flux:table class="w-full">
                     <flux:table.columns>
-                        <flux:table.column class="w-1/4">Business Name</flux:table.column>
-                        <flux:table.column class="w-1/4">.com</flux:table.column>
-                        <flux:table.column class="w-1/4">.net</flux:table.column>
-                        <flux:table.column class="w-1/4">.org</flux:table.column>
+                        <flux:table.column class="w-2/5">Business Name</flux:table.column>
+                        <flux:table.column class="w-1/5">.com</flux:table.column>
+                        <flux:table.column class="w-1/5">.net</flux:table.column>
+                        <flux:table.column class="w-1/5">.org</flux:table.column>
                     </flux:table.columns>
 
                     <flux:table.rows>
                         @foreach($domainResults as $result)
                             <flux:table.row>
                                 <flux:table.cell class="font-semibold">
-                                    {{ $result['name'] }}
+                                    <div class="flex items-center justify-between">
+                                        <span>{{ $result['name'] }}</span>
+                                        
+                                        {{-- Generate Logos Button --}}
+                                        <flux:button
+                                            wire:click="generateLogos('{{ $result['name'] }}')" 
+                                            variant="outline"
+                                            size="sm"
+                                            :disabled="$isGeneratingLogos"
+                                            class="ml-2">
+                                            
+                                            <span wire:loading.remove wire:target="generateLogos('{{ $result['name'] }}')">
+                                                🎨 Generate Logos
+                                            </span>
+                                            
+                                            <span wire:loading wire:target="generateLogos('{{ $result['name'] }}')"
+                                                  class="flex items-center">
+                                                <svg class="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                Generating...
+                                            </span>
+                                        </flux:button>
+                                    </div>
                                 </flux:table.cell>
                                 
                                 @foreach(['com', 'net', 'org'] as $tld)
@@ -685,6 +762,55 @@ new class extends Component {
                             size="sm">
                             Recheck Domains
                         </flux:button>
+                    </div>
+                @endif
+
+                {{-- Bulk Logo Generation Section --}}
+                @if(!empty($generatedNames) && !$isCheckingDomains)
+                    <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <h3 class="text-lg font-medium text-blue-900 dark:text-blue-100">
+                                    🎨 Generate Logos
+                                </h3>
+                                <p class="text-sm text-blue-700 dark:text-blue-300">
+                                    Create AI-powered logo designs for your selected business name
+                                </p>
+                            </div>
+                            <div class="text-right text-xs text-blue-600 dark:text-blue-400">
+                                12 unique designs<br>
+                                4 styles × 3 variations each
+                            </div>
+                        </div>
+                        
+                        <div class="text-sm text-blue-600 dark:text-blue-400 mb-3">
+                            Click "Generate Logos" next to any business name above, or use the bulk generation below:
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($generatedNames as $name)
+                                <flux:button
+                                    wire:click="generateLogos('{{ $name }}')" 
+                                    variant="filled"
+                                    size="sm"
+                                    :disabled="$isGeneratingLogos"
+                                    class="bg-blue-600 hover:bg-blue-700 text-white">
+                                    
+                                    <span wire:loading.remove wire:target="generateLogos('{{ $name }}')">
+                                        Generate for {{ $name }}
+                                    </span>
+                                    
+                                    <span wire:loading wire:target="generateLogos('{{ $name }}')" 
+                                          class="flex items-center">
+                                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Generating...
+                                    </span>
+                                </flux:button>
+                            @endforeach
+                        </div>
                     </div>
                 @endif
             </div>

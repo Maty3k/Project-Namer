@@ -1,0 +1,791 @@
+Note: Using configuration file /Users/anamariaradulescu/Herd/Project-Namer/phpstan.neon.
+  0/63 [░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0%[1G[2K 63/63 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%
+
+ ------ ----------------------------------------------------------------------- 
+  Line   Http/Resources/ExportResource.php                                      
+ ------ ----------------------------------------------------------------------- 
+  15     PHPDoc tag @property-read for property                                 
+         App\Http\Resources\ExportResource::$resource contains generic class    
+         App\Models\Export but does not specify its types: TFactory             
+         🪪  missingType.generics                                               
+  39     Access to an undefined property                                        
+         App\Models\Export::$last_downloaded_at.                                
+         🪪  property.notFound                                                  
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-und  
+         efined-property                                                        
+  40     Access to an undefined property                                        
+         App\Models\Export::$last_downloaded_at.                                
+         🪪  property.notFound                                                  
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-und  
+         efined-property                                                        
+ ------ ----------------------------------------------------------------------- 
+
+ ------ -------------------------------------------------------------------- 
+  Line   Http/Resources/ShareResource.php                                    
+ ------ -------------------------------------------------------------------- 
+  15     PHPDoc tag @property-read for property                              
+         App\Http\Resources\ShareResource::$resource contains generic class  
+         App\Models\Share but does not specify its types: TFactory           
+         🪪  missingType.generics                                            
+  38     Parameter #1 $condition of method                                   
+         Illuminate\Http\Resources\Json\JsonResource::when() expects bool,   
+         array<mixed>|null given.                                            
+         🪪  argument.type                                                   
+  39     Parameter #1 $condition of method                                   
+         Illuminate\Http\Resources\Json\JsonResource::when() expects bool,   
+         Illuminate\Support\Carbon|null given.                               
+         🪪  argument.type                                                   
+ ------ -------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   Models/Export.php                                                      
+ ------ ----------------------------------------------------------------------- 
+  59     PHPDoc tag @method for method App\Models\Export::active() return type  
+         contains generic class App\Models\Export but does not specify its      
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  59     PHPDoc tag @method for method App\Models\Export::newModelQuery()       
+         return type contains generic class App\Models\Export but does not      
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  59     PHPDoc tag @method for method App\Models\Export::newQuery() return     
+         type contains generic class App\Models\Export but does not specify     
+         its types: TFactory                                                    
+         🪪  missingType.generics                                               
+  59     PHPDoc tag @method for method App\Models\Export::ofType() return type  
+         contains generic class App\Models\Export but does not specify its      
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  59     PHPDoc tag @method for method App\Models\Export::query() return type   
+         contains generic class App\Models\Export but does not specify its      
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  59     PHPDoc tag @method for method App\Models\Export::recent() return type  
+         contains generic class App\Models\Export but does not specify its      
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  59     PHPDoc tag @method for method App\Models\Export::whereCreatedAt()      
+         return type contains generic class App\Models\Export but does not      
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  59     PHPDoc tag @method for method App\Models\Export::whereDownloadCount()  
+         return type contains generic class App\Models\Export but does not      
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  59     PHPDoc tag @method for method App\Models\Export::whereExpiresAt()      
+         return type contains generic class App\Models\Export but does not      
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  59     PHPDoc tag @method for method App\Models\Export::whereExportType()     
+         return type contains generic class App\Models\Export but does not      
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  59     PHPDoc tag @method for method App\Models\Export::whereExportableId()   
+         return type contains generic class App\Models\Export but does not      
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  59     PHPDoc tag @method for method                                          
+         App\Models\Export::whereExportableType() return type contains generic  
+         class App\Models\Export but does not specify its types: TFactory       
+         🪪  missingType.generics                                               
+  59     PHPDoc tag @method for method App\Models\Export::whereFilePath()       
+         return type contains generic class App\Models\Export but does not      
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  59     PHPDoc tag @method for method App\Models\Export::whereFileSize()       
+         return type contains generic class App\Models\Export but does not      
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  59     PHPDoc tag @method for method App\Models\Export::whereId() return      
+         type contains generic class App\Models\Export but does not specify     
+         its types: TFactory                                                    
+         🪪  missingType.generics                                               
+  59     PHPDoc tag @method for method App\Models\Export::whereUpdatedAt()      
+         return type contains generic class App\Models\Export but does not      
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  59     PHPDoc tag @method for method App\Models\Export::whereUserId() return  
+         type contains generic class App\Models\Export but does not specify     
+         its types: TFactory                                                    
+         🪪  missingType.generics                                               
+  59     PHPDoc tag @method for method App\Models\Export::whereUuid() return    
+         type contains generic class App\Models\Export but does not specify     
+         its types: TFactory                                                    
+         🪪  missingType.generics                                               
+  100    Method App\Models\Export::user() return type with generic class        
+         Illuminate\Database\Eloquent\Relations\BelongsTo does not specify its  
+         types: TRelatedModel, TDeclaringModel                                  
+         🪪  missingType.generics                                               
+  108    Method App\Models\Export::exportable() return type with generic class  
+         Illuminate\Database\Eloquent\Relations\MorphTo does not specify its    
+         types: TRelatedModel, TDeclaringModel                                  
+         🪪  missingType.generics                                               
+  198    Method App\Models\Export::scopeActive() has no return type specified.  
+         🪪  missingType.return                                                 
+  198    Method App\Models\Export::scopeActive() has parameter $query with no   
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+  209    Method App\Models\Export::scopeOfType() has no return type specified.  
+         🪪  missingType.return                                                 
+  209    Method App\Models\Export::scopeOfType() has parameter $query with no   
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+  217    Method App\Models\Export::scopeRecent() has no return type specified.  
+         🪪  missingType.return                                                 
+  217    Method App\Models\Export::scopeRecent() has parameter $query with no   
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   Models/GeneratedLogo.php                                               
+ ------ ----------------------------------------------------------------------- 
+  61     PHPDoc tag @method for method                                          
+         App\Models\GeneratedLogo::newModelQuery() return type contains         
+         generic class App\Models\GeneratedLogo but does not specify its        
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  61     PHPDoc tag @method for method App\Models\GeneratedLogo::newQuery()     
+         return type contains generic class App\Models\GeneratedLogo but does   
+         not specify its types: TFactory                                        
+         🪪  missingType.generics                                               
+  61     PHPDoc tag @method for method App\Models\GeneratedLogo::ofStyle()      
+         return type contains generic class App\Models\GeneratedLogo but does   
+         not specify its types: TFactory                                        
+         🪪  missingType.generics                                               
+  61     PHPDoc tag @method for method App\Models\GeneratedLogo::query()        
+         return type contains generic class App\Models\GeneratedLogo but does   
+         not specify its types: TFactory                                        
+         🪪  missingType.generics                                               
+  61     PHPDoc tag @method for method                                          
+         App\Models\GeneratedLogo::whereApiImageUrl() return type contains      
+         generic class App\Models\GeneratedLogo but does not specify its        
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  61     PHPDoc tag @method for method                                          
+         App\Models\GeneratedLogo::whereCreatedAt() return type contains        
+         generic class App\Models\GeneratedLogo but does not specify its        
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  61     PHPDoc tag @method for method                                          
+         App\Models\GeneratedLogo::whereFileSize() return type contains         
+         generic class App\Models\GeneratedLogo but does not specify its        
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  61     PHPDoc tag @method for method                                          
+         App\Models\GeneratedLogo::whereGenerationTimeMs() return type          
+         contains generic class App\Models\GeneratedLogo but does not specify   
+         its types: TFactory                                                    
+         🪪  missingType.generics                                               
+  61     PHPDoc tag @method for method App\Models\GeneratedLogo::whereId()      
+         return type contains generic class App\Models\GeneratedLogo but does   
+         not specify its types: TFactory                                        
+         🪪  missingType.generics                                               
+  61     PHPDoc tag @method for method                                          
+         App\Models\GeneratedLogo::whereImageHeight() return type contains      
+         generic class App\Models\GeneratedLogo but does not specify its        
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  61     PHPDoc tag @method for method                                          
+         App\Models\GeneratedLogo::whereImageWidth() return type contains       
+         generic class App\Models\GeneratedLogo but does not specify its        
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  61     PHPDoc tag @method for method                                          
+         App\Models\GeneratedLogo::whereLogoGenerationId() return type          
+         contains generic class App\Models\GeneratedLogo but does not specify   
+         its types: TFactory                                                    
+         🪪  missingType.generics                                               
+  61     PHPDoc tag @method for method                                          
+         App\Models\GeneratedLogo::whereOriginalFilePath() return type          
+         contains generic class App\Models\GeneratedLogo but does not specify   
+         its types: TFactory                                                    
+         🪪  missingType.generics                                               
+  61     PHPDoc tag @method for method                                          
+         App\Models\GeneratedLogo::wherePromptUsed() return type contains       
+         generic class App\Models\GeneratedLogo but does not specify its        
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  61     PHPDoc tag @method for method App\Models\GeneratedLogo::whereStyle()   
+         return type contains generic class App\Models\GeneratedLogo but does   
+         not specify its types: TFactory                                        
+         🪪  missingType.generics                                               
+  61     PHPDoc tag @method for method                                          
+         App\Models\GeneratedLogo::whereUpdatedAt() return type contains        
+         generic class App\Models\GeneratedLogo but does not specify its        
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  61     PHPDoc tag @method for method                                          
+         App\Models\GeneratedLogo::whereVariationNumber() return type contains  
+         generic class App\Models\GeneratedLogo but does not specify its        
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  61     PHPDoc tag @property-read for property                                 
+         App\Models\GeneratedLogo::$colorVariants contains generic class        
+         App\Models\LogoColorVariant but does not specify its types: TFactory   
+         🪪  missingType.generics                                               
+  61     PHPDoc tag @property-read for property                                 
+         App\Models\GeneratedLogo::$logoGeneration contains generic class       
+         App\Models\LogoGeneration but does not specify its types: TFactory     
+         🪪  missingType.generics                                               
+  102    Method App\Models\GeneratedLogo::logoGeneration() return type with     
+         generic class App\Models\LogoGeneration does not specify its types:    
+         TFactory                                                               
+         🪪  missingType.generics                                               
+  112    Method App\Models\GeneratedLogo::colorVariants() return type with      
+         generic class App\Models\LogoColorVariant does not specify its types:  
+         TFactory                                                               
+         🪪  missingType.generics                                               
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   Models/LogoColorVariant.php                                            
+ ------ ----------------------------------------------------------------------- 
+  46     PHPDoc tag @method for method                                          
+         App\Models\LogoColorVariant::newModelQuery() return type contains      
+         generic class App\Models\LogoColorVariant but does not specify its     
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  46     PHPDoc tag @method for method App\Models\LogoColorVariant::newQuery()  
+         return type contains generic class App\Models\LogoColorVariant but     
+         does not specify its types: TFactory                                   
+         🪪  missingType.generics                                               
+  46     PHPDoc tag @method for method App\Models\LogoColorVariant::query()     
+         return type contains generic class App\Models\LogoColorVariant but     
+         does not specify its types: TFactory                                   
+         🪪  missingType.generics                                               
+  46     PHPDoc tag @method for method                                          
+         App\Models\LogoColorVariant::whereColorScheme() return type contains   
+         generic class App\Models\LogoColorVariant but does not specify its     
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  46     PHPDoc tag @method for method                                          
+         App\Models\LogoColorVariant::whereCreatedAt() return type contains     
+         generic class App\Models\LogoColorVariant but does not specify its     
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  46     PHPDoc tag @method for method                                          
+         App\Models\LogoColorVariant::whereFilePath() return type contains      
+         generic class App\Models\LogoColorVariant but does not specify its     
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  46     PHPDoc tag @method for method                                          
+         App\Models\LogoColorVariant::whereFileSize() return type contains      
+         generic class App\Models\LogoColorVariant but does not specify its     
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  46     PHPDoc tag @method for method                                          
+         App\Models\LogoColorVariant::whereGeneratedLogoId() return type        
+         contains generic class App\Models\LogoColorVariant but does not        
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  46     PHPDoc tag @method for method App\Models\LogoColorVariant::whereId()   
+         return type contains generic class App\Models\LogoColorVariant but     
+         does not specify its types: TFactory                                   
+         🪪  missingType.generics                                               
+  46     PHPDoc tag @method for method                                          
+         App\Models\LogoColorVariant::whereUpdatedAt() return type contains     
+         generic class App\Models\LogoColorVariant but does not specify its     
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  46     PHPDoc tag @method for method                                          
+         App\Models\LogoColorVariant::withColorScheme() return type contains    
+         generic class App\Models\LogoColorVariant but does not specify its     
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  46     PHPDoc tag @property-read for property                                 
+         App\Models\LogoColorVariant::$generatedLogo contains generic class     
+         App\Models\GeneratedLogo but does not specify its types: TFactory      
+         🪪  missingType.generics                                               
+  71     Method App\Models\LogoColorVariant::generatedLogo() return type with   
+         generic class App\Models\GeneratedLogo does not specify its types:     
+         TFactory                                                               
+         🪪  missingType.generics                                               
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   Models/LogoGeneration.php                                              
+ ------ ----------------------------------------------------------------------- 
+  71     PHPDoc tag @method for method App\Models\LogoGeneration::completed()   
+         return type contains generic class App\Models\LogoGeneration but does  
+         not specify its types: TFactory                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\LogoGeneration::failed()      
+         return type contains generic class App\Models\LogoGeneration but does  
+         not specify its types: TFactory                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\LogoGeneration::forSession()  
+         return type contains generic class App\Models\LogoGeneration but does  
+         not specify its types: TFactory                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method                                          
+         App\Models\LogoGeneration::newModelQuery() return type contains        
+         generic class App\Models\LogoGeneration but does not specify its       
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\LogoGeneration::newQuery()    
+         return type contains generic class App\Models\LogoGeneration but does  
+         not specify its types: TFactory                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\LogoGeneration::pending()     
+         return type contains generic class App\Models\LogoGeneration but does  
+         not specify its types: TFactory                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\LogoGeneration::processing()  
+         return type contains generic class App\Models\LogoGeneration but does  
+         not specify its types: TFactory                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\LogoGeneration::query()       
+         return type contains generic class App\Models\LogoGeneration but does  
+         not specify its types: TFactory                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method                                          
+         App\Models\LogoGeneration::whereApiProvider() return type contains     
+         generic class App\Models\LogoGeneration but does not specify its       
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method                                          
+         App\Models\LogoGeneration::whereBusinessDescription() return type      
+         contains generic class App\Models\LogoGeneration but does not specify  
+         its types: TFactory                                                    
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method                                          
+         App\Models\LogoGeneration::whereBusinessName() return type contains    
+         generic class App\Models\LogoGeneration but does not specify its       
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method                                          
+         App\Models\LogoGeneration::whereCostCents() return type contains       
+         generic class App\Models\LogoGeneration but does not specify its       
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method                                          
+         App\Models\LogoGeneration::whereCreatedAt() return type contains       
+         generic class App\Models\LogoGeneration but does not specify its       
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method                                          
+         App\Models\LogoGeneration::whereErrorMessage() return type contains    
+         generic class App\Models\LogoGeneration but does not specify its       
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method                                          
+         App\Models\LogoGeneration::whereEstimatedCompletion() return type      
+         contains generic class App\Models\LogoGeneration but does not specify  
+         its types: TFactory                                                    
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\LogoGeneration::whereId()     
+         return type contains generic class App\Models\LogoGeneration but does  
+         not specify its types: TFactory                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method                                          
+         App\Models\LogoGeneration::whereLastSharedAt() return type contains    
+         generic class App\Models\LogoGeneration but does not specify its       
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method                                          
+         App\Models\LogoGeneration::whereLogosCompleted() return type contains  
+         generic class App\Models\LogoGeneration but does not specify its       
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method                                          
+         App\Models\LogoGeneration::whereProgress() return type contains        
+         generic class App\Models\LogoGeneration but does not specify its       
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method                                          
+         App\Models\LogoGeneration::whereSessionId() return type contains       
+         generic class App\Models\LogoGeneration but does not specify its       
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method                                          
+         App\Models\LogoGeneration::whereShareCount() return type contains      
+         generic class App\Models\LogoGeneration but does not specify its       
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method                                          
+         App\Models\LogoGeneration::whereStartedAt() return type contains       
+         generic class App\Models\LogoGeneration but does not specify its       
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method                                          
+         App\Models\LogoGeneration::whereStatus() return type contains generic  
+         class App\Models\LogoGeneration but does not specify its types:        
+         TFactory                                                               
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method                                          
+         App\Models\LogoGeneration::whereTotalLogosRequested() return type      
+         contains generic class App\Models\LogoGeneration but does not specify  
+         its types: TFactory                                                    
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method                                          
+         App\Models\LogoGeneration::whereUpdatedAt() return type contains       
+         generic class App\Models\LogoGeneration but does not specify its       
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method                                          
+         App\Models\LogoGeneration::whereUserId() return type contains generic  
+         class App\Models\LogoGeneration but does not specify its types:        
+         TFactory                                                               
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @property-read for property                                 
+         App\Models\LogoGeneration::$generatedLogos contains generic class      
+         App\Models\GeneratedLogo but does not specify its types: TFactory      
+         🪪  missingType.generics                                               
+  116    Method App\Models\LogoGeneration::generatedLogos() return type with    
+         generic class App\Models\GeneratedLogo does not specify its types:     
+         TFactory                                                               
+         🪪  missingType.generics                                               
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   Models/Share.php                                                       
+ ------ ----------------------------------------------------------------------- 
+  71     PHPDoc tag @method for method App\Models\Share::accessible() return    
+         type contains generic class App\Models\Share but does not specify its  
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::active() return type   
+         contains generic class App\Models\Share but does not specify its       
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::newModelQuery()        
+         return type contains generic class App\Models\Share but does not       
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::newQuery() return      
+         type contains generic class App\Models\Share but does not specify its  
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::ofType() return type   
+         contains generic class App\Models\Share but does not specify its       
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::query() return type    
+         contains generic class App\Models\Share but does not specify its       
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::whereCreatedAt()       
+         return type contains generic class App\Models\Share but does not       
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::whereDescription()     
+         return type contains generic class App\Models\Share but does not       
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::whereExpiresAt()       
+         return type contains generic class App\Models\Share but does not       
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::whereId() return type  
+         contains generic class App\Models\Share but does not specify its       
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::whereIsActive()        
+         return type contains generic class App\Models\Share but does not       
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::whereLastViewedAt()    
+         return type contains generic class App\Models\Share but does not       
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::wherePasswordHash()    
+         return type contains generic class App\Models\Share but does not       
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::whereSettings()        
+         return type contains generic class App\Models\Share but does not       
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::whereShareType()       
+         return type contains generic class App\Models\Share but does not       
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::whereShareableId()     
+         return type contains generic class App\Models\Share but does not       
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::whereShareableType()   
+         return type contains generic class App\Models\Share but does not       
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::whereTitle() return    
+         type contains generic class App\Models\Share but does not specify its  
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::whereUpdatedAt()       
+         return type contains generic class App\Models\Share but does not       
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::whereUserId() return   
+         type contains generic class App\Models\Share but does not specify its  
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::whereUuid() return     
+         type contains generic class App\Models\Share but does not specify its  
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @method for method App\Models\Share::whereViewCount()       
+         return type contains generic class App\Models\Share but does not       
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  71     PHPDoc tag @property-read for property App\Models\Share::$accesses     
+         contains generic class App\Models\ShareAccess but does not specify     
+         its types: TFactory                                                    
+         🪪  missingType.generics                                               
+  107    Method App\Models\Share::password() return type with generic class     
+         Illuminate\Database\Eloquent\Casts\Attribute does not specify its      
+         types: TGet, TSet                                                      
+         🪪  missingType.generics                                               
+  115    Method App\Models\Share::user() return type with generic class         
+         Illuminate\Database\Eloquent\Relations\BelongsTo does not specify its  
+         types: TRelatedModel, TDeclaringModel                                  
+         🪪  missingType.generics                                               
+  123    Method App\Models\Share::shareable() return type with generic class    
+         Illuminate\Database\Eloquent\Relations\MorphTo does not specify its    
+         types: TRelatedModel, TDeclaringModel                                  
+         🪪  missingType.generics                                               
+  131    Method App\Models\Share::accesses() return type with generic class     
+         Illuminate\Database\Eloquent\Relations\HasMany does not specify its    
+         types: TRelatedModel, TDeclaringModel                                  
+         🪪  missingType.generics                                               
+  190    Method App\Models\Share::scopeActive() has no return type specified.   
+         🪪  missingType.return                                                 
+  190    Method App\Models\Share::scopeActive() has parameter $query with no    
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+  202    Method App\Models\Share::scopeAccessible() has no return type          
+         specified.                                                             
+         🪪  missingType.return                                                 
+  202    Method App\Models\Share::scopeAccessible() has parameter $query with   
+         no type specified.                                                     
+         🪪  missingType.parameter                                              
+  210    Method App\Models\Share::scopeOfType() has no return type specified.   
+         🪪  missingType.return                                                 
+  210    Method App\Models\Share::scopeOfType() has parameter $query with no    
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   Models/ShareAccess.php                                                 
+ ------ ----------------------------------------------------------------------- 
+  43     PHPDoc tag @method for method App\Models\ShareAccess::betweenDates()   
+         return type contains generic class App\Models\ShareAccess but does     
+         not specify its types: TFactory                                        
+         🪪  missingType.generics                                               
+  43     PHPDoc tag @method for method App\Models\ShareAccess::fromIp() return  
+         type contains generic class App\Models\ShareAccess but does not        
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  43     PHPDoc tag @method for method App\Models\ShareAccess::newModelQuery()  
+         return type contains generic class App\Models\ShareAccess but does     
+         not specify its types: TFactory                                        
+         🪪  missingType.generics                                               
+  43     PHPDoc tag @method for method App\Models\ShareAccess::newQuery()       
+         return type contains generic class App\Models\ShareAccess but does     
+         not specify its types: TFactory                                        
+         🪪  missingType.generics                                               
+  43     PHPDoc tag @method for method App\Models\ShareAccess::query() return   
+         type contains generic class App\Models\ShareAccess but does not        
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  43     PHPDoc tag @method for method App\Models\ShareAccess::recent() return  
+         type contains generic class App\Models\ShareAccess but does not        
+         specify its types: TFactory                                            
+         🪪  missingType.generics                                               
+  43     PHPDoc tag @method for method                                          
+         App\Models\ShareAccess::whereAccessedAt() return type contains         
+         generic class App\Models\ShareAccess but does not specify its types:   
+         TFactory                                                               
+         🪪  missingType.generics                                               
+  43     PHPDoc tag @method for method App\Models\ShareAccess::whereId()        
+         return type contains generic class App\Models\ShareAccess but does     
+         not specify its types: TFactory                                        
+         🪪  missingType.generics                                               
+  43     PHPDoc tag @method for method                                          
+         App\Models\ShareAccess::whereIpAddress() return type contains generic  
+         class App\Models\ShareAccess but does not specify its types: TFactory  
+         🪪  missingType.generics                                               
+  43     PHPDoc tag @method for method App\Models\ShareAccess::whereReferrer()  
+         return type contains generic class App\Models\ShareAccess but does     
+         not specify its types: TFactory                                        
+         🪪  missingType.generics                                               
+  43     PHPDoc tag @method for method App\Models\ShareAccess::whereShareId()   
+         return type contains generic class App\Models\ShareAccess but does     
+         not specify its types: TFactory                                        
+         🪪  missingType.generics                                               
+  43     PHPDoc tag @method for method                                          
+         App\Models\ShareAccess::whereUserAgent() return type contains generic  
+         class App\Models\ShareAccess but does not specify its types: TFactory  
+         🪪  missingType.generics                                               
+  43     PHPDoc tag @property-read for property App\Models\ShareAccess::$share  
+         contains generic class App\Models\Share but does not specify its       
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  75     Method App\Models\ShareAccess::share() should return                   
+         Illuminate\Database\Eloquent\Relations\BelongsTo<App\Models\Share<Dat  
+         abase\Factories\ShareFactory>, $this(App\Models\ShareAccess<TFactory   
+         of Database\Factories\ShareAccessFactory>)> but returns Illuminate\Da  
+         tabase\Eloquent\Relations\BelongsTo<App\Models\Share,                  
+         $this(App\Models\ShareAccess<TFactory of Database\Factories\ShareAcce  
+         ssFactory>)>.                                                          
+         🪪  return.type                                                        
+  81     Method App\Models\ShareAccess::scopeRecent() has no return type        
+         specified.                                                             
+         🪪  missingType.return                                                 
+  81     Method App\Models\ShareAccess::scopeRecent() has parameter $query      
+         with no type specified.                                                
+         🪪  missingType.parameter                                              
+  89     Method App\Models\ShareAccess::scopeFromIp() has no return type        
+         specified.                                                             
+         🪪  missingType.return                                                 
+  89     Method App\Models\ShareAccess::scopeFromIp() has parameter $query      
+         with no type specified.                                                
+         🪪  missingType.parameter                                              
+  97     Method App\Models\ShareAccess::scopeBetweenDates() has no return type  
+         specified.                                                             
+         🪪  missingType.return                                                 
+  97     Method App\Models\ShareAccess::scopeBetweenDates() has parameter       
+         $query with no type specified.                                         
+         🪪  missingType.parameter                                              
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   Policies/ExportPolicy.php                                              
+ ------ ----------------------------------------------------------------------- 
+  18     Method App\Policies\ExportPolicy::view() has parameter $export with    
+         generic class App\Models\Export but does not specify its types:        
+         TFactory                                                               
+         🪪  missingType.generics                                               
+  26     Method App\Policies\ExportPolicy::download() has parameter $export     
+         with generic class App\Models\Export but does not specify its types:   
+         TFactory                                                               
+         🪪  missingType.generics                                               
+  34     Method App\Policies\ExportPolicy::delete() has parameter $export with  
+         generic class App\Models\Export but does not specify its types:        
+         TFactory                                                               
+         🪪  missingType.generics                                               
+ ------ ----------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------- 
+  Line   Policies/SharePolicy.php                                             
+ ------ --------------------------------------------------------------------- 
+  18     Method App\Policies\SharePolicy::view() has parameter $share with    
+         generic class App\Models\Share but does not specify its types:       
+         TFactory                                                             
+         🪪  missingType.generics                                             
+  26     Method App\Policies\SharePolicy::update() has parameter $share with  
+         generic class App\Models\Share but does not specify its types:       
+         TFactory                                                             
+         🪪  missingType.generics                                             
+  34     Method App\Policies\SharePolicy::delete() has parameter $share with  
+         generic class App\Models\Share but does not specify its types:       
+         TFactory                                                             
+         🪪  missingType.generics                                             
+ ------ --------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   Services/ExportService.php                                             
+ ------ ----------------------------------------------------------------------- 
+  39     Method App\Services\ExportService::createExport() return type with     
+         generic class App\Models\Export does not specify its types: TFactory   
+         🪪  missingType.generics                                               
+  78     Method App\Services\ExportService::serveDownload() has parameter       
+         $export with generic class App\Models\Export but does not specify its  
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  160    Method App\Services\ExportService::generateExportFile() has parameter  
+         $export with generic class App\Models\Export but does not specify its  
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  183    Method App\Services\ExportService::generatePdfExport() has parameter   
+         $export with generic class App\Models\Export but does not specify its  
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  197    Cannot call method load() on class-string|object.                      
+         🪪  method.nonObject                                                   
+  218    Method App\Services\ExportService::generateCsvExport() has parameter   
+         $export with generic class App\Models\Export but does not specify its  
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  259    Method App\Services\ExportService::generateJsonExport() has parameter  
+         $export with generic class App\Models\Export but does not specify its  
+         types: TFactory                                                        
+         🪪  missingType.generics                                               
+  277    Using nullsafe property access "?->name" on left side of ?? is         
+         unnecessary. Use -> instead.                                           
+         🪪  nullsafe.neverNull                                                 
+  283    Left side of && is always false.                                       
+         🪪  booleanAnd.leftAlwaysFalse                                         
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   Services/LazyLoadingService.php                                        
+ ------ ----------------------------------------------------------------------- 
+  55     Parameter #1 $logos of method                                          
+         App\Services\LazyLoadingService::formatLogosForDisplay() expects       
+         Illuminate\Support\Collection<int, App\Models\GeneratedLogo<Database\  
+         Factories\GeneratedLogoFactory>>, array<int, App\Models\GeneratedLogo  
+         > given.                                                               
+         🪪  argument.type                                                      
+  108    Parameter #1 $logos of method                                          
+         App\Services\LazyLoadingService::formatLogosForDisplay() expects       
+         Illuminate\Support\Collection<int, App\Models\GeneratedLogo<Database\  
+         Factories\GeneratedLogoFactory>>, Illuminate\Database\Eloquent\Collec  
+         tion<int, App\Models\GeneratedLogo> given.                             
+         🪪  argument.type                                                      
+  164    Parameter #1 $logos of method                                          
+         App\Services\LazyLoadingService::formatLogosForDisplay() expects       
+         Illuminate\Support\Collection<int, App\Models\GeneratedLogo<Database\  
+         Factories\GeneratedLogoFactory>>, Illuminate\Database\Eloquent\Collec  
+         tion<int, App\Models\GeneratedLogo> given.                             
+         🪪  argument.type                                                      
+  205    Parameter #1 $logos of method                                          
+         App\Services\LazyLoadingService::formatLogosForDisplay() expects       
+         Illuminate\Support\Collection<int, App\Models\GeneratedLogo<Database\  
+         Factories\GeneratedLogoFactory>>, Illuminate\Database\Eloquent\Collec  
+         tion<int, App\Models\GeneratedLogo> given.                             
+         🪪  argument.type                                                      
+  221    Method App\Services\LazyLoadingService::preloadLogos() has parameter   
+         $styles with no value type specified in iterable type array.           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+  238    Method App\Services\LazyLoadingService::getThumbnailData() has         
+         parameter $logoIds with no value type specified in iterable type       
+         array.                                                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+  303    Parameter #1 $value of function collect contains unresolvable type.    
+         🪪  argument.unresolvableType                                          
+  303    Return type of call to function collect contains unresolvable type.    
+         🪪  function.unresolvableReturnType                                    
+  358    Method App\Services\LazyLoadingService::buildCacheKey() has parameter  
+         $params with no type specified.                                        
+         🪪  missingType.parameter                                              
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------- 
+  Line   Services/MemoryManagementService.php                             
+ ------ ----------------------------------------------------------------- 
+  316    Cannot unset offset int on array<string, array<string, mixed>>.  
+         🪪  unset.offset                                                 
+ ------ ----------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   Services/ShareService.php                                              
+ ------ ----------------------------------------------------------------------- 
+  135    Using nullsafe property access "?->name" on left side of ?? is         
+         unnecessary. Use -> instead.                                           
+         🪪  nullsafe.neverNull                                                 
+  313    PHPDoc tag @var with type object{referrer: string, count: int} is not  
+         subtype of native type Illuminate\Database\Eloquent\Model.             
+         🪪  varTag.nativeType                                                  
+ ------ ----------------------------------------------------------------------- 
+
+ [ERROR] Found 174 errors                                                       
+
