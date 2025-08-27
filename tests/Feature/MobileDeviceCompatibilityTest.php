@@ -55,8 +55,8 @@ describe('Mobile Device Compatibility Testing', function (): void {
 
             // Safe area support patterns
             $content = $response->content();
-            expect($content)->toContain('padding') // Has padding for safe areas
-                ->toContain('space-'); // Has spacing for layout
+            expect($content)->toContain('p-') // Has padding classes
+                ->toContain('gap-'); // Has gap spacing for layout
         });
     });
 

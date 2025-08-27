@@ -7,10 +7,12 @@ namespace App\Livewire;
 use App\Jobs\GenerateLogosJob;
 use App\Models\GenerationCache;
 use App\Models\LogoGeneration;
+use App\Models\NamingSession;
 use App\Models\Share;
 use App\Services\DomainCheckService;
 use App\Services\ExportService;
 use App\Services\OpenAINameService;
+use App\Services\SessionService;
 use App\Services\ShareService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -70,6 +72,13 @@ class Dashboard extends Component
     // Current active tab
     public string $activeTab = 'generate';
 
+    // Session management
+    public ?string $currentSessionId = null;
+    
+    public bool $hasUnsavedChanges = false;
+    
+    protected ?NamingSession $currentSession = null;
+
     /** @var array<string, string> */
     protected array $rules = [
         'businessIdea' => 'required|string|max:2000',
@@ -113,6 +122,9 @@ class Dashboard extends Component
             $this->checkDomainAvailability();
             $this->showResults = true;
             $this->activeTab = 'results';
+
+            // Auto-save session after successful generation
+            $this->autoSaveSession();
 
             $this->successMessage = 'Generated '.count($this->generatedNames).' business names!';
 
@@ -491,6 +503,206 @@ class Dashboard extends Component
         }
 
         return json_encode($properties);
+    }
+
+    // Session Management Methods
+
+    /**
+     * Load a session into the dashboard.
+     */
+    public function loadSession(string $sessionId): void
+    {
+        $user = Auth::user();
+        if (! $user) {
+            return;
+        }
+
+        $sessionService = app(SessionService::class);
+        $session = $sessionService->loadSession($user, $sessionId);
+
+        if (! $session) {
+            $this->dispatch('toast', message: 'Session not found', type: 'error');
+            return;
+        }
+
+        // Check for unsaved changes before switching
+        if ($this->hasUnsavedChanges && $this->currentSessionId !== $sessionId) {
+            $this->dispatch('confirm-session-switch', newSessionId: $sessionId);
+            return;
+        }
+
+        $this->currentSession = $session;
+        $this->currentSessionId = $session->id;
+        $this->businessIdea = $session->business_description ?? '';
+        $this->generationMode = $session->generation_mode ?? 'creative';
+        $this->deepThinking = $session->deep_thinking ?? false;
+
+        // Load results if available
+        $latestResult = $session->results()->latest()->first();
+        if ($latestResult) {
+            $this->generatedNames = $latestResult->generated_names ?? [];
+            $this->domainResults = $latestResult->domain_results ?? [];
+            $this->showResults = !empty($this->generatedNames);
+            if ($this->showResults) {
+                $this->activeTab = 'results';
+            }
+        } else {
+            $this->resetState();
+        }
+
+        $this->hasUnsavedChanges = false;
+    }
+
+    /**
+     * Confirm session switch with save option.
+     */
+    public function confirmSessionSwitch(string $newSessionId, bool $saveChanges): void
+    {
+        if ($saveChanges && $this->currentSessionId) {
+            $this->autoSaveSession();
+        }
+
+        $this->hasUnsavedChanges = false;
+        $this->loadSession($newSessionId);
+    }
+
+    /**
+     * Auto-save current session.
+     */
+    public function autoSave(): void
+    {
+        if (empty(trim($this->businessIdea))) {
+            return;
+        }
+
+        $this->autoSaveSession();
+    }
+
+    /**
+     * Create new session.
+     */
+    public function newSession(): void
+    {
+        if ($this->hasUnsavedChanges) {
+            $this->dispatch('confirm-new-session');
+            return;
+        }
+
+        $this->currentSession = null;
+        $this->currentSessionId = null;
+        $this->resetState();
+        $this->businessIdea = '';
+        $this->generationMode = 'creative';
+        $this->deepThinking = false;
+        $this->activeTab = 'generate';
+        $this->hasUnsavedChanges = false;
+    }
+
+    /**
+     * Auto-save session data.
+     */
+    private function autoSaveSession(): void
+    {
+        $user = Auth::user();
+        if (! $user || empty(trim($this->businessIdea))) {
+            return;
+        }
+
+        $sessionService = app(SessionService::class);
+
+        if ($this->currentSessionId) {
+            // Update existing session
+            $sessionService->saveSession($user, $this->currentSessionId, [
+                'business_description' => $this->businessIdea,
+                'generation_mode' => $this->generationMode,
+                'deep_thinking' => $this->deepThinking,
+                'title' => $this->generateSessionTitle(),
+            ]);
+        } else {
+            // Create new session
+            $this->currentSession = $sessionService->createSession($user, [
+                'title' => $this->generateSessionTitle(),
+                'business_description' => $this->businessIdea,
+                'generation_mode' => $this->generationMode,
+                'deep_thinking' => $this->deepThinking,
+            ]);
+            $this->currentSessionId = $this->currentSession->id;
+        }
+
+        // Save results if available
+        if (!empty($this->generatedNames)) {
+            $this->currentSession->results()->create([
+                'generated_names' => $this->generatedNames,
+                'domain_results' => $this->domainResults,
+                'generation_mode' => $this->generationMode,
+                'deep_thinking' => $this->deepThinking,
+            ]);
+        }
+
+        $this->hasUnsavedChanges = false;
+    }
+
+    /**
+     * Generate a session title from business description.
+     */
+    private function generateSessionTitle(): string
+    {
+        $title = trim($this->businessIdea);
+        if (empty($title)) {
+            return 'New Session ' . now()->format('M j, g:i A');
+        }
+
+        // Take first 50 characters and clean up
+        $title = substr($title, 0, 50);
+        $title = trim($title);
+        
+        // Add ellipsis if truncated
+        if (strlen($this->businessIdea) > 50) {
+            $title .= '...';
+        }
+
+        return $title;
+    }
+
+    /**
+     * Listen for sidebar events.
+     */
+    #[On('sessionLoaded')]
+    public function onSessionLoaded(array $data): void
+    {
+        $this->loadSession($data['sessionId']);
+    }
+
+    #[On('sessionCreated')]
+    public function onSessionCreated(array $data): void
+    {
+        $this->loadSession($data['sessionId']);
+    }
+
+    #[On('sessionDeleted')]
+    public function onSessionDeleted(array $data): void
+    {
+        if ($this->currentSessionId === $data['sessionId']) {
+            $this->newSession();
+        }
+    }
+
+    /**
+     * Mark changes as unsaved when form data changes.
+     */
+    public function updatedBusinessIdea(): void
+    {
+        $this->hasUnsavedChanges = true;
+    }
+
+    public function updatedGenerationMode(): void
+    {
+        $this->hasUnsavedChanges = true;
+    }
+
+    public function updatedDeepThinking(): void
+    {
+        $this->hasUnsavedChanges = true;
     }
 
     public function render(): View

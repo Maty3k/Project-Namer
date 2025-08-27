@@ -25,6 +25,8 @@ use Illuminate\Support\Str;
  * @property string|null $two_factor_recovery_codes
  * @property \Illuminate\Support\Carbon|null $two_factor_confirmed_at
  * @property-read bool $two_factor_enabled
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\NamingSession> $namingSessions
+ * @property-read int|null $naming_sessions_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Share> $shares
@@ -96,6 +98,16 @@ class User extends Authenticatable
     public function shares(): HasMany
     {
         return $this->hasMany(Share::class);
+    }
+
+    /**
+     * Get the user's naming sessions
+     *
+     * @return HasMany<NamingSession, $this>
+     */
+    public function namingSessions(): HasMany
+    {
+        return $this->hasMany(\App\Models\NamingSession::class);
     }
 
     /**
