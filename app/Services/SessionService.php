@@ -81,38 +81,52 @@ class SessionService
     public function searchSessions(User $user, string $query): Collection
     {
         if (empty(trim($query))) {
-            return $user->namingSessions()->recent()->get();
+            return $user->namingSessions()
+                ->with(['results' => function ($query) {
+                    $query->select(['id', 'session_id', 'generated_names', 'generation_timestamp'])
+                        ->orderBy('generation_timestamp', 'desc');
+                }])
+                ->recent()
+                ->get();
         }
 
         try {
             // Try FTS5 search first
-            $escapedQuery = '"' . str_replace('"', '""', trim($query)) . '"';
-            
+            $escapedQuery = '"'.str_replace('"', '""', trim($query)).'"';
+
             $matchingIds = DB::select(
                 'SELECT id FROM naming_sessions_fts WHERE naming_sessions_fts MATCH ? ORDER BY rank',
                 [$escapedQuery]
             );
 
-            if (!empty($matchingIds)) {
+            if (! empty($matchingIds)) {
                 $sessionIds = array_column($matchingIds, 'id');
 
                 return $user->namingSessions()
+                    ->with(['results' => function ($query) {
+                        $query->select(['id', 'session_id', 'generated_names', 'generation_timestamp'])
+                            ->orderBy('generation_timestamp', 'desc');
+                    }])
                     ->whereIn('id', $sessionIds)
-                    ->orderByRaw('CASE ' . implode(' ', array_map(
-                        fn($id, $index) => "WHEN id = '{$id}' THEN {$index}",
+                    ->orderByRaw('CASE '.implode(' ', array_map(
+                        fn ($id, $index) => "WHEN id = '{$id}' THEN {$index}",
                         $sessionIds,
                         array_keys($sessionIds)
-                    )) . ' END')
+                    )).' END')
                     ->get();
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             // Fall back to LIKE search if FTS5 fails
         }
 
         // Fallback to LIKE-based search (case-insensitive)
         $trimmedQuery = trim($query);
-        
+
         return $user->namingSessions()
+            ->with(['results' => function ($query) {
+                $query->select(['id', 'session_id', 'generated_names', 'generation_timestamp'])
+                    ->orderBy('generation_timestamp', 'desc');
+            }])
             ->where(function ($q) use ($trimmedQuery): void {
                 $q->whereRaw('LOWER(title) LIKE LOWER(?)', ["%{$trimmedQuery}%"])
                     ->orWhereRaw('LOWER(business_description) LIKE LOWER(?)', ["%{$trimmedQuery}%"]);
@@ -129,7 +143,11 @@ class SessionService
      */
     public function filterSessions(User $user, array $filters): Collection
     {
-        $query = $user->namingSessions();
+        $query = $user->namingSessions()
+            ->with(['results' => function ($query) {
+                $query->select(['id', 'session_id', 'generated_names', 'generation_timestamp'])
+                    ->orderBy('generation_timestamp', 'desc');
+            }]);
 
         foreach ($filters as $field => $value) {
             $query->where($field, $value);
@@ -160,6 +178,11 @@ class SessionService
     public function getUserSessions(User $user, int $limit = 20, int $offset = 0): Collection
     {
         return $user->namingSessions()
+            ->with(['results' => function ($query) {
+                $query->select(['id', 'session_id', 'generated_names', 'generation_timestamp'])
+                    ->orderBy('generation_timestamp', 'desc')
+                    ->limit(3); // Only load latest 3 results for preview
+            }])
             ->recent()
             ->skip($offset)
             ->take($limit)

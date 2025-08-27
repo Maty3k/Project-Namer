@@ -74,9 +74,9 @@ class Dashboard extends Component
 
     // Session management
     public ?string $currentSessionId = null;
-    
+
     public bool $hasUnsavedChanges = false;
-    
+
     protected ?NamingSession $currentSession = null;
 
     /** @var array<string, string> */
@@ -522,12 +522,14 @@ class Dashboard extends Component
 
         if (! $session) {
             $this->dispatch('toast', message: 'Session not found', type: 'error');
+
             return;
         }
 
         // Check for unsaved changes before switching
         if ($this->hasUnsavedChanges && $this->currentSessionId !== $sessionId) {
             $this->dispatch('confirm-session-switch', newSessionId: $sessionId);
+
             return;
         }
 
@@ -542,7 +544,7 @@ class Dashboard extends Component
         if ($latestResult) {
             $this->generatedNames = $latestResult->generated_names ?? [];
             $this->domainResults = $latestResult->domain_results ?? [];
-            $this->showResults = !empty($this->generatedNames);
+            $this->showResults = ! empty($this->generatedNames);
             if ($this->showResults) {
                 $this->activeTab = 'results';
             }
@@ -585,6 +587,7 @@ class Dashboard extends Component
     {
         if ($this->hasUnsavedChanges) {
             $this->dispatch('confirm-new-session');
+
             return;
         }
 
@@ -630,7 +633,7 @@ class Dashboard extends Component
         }
 
         // Save results if available
-        if (!empty($this->generatedNames)) {
+        if (! empty($this->generatedNames)) {
             $this->currentSession->results()->create([
                 'generated_names' => $this->generatedNames,
                 'domain_results' => $this->domainResults,
@@ -649,13 +652,13 @@ class Dashboard extends Component
     {
         $title = trim($this->businessIdea);
         if (empty($title)) {
-            return 'New Session ' . now()->format('M j, g:i A');
+            return 'New Session '.now()->format('M j, g:i A');
         }
 
         // Take first 50 characters and clean up
         $title = substr($title, 0, 50);
         $title = trim($title);
-        
+
         // Add ellipsis if truncated
         if (strlen($this->businessIdea) > 50) {
             $title .= '...';
@@ -667,18 +670,27 @@ class Dashboard extends Component
     /**
      * Listen for sidebar events.
      */
+    /**
+     * @param  array<string, mixed>  $data
+     */
     #[On('sessionLoaded')]
     public function onSessionLoaded(array $data): void
     {
         $this->loadSession($data['sessionId']);
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     #[On('sessionCreated')]
     public function onSessionCreated(array $data): void
     {
         $this->loadSession($data['sessionId']);
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     #[On('sessionDeleted')]
     public function onSessionDeleted(array $data): void
     {

@@ -58,19 +58,19 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 6.6 Verify all integration tests pass
 
 - [x] 7. Session Actions and Management
-  - [ ] 7.1 Write tests for session actions
+  - [x] 7.1 Write tests for session actions
   - [x] 7.2 Implement inline session renaming
   - [x] 7.3 Add session deletion with confirmation
   - [x] 7.4 Implement star/favorite functionality
   - [x] 7.5 Add session duplication feature
-  - [ ] 7.6 Implement infinite scroll/pagination for long lists
-  - [ ] 7.7 Verify all session management tests pass
+  - [x] 7.6 Implement infinite scroll/pagination for long lists
+  - [x] 7.7 Verify all session management tests pass
 
-- [ ] 8. Polish and Optimization
-  - [ ] 8.1 Write performance tests for large session counts
-  - [ ] 8.2 Implement virtual scrolling for session list
+- [x] 8. Polish and Optimization
+  - [x] 8.1 Write performance tests for large session counts
+  - [x] 8.2 Implement virtual scrolling for session list
   - [x] 8.3 Add smooth animations and transitions
-  - [ ] 8.4 Optimize database queries with eager loading
-  - [ ] 8.5 Add loading skeletons and optimistic UI updates
-  - [ ] 8.6 Test and fix accessibility compliance
-  - [ ] 8.7 Verify all tests pass and performance benchmarks met
+  - [x] 8.4 Optimize database queries with eager loading
+  - [x] 8.5 Add loading skeletons and optimistic UI updates
+  - [x] 8.6 Test and fix accessibility compliance
+  - [x] 8.7 Verify all tests pass and performance benchmarks met

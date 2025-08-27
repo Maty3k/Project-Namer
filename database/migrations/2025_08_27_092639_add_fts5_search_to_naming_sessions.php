@@ -30,7 +30,7 @@ return new class extends Migration
         ');
 
         // Create triggers to keep FTS table in sync
-        
+
         // Trigger for INSERT
         DB::statement('
             CREATE TRIGGER naming_sessions_fts_insert AFTER INSERT ON naming_sessions BEGIN
@@ -65,7 +65,7 @@ return new class extends Migration
         DB::statement('DROP TRIGGER IF EXISTS naming_sessions_fts_insert');
         DB::statement('DROP TRIGGER IF EXISTS naming_sessions_fts_update');
         DB::statement('DROP TRIGGER IF EXISTS naming_sessions_fts_delete');
-        
+
         // Drop FTS table
         DB::statement('DROP TABLE IF EXISTS naming_sessions_fts');
     }

@@ -77,7 +77,7 @@ describe('SessionSidebar Search Functionality', function (): void {
                 ->set('searchQuery', 'E-commerce');
 
             $sessions = $component->viewData('sessions');
-            
+
             expect($sessions)->toHaveCount(1);
             expect($sessions->first()->title)->toBe('E-commerce Platform');
         });
@@ -87,7 +87,7 @@ describe('SessionSidebar Search Functionality', function (): void {
                 ->set('searchQuery', 'mobile');
 
             $sessions = $component->viewData('sessions');
-            
+
             expect($sessions)->toHaveCount(2);
             expect($sessions->pluck('title')->toArray())->toContain('Food Delivery App', 'Fitness Tracker');
         });
@@ -97,7 +97,7 @@ describe('SessionSidebar Search Functionality', function (): void {
                 ->set('searchQuery', 'SAAS analytics');
 
             $sessions = $component->viewData('sessions');
-            
+
             expect($sessions)->toHaveCount(1);
             expect($sessions->first()->title)->toBe('SaaS Analytics Tool');
         });
@@ -107,7 +107,7 @@ describe('SessionSidebar Search Functionality', function (): void {
                 ->set('searchQuery', 'deliver');
 
             $sessions = $component->viewData('sessions');
-            
+
             expect($sessions)->toHaveCount(1);
             expect($sessions->first()->title)->toBe('Food Delivery App');
         });
@@ -117,7 +117,7 @@ describe('SessionSidebar Search Functionality', function (): void {
                 ->set('searchQuery', 'nonexistent search term');
 
             $sessions = $component->viewData('sessions');
-            
+
             expect($sessions)->toHaveCount(0);
         });
 
@@ -126,7 +126,7 @@ describe('SessionSidebar Search Functionality', function (): void {
                 ->set('searchQuery', '');
 
             $sessions = $component->viewData('sessions');
-            
+
             expect($sessions)->toHaveCount(4);
         });
 
@@ -135,7 +135,7 @@ describe('SessionSidebar Search Functionality', function (): void {
                 ->set('searchQuery', '  E-commerce  ');
 
             $sessions = $component->viewData('sessions');
-            
+
             expect($sessions)->toHaveCount(1);
             expect($sessions->first()->title)->toBe('E-commerce Platform');
         });
@@ -154,7 +154,7 @@ describe('SessionSidebar Search Functionality', function (): void {
             NamingSession::factory(50)->create(['user_id' => $this->user->id]);
 
             $startTime = microtime(true);
-            
+
             $component = Livewire::test(SessionSidebar::class)
                 ->set('searchQuery', 'E-commerce');
 
@@ -233,7 +233,7 @@ describe('SessionSidebar Search Functionality', function (): void {
 
         it('handles very long search queries', function (): void {
             $longQuery = str_repeat('test ', 100);
-            
+
             $component = Livewire::test(SessionSidebar::class)
                 ->set('searchQuery', $longQuery);
 
@@ -243,14 +243,14 @@ describe('SessionSidebar Search Functionality', function (): void {
 
         it('handles SQL injection attempts', function (): void {
             $maliciousQuery = "'; DROP TABLE naming_sessions; --";
-            
+
             $component = Livewire::test(SessionSidebar::class)
                 ->set('searchQuery', $maliciousQuery);
 
             // Should safely handle the query without SQL injection
             $sessions = $component->viewData('sessions');
             expect($sessions)->toHaveCount(0);
-            
+
             // Verify sessions table still exists by checking count
             expect(NamingSession::count())->toBe(4);
         });
@@ -262,7 +262,7 @@ describe('SessionSidebar Search Functionality', function (): void {
                 ->set('searchQuery', 'platform');
 
             $sessions = $component->viewData('sessions');
-            
+
             expect($sessions)->toHaveCount(1);
             expect($sessions->first()->title)->toBe('E-commerce Platform');
         });
@@ -281,7 +281,7 @@ describe('SessionSidebar Search Functionality', function (): void {
             // Refresh component to reflect new session
             $component->call('$refresh');
             $sessions = $component->viewData('sessions');
-            
+
             // Should now show both matching sessions
             expect($sessions)->toHaveCount(2);
             expect($component->get('searchQuery'))->toBe('analytics');

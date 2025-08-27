@@ -70,8 +70,8 @@ describe('Dashboard Session Integration', function (): void {
             $component = Livewire::test(Dashboard::class)
                 ->call('loadSession', 'non-existent-id');
 
-            $component->assertDispatched('toast', 
-                message: 'Session not found', 
+            $component->assertDispatched('toast',
+                message: 'Session not found',
                 type: 'error'
             );
         });

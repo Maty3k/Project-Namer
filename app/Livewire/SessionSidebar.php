@@ -23,7 +23,17 @@ class SessionSidebar extends Component
 
     public int $offset = 0;
 
+    public bool $hasMoreSessions = true;
+
+    public bool $isLoadingMore = false;
+
+    public bool $isLoadingSessions = false;
+
+    public bool $isCreatingSession = false;
+
     public ?string $renamingSessionId = null;
+
+    public ?string $deletingSessionId = null;
 
     public string $renameText = '';
 
@@ -64,8 +74,9 @@ class SessionSidebar extends Component
             return $sessionService->filterSessions($user, ['is_starred' => true]);
         }
 
-        // Return paginated sessions
-        return $sessionService->getUserSessions($user, $this->limit, 0);
+        // Return sessions up to current offset + limit (for virtual scrolling)
+        $totalToShow = $this->offset + $this->limit;
+        return $sessionService->getUserSessions($user, $totalToShow, 0);
     }
 
     /**
@@ -103,13 +114,20 @@ class SessionSidebar extends Component
             return;
         }
 
-        $session = $this->getSessionService()->createSession($user, [
-            'title' => 'New Session '.now()->format('M j, g:i A'),
-            'business_description' => null,
-            'generation_mode' => 'creative',
-        ]);
+        // Optimistic UI - show loading state immediately
+        $this->isCreatingSession = true;
 
-        $this->dispatch('sessionCreated', ['sessionId' => $session->id]);
+        try {
+            $session = $this->getSessionService()->createSession($user, [
+                'title' => 'New Session '.now()->format('M j, g:i A'),
+                'business_description' => null,
+                'generation_mode' => 'creative',
+            ]);
+
+            $this->dispatch('sessionCreated', ['sessionId' => $session->id]);
+        } finally {
+            $this->isCreatingSession = false;
+        }
     }
 
     public function loadSession(string $sessionId): void
@@ -137,10 +155,17 @@ class SessionSidebar extends Component
             return;
         }
 
-        $deleted = $this->getSessionService()->deleteSession($user, $sessionId);
+        // Optimistic UI - mark as deleting immediately
+        $this->deletingSessionId = $sessionId;
 
-        if ($deleted) {
-            $this->dispatch('sessionDeleted', ['sessionId' => $sessionId]);
+        try {
+            $deleted = $this->getSessionService()->deleteSession($user, $sessionId);
+
+            if ($deleted) {
+                $this->dispatch('sessionDeleted', ['sessionId' => $sessionId]);
+            }
+        } finally {
+            $this->deletingSessionId = null;
         }
     }
 
@@ -216,7 +241,33 @@ class SessionSidebar extends Component
 
     public function loadMore(): void
     {
-        $this->limit += 20;
+        if ($this->isLoadingMore || ! $this->hasMoreSessions) {
+            return;
+        }
+
+        $this->isLoadingMore = true;
+
+        $user = Auth::user();
+        if (! $user) {
+            $this->isLoadingMore = false;
+            return;
+        }
+
+        $sessionService = $this->getSessionService();
+        $nextOffset = $this->offset + $this->limit;
+
+        // Get next batch of sessions to check if there are more
+        $nextBatch = $sessionService->getUserSessions($user, $this->limit, $nextOffset);
+
+        if ($nextBatch->count() < $this->limit) {
+            $this->hasMoreSessions = false;
+        }
+
+        if ($nextBatch->count() > 0) {
+            $this->offset = $nextOffset;
+        }
+
+        $this->isLoadingMore = false;
     }
 
     /**
@@ -246,8 +297,10 @@ class SessionSidebar extends Component
 
     protected function resetPagination(): void
     {
-        $this->limit = 20;
+        $this->offset = 0;
+        $this->hasMoreSessions = true;
     }
+
 
     public function render(): \Illuminate\Contracts\View\View
     {

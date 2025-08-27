@@ -43,13 +43,20 @@
         <!-- New Session Button -->
         <button
             wire:click="createNewSession"
+            @if($isCreatingSession) disabled @endif
             class="w-full bg-black dark:bg-white text-white dark:text-black rounded-lg px-4 py-3 
                    hover:bg-gray-800 dark:hover:bg-gray-100 transition-all duration-200 
                    flex items-center justify-center gap-2 font-medium shadow-sm hover:shadow-md
-                   hover:scale-[1.02] active:scale-[0.98]"
+                   hover:scale-[1.02] active:scale-[0.98]
+                   @if($isCreatingSession) opacity-75 cursor-not-allowed @endif"
         >
-            <flux:icon name="plus" size="sm" class="transform group-hover:rotate-90 transition-transform duration-200" />
-            New session
+            @if($isCreatingSession)
+                <div class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                Creating...
+            @else
+                <flux:icon name="plus" size="sm" class="transform group-hover:rotate-90 transition-transform duration-200" />
+                New session
+            @endif
         </button>
     </header>
 
@@ -95,8 +102,41 @@
     </div>
 
     <!-- Sessions List -->
-    <div class="flex-1 overflow-y-auto px-2">
-        @if(empty($groupedSessions))
+    <div 
+        class="flex-1 overflow-y-auto px-2 sessions-container"
+        x-data="{
+            init() {
+                // Virtual scrolling intersection observer
+                if (this.$refs.loadMore) {
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting && !$wire.isLoadingMore && $wire.hasMoreSessions) {
+                                $wire.loadMore();
+                            }
+                        });
+                    }, {
+                        root: this.$el,
+                        rootMargin: '100px'
+                    });
+                    
+                    observer.observe(this.$refs.loadMore);
+                    
+                    this.$cleanup = () => observer.disconnect();
+                }
+            }
+        }"
+    >
+        @if($isLoadingSessions)
+            <!-- Loading Skeletons -->
+            <div class="mb-2">
+                <div class="sticky top-0 bg-white dark:bg-gray-900 py-2 px-2 mb-2">
+                    <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16 animate-pulse"></div>
+                </div>
+                @for($i = 0; $i < 6; $i++)
+                    <x-session-skeleton />
+                @endfor
+            </div>
+        @elseif(empty($groupedSessions))
             <!-- Empty State -->
             <div class="flex flex-col items-center justify-center h-64 text-center px-4">
                 <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
@@ -117,10 +157,21 @@
                 <!-- Sessions in Group -->
                 @foreach($sessions as $session)
                     <div 
-                        class="relative group mb-2"
+                        class="relative group mb-2 
+                               @if($deletingSessionId === $session->id) opacity-50 pointer-events-none @endif"
                         x-data="{ showMenu: false }"
                         x-on:click.away="showMenu = false"
                     >
+                        @if($deletingSessionId === $session->id)
+                            <!-- Deleting overlay -->
+                            <div class="absolute inset-0 bg-red-50 dark:bg-red-900/20 rounded-lg flex items-center justify-center z-10">
+                                <div class="flex items-center gap-2 text-red-600 dark:text-red-400">
+                                    <div class="animate-spin rounded-full h-4 w-4 border-2 border-red-600 border-t-transparent"></div>
+                                    <span class="text-sm font-medium">Deleting...</span>
+                                </div>
+                            </div>
+                        @endif
+                        
                         <div 
                             class="p-3 rounded-lg cursor-pointer transition-all duration-150 hover:bg-gray-50 dark:hover:bg-gray-800
                                    hover:scale-[1.02] active:scale-[0.98] border border-transparent hover:border-gray-200 dark:hover:border-gray-700
@@ -236,15 +287,17 @@
                 @endforeach
             @endforeach
 
-            <!-- Load More Button -->
-            @if(count($sessions) >= $limit)
-                <div class="p-4 text-center">
-                    <button
-                        wire:click="loadMore"
-                        class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-150"
-                    >
-                        Load more sessions...
-                    </button>
+            <!-- Virtual Scrolling Trigger -->
+            @if($hasMoreSessions)
+                <div x-ref="loadMore" class="p-4 text-center">
+                    @if($isLoadingMore)
+                        <div class="flex items-center justify-center gap-2">
+                            <div class="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-gray-600"></div>
+                            <span class="text-sm text-gray-500 dark:text-gray-400">Loading more sessions...</span>
+                        </div>
+                    @else
+                        <div class="h-4"></div> <!-- Invisible trigger area -->
+                    @endif
                 </div>
             @endif
         @endif
