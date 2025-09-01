@@ -27,6 +27,11 @@ Route::get('dashboard', App\Livewire\Dashboard::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+Route::get('project/{uuid}', function (string $uuid) {
+    // Temporary placeholder - will implement ProjectPage component later
+    return redirect('/dashboard');
+})->middleware(['auth', 'verified'])->name('project.show');
+
 Route::get('logo-gallery/{logoGeneration}', App\Livewire\LogoGallery::class)
     ->middleware(['auth', 'verified'])
     ->name('logo-gallery');
