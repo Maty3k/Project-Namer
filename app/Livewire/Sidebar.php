@@ -12,19 +12,22 @@ use Livewire\Component;
 
 /**
  * Sidebar component for project navigation.
- * 
+ *
  * Displays user's projects in chronological order with active project highlighting
  * and real-time updates via Livewire events.
  */
 class Sidebar extends Component
 {
     public ?string $activeProjectUuid = null;
+
     public bool $collapsed = false;
+
     public ?Project $selectedProject = null;
 
+    /** @var array<string, string> */
     protected $listeners = [
         'project-created' => 'refreshProjects',
-        'project-updated' => 'refreshProjects', 
+        'project-updated' => 'refreshProjects',
         'project-deleted' => 'refreshProjects',
     ];
 
@@ -34,7 +37,7 @@ class Sidebar extends Component
     public function mount(?string $activeProjectUuid = null): void
     {
         $this->activeProjectUuid = $activeProjectUuid;
-        
+
         if ($this->activeProjectUuid) {
             $this->selectedProject = Project::where('uuid', $this->activeProjectUuid)
                 ->where('user_id', Auth::id())
@@ -44,6 +47,8 @@ class Sidebar extends Component
 
     /**
      * Get user's projects ordered chronologically (newest first).
+     *
+     * @return Collection<int, Project>
      */
     public function getProjectsProperty(): Collection
     {
@@ -58,7 +63,7 @@ class Sidebar extends Component
      */
     public function getProjectCountProperty(): int
     {
-        return $this->projects->count();
+        return $this->getProjectsProperty()->count();
     }
 
     /**
@@ -82,7 +87,7 @@ class Sidebar extends Component
      */
     public function toggleCollapse(): void
     {
-        $this->collapsed = !$this->collapsed;
+        $this->collapsed = ! $this->collapsed;
     }
 
     /**
@@ -90,9 +95,9 @@ class Sidebar extends Component
      */
     public function refreshProjects(?string $projectUuid = null): void
     {
-        // Force refresh the projects property
-        unset($this->projects);
-        
+        // Computed properties are automatically refreshed on the next access
+        // No explicit action needed for Livewire computed properties
+
         // Update selected project if it was the affected one
         if ($projectUuid && $this->activeProjectUuid === $projectUuid) {
             $this->selectedProject = Project::where('uuid', $projectUuid)
@@ -114,7 +119,7 @@ class Sidebar extends Component
      */
     public function truncateName(string $name, int $length = 25): string
     {
-        return strlen($name) > $length ? substr($name, 0, $length) . '...' : $name;
+        return strlen($name) > $length ? substr($name, 0, $length).'...' : $name;
     }
 
     public function render(): View

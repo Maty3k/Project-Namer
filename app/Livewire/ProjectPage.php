@@ -77,7 +77,7 @@ class ProjectPage extends Component
 
         $this->project->update(['name' => $this->editableName]);
         $this->editingName = false;
-        
+
         // Dispatch event to update sidebar
         $this->dispatch('project-updated', $this->project->uuid);
     }
@@ -102,7 +102,7 @@ class ProjectPage extends Component
         $this->validate(['editableDescription' => $this->rules['editableDescription']]);
 
         $this->project->update(['description' => $this->editableDescription]);
-        
+
         // Dispatch event to update sidebar
         $this->dispatch('project-updated', $this->project->uuid);
     }
