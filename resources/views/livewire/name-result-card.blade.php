@@ -1,6 +1,6 @@
-<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-200 
-             {{ $this->isSelected ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/10' : '' }}
-             {{ $suggestion->is_hidden ? 'opacity-60' : '' }}"
+<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-200 hover:shadow-md
+             {{ $this->isSelected ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/10' : 'hover:border-gray-300 dark:hover:border-gray-600' }}
+             {{ $suggestion->is_hidden ? 'opacity-60 scale-95' : 'scale-100' }}"
      wire:key="suggestion-{{ $suggestion->id }}">
     
     <!-- Card Header -->
@@ -52,7 +52,7 @@
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="flex items-center space-x-1">
+                <div class="flex items-center space-x-1 sm:space-x-2">
                     <!-- Selection Toggle -->
                     @if($this->isSelected)
                         <flux:button
@@ -60,16 +60,20 @@
                             variant="ghost"
                             size="sm"
                             class="text-blue-600 hover:text-blue-700"
+                            wire:loading.attr="disabled"
                         >
-                            Deselect
+                            <span wire:loading.remove wire:target="deselectName">Deselect</span>
+                            <span wire:loading wire:target="deselectName">Deselecting...</span>
                         </flux:button>
                     @else
                         <flux:button
                             wire:click="selectName"
                             variant="primary"
                             size="sm"
+                            wire:loading.attr="disabled"
                         >
-                            Select
+                            <span wire:loading.remove wire:target="selectName">Select</span>
+                            <span wire:loading wire:target="selectName">Selecting...</span>
                         </flux:button>
                     @endif
 
@@ -80,8 +84,10 @@
                             variant="ghost"
                             size="sm"
                             class="text-green-600 hover:text-green-700"
+                            wire:loading.attr="disabled"
                         >
-                            Show
+                            <span wire:loading.remove wire:target="showSuggestion">Show</span>
+                            <span wire:loading wire:target="showSuggestion">Showing...</span>
                         </flux:button>
                     @else
                         <flux:button
@@ -89,8 +95,10 @@
                             variant="ghost"
                             size="sm"
                             class="text-gray-600 hover:text-gray-700"
+                            wire:loading.attr="disabled"
                         >
-                            Hide
+                            <span wire:loading.remove wire:target="hideSuggestion">Hide</span>
+                            <span wire:loading wire:target="hideSuggestion">Hiding...</span>
                         </flux:button>
                     @endif
 
@@ -172,8 +180,10 @@
                             variant="ghost"
                             size="sm"
                             class="text-blue-600 hover:text-blue-700"
+                            wire:loading.attr="disabled"
                         >
-                            Generate Logos
+                            <span wire:loading.remove wire:target="generateLogos">Generate Logos</span>
+                            <span wire:loading wire:target="generateLogos">Generating...</span>
                         </flux:button>
                     @endif
                 </div>

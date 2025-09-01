@@ -91,6 +91,10 @@ class ProjectPage extends Component
 
         // Dispatch event to update sidebar
         $this->dispatch('project-updated', $this->project->uuid);
+        $this->dispatch('show-toast', [
+            'message' => 'Project name updated successfully!',
+            'type' => 'success',
+        ]);
     }
 
     /**
@@ -127,6 +131,9 @@ class ProjectPage extends Component
 
         if (strlen(trim($this->editableDescription)) >= 10) {
             $this->project->update(['description' => $this->editableDescription]);
+
+            // Only show toast for manual save, not auto-save to avoid spam
+            // Auto-save feedback is handled via the UI "Auto-saving..." indicator
         }
     }
 

@@ -1,27 +1,28 @@
-<div class="max-w-4xl mx-auto p-6">
-    <div class="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-8">
+<div class="max-w-4xl mx-auto p-4 sm:p-6">
+    <div class="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-4 sm:p-6 lg:p-8">
         <!-- Project Header with Editable Name -->
         <div class="mb-8">
             @if($editingName)
-                <div class="flex items-center gap-3">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                     <flux:field class="flex-1">
                         <flux:input
                             wire:model="editableName"
                             wire:keydown.enter="saveName"
                             wire:keydown.escape="cancelNameEdit"
-                            class="text-3xl font-bold bg-transparent border-0 border-b-2 border-blue-500 focus:ring-0 focus:border-blue-600"
+                            class="text-2xl sm:text-3xl font-bold bg-transparent border-0 border-b-2 border-blue-500 focus:ring-0 focus:border-blue-600"
                             placeholder="Project name"
                             autofocus
                         />
                         <flux:error name="editableName" />
                     </flux:field>
                     
-                    <div class="flex gap-2">
+                    <div class="flex gap-2 sm:flex-shrink-0">
                         <flux:button 
                             wire:click="saveName"
                             variant="primary"
                             size="sm"
                             wire:loading.attr="disabled"
+                            class="flex-1 sm:flex-none"
                         >
                             <span wire:loading.remove wire:target="saveName">Save</span>
                             <span wire:loading wire:target="saveName">Saving...</span>
@@ -31,6 +32,7 @@
                             wire:click="cancelNameEdit"
                             variant="ghost"
                             size="sm"
+                            class="flex-1 sm:flex-none"
                         >
                             Cancel
                         </flux:button>
@@ -98,7 +100,7 @@
         <!-- Name Suggestions Section -->
         <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
             <!-- Section Header -->
-            <div class="flex items-center justify-between mb-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <div>
                     <h3 class="text-lg font-medium text-gray-900 dark:text-white">Name Suggestions</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -112,13 +114,16 @@
 
                 <!-- Filter Controls -->
                 @if($this->suggestionCounts['total'] > 0)
-                    <div class="flex items-center space-x-2">
+                    <div class="flex items-center space-x-2 sm:flex-shrink-0">
                         <flux:button
                             wire:click="setResultsFilter('visible')"
                             variant="{{ $resultsFilter === 'visible' ? 'primary' : 'ghost' }}"
                             size="sm"
+                            wire:loading.attr="disabled"
+                            wire:target="setResultsFilter"
                         >
-                            Visible ({{ $this->suggestionCounts['visible'] }})
+                            <span wire:loading.remove wire:target="setResultsFilter">Visible ({{ $this->suggestionCounts['visible'] }})</span>
+                            <span wire:loading wire:target="setResultsFilter">Loading...</span>
                         </flux:button>
                         
                         @if($this->suggestionCounts['hidden'] > 0)
@@ -126,8 +131,11 @@
                                 wire:click="setResultsFilter('hidden')"
                                 variant="{{ $resultsFilter === 'hidden' ? 'primary' : 'ghost' }}"
                                 size="sm"
+                                wire:loading.attr="disabled"
+                                wire:target="setResultsFilter"
                             >
-                                Hidden ({{ $this->suggestionCounts['hidden'] }})
+                                <span wire:loading.remove wire:target="setResultsFilter">Hidden ({{ $this->suggestionCounts['hidden'] }})</span>
+                                <span wire:loading wire:target="setResultsFilter">Loading...</span>
                             </flux:button>
                         @endif
                         
@@ -135,14 +143,29 @@
                             wire:click="setResultsFilter('all')"
                             variant="{{ $resultsFilter === 'all' ? 'primary' : 'ghost' }}"
                             size="sm"
+                            wire:loading.attr="disabled"
+                            wire:target="setResultsFilter"
                         >
-                            All ({{ $this->suggestionCounts['total'] }})
+                            <span wire:loading.remove wire:target="setResultsFilter">All ({{ $this->suggestionCounts['total'] }})</span>
+                            <span wire:loading wire:target="setResultsFilter">Loading...</span>
                         </flux:button>
                     </div>
                 @endif
             </div>
 
             <!-- Name Suggestions List -->
+            <div class="relative">
+                <!-- Loading Overlay -->
+                <div wire:loading wire:target="setResultsFilter" class="absolute inset-0 bg-white/80 dark:bg-gray-900/80 flex items-center justify-center z-10 rounded-lg">
+                    <div class="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
+                        <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span>Filtering suggestions...</span>
+                    </div>
+                </div>
+
             @if($this->filteredSuggestions->isEmpty())
                 <div class="text-center py-12">
                     @if($this->suggestionCounts['total'] === 0)
@@ -173,6 +196,7 @@
                     @endforeach
                 </div>
             @endif
+            </div>
         </div>
     </div>
 </div>

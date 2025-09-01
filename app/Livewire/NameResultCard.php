@@ -49,6 +49,10 @@ class NameResultCard extends Component
         $this->suggestion->update(['is_hidden' => true]);
 
         $this->dispatch('suggestion-hidden', $this->suggestion->id);
+        $this->dispatch('show-toast', [
+            'message' => "Hidden '{$this->suggestion->name}' from results.",
+            'type' => 'info',
+        ]);
     }
 
     /**
@@ -61,6 +65,10 @@ class NameResultCard extends Component
         $this->suggestion->update(['is_hidden' => false]);
 
         $this->dispatch('suggestion-shown', $this->suggestion->id);
+        $this->dispatch('show-toast', [
+            'message' => "Restored '{$this->suggestion->name}' to visible results.",
+            'type' => 'success',
+        ]);
     }
 
     /**
@@ -73,6 +81,10 @@ class NameResultCard extends Component
         $this->suggestion->project->update(['selected_name_id' => $this->suggestion->id]);
 
         $this->dispatch('name-selected', $this->suggestion->id);
+        $this->dispatch('show-toast', [
+            'message' => "Selected '{$this->suggestion->name}' as your project name!",
+            'type' => 'success',
+        ]);
     }
 
     /**
@@ -85,6 +97,10 @@ class NameResultCard extends Component
         $this->suggestion->project->update(['selected_name_id' => null]);
 
         $this->dispatch('name-deselected', $this->suggestion->id);
+        $this->dispatch('show-toast', [
+            'message' => "Deselected '{$this->suggestion->name}'. You can select another name anytime.",
+            'type' => 'info',
+        ]);
     }
 
     /**

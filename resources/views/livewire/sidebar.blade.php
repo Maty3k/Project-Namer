@@ -71,10 +71,10 @@
                 @foreach($this->projects as $project)
                     <div
                         wire:click="selectProject('{{ $project->uuid }}')"
-                        class="cursor-pointer rounded-lg p-3 transition-colors duration-150 
+                        class="cursor-pointer rounded-lg p-3 transition-all duration-200 
                                {{ $this->isActiveProject($project) 
-                                   ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500' 
-                                   : 'hover:bg-gray-100 dark:hover:bg-gray-800' }}"
+                                   ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 shadow-sm' 
+                                   : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm transform hover:scale-[1.02]' }}"
                         wire:key="project-{{ $project->uuid }}"
                     >
                         @if($collapsed)
@@ -91,9 +91,22 @@
                                     <h3 class="text-sm font-medium text-gray-900 dark:text-white truncate">
                                         {{ $this->truncateName($project->name, 22) }}
                                     </h3>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">
-                                        {{ $this->truncateName($project->description, 35) }}
-                                    </p>
+                                    
+                                    @if($project->selectedName)
+                                        <div class="flex items-center mt-1">
+                                            <span class="text-xs text-green-600 dark:text-green-400 font-medium">
+                                                ✓ {{ $this->truncateName($project->selectedName->name, 18) }}
+                                            </span>
+                                        </div>
+                                        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1 truncate">
+                                            {{ $this->truncateName($project->description, 25) }}
+                                        </p>
+                                    @else
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">
+                                            {{ $this->truncateName($project->description, 35) }}
+                                        </p>
+                                    @endif
+                                    
                                     <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
                                         {{ $project->updated_at->format('M j') }}
                                     </p>

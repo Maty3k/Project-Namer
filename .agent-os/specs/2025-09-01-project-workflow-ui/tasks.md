@@ -59,13 +59,13 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 5.8 Add visual feedback for selected name
   - [x] 5.9 Verify all name result tests pass
 
-- [ ] 6. State Management and Polish
-  - [ ] 6.1 Write integration tests for complete workflows
-  - [ ] 6.2 Implement name selection persistence in database
-  - [ ] 6.3 Add name deselection with UI revert functionality
-  - [ ] 6.4 Ensure selected name appears in sidebar
-  - [ ] 6.5 Add loading states and transitions
-  - [ ] 6.6 Implement toast notifications for user feedback
-  - [ ] 6.7 Add responsive design adjustments
-  - [ ] 6.8 Verify all integration tests pass
-  - [ ] 6.9 Run full test suite and ensure 100% pass rate
+- [x] 6. State Management and Polish
+  - [x] 6.1 Write integration tests for complete workflows
+  - [x] 6.2 Implement name selection persistence in database
+  - [x] 6.3 Add name deselection with UI revert functionality
+  - [x] 6.4 Ensure selected name appears in sidebar
+  - [x] 6.5 Add loading states and transitions
+  - [x] 6.6 Implement toast notifications for user feedback
+  - [x] 6.7 Add responsive design adjustments
+  - [x] 6.8 Verify all integration tests pass
+  - [x] 6.9 Run full test suite and ensure 100% pass rate

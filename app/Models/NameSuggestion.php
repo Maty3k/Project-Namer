@@ -56,6 +56,14 @@ final class NameSuggestion extends Model
         'logos',
         'is_hidden',
         'generation_metadata',
+        'ai_model_used',
+        'ai_generation_mode',
+        'ai_deep_thinking',
+        'ai_response_time_ms',
+        'ai_tokens_used',
+        'ai_cost_cents',
+        'ai_generation_session_id',
+        'ai_prompt_metadata',
     ];
 
     /**
@@ -91,6 +99,58 @@ final class NameSuggestion extends Model
     }
 
     /**
+     * Scope a query to only include AI-generated suggestions.
+     *
+     * @param  Builder<$this>  $query
+     * @return Builder<$this>
+     */
+    protected function scopeAiGenerated(Builder $query): Builder
+    {
+        return $query->whereNotNull('ai_model_used');
+    }
+
+    /**
+     * Scope a query to filter by AI model.
+     *
+     * @param  Builder<$this>  $query
+     * @return Builder<$this>
+     */
+    protected function scopeByAiModel(Builder $query, string $modelName): Builder
+    {
+        return $query->where('ai_model_used', $modelName);
+    }
+
+    /**
+     * Check if this suggestion was AI-generated.
+     */
+    public function isAiGenerated(): bool
+    {
+        return ! is_null($this->ai_model_used);
+    }
+
+    /**
+     * Get AI generation summary for this suggestion.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getAiGenerationSummary(): ?array
+    {
+        if (! $this->isAiGenerated()) {
+            return null;
+        }
+
+        return [
+            'model_used' => $this->ai_model_used,
+            'generation_mode' => $this->ai_generation_mode,
+            'deep_thinking' => $this->ai_deep_thinking,
+            'response_time_ms' => $this->ai_response_time_ms,
+            'tokens_used' => $this->ai_tokens_used,
+            'cost_cents' => $this->ai_cost_cents,
+            'session_id' => $this->ai_generation_session_id,
+        ];
+    }
+
+    /**
      * The attributes that should be cast.
      *
      * @return array<string, string>
@@ -102,6 +162,11 @@ final class NameSuggestion extends Model
             'logos' => 'array',
             'is_hidden' => 'boolean',
             'generation_metadata' => 'array',
+            'ai_deep_thinking' => 'boolean',
+            'ai_response_time_ms' => 'integer',
+            'ai_tokens_used' => 'integer',
+            'ai_cost_cents' => 'integer',
+            'ai_prompt_metadata' => 'array',
         ];
     }
 }

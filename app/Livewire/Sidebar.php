@@ -29,6 +29,8 @@ class Sidebar extends Component
         'project-created' => 'refreshProjects',
         'project-updated' => 'refreshProjects',
         'project-deleted' => 'refreshProjects',
+        'name-selected' => 'refreshProjects',
+        'name-deselected' => 'refreshProjects',
     ];
 
     /**
@@ -53,6 +55,7 @@ class Sidebar extends Component
     public function getProjectsProperty(): Collection
     {
         return Project::where('user_id', Auth::id())
+            ->with('selectedName')
             ->orderBy('updated_at', 'desc')
             ->orderBy('created_at', 'desc')
             ->get();
