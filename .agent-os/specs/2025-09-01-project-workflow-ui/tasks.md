@@ -48,16 +48,16 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 4.8 Integrate sidebar into main layout
   - [x] 4.9 Verify all sidebar tests pass
 
-- [ ] 5. Name Results Table and Cards
-  - [ ] 5.1 Write tests for NameResultCard component
-  - [ ] 5.2 Create NameResultCard Livewire component
-  - [ ] 5.3 Implement Flux table structure for results display
-  - [ ] 5.4 Create expandable card UI with name, domains, and logo sections
-  - [ ] 5.5 Implement hide/show functionality for individual cards
-  - [ ] 5.6 Add filter toggle for active/hidden results
-  - [ ] 5.7 Implement name selection functionality
-  - [ ] 5.8 Add visual feedback for selected name
-  - [ ] 5.9 Verify all name result tests pass
+- [x] 5. Name Results Table and Cards
+  - [x] 5.1 Write tests for NameResultCard component
+  - [x] 5.2 Create NameResultCard Livewire component
+  - [x] 5.3 Implement Flux table structure for results display
+  - [x] 5.4 Create expandable card UI with name, domains, and logo sections
+  - [x] 5.5 Implement hide/show functionality for individual cards
+  - [x] 5.6 Add filter toggle for active/hidden results
+  - [x] 5.7 Implement name selection functionality
+  - [x] 5.8 Add visual feedback for selected name
+  - [x] 5.9 Verify all name result tests pass
 
 - [ ] 6. State Management and Polish
   - [ ] 6.1 Write integration tests for complete workflows

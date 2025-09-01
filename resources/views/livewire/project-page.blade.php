@@ -95,12 +95,84 @@
             </div>
         </div>
         
-        <!-- Future: Name suggestions table will go here -->
+        <!-- Name Suggestions Section -->
         <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <div class="text-center text-gray-500 dark:text-gray-400">
-                <h3 class="text-lg font-medium mb-2">Name Suggestions</h3>
-                <p class="text-sm">Name generation functionality will be added in the next phase.</p>
+            <!-- Section Header -->
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Name Suggestions</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        @if($this->suggestionCounts['total'] > 0)
+                            {{ $this->suggestionCounts['visible'] }} visible, {{ $this->suggestionCounts['hidden'] }} hidden
+                        @else
+                            No suggestions generated yet
+                        @endif
+                    </p>
+                </div>
+
+                <!-- Filter Controls -->
+                @if($this->suggestionCounts['total'] > 0)
+                    <div class="flex items-center space-x-2">
+                        <flux:button
+                            wire:click="setResultsFilter('visible')"
+                            variant="{{ $resultsFilter === 'visible' ? 'primary' : 'ghost' }}"
+                            size="sm"
+                        >
+                            Visible ({{ $this->suggestionCounts['visible'] }})
+                        </flux:button>
+                        
+                        @if($this->suggestionCounts['hidden'] > 0)
+                            <flux:button
+                                wire:click="setResultsFilter('hidden')"
+                                variant="{{ $resultsFilter === 'hidden' ? 'primary' : 'ghost' }}"
+                                size="sm"
+                            >
+                                Hidden ({{ $this->suggestionCounts['hidden'] }})
+                            </flux:button>
+                        @endif
+                        
+                        <flux:button
+                            wire:click="setResultsFilter('all')"
+                            variant="{{ $resultsFilter === 'all' ? 'primary' : 'ghost' }}"
+                            size="sm"
+                        >
+                            All ({{ $this->suggestionCounts['total'] }})
+                        </flux:button>
+                    </div>
+                @endif
             </div>
+
+            <!-- Name Suggestions List -->
+            @if($this->filteredSuggestions->isEmpty())
+                <div class="text-center py-12">
+                    @if($this->suggestionCounts['total'] === 0)
+                        <!-- No suggestions at all -->
+                        <svg class="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                        <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Ready to generate names</h4>
+                        <p class="text-gray-500 dark:text-gray-400 mb-4">Start by describing your project above, then generate AI-powered name suggestions.</p>
+                        <flux:button variant="primary">
+                            Generate Names
+                        </flux:button>
+                    @else
+                        <!-- No suggestions for current filter -->
+                        <div class="text-gray-500 dark:text-gray-400">
+                            <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            <p>No {{ $resultsFilter }} suggestions found</p>
+                        </div>
+                    @endif
+                </div>
+            @else
+                <!-- Suggestions Table -->
+                <div class="space-y-4">
+                    @foreach($this->filteredSuggestions as $suggestion)
+                        @livewire('name-result-card', ['suggestion' => $suggestion], key('suggestion-'.$suggestion->id))
+                    @endforeach
+                </div>
+            @endif
         </div>
     </div>
 </div>

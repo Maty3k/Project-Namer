@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Models\Project;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -25,6 +26,16 @@ class ProjectPage extends Component
     public string $editableDescription = '';
 
     public bool $editingName = false;
+
+    public string $resultsFilter = 'visible'; // 'visible', 'hidden', 'all'
+
+    /** @var array<string, string> */
+    protected $listeners = [
+        'name-selected' => 'handleNameSelected',
+        'name-deselected' => 'handleNameDeselected',
+        'suggestion-hidden' => 'handleSuggestionVisibilityChanged',
+        'suggestion-shown' => 'handleSuggestionVisibilityChanged',
+    ];
 
     /** @var array<string, string> */
     protected array $rules = [
@@ -125,6 +136,80 @@ class ProjectPage extends Component
     public function getDescriptionCharacterCountProperty(): string
     {
         return strlen($this->editableDescription).' / 2000';
+    }
+
+    /**
+     * Get filtered name suggestions based on current filter.
+     *
+     * @return Collection<int, \App\Models\NameSuggestion>
+     */
+    public function getFilteredSuggestionsProperty(): Collection
+    {
+        $query = $this->project->nameSuggestions();
+
+        return match ($this->resultsFilter) {
+            'visible' => $query->where('is_hidden', false)->get(),
+            'hidden' => $query->where('is_hidden', true)->get(),
+            'all' => $query->get(),
+            default => $query->where('is_hidden', false)->get(),
+        };
+    }
+
+    /**
+     * Get the count of suggestions by type.
+     *
+     * @return array<string, int>
+     */
+    public function getSuggestionCountsProperty(): array
+    {
+        $suggestions = $this->project->nameSuggestions;
+
+        return [
+            'visible' => $suggestions->where('is_hidden', false)->count(),
+            'hidden' => $suggestions->where('is_hidden', true)->count(),
+            'total' => $suggestions->count(),
+        ];
+    }
+
+    /**
+     * Set the results filter.
+     */
+    public function setResultsFilter(string $filter): void
+    {
+        $this->resultsFilter = $filter;
+    }
+
+    /**
+     * Handle when a name is selected.
+     */
+    public function handleNameSelected(int $suggestionId): void
+    {
+        // Refresh project to get updated selected_name_id
+        $this->project = $this->project->fresh();
+
+        // Dispatch event to update sidebar if name changed
+        $this->dispatch('project-updated', $this->project->uuid);
+    }
+
+    /**
+     * Handle when a name is deselected.
+     */
+    public function handleNameDeselected(int $suggestionId): void
+    {
+        // Refresh project to get updated selected_name_id
+        $this->project = $this->project->fresh();
+
+        // Dispatch event to update sidebar
+        $this->dispatch('project-updated', $this->project->uuid);
+    }
+
+    /**
+     * Handle when suggestion visibility changes.
+     */
+    public function handleSuggestionVisibilityChanged(int $suggestionId): void
+    {
+        // Force refresh of computed properties by re-rendering
+        $this->render();
     }
 
     public function render(): View
