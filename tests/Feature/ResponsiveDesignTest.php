@@ -17,7 +17,7 @@ describe('Responsive Design Cross-Device Testing', function (): void {
             $response = $this->get(route('dashboard'));
 
             $response->assertSuccessful()
-                ->assertSee('max-w-2xl') // Main container constraint  
+                ->assertSee('max-w-2xl') // Main container constraint
                 ->assertSee('mx-auto') // Centered layout
                 ->assertSee('w-full') // Full width base
                 ->assertSee('space-y-6'); // Vertical spacing
@@ -38,7 +38,7 @@ describe('Responsive Design Cross-Device Testing', function (): void {
 
             $response->assertSuccessful()
                 ->assertSee('rounded-lg') // Rounded corners
-                ->assertSee('shadow-lg') // Shadow effects  
+                ->assertSee('shadow-lg') // Shadow effects
                 ->assertSee('p-6') // Padding
                 ->assertSee('p-8'); // Inner padding
         });
