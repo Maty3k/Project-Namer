@@ -7,7 +7,7 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Support\Str;
 
-test('a project belongs to a user', function () {
+test('a project belongs to a user', function (): void {
     $user = User::factory()->create();
     $project = Project::factory()->for($user)->create();
 
@@ -15,7 +15,7 @@ test('a project belongs to a user', function () {
     expect($project->user->id)->toBe($user->id);
 });
 
-test('a project has many name suggestions', function () {
+test('a project has many name suggestions', function (): void {
     $project = Project::factory()->create();
     $suggestions = NameSuggestion::factory()->count(3)->for($project)->create();
 
@@ -23,7 +23,7 @@ test('a project has many name suggestions', function () {
     expect($project->nameSuggestions->first())->toBeInstanceOf(NameSuggestion::class);
 });
 
-test('a project can have a selected name', function () {
+test('a project can have a selected name', function (): void {
     $project = Project::factory()->create();
     $suggestion = NameSuggestion::factory()->for($project)->create();
 
@@ -34,7 +34,7 @@ test('a project can have a selected name', function () {
     expect($project->selectedName->id)->toBe($suggestion->id);
 });
 
-test('a project has visible name suggestions scope', function () {
+test('a project has visible name suggestions scope', function (): void {
     $project = Project::factory()->create();
 
     NameSuggestion::factory()->for($project)->count(2)->create(['is_hidden' => false]);
@@ -44,21 +44,21 @@ test('a project has visible name suggestions scope', function () {
     expect($project->nameSuggestions)->toHaveCount(3);
 });
 
-test('uuid is automatically generated on creation', function () {
+test('uuid is automatically generated on creation', function (): void {
     $project = Project::factory()->create(['uuid' => null]);
 
     expect($project->uuid)->not()->toBeNull();
     expect(Str::isUuid($project->uuid))->toBeTrue();
 });
 
-test('project has correct fillable attributes', function () {
+test('project has correct fillable attributes', function (): void {
     $fillable = ['uuid', 'name', 'description', 'user_id', 'selected_name_id'];
     $project = new Project;
 
     expect($project->getFillable())->toBe($fillable);
 });
 
-test('project casts uuid to string', function () {
+test('project casts uuid to string', function (): void {
     $project = new Project;
     $casts = $project->getCasts();
 
@@ -66,7 +66,7 @@ test('project casts uuid to string', function () {
     expect($casts['uuid'])->toBe('string');
 });
 
-test('project generates default name if not provided', function () {
+test('project generates default name if not provided', function (): void {
     $user = User::factory()->create();
     $project = Project::factory()->for($user)->create(['name' => null]);
 

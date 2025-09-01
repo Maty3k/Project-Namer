@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Models\NameSuggestion;
 use App\Models\Project;
 
-test('a name suggestion belongs to a project', function () {
+test('a name suggestion belongs to a project', function (): void {
     $project = Project::factory()->create();
     $suggestion = NameSuggestion::factory()->for($project)->create();
 
@@ -13,14 +13,14 @@ test('a name suggestion belongs to a project', function () {
     expect($suggestion->project->id)->toBe($project->id);
 });
 
-test('name suggestion has correct fillable attributes', function () {
+test('name suggestion has correct fillable attributes', function (): void {
     $fillable = ['project_id', 'name', 'domains', 'logos', 'is_hidden', 'generation_metadata'];
     $suggestion = new NameSuggestion;
 
     expect($suggestion->getFillable())->toBe($fillable);
 });
 
-test('name suggestion casts attributes correctly', function () {
+test('name suggestion casts attributes correctly', function (): void {
     $suggestion = new NameSuggestion;
     $casts = $suggestion->getCasts();
 
@@ -34,7 +34,7 @@ test('name suggestion casts attributes correctly', function () {
     expect($casts['generation_metadata'])->toBe('array');
 });
 
-test('visible scope filters hidden suggestions', function () {
+test('visible scope filters hidden suggestions', function (): void {
     $project = Project::factory()->create();
 
     NameSuggestion::factory()->for($project)->count(2)->create(['is_hidden' => false]);
@@ -46,7 +46,7 @@ test('visible scope filters hidden suggestions', function () {
     expect($visible->every(fn ($s) => $s->is_hidden === false))->toBeTrue();
 });
 
-test('hidden scope filters visible suggestions', function () {
+test('hidden scope filters visible suggestions', function (): void {
     $project = Project::factory()->create();
 
     NameSuggestion::factory()->for($project)->count(2)->create(['is_hidden' => false]);
@@ -58,7 +58,7 @@ test('hidden scope filters visible suggestions', function () {
     expect($hidden->every(fn ($s) => $s->is_hidden === true))->toBeTrue();
 });
 
-test('domains are cast to array from json', function () {
+test('domains are cast to array from json', function (): void {
     $domains = [
         ['extension' => '.com', 'available' => true],
         ['extension' => '.io', 'available' => false],
@@ -70,7 +70,7 @@ test('domains are cast to array from json', function () {
     expect($suggestion->domains)->toBe($domains);
 });
 
-test('logos are cast to array from json', function () {
+test('logos are cast to array from json', function (): void {
     $logos = [
         ['url' => 'https://example.com/logo1.png', 'style' => 'modern'],
         ['url' => 'https://example.com/logo2.svg', 'style' => 'minimalist'],
@@ -82,7 +82,7 @@ test('logos are cast to array from json', function () {
     expect($suggestion->logos)->toBe($logos);
 });
 
-test('generation metadata is cast to array from json', function () {
+test('generation metadata is cast to array from json', function (): void {
     $metadata = [
         'ai_model' => 'gpt-4',
         'temperature' => 0.7,
@@ -95,7 +95,7 @@ test('generation metadata is cast to array from json', function () {
     expect($suggestion->generation_metadata)->toBe($metadata);
 });
 
-test('is_hidden defaults to false', function () {
+test('is_hidden defaults to false', function (): void {
     $project = Project::factory()->create();
     $suggestion = NameSuggestion::factory()->for($project)->create();
 

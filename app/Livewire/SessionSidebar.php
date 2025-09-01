@@ -76,6 +76,7 @@ class SessionSidebar extends Component
 
         // Return sessions up to current offset + limit (for virtual scrolling)
         $totalToShow = $this->offset + $this->limit;
+
         return $sessionService->getUserSessions($user, $totalToShow, 0);
     }
 
@@ -250,6 +251,7 @@ class SessionSidebar extends Component
         $user = Auth::user();
         if (! $user) {
             $this->isLoadingMore = false;
+
             return;
         }
 
@@ -300,7 +302,6 @@ class SessionSidebar extends Component
         $this->offset = 0;
         $this->hasMoreSessions = true;
     }
-
 
     public function render(): \Illuminate\Contracts\View\View
     {

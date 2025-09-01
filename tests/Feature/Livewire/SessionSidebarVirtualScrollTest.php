@@ -108,13 +108,13 @@ describe('SessionSidebar Virtual Scrolling', function (): void {
 
         // Load more sessions
         $component->call('loadMore');
-        
+
         // Still should have more sessions
         expect($component->get('hasMoreSessions'))->toBe(true);
-        
+
         // Load more again to get to the end
         $component->call('loadMore');
-        
+
         // Now should not have more sessions
         expect($component->get('hasMoreSessions'))->toBe(false);
     });
@@ -154,7 +154,7 @@ describe('SessionSidebar Virtual Scrolling', function (): void {
 
         // Initially shows 20 sessions
         $groupedSessions = $component->get('groupedSessions');
-        
+
         expect($groupedSessions)->toBeArray();
         expect(array_sum(array_map('count', $groupedSessions)))->toBe(20);
 
@@ -185,7 +185,7 @@ describe('SessionSidebar Virtual Scrolling', function (): void {
 
         // Should only show starred sessions
         expect($component->get('sessions')->count())->toBe(15);
-        expect($component->get('sessions')->every(fn($session) => $session->is_starred))->toBe(true);
+        expect($component->get('sessions')->every(fn ($session) => $session->is_starred))->toBe(true);
     });
 
     it('handles virtual scrolling performance with large datasets', function (): void {
@@ -193,9 +193,9 @@ describe('SessionSidebar Virtual Scrolling', function (): void {
         NamingSession::factory()->count(200)->create(['user_id' => $this->user->id]);
 
         $startTime = microtime(true);
-        
+
         $component = Livewire::test(SessionSidebar::class);
-        
+
         // Initial load should be fast
         $component->assertSet('offset', 0);
         expect($component->get('sessions')->count())->toBe(20);
@@ -210,7 +210,7 @@ describe('SessionSidebar Virtual Scrolling', function (): void {
         $startTime = microtime(true);
         $component->call('loadMore');
         $endTime = microtime(true);
-        
+
         $loadMoreTime = ($endTime - $startTime) * 1000;
         expect($loadMoreTime)->toBeLessThan(200); // Under 200ms
     });

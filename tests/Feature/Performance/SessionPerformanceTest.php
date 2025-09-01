@@ -24,10 +24,10 @@ describe('Session Performance Testing', function (): void {
     it('handles large session counts efficiently under 200ms', function (): void {
         // Create large dataset of sessions
         $sessions = NamingSession::factory()->count(500)->create(['user_id' => $this->user->id]);
-        
+
         // Add results to some sessions to make it more realistic
-        $sessions->take(100)->each(function (NamingSession $session) {
-            SessionResult::factory()->count(rand(5, 15))->create([
+        $sessions->take(100)->each(function (NamingSession $session): void {
+            SessionResult::factory()->count(random_int(5, 15))->create([
                 'session_id' => $session->id,
             ]);
         });
@@ -51,12 +51,12 @@ describe('Session Performance Testing', function (): void {
     it('performs session search efficiently with large datasets under 150ms', function (): void {
         // Create sessions with varied content for search testing
         $searchTerms = ['ecommerce', 'fintech', 'healthcare', 'education', 'gaming'];
-        
+
         foreach ($searchTerms as $term) {
             NamingSession::factory()->count(100)->create([
                 'user_id' => $this->user->id,
                 'business_description' => "A {$term} platform for modern businesses",
-                'title' => ucfirst($term) . ' Session',
+                'title' => ucfirst($term).' Session',
             ]);
         }
 
@@ -153,7 +153,7 @@ describe('Session Performance Testing', function (): void {
     it('handles concurrent session operations efficiently', function (): void {
         // Setup data for concurrent operations
         NamingSession::factory()->count(200)->create(['user_id' => $this->user->id]);
-        
+
         $sessionService = app(SessionService::class);
         $operations = [];
 
@@ -166,7 +166,7 @@ describe('Session Performance Testing', function (): void {
             // Mixed operations that might happen concurrently
             $sessionService->getUserSessions($this->user, 20, $i * 2);
             $sessionService->searchSessions($this->user, 'test');
-            
+
             $operationEnd = microtime(true);
             $operations[] = ($operationEnd - $operationStart) * 1000;
         }
@@ -185,7 +185,7 @@ describe('Session Performance Testing', function (): void {
             'user_id' => $this->user->id,
             'is_starred' => true,
         ]);
-        
+
         // Regular sessions with varied generation modes
         $modes = ['creative', 'professional', 'brandable', 'tech_focused'];
         foreach ($modes as $mode) {
@@ -196,7 +196,7 @@ describe('Session Performance Testing', function (): void {
         }
 
         $sessionService = app(SessionService::class);
-        
+
         DB::enableQueryLog();
         $startTime = microtime(true);
 
@@ -223,11 +223,11 @@ describe('Session Performance Testing', function (): void {
 
         // Test performance at different scales
         $scales = [100, 300, 500, 1000];
-        
+
         foreach ($scales as $sessionCount) {
             // Clear previous data
             NamingSession::where('user_id', $this->user->id)->delete();
-            
+
             // Create dataset at this scale
             NamingSession::factory()->count($sessionCount)->create([
                 'user_id' => $this->user->id,
@@ -257,17 +257,17 @@ describe('Session Performance Testing', function (): void {
         // Create searchable content
         $businessTypes = [
             'ecommerce store selling handmade jewelry',
-            'fintech startup for small business loans', 
+            'fintech startup for small business loans',
             'healthcare platform for telemedicine',
             'educational app for language learning',
-            'gaming community for indie developers'
+            'gaming community for indie developers',
         ];
 
         foreach ($businessTypes as $business) {
             NamingSession::factory()->count(50)->create([
                 'user_id' => $this->user->id,
                 'business_description' => $business,
-                'title' => 'Session for ' . explode(' ', $business)[0],
+                'title' => 'Session for '.explode(' ', $business)[0],
             ]);
         }
 
@@ -293,12 +293,12 @@ describe('Session Performance Testing', function (): void {
         // Test various state changes
         foreach ($sessions->take(10) as $session) {
             $startTime = microtime(true);
-            
+
             // Save data (this is the main update method available)
             $sessionService->saveSession($this->user, $session->id, [
                 'business_description' => 'Updated business description',
                 'title' => 'Updated Title',
-                'is_starred' => !$session->is_starred,
+                'is_starred' => ! $session->is_starred,
             ]);
 
             $endTime = microtime(true);
