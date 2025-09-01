@@ -101,10 +101,10 @@ describe('Mobile Accessibility Compliance Testing', function (): void {
 
             // Debug: let's see what's actually in the content
             $content = $response->content();
-            
+
             // Form accessibility compliance - FluxUI might render differently
             expect($content)->toContain('<form') // Semantic forms
-                ->toContain('<h1') // Proper heading structure  
+                ->toContain('<h1') // Proper heading structure
                 ->toContain('placeholder=') // Input placeholders
                 ->toContain('wire:submit') // Form submission
                 ->toContain('type="submit"'); // Submit button

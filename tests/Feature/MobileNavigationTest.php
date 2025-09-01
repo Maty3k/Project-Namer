@@ -111,7 +111,7 @@ describe('Mobile Navigation System', function (): void {
             $response = $this->get(route('dashboard'));
 
             $response->assertStatus(200);
-            // Verify basic responsive and theme classes are present  
+            // Verify basic responsive and theme classes are present
             $response->assertSeeHtml('dark:')
                 ->assertSeeHtml('text-')
                 ->assertSeeHtml('max-w-');

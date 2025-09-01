@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\ExportController;
 use App\Http\Controllers\PublicShareController;
+use App\Livewire\ProjectPage;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
@@ -27,9 +28,9 @@ Route::get('dashboard', App\Livewire\Dashboard::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::get('project/{uuid}', fn (string $uuid) =>
-    // Temporary placeholder - will implement ProjectPage component later
-    redirect('/dashboard'))->middleware(['auth', 'verified'])->name('project.show');
+Route::get('project/{uuid}', ProjectPage::class)
+    ->middleware(['auth', 'verified'])
+    ->name('project.show');
 
 Route::get('logo-gallery/{logoGeneration}', App\Livewire\LogoGallery::class)
     ->middleware(['auth', 'verified'])

@@ -17,25 +17,25 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 1.7 Run migrations and verify database structure
   - [x] 1.8 Verify all model tests pass
 
-- [ ] 2. Dashboard Implementation
-  - [ ] 2.1 Write tests for Dashboard Livewire component
-  - [ ] 2.2 Create Dashboard Livewire component
-  - [ ] 2.3 Create dashboard Blade view with textarea and button
-  - [ ] 2.4 Implement project creation logic with validation
-  - [ ] 2.5 Add UUID generation and default naming
-  - [ ] 2.6 Implement redirect to project page after save
-  - [ ] 2.7 Create route for dashboard page
-  - [ ] 2.8 Verify all dashboard tests pass
+- [x] 2. Dashboard Implementation
+  - [x] 2.1 Write tests for Dashboard Livewire component
+  - [x] 2.2 Create Dashboard Livewire component
+  - [x] 2.3 Create dashboard Blade view with textarea and button
+  - [x] 2.4 Implement project creation logic with validation
+  - [x] 2.5 Add UUID generation and default naming
+  - [x] 2.6 Implement redirect to project page after save
+  - [x] 2.7 Create route for dashboard page
+  - [x] 2.8 Verify all dashboard tests pass
 
-- [ ] 3. Project Page Core Functionality
-  - [ ] 3.1 Write tests for ProjectPage Livewire component
-  - [ ] 3.2 Create ProjectPage Livewire component
-  - [ ] 3.3 Create project page Blade view structure
-  - [ ] 3.4 Implement editable project name with inline editing
-  - [ ] 3.5 Implement editable description textarea with auto-save
-  - [ ] 3.6 Create route for project page with UUID parameter
-  - [ ] 3.7 Add authorization checks for project access
-  - [ ] 3.8 Verify all project page tests pass
+- [x] 3. Project Page Core Functionality
+  - [x] 3.1 Write tests for ProjectPage Livewire component
+  - [x] 3.2 Create ProjectPage Livewire component
+  - [x] 3.3 Create project page Blade view structure
+  - [x] 3.4 Implement editable project name with inline editing
+  - [x] 3.5 Implement editable description textarea with auto-save
+  - [x] 3.6 Create route for project page with UUID parameter
+  - [x] 3.7 Add authorization checks for project access
+  - [x] 3.8 Verify all project page tests pass
 
 - [ ] 4. Sidebar Navigation
   - [ ] 4.1 Write tests for Sidebar Livewire component
