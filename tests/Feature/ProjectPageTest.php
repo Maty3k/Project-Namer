@@ -49,7 +49,7 @@ test('project page component renders correctly', function (): void {
     $project = Project::factory()->create([
         'user_id' => $user->id,
         'name' => 'Test Project Name',
-        'description' => 'This is a test project description for testing purposes'
+        'description' => 'This is a test project description for testing purposes',
     ]);
 
     $this->actingAs($user);
@@ -68,7 +68,7 @@ test('can edit project name inline', function (): void {
     $user = User::factory()->create();
     $project = Project::factory()->create([
         'user_id' => $user->id,
-        'name' => 'Original Name'
+        'name' => 'Original Name',
     ]);
 
     $this->actingAs($user);
@@ -88,7 +88,7 @@ test('can cancel name editing', function (): void {
     $user = User::factory()->create();
     $project = Project::factory()->create([
         'user_id' => $user->id,
-        'name' => 'Original Name'
+        'name' => 'Original Name',
     ]);
 
     $this->actingAs($user);
@@ -141,7 +141,7 @@ test('can edit project description', function (): void {
     $user = User::factory()->create();
     $project = Project::factory()->create([
         'user_id' => $user->id,
-        'description' => 'Original description'
+        'description' => 'Original description',
     ]);
 
     $this->actingAs($user);
@@ -209,7 +209,7 @@ test('unauthorized user cannot edit project', function (): void {
     $project = Project::factory()->create(['user_id' => $otherUser->id]);
 
     $response = $this->actingAs($user)->get("/project/{$project->uuid}");
-    
+
     // Should get 403 Forbidden when trying to access another user's project
     $response->assertStatus(403);
 });

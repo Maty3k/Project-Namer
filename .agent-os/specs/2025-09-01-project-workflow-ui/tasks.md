@@ -37,16 +37,16 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 3.7 Add authorization checks for project access
   - [x] 3.8 Verify all project page tests pass
 
-- [ ] 4. Sidebar Navigation
-  - [ ] 4.1 Write tests for Sidebar Livewire component
-  - [ ] 4.2 Create Sidebar Livewire component
-  - [ ] 4.3 Create sidebar Blade view with project listing
-  - [ ] 4.4 Implement chronological project ordering
-  - [ ] 4.5 Add "New Project" button with navigation
-  - [ ] 4.6 Implement active project highlighting
-  - [ ] 4.7 Add real-time updates using Livewire events
-  - [ ] 4.8 Integrate sidebar into main layout
-  - [ ] 4.9 Verify all sidebar tests pass
+- [x] 4. Sidebar Navigation
+  - [x] 4.1 Write tests for Sidebar Livewire component
+  - [x] 4.2 Create Sidebar Livewire component
+  - [x] 4.3 Create sidebar Blade view with project listing
+  - [x] 4.4 Implement chronological project ordering
+  - [x] 4.5 Add "New Project" button with navigation
+  - [x] 4.6 Implement active project highlighting
+  - [x] 4.7 Add real-time updates using Livewire events
+  - [x] 4.8 Integrate sidebar into main layout
+  - [x] 4.9 Verify all sidebar tests pass
 
 - [ ] 5. Name Results Table and Cards
   - [ ] 5.1 Write tests for NameResultCard component

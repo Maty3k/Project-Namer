@@ -50,12 +50,16 @@ class Dashboard extends Component
         // Clear the description field
         $this->description = '';
 
+        // Dispatch event to update sidebar
+        $this->dispatch('project-created', $project->uuid);
+
         // Redirect to the project page
         $this->redirect("/project/{$project->uuid}");
     }
 
     public function render(): View
     {
-        return view('livewire.dashboard');
+        return view('livewire.dashboard')
+            ->layout('components.layouts.project-workflow');
     }
 }

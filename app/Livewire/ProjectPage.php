@@ -6,13 +6,12 @@ namespace App\Livewire;
 
 use App\Models\Project;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use Livewire\Component;
 
 /**
  * ProjectPage component for viewing and editing individual projects.
- * 
+ *
  * Handles project display, inline name editing, and description auto-save functionality.
  */
 class ProjectPage extends Component
@@ -20,8 +19,11 @@ class ProjectPage extends Component
     use AuthorizesRequests;
 
     public Project $project;
+
     public string $editableName = '';
+
     public string $editableDescription = '';
+
     public bool $editingName = false;
 
     /** @var array<string, string> */
@@ -46,10 +48,10 @@ class ProjectPage extends Component
     public function mount(string $uuid): void
     {
         $this->project = Project::where('uuid', $uuid)->firstOrFail();
-        
+
         // Check if user can view this project
         $this->authorize('view', $this->project);
-        
+
         $this->editableName = $this->project->name;
         $this->editableDescription = $this->project->description;
     }
@@ -70,11 +72,14 @@ class ProjectPage extends Component
     public function saveName(): void
     {
         $this->authorize('update', $this->project);
-        
+
         $this->validate(['editableName' => $this->rules['editableName']]);
 
         $this->project->update(['name' => $this->editableName]);
         $this->editingName = false;
+        
+        // Dispatch event to update sidebar
+        $this->dispatch('project-updated', $this->project->uuid);
     }
 
     /**
@@ -93,10 +98,13 @@ class ProjectPage extends Component
     public function saveDescription(): void
     {
         $this->authorize('update', $this->project);
-        
+
         $this->validate(['editableDescription' => $this->rules['editableDescription']]);
 
         $this->project->update(['description' => $this->editableDescription]);
+        
+        // Dispatch event to update sidebar
+        $this->dispatch('project-updated', $this->project->uuid);
     }
 
     /**
@@ -116,11 +124,12 @@ class ProjectPage extends Component
      */
     public function getDescriptionCharacterCountProperty(): string
     {
-        return strlen($this->editableDescription) . ' / 2000';
+        return strlen($this->editableDescription).' / 2000';
     }
 
     public function render(): View
     {
-        return view('livewire.project-page');
+        return view('livewire.project-page')
+            ->layout('components.layouts.project-workflow');
     }
 }

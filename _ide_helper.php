@@ -27903,6 +27903,14 @@ namespace App\Livewire {
     class Dashboard extends \Livewire\Component {
             }
     /**
+     * ProjectPage component for viewing and editing individual projects.
+     * 
+     * Handles project display, inline name editing, and description auto-save functionality.
+     *
+     */
+    class ProjectPage extends \Livewire\Component {
+            }
+    /**
      * Logo Gallery component for displaying and managing generated logos.
      * 
      * Handles logo display, color customization, and download functionality
