@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Jobs\GenerateLogosJob;
-use App\Livewire\Dashboard;
+use App\Livewire\NameGeneratorDashboard;
 use App\Models\GenerationCache;
 use App\Models\LogoGeneration;
 use App\Models\User;
@@ -25,7 +25,7 @@ beforeEach(function (): void {
 describe('Dashboard Component', function (): void {
     it('can mount successfully', function (): void {
         Livewire::actingAs($this->user)
-            ->test(Dashboard::class)
+            ->test(NameGeneratorDashboard::class)
             ->assertOk()
             ->assertSet('activeTab', 'generate')
             ->assertSet('businessIdea', '')
@@ -35,7 +35,7 @@ describe('Dashboard Component', function (): void {
 
     it('displays the name generation interface', function (): void {
         Livewire::actingAs($this->user)
-            ->test(Dashboard::class)
+            ->test(NameGeneratorDashboard::class)
             ->assertSee('AI-Powered Business Name Generator')
             ->assertSee('Describe Your Business Idea')
             ->assertSee('Generation Style')
@@ -44,7 +44,7 @@ describe('Dashboard Component', function (): void {
 
     it('validates business idea input', function (): void {
         Livewire::actingAs($this->user)
-            ->test(Dashboard::class)
+            ->test(NameGeneratorDashboard::class)
             ->call('generateNames')
             ->assertHasErrors(['businessIdea' => 'required']);
     });
@@ -53,7 +53,7 @@ describe('Dashboard Component', function (): void {
         $longIdea = str_repeat('a', 2001);
 
         Livewire::actingAs($this->user)
-            ->test(Dashboard::class)
+            ->test(NameGeneratorDashboard::class)
             ->set('businessIdea', $longIdea)
             ->call('generateNames')
             ->assertHasErrors(['businessIdea' => 'max']);
@@ -75,7 +75,7 @@ describe('Dashboard Component', function (): void {
         ]);
 
         Livewire::actingAs($this->user)
-            ->test(Dashboard::class)
+            ->test(NameGeneratorDashboard::class)
             ->set('businessIdea', 'A tech startup building productivity tools')
             ->set('generationMode', 'creative')
             ->call('generateNames')
@@ -88,7 +88,7 @@ describe('Dashboard Component', function (): void {
 
     it('can toggle name selection for logo generation', function (): void {
         Livewire::actingAs($this->user)
-            ->test(Dashboard::class)
+            ->test(NameGeneratorDashboard::class)
             ->set('generatedNames', ['TechFlow', 'DataSync'])
             ->set('showResults', true)
             ->call('toggleNameSelection', 'TechFlow')
@@ -103,7 +103,7 @@ describe('Dashboard Component', function (): void {
         $names = ['Name1', 'Name2', 'Name3', 'Name4', 'Name5', 'Name6'];
 
         $component = Livewire::actingAs($this->user)
-            ->test(Dashboard::class)
+            ->test(NameGeneratorDashboard::class)
             ->set('generatedNames', $names);
 
         // Select 5 names
@@ -127,7 +127,7 @@ describe('Dashboard Component', function (): void {
         $selectedNames = ['TechFlow', 'DataSync'];
 
         $component = Livewire::actingAs($this->user)
-            ->test(Dashboard::class)
+            ->test(NameGeneratorDashboard::class)
             ->set('businessIdea', 'A tech startup')
             ->set('generationMode', 'creative')
             ->set('selectedNamesForLogos', $selectedNames)
@@ -161,7 +161,7 @@ describe('Dashboard Component', function (): void {
 
     it('validates logo generation requires selected names', function (): void {
         Livewire::actingAs($this->user)
-            ->test(Dashboard::class)
+            ->test(NameGeneratorDashboard::class)
             ->call('generateLogos')
             ->assertHasErrors(['selectedNamesForLogos']);
     });
@@ -197,7 +197,7 @@ describe('Dashboard Component', function (): void {
         ]);
 
         $component = Livewire::actingAs($this->user)
-            ->test(Dashboard::class);
+            ->test(NameGeneratorDashboard::class);
 
         expect($component->get('searchHistory'))->toHaveCount(2);
 
@@ -221,7 +221,7 @@ describe('Dashboard Component', function (): void {
         ]);
 
         Livewire::actingAs($this->user)
-            ->test(Dashboard::class)
+            ->test(NameGeneratorDashboard::class)
             ->call('loadFromHistory', 'test-hash')
             ->assertSet('businessIdea', 'Historical search')
             ->assertSet('generationMode', 'professional')
@@ -234,7 +234,7 @@ describe('Dashboard Component', function (): void {
 
     it('can clear results', function (): void {
         Livewire::actingAs($this->user)
-            ->test(Dashboard::class)
+            ->test(NameGeneratorDashboard::class)
             ->set('generatedNames', ['Name1', 'Name2'])
             ->set('selectedNamesForLogos', ['Name1'])
             ->set('showResults', true)
@@ -248,7 +248,7 @@ describe('Dashboard Component', function (): void {
     });
 
     it('displays different generation modes correctly', function (): void {
-        $component = Livewire::actingAs($this->user)->test(Dashboard::class);
+        $component = Livewire::actingAs($this->user)->test(NameGeneratorDashboard::class);
 
         // Debug: Let's see what's actually in the HTML
         $html = $component->html();
@@ -261,7 +261,7 @@ describe('Dashboard Component', function (): void {
 
     it('can set example business ideas', function (): void {
         Livewire::actingAs($this->user)
-            ->test(Dashboard::class)
+            ->test(NameGeneratorDashboard::class)
             ->call('$set', 'businessIdea', 'A sustainable fashion brand that creates eco-friendly clothing from recycled materials')
             ->assertSet('businessIdea', 'A sustainable fashion brand that creates eco-friendly clothing from recycled materials');
     });
@@ -279,7 +279,7 @@ describe('Dashboard Component', function (): void {
         ]);
 
         Livewire::actingAs($this->user)
-            ->test(Dashboard::class)
+            ->test(NameGeneratorDashboard::class)
             ->set('businessIdea', 'Test business')
             ->call('generateNames')
             ->assertSet('generatedNames', ['TestName', 'BusinessName2', 'BusinessName3', 'BusinessName4', 'BusinessName5', 'BusinessName6', 'BusinessName7', 'BusinessName8', 'BusinessName9', 'BusinessName10'])
@@ -293,7 +293,7 @@ describe('Dashboard Component', function (): void {
         ]);
 
         Livewire::actingAs($this->user)
-            ->test(Dashboard::class)
+            ->test(NameGeneratorDashboard::class)
             ->assertSet('showLogoGeneration', true)
             ->assertSee('Logo Generation');
     });
@@ -305,7 +305,7 @@ describe('Dashboard Component', function (): void {
 
         // Since currentLogoGeneration is now protected, we test the refresh method directly
         $component = Livewire::actingAs($this->user)
-            ->test(Dashboard::class);
+            ->test(NameGeneratorDashboard::class);
 
         // Call refreshLogoStatus method which is what the dispatch actually triggers
         $component->call('refreshLogoStatus');
@@ -315,14 +315,14 @@ describe('Dashboard Component', function (): void {
 
     it('handles export with no results', function (): void {
         Livewire::actingAs($this->user)
-            ->test(Dashboard::class)
+            ->test(NameGeneratorDashboard::class)
             ->call('exportResults', 'pdf')
             ->assertDispatched('toast', message: 'No results to export');
     });
 
     it('handles share with no results', function (): void {
         Livewire::actingAs($this->user)
-            ->test(Dashboard::class)
+            ->test(NameGeneratorDashboard::class)
             ->call('shareResults')
             ->assertDispatched('toast', message: 'No results to share');
     });
@@ -340,7 +340,7 @@ describe('Dashboard Component', function (): void {
         ]);
 
         $component = Livewire::actingAs($this->user)
-            ->test(Dashboard::class)
+            ->test(NameGeneratorDashboard::class)
             ->set('businessIdea', 'Test business');
 
         // Before generation starts

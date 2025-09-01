@@ -27895,10 +27895,9 @@ namespace Illuminate\Testing {
 
 namespace App\Livewire {
     /**
-     * Main dashboard component for the Project Namer application.
+     * Dashboard component for project workflow UI.
      * 
-     * Handles the complete workflow from business idea input to name generation,
-     * domain checking, logo creation, and result sharing.
+     * Handles project creation with validation and redirects to project page.
      *
      */
     class Dashboard extends \Livewire\Component {

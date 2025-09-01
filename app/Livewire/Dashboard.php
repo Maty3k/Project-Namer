@@ -38,7 +38,7 @@ class Dashboard extends Component
         $this->validate();
 
         $user = Auth::user();
-        if (!$user) {
+        if (! $user) {
             return;
         }
 
