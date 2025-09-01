@@ -7,15 +7,15 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
 
 ## Tasks
 
-- [ ] 1. Database Setup and Models
-  - [ ] 1.1 Write tests for Project and NameSuggestion models
-  - [ ] 1.2 Create migration for projects table
-  - [ ] 1.3 Create migration for name_suggestions table  
-  - [ ] 1.4 Create Project model with relationships and scopes
-  - [ ] 1.5 Create NameSuggestion model with relationships and scopes
-  - [ ] 1.6 Create model factories for testing
-  - [ ] 1.7 Run migrations and verify database structure
-  - [ ] 1.8 Verify all model tests pass
+- [x] 1. Database Setup and Models
+  - [x] 1.1 Write tests for Project and NameSuggestion models
+  - [x] 1.2 Create migration for projects table
+  - [x] 1.3 Create migration for name_suggestions table  
+  - [x] 1.4 Create Project model with relationships and scopes
+  - [x] 1.5 Create NameSuggestion model with relationships and scopes
+  - [x] 1.6 Create model factories for testing
+  - [x] 1.7 Run migrations and verify database structure
+  - [x] 1.8 Verify all model tests pass
 
 - [ ] 2. Dashboard Implementation
   - [ ] 2.1 Write tests for Dashboard Livewire component
