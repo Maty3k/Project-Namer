@@ -23,12 +23,12 @@ describe('AI Generation Service', function (): void {
 
         $result = $this->service->generateNamesParallel(
             'A workflow orchestration platform',
-            ['gpt-4o', 'claude-3.5-sonnet'],
+            ['gpt-4', 'claude-3.5-sonnet'],
             'tech-focused'
         );
 
         expect($result)->toHaveKeys(['results', 'execution_metadata']);
-        expect($result['results'])->toHaveKeys(['gpt-4o', 'claude-3.5-sonnet']);
+        expect($result['results'])->toHaveKeys(['gpt-4', 'claude-3.5-sonnet']);
         expect($result['execution_metadata']['total_models_requested'])->toBe(2);
         expect($result['execution_metadata']['successful_models'])->toBe(2);
         expect($result['execution_metadata']['failed_models'])->toBe(0);
@@ -50,7 +50,7 @@ describe('AI Generation Service', function (): void {
         );
 
         expect($result['execution_metadata']['total_models_requested'])->toBe(2);
-        expect($result['results'])->toHaveKeys(['gpt-4o', 'claude-3.5-sonnet']);
+        expect($result['results'])->toHaveKeys(['gpt-4', 'claude-3.5-sonnet']);
         expect($result['execution_metadata']['execution_strategy'])->toBe('sequential_with_fallback');
     });
 
@@ -70,7 +70,7 @@ describe('AI Generation Service', function (): void {
         );
 
         expect($result['execution_metadata']['total_models_requested'])->toBe(4);
-        expect($result['results'])->toHaveKeys(['gpt-4o', 'claude-3.5-sonnet', 'gemini-1.5-pro', 'grok-beta']);
+        expect($result['results'])->toHaveKeys(['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro', 'grok-beta']);
 
         // Verify deep thinking was enabled
         foreach ($result['results'] as $modelResult) {
@@ -88,7 +88,7 @@ describe('AI Generation Service', function (): void {
 
         $result = $this->service->generateNamesCustom(
             'A custom solution platform',
-            ['gpt-4o', 'gemini-1.5-pro'],
+            ['gpt-4', 'gemini-1.5-pro'],
             [
                 'mode' => 'brandable',
                 'deep_thinking' => true,
@@ -97,7 +97,7 @@ describe('AI Generation Service', function (): void {
         );
 
         expect($result['execution_metadata']['total_models_requested'])->toBe(2);
-        expect($result['results'])->toHaveKeys(['gpt-4o', 'gemini-1.5-pro']);
+        expect($result['results'])->toHaveKeys(['gpt-4', 'gemini-1.5-pro']);
 
         foreach ($result['results'] as $modelResult) {
             expect($modelResult['deep_thinking'])->toBe(true);
@@ -116,7 +116,7 @@ describe('AI Generation Service', function (): void {
 
         $generationResult = $this->service->generateNamesParallel(
             'A performance analytics platform',
-            ['gpt-4o', 'claude-3.5-sonnet'],
+            ['gpt-4', 'claude-3.5-sonnet'],
             'tech-focused'
         );
 
@@ -139,7 +139,7 @@ describe('AI Generation Service', function (): void {
 
         $generationResult = $this->service->generateNamesParallel(
             'An advisory platform',
-            ['gpt-4o', 'claude-3.5-sonnet'],
+            ['gpt-4', 'claude-3.5-sonnet'],
             'professional'
         );
 
@@ -159,7 +159,7 @@ describe('AI Generation Service', function (): void {
 
         $result = $this->service->generateNamesParallel(
             'A monitoring platform',
-            ['gpt-4o'],
+            ['gpt-4'],
             'tech-focused'
         );
 
@@ -194,8 +194,8 @@ describe('AI Generation Service', function (): void {
             expect($strategy)->toHaveKeys(['name', 'description', 'models', 'estimated_time', 'best_for']);
         }
 
-        expect($strategies['quick']['models'])->toBe(['gpt-4o', 'claude-3.5-sonnet']);
-        expect($strategies['comprehensive']['models'])->toBe(['gpt-4o', 'claude-3.5-sonnet', 'gemini-1.5-pro', 'grok-beta']);
+        expect($strategies['quick']['models'])->toBe(['gpt-4', 'claude-3.5-sonnet']);
+        expect($strategies['comprehensive']['models'])->toBe(['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro', 'grok-beta']);
         expect($strategies['custom']['models'])->toBe('User-defined');
     });
 

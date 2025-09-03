@@ -19,14 +19,31 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property array<array-key, mixed>|null $generation_metadata
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $ai_model_used
+ * @property string|null $ai_generation_mode
+ * @property bool $ai_deep_thinking
+ * @property int|null $ai_response_time_ms
+ * @property int|null $ai_tokens_used
+ * @property int|null $ai_cost_cents
+ * @property string|null $ai_generation_session_id
+ * @property array<array-key, mixed>|null $ai_prompt_metadata
  * @property-read \App\Models\Project $project
- *
+ * @method static Builder<static>|NameSuggestion aiGenerated()
+ * @method static Builder<static>|NameSuggestion byAiModel(string $modelName)
  * @method static \Database\Factories\NameSuggestionFactory factory($count = null, $state = [])
  * @method static Builder<static>|NameSuggestion hidden()
  * @method static Builder<static>|NameSuggestion newModelQuery()
  * @method static Builder<static>|NameSuggestion newQuery()
  * @method static Builder<static>|NameSuggestion query()
  * @method static Builder<static>|NameSuggestion visible()
+ * @method static Builder<static>|NameSuggestion whereAiCostCents($value)
+ * @method static Builder<static>|NameSuggestion whereAiDeepThinking($value)
+ * @method static Builder<static>|NameSuggestion whereAiGenerationMode($value)
+ * @method static Builder<static>|NameSuggestion whereAiGenerationSessionId($value)
+ * @method static Builder<static>|NameSuggestion whereAiModelUsed($value)
+ * @method static Builder<static>|NameSuggestion whereAiPromptMetadata($value)
+ * @method static Builder<static>|NameSuggestion whereAiResponseTimeMs($value)
+ * @method static Builder<static>|NameSuggestion whereAiTokensUsed($value)
  * @method static Builder<static>|NameSuggestion whereCreatedAt($value)
  * @method static Builder<static>|NameSuggestion whereDomains($value)
  * @method static Builder<static>|NameSuggestion whereGenerationMetadata($value)
@@ -36,7 +53,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|NameSuggestion whereName($value)
  * @method static Builder<static>|NameSuggestion whereProjectId($value)
  * @method static Builder<static>|NameSuggestion whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 final class NameSuggestion extends Model

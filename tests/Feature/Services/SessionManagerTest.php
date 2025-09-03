@@ -15,7 +15,7 @@ describe('Session Manager', function (): void {
     it('can create a new generation session', function (): void {
         $session = $this->service->startSession(
             'A project management platform',
-            ['gpt-4o', 'claude-3.5-sonnet'],
+            ['gpt-4', 'claude-3.5-sonnet'],
             'professional',
             true,
             ['temperature' => 0.8],
@@ -28,7 +28,7 @@ describe('Session Manager', function (): void {
         expect($session->business_description)->toBe('A project management platform');
         expect($session->generation_mode)->toBe('professional');
         expect($session->deep_thinking)->toBe(true);
-        expect($session->requested_models)->toBe(['gpt-4o', 'claude-3.5-sonnet']);
+        expect($session->requested_models)->toBe(['gpt-4', 'claude-3.5-sonnet']);
         expect($session->custom_parameters)->toBe(['temperature' => 0.8]);
         expect($session->generation_strategy)->toBe('parallel');
         expect($session->progress_percentage)->toBe(0);
@@ -44,7 +44,7 @@ describe('Session Manager', function (): void {
 
         $session = $this->service->startSession(
             'A session tracking platform',
-            ['gpt-4o', 'claude-3.5-sonnet'],
+            ['gpt-4', 'claude-3.5-sonnet'],
             'tech-focused'
         );
 
@@ -69,7 +69,7 @@ describe('Session Manager', function (): void {
 
         $session = $this->service->startSession(
             'A fast development platform',
-            ['gpt-4o', 'claude-3.5-sonnet'],
+            ['gpt-4', 'claude-3.5-sonnet'],
             'tech-focused',
             false,
             [],
@@ -95,7 +95,7 @@ describe('Session Manager', function (): void {
 
         $session = $this->service->startSession(
             'A comprehensive solution platform',
-            ['gpt-4o', 'claude-3.5-sonnet', 'gemini-1.5-pro', 'grok-beta'],
+            ['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro', 'grok-beta'],
             'professional',
             true,
             [],
@@ -135,7 +135,7 @@ describe('Session Manager', function (): void {
     it('can retrieve session status for real-time updates', function (): void {
         $session = $this->service->startSession(
             'A status tracking platform',
-            ['gpt-4o'],
+            ['gpt-4'],
             'tech-focused'
         );
 
@@ -160,7 +160,7 @@ describe('Session Manager', function (): void {
     it('can retrieve full session details', function (): void {
         $session = $this->service->startSession(
             'A detailed tracking platform',
-            ['gpt-4o', 'claude-3.5-sonnet'],
+            ['gpt-4', 'claude-3.5-sonnet'],
             'professional',
             true,
             ['temperature' => 0.9]
@@ -185,13 +185,13 @@ describe('Session Manager', function (): void {
         ]);
         expect($details['business_description'])->toBe('A detailed tracking platform');
         expect($details['deep_thinking'])->toBe(true);
-        expect($details['requested_models'])->toBe(['gpt-4o', 'claude-3.5-sonnet']);
+        expect($details['requested_models'])->toBe(['gpt-4', 'claude-3.5-sonnet']);
     });
 
     it('can cancel a running session', function (): void {
         $session = $this->service->startSession(
             'A cancellable platform',
-            ['gpt-4o'],
+            ['gpt-4'],
             'creative'
         );
 
@@ -214,11 +214,11 @@ describe('Session Manager', function (): void {
 
     it('can retrieve active sessions', function (): void {
         // Create multiple sessions with different statuses
-        $activeSession1 = $this->service->startSession('Platform 1', ['gpt-4o'], 'creative');
+        $activeSession1 = $this->service->startSession('Platform 1', ['gpt-4'], 'creative');
         $activeSession2 = $this->service->startSession('Platform 2', ['claude-3.5-sonnet'], 'professional');
         $activeSession2->markAsStarted();
 
-        $completedSession = $this->service->startSession('Platform 3', ['gpt-4o'], 'brandable');
+        $completedSession = $this->service->startSession('Platform 3', ['gpt-4'], 'brandable');
         $completedSession->markAsCompleted(['test' => 'results']);
 
         $activeSessions = $this->service->getActiveSessions();
@@ -232,7 +232,7 @@ describe('Session Manager', function (): void {
 
     it('can retrieve recent session history', function (): void {
         // Create sessions
-        $session1 = $this->service->startSession('Recent Platform 1', ['gpt-4o'], 'creative');
+        $session1 = $this->service->startSession('Recent Platform 1', ['gpt-4'], 'creative');
         $session2 = $this->service->startSession('Recent Platform 2', ['claude-3.5-sonnet'], 'professional');
 
         $recentSessions = $this->service->getRecentSessions(5);
@@ -254,12 +254,12 @@ describe('Session Manager', function (): void {
 
     it('can generate session statistics', function (): void {
         // Create sessions with different statuses
-        $this->service->startSession('Stats Platform 1', ['gpt-4o'], 'creative');
+        $this->service->startSession('Stats Platform 1', ['gpt-4'], 'creative');
 
         $completedSession = $this->service->startSession('Stats Platform 2', ['claude-3.5-sonnet'], 'professional');
         $completedSession->markAsCompleted(['test' => 'results']);
 
-        $failedSession = $this->service->startSession('Stats Platform 3', ['gpt-4o'], 'brandable');
+        $failedSession = $this->service->startSession('Stats Platform 3', ['gpt-4'], 'brandable');
         $failedSession->markAsFailed('Test failure');
 
         $stats = $this->service->getSessionStatistics();
@@ -293,7 +293,7 @@ describe('Session Manager', function (): void {
             'An immediate execution platform',
             'parallel',
             [
-                'models' => ['gpt-4o', 'claude-3.5-sonnet'],
+                'models' => ['gpt-4', 'claude-3.5-sonnet'],
                 'mode' => 'tech-focused',
                 'deep_thinking' => true,
                 'custom_params' => ['temperature' => 0.7],
@@ -304,7 +304,7 @@ describe('Session Manager', function (): void {
         expect($session->business_description)->toBe('An immediate execution platform');
         expect($session->generation_mode)->toBe('tech-focused');
         expect($session->deep_thinking)->toBe(true);
-        expect($session->requested_models)->toBe(['gpt-4o', 'claude-3.5-sonnet']);
+        expect($session->requested_models)->toBe(['gpt-4', 'claude-3.5-sonnet']);
         expect($session->results)->not->toBeNull();
     });
 
@@ -326,7 +326,7 @@ describe('Session Manager', function (): void {
 
         $session = $this->service->startSession(
             'A progress tracking platform',
-            ['gpt-4o', 'claude-3.5-sonnet'],
+            ['gpt-4', 'claude-3.5-sonnet'],
             'professional'
         );
 

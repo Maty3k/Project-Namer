@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SharePasswordRequest;
+use App\Models\MoodBoard;
 use App\Models\Share;
 use App\Services\ShareService;
 use Illuminate\Http\JsonResponse;
@@ -212,6 +213,29 @@ final class PublicShareController extends Controller
         }
 
         return $data;
+    }
+
+    /**
+     * Display a publicly shared mood board.
+     */
+    public function showMoodBoard(string $token): Response
+    {
+        $moodBoard = MoodBoard::where('share_token', $token)
+            ->where('is_public', true)
+            ->with(['projectImages', 'project', 'user'])
+            ->first();
+
+        if (! $moodBoard) {
+            abort(404, 'Mood board not found or not publicly shared');
+        }
+
+        return response()->view('shares.mood-board', [
+            'moodBoard' => $moodBoard,
+            'metadata' => [
+                'title' => "Mood Board: {$moodBoard->name}",
+                'description' => $moodBoard->description ?? 'A creative mood board collection',
+            ],
+        ]);
     }
 
     /**

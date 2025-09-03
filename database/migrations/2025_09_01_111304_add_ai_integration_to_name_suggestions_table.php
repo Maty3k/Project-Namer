@@ -38,7 +38,7 @@ return new class extends Migration
             $table->dropIndex(['ai_model_used', 'created_at']);
             $table->dropIndex(['ai_generation_session_id']);
             $table->dropIndex(['ai_generation_mode', 'ai_deep_thinking']);
-            
+
             $table->dropColumn([
                 'ai_model_used',
                 'ai_generation_mode',

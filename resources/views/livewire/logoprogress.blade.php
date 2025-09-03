@@ -53,6 +53,15 @@ new class extends Component {
             ]);
         }
     }
+    
+    protected function serializeProperty($property)
+    {
+        if ($property === $this->status && is_array($property)) {
+            return array_map(fn($value) => is_string($value) || is_numeric($value) || is_bool($value) ? $value : (string) $value, $property);
+        }
+        
+        return parent::serializeProperty($property);
+    }
 }; ?>
 
 <div class="w-full max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg">

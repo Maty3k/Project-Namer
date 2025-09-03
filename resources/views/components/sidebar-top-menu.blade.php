@@ -19,9 +19,19 @@
         </flux:navlist.item>
         
         <flux:navlist.item icon="photo" 
-                           href="#" 
+                           :href="route('logos.index')"
+                           :current="request()->routeIs('logos.*')"
+                           wire:navigate
                            class="touch-target interactive focus-modern">
             {{ __('Logo Gallery') }}
+        </flux:navlist.item>
+
+        <flux:navlist.item icon="layout-grid" 
+                           href="{{ route('themes.customizer') }}" 
+                           :current="request()->routeIs('themes.customizer')"
+                           wire:navigate
+                           class="touch-target interactive focus-modern">
+            {{ __('Theme Customizer') }}
         </flux:navlist.item>
     </flux:navlist.group>
 </flux:navlist>

@@ -77,14 +77,7 @@
                                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm transform hover:scale-[1.02]' }}"
                         wire:key="project-{{ $project->uuid }}"
                     >
-                        @if($collapsed)
-                            <!-- Collapsed view - show first letter -->
-                            <div class="flex items-center justify-center">
-                                <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-sm font-semibold text-gray-700 dark:text-gray-300">
-                                    {{ strtoupper(substr($project->name, 0, 1)) }}
-                                </div>
-                            </div>
-                        @else
+                        @if(!$collapsed)
                             <!-- Expanded view -->
                             <div class="flex items-start justify-between">
                                 <div class="flex-1 min-w-0">

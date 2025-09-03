@@ -264,6 +264,33 @@ new class extends Component {
         // Dispatch download batch event
         $this->dispatch('download-file', url: "/api/logos/{$logoGeneration->id}/download-batch");
     }
+    
+    protected function serializeProperty($property)
+    {
+        if ($property instanceof \App\Models\LogoGeneration) {
+            return $property->id;
+        }
+
+        if ($property instanceof \App\Models\GeneratedLogo) {
+            return $property->id;
+        }
+
+        if ($property instanceof \Illuminate\Database\Eloquent\Collection) {
+            return $property->pluck('id')->toArray();
+        }
+
+        return parent::serializeProperty($property);
+    }
+
+    protected function hydrateProperty($property, $value)
+    {
+        // Don't hydrate computed properties - let them be computed fresh
+        if (in_array($property, ['logoGeneration', 'colorSchemes', 'logosByStyle'])) {
+            return null;
+        }
+
+        return parent::hydrateProperty($property, $value);
+    }
 }; ?>
 
 <div class="max-w-7xl mx-auto px-4 py-8">

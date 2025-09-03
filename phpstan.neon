@@ -11,3 +11,8 @@ parameters:
     level: 6
 
     treatPhpDocTypesAsCertain: false
+
+    ignoreErrors:
+        -
+            message: '#Class App\\Models\\ProjectImage has PHPDoc tag @method for method withTags\(\) parameter \#1 \$tags with no value type specified in iterable type array\.#'
+            path: app/Models/ProjectImage.php

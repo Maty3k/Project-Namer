@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
  * AI generation session tracking model.
- *
+ * 
  * Tracks the progress and status of AI name generation sessions
  * with real-time status updates and comprehensive metadata.
  *
@@ -32,15 +34,22 @@ use Illuminate\Support\Str;
  * @property string $generation_strategy
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
+ * @property int|null $user_id
+ * @property int|null $project_id
+ * @property array<array-key, mixed>|null $image_context_ids
+ * @property int $used_image_context
+ * @property int $context_image_count
+ * @property-read \App\Models\User|null $user
  * @method static Builder<static>|GenerationSession active()
  * @method static Builder<static>|GenerationSession byStatus(string $status)
+ * @method static \Database\Factories\GenerationSessionFactory factory($count = null, $state = [])
  * @method static Builder<static>|GenerationSession newModelQuery()
  * @method static Builder<static>|GenerationSession newQuery()
  * @method static Builder<static>|GenerationSession query()
  * @method static Builder<static>|GenerationSession recent()
  * @method static Builder<static>|GenerationSession whereBusinessDescription($value)
  * @method static Builder<static>|GenerationSession whereCompletedAt($value)
+ * @method static Builder<static>|GenerationSession whereContextImageCount($value)
  * @method static Builder<static>|GenerationSession whereCreatedAt($value)
  * @method static Builder<static>|GenerationSession whereCurrentStep($value)
  * @method static Builder<static>|GenerationSession whereCustomParameters($value)
@@ -50,20 +59,27 @@ use Illuminate\Support\Str;
  * @method static Builder<static>|GenerationSession whereGenerationMode($value)
  * @method static Builder<static>|GenerationSession whereGenerationStrategy($value)
  * @method static Builder<static>|GenerationSession whereId($value)
+ * @method static Builder<static>|GenerationSession whereImageContextIds($value)
  * @method static Builder<static>|GenerationSession whereProgressPercentage($value)
+ * @method static Builder<static>|GenerationSession whereProjectId($value)
  * @method static Builder<static>|GenerationSession whereRequestedModels($value)
  * @method static Builder<static>|GenerationSession whereResults($value)
  * @method static Builder<static>|GenerationSession whereSessionId($value)
  * @method static Builder<static>|GenerationSession whereStartedAt($value)
  * @method static Builder<static>|GenerationSession whereStatus($value)
  * @method static Builder<static>|GenerationSession whereUpdatedAt($value)
- *
+ * @method static Builder<static>|GenerationSession whereUsedImageContext($value)
+ * @method static Builder<static>|GenerationSession whereUserId($value)
  * @mixin \Eloquent
  */
 final class GenerationSession extends Model
 {
+    /** @use HasFactory<\Database\Factories\GenerationSessionFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'session_id',
+        'user_id',
         'status',
         'business_description',
         'generation_mode',
@@ -78,6 +94,8 @@ final class GenerationSession extends Model
         'completed_at',
         'error_message',
         'generation_strategy',
+        'project_id',
+        'image_context_ids',
     ];
 
     protected function casts(): array
@@ -91,6 +109,7 @@ final class GenerationSession extends Model
             'progress_percentage' => 'integer',
             'started_at' => 'datetime',
             'completed_at' => 'datetime',
+            'image_context_ids' => 'array',
         ];
     }
 
@@ -267,5 +286,29 @@ final class GenerationSession extends Model
             'started_at' => $this->started_at?->toISOString(),
             'completed_at' => $this->completed_at?->toISOString(),
         ]);
+    }
+
+    /**
+     * Get project images used as context for this session.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, ProjectImage>
+     */
+    public function getImageContexts(): Collection
+    {
+        if ($this->image_context_ids === null || empty($this->image_context_ids)) {
+            return new Collection;
+        }
+
+        return ProjectImage::whereIn('id', $this->image_context_ids)->get();
+    }
+
+    /**
+     * Get the user that owns this session.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\User, $this>
+     */
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\User::class);
     }
 }

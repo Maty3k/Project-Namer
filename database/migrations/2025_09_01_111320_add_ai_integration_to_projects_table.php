@@ -36,7 +36,7 @@ return new class extends Migration
             $table->dropIndex(['user_id', 'last_ai_generation_at']);
             $table->dropIndex(['total_ai_generations', 'created_at']);
             $table->dropIndex(['last_ai_generation_mode']);
-            
+
             $table->dropColumn([
                 'ai_generation_history',
                 'last_ai_generation_mode',

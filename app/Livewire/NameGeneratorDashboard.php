@@ -5,10 +5,15 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Jobs\GenerateLogosJob;
+use App\Models\AIGeneration;
+use App\Models\AIModelPerformance;
 use App\Models\GenerationCache;
 use App\Models\LogoGeneration;
 use App\Models\NamingSession;
 use App\Models\Share;
+use App\Models\UserAIPreferences;
+use App\Services\AI\AIGenerationService;
+use App\Services\AI\PrismAIService;
 use App\Services\DomainCheckService;
 use App\Services\ExportService;
 use App\Services\OpenAINameService;
@@ -20,7 +25,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
-use ReflectionClass;
 
 /**
  * Name generator dashboard component for the Project Namer application.
@@ -37,6 +41,34 @@ class NameGeneratorDashboard extends Component
 
     public bool $deepThinking = false;
 
+    // AI Generation Properties
+    public bool $useAIGeneration = false;
+
+    public bool $enableModelComparison = false;
+
+    /** @var array<int, string> */
+    public array $selectedAIModels = [];
+
+    /** @var array<int, array<string, string>> */
+    public array $availableAIModels = [
+        ['id' => 'gpt-4', 'name' => 'GPT-4', 'provider' => 'OpenAI'],
+        ['id' => 'claude-3.5-sonnet', 'name' => 'Claude 3.5', 'provider' => 'Anthropic'],
+        ['id' => 'gemini-1.5-pro', 'name' => 'Gemini Pro', 'provider' => 'Google'],
+        ['id' => 'grok-beta', 'name' => 'Grok', 'provider' => 'xAI'],
+    ];
+
+    /** @var array<string, bool> */
+    public array $modelAvailability = [];
+
+    public ?int $currentAIGenerationId = null;
+
+    public string $aiGenerationStatus = '';
+
+    /** @var array<string, array<int, string>> */
+    public array $aiModelResults = [];
+
+    public string $activeModelTab = '';
+
     // Generated names and domain results
     /** @var array<int, string> */
     public array $generatedNames = [];
@@ -49,6 +81,8 @@ class NameGeneratorDashboard extends Component
 
     /** @var array<int, string> */
     public array $selectedNamesForLogos = [];
+
+    public bool $selectAll = false;
 
     public bool $showLogoGeneration = false;
 
@@ -85,6 +119,10 @@ class NameGeneratorDashboard extends Component
         'generationMode' => 'required|in:creative,professional,brandable,tech-focused',
         'deepThinking' => 'boolean',
         'selectedNamesForLogos' => 'array|max:5',
+        'useAIGeneration' => 'boolean',
+        'enableModelComparison' => 'boolean',
+        'selectedAIModels' => 'array|min:1|max:4',
+        'selectedAIModels.*' => 'string|in:gpt-4,claude-3.5-sonnet,gemini-1.5-pro,grok-beta',
     ];
 
     /** @var array<string, string> */
@@ -92,12 +130,17 @@ class NameGeneratorDashboard extends Component
         'businessIdea.required' => 'Please describe your business idea',
         'businessIdea.max' => 'Business idea must be less than 2000 characters',
         'selectedNamesForLogos.max' => 'You can select up to 5 names for logo generation',
+        'selectedAIModels.required' => 'Please select at least one AI model',
+        'selectedAIModels.min' => 'Please select at least one AI model',
+        'selectedAIModels.max' => 'You can select up to 4 AI models for comparison',
     ];
 
     public function mount(): void
     {
         $this->loadSearchHistory();
         $this->checkForActiveLogoGeneration();
+        $this->loadUserAIPreferences();
+        $this->checkModelAvailability();
     }
 
     /**
@@ -105,7 +148,11 @@ class NameGeneratorDashboard extends Component
      */
     public function generateNames(): void
     {
-        $this->validate();
+        $this->validate([
+            'businessIdea' => 'required|string|max:2000',
+            'generationMode' => 'required|in:creative,professional,brandable,tech-focused',
+            'deepThinking' => 'boolean',
+        ]);
 
         $this->resetState();
         $this->isGeneratingNames = true;
@@ -134,9 +181,28 @@ class NameGeneratorDashboard extends Component
             // Dispatch success event for toast notification
             $this->dispatch('toast', message: $this->successMessage, type: 'success');
 
-        } catch (Exception $e) {
-            $this->errorMessage = $this->getFriendlyErrorMessage($e->getMessage());
-            $this->dispatch('toast', message: $this->errorMessage, type: 'error');
+        } catch (Exception) {
+            // Try fallback generation when OpenAI fails
+            try {
+                $fallbackService = app(\App\Services\FallbackNameService::class);
+                $this->generatedNames = $fallbackService->generateNames(
+                    $this->businessIdea,
+                    $this->generationMode,
+                    10
+                );
+
+                $this->checkDomainAvailability();
+                $this->showResults = true;
+                $this->activeTab = 'results';
+                $this->autoSaveSession();
+
+                $this->successMessage = 'Generated '.count($this->generatedNames).' business names using creative generation!';
+                $this->dispatch('toast', message: 'API unavailable - used creative generation instead', type: 'warning');
+
+            } catch (Exception $fallbackException) {
+                $this->errorMessage = $this->getFriendlyErrorMessage($fallbackException->getMessage());
+                $this->dispatch('toast', message: $this->errorMessage, type: 'error');
+            }
         } finally {
             $this->isGeneratingNames = false;
         }
@@ -472,88 +538,7 @@ class NameGeneratorDashboard extends Component
         }
     }
 
-    /**
-     * Add a toJSON method to prevent the toJSON error.
-     */
-    public function toJSON(): string
-    {
-        Log::error('Dashboard toJSON method called - this indicates a serialization issue', [
-            'backtrace' => debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 5),
-        ]);
-
-        // Return component state for JSON serialization
-        $reflection = new ReflectionClass($this);
-        $properties = [];
-
-        foreach ($reflection->getProperties() as $property) {
-            if ($property->isPublic() && ! $property->isStatic()) {
-                $name = $property->getName();
-                try {
-                    $value = $this->{$name};
-                    json_encode($value, JSON_THROW_ON_ERROR); // Test if serializable
-                    $properties[$name] = $value;
-                } catch (\JsonException $e) {
-                    Log::error("Dashboard property {$name} not serializable", [
-                        'error' => $e->getMessage(),
-                        'type' => gettype($this->{$name}),
-                    ]);
-                    $properties[$name] = is_object($this->{$name}) ? $this->{$name}::class : 'NOT_SERIALIZABLE';
-                }
-            }
-        }
-
-        return json_encode($properties);
-    }
-
     // Session Management Methods
-
-    /**
-     * Load a session into the dashboard.
-     */
-    public function loadSession(string $sessionId): void
-    {
-        $user = Auth::user();
-        if (! $user) {
-            return;
-        }
-
-        $sessionService = app(SessionService::class);
-        $session = $sessionService->loadSession($user, $sessionId);
-
-        if (! $session) {
-            $this->dispatch('toast', message: 'Session not found', type: 'error');
-
-            return;
-        }
-
-        // Check for unsaved changes before switching
-        if ($this->hasUnsavedChanges && $this->currentSessionId !== $sessionId) {
-            $this->dispatch('confirm-session-switch', newSessionId: $sessionId);
-
-            return;
-        }
-
-        $this->currentSession = $session;
-        $this->currentSessionId = $session->id;
-        $this->businessIdea = $session->business_description ?? '';
-        $this->generationMode = $session->generation_mode ?? 'creative';
-        $this->deepThinking = $session->deep_thinking ?? false;
-
-        // Load results if available
-        $latestResult = $session->results()->latest()->first();
-        if ($latestResult) {
-            $this->generatedNames = $latestResult->generated_names ?? [];
-            $this->domainResults = $latestResult->domain_results ?? [];
-            $this->showResults = ! empty($this->generatedNames);
-            if ($this->showResults) {
-                $this->activeTab = 'results';
-            }
-        } else {
-            $this->resetState();
-        }
-
-        $this->hasUnsavedChanges = false;
-    }
 
     /**
      * Confirm session switch with save option.
@@ -668,6 +653,41 @@ class NameGeneratorDashboard extends Component
     }
 
     /**
+     * Load a session by ID.
+     */
+    private function loadSession(string $sessionId): void
+    {
+        $user = Auth::user();
+        if (! $user) {
+            return;
+        }
+
+        $sessionService = app(SessionService::class);
+        $session = $sessionService->loadSession($user, $sessionId);
+
+        if ($session) {
+            $this->currentSession = $session;
+            $this->currentSessionId = $session->id;
+            $this->businessIdea = $session->data['business_description'] ?? '';
+            $this->generationMode = $session->data['generation_mode'] ?? 'creative';
+            $this->deepThinking = $session->data['deep_thinking'] ?? false;
+
+            // Load results if available
+            $latestResult = $session->results()->latest()->first();
+            if ($latestResult) {
+                $this->generatedNames = $latestResult->generated_names ?? [];
+                $this->domainResults = $latestResult->domain_results ?? [];
+                $this->showResults = ! empty($this->generatedNames);
+                if ($this->showResults) {
+                    $this->activeTab = 'results';
+                }
+            }
+
+            $this->hasUnsavedChanges = false;
+        }
+    }
+
+    /**
      * Listen for sidebar events.
      */
     /**
@@ -715,6 +735,403 @@ class NameGeneratorDashboard extends Component
     public function updatedDeepThinking(): void
     {
         $this->hasUnsavedChanges = true;
+    }
+
+    public function updatedSelectAll(): void
+    {
+        if ($this->selectAll) {
+            $this->selectedNamesForLogos = $this->generatedNames;
+        } else {
+            $this->selectedNamesForLogos = [];
+        }
+    }
+
+    /**
+     * Load user AI preferences.
+     */
+    protected function loadUserAIPreferences(): void
+    {
+        $user = Auth::user();
+        if (! $user) {
+            return;
+        }
+
+        $preferences = UserAIPreferences::findOrCreateForUser($user->id);
+
+        $this->selectedAIModels = $preferences->preferred_models;
+        $this->generationMode = $preferences->default_generation_mode;
+        $this->deepThinking = $preferences->default_deep_thinking;
+        $this->enableModelComparison = $preferences->enable_model_comparison;
+    }
+
+    /**
+     * Check AI model availability.
+     */
+    public function checkModelAvailability(): void
+    {
+        try {
+            $aiService = app(PrismAIService::class);
+
+            foreach ($this->availableAIModels as $model) {
+                $this->modelAvailability[$model['id']] = $aiService->isModelAvailable($model['id']);
+            }
+        } catch (Exception $e) {
+            Log::warning('Failed to check model availability', ['error' => $e->getMessage()]);
+            // Default all to available if check fails
+            foreach ($this->availableAIModels as $model) {
+                $this->modelAvailability[$model['id']] = true;
+            }
+        }
+    }
+
+    /**
+     * Initialize the active model tab when AI results are available.
+     */
+    public function initializeActiveModelTab(): void
+    {
+        if (empty($this->activeModelTab) && ! empty($this->aiModelResults) && $this->enableModelComparison) {
+            $this->activeModelTab = array_key_first($this->aiModelResults);
+        }
+    }
+
+    /**
+     * Generate names with AI.
+     */
+    public function generateNamesWithAI(): void
+    {
+        $this->validate([
+            'businessIdea' => 'required|string|max:2000',
+            'selectedAIModels' => 'required|array|min:1',
+        ]);
+
+        // Check rate limits
+        if (! $this->checkAIRateLimits()) {
+            $this->errorMessage = 'AI generation rate limit exceeded. Please try again later.';
+            $this->dispatch('toast', type: 'error');
+
+            return;
+        }
+
+        $this->resetState();
+        $this->isGeneratingNames = true;
+        $this->errorMessage = null;
+
+        /** @var AIGeneration|null $aiGeneration */
+        $aiGeneration = null;
+
+        try {
+            $user = Auth::user();
+            if (! $user) {
+                throw new Exception('User not authenticated');
+            }
+
+            // Create AI generation record
+            $aiGeneration = AIGeneration::create([
+                'user_id' => $user->id,
+                'project_id' => null, // Will be set if project is created
+                'generation_session_id' => uniqid('gen_'),
+                'models_requested' => $this->selectedAIModels,
+                'generation_mode' => $this->generationMode,
+                'deep_thinking' => $this->deepThinking,
+                'status' => 'pending',
+                'prompt_used' => $this->businessIdea,
+            ]);
+
+            $this->currentAIGenerationId = $aiGeneration->id;
+            $this->aiGenerationStatus = 'Initializing AI models...';
+
+            // Mark as started
+            $aiGeneration->markAsStarted();
+
+            // Dispatch AI generation started event
+            $this->dispatch('ai-generation-started', [
+                'generationId' => $aiGeneration->id,
+                'models' => $this->selectedAIModels,
+                'deepThinking' => $this->deepThinking,
+            ]);
+
+            // Dispatch deep thinking activation if enabled
+            if ($this->deepThinking) {
+                $this->dispatch('ai-deep-thinking-activated', [
+                    'generationId' => $aiGeneration->id,
+                    'message' => 'Enhanced processing activated for higher quality results',
+                ]);
+            }
+
+            // Generate names using AI service
+            $aiService = app(AIGenerationService::class);
+
+            $startTime = microtime(true);
+            $results = $aiService->generateWithModels(
+                $aiGeneration,
+                $this->selectedAIModels,
+                $this->businessIdea,
+                [
+                    'mode' => $this->generationMode,
+                    'deep_thinking' => $this->deepThinking,
+                ]
+            );
+            $endTime = microtime(true);
+
+            // Process results
+            $this->aiModelResults = $results;
+            $allNames = [];
+
+            foreach ($results as $model => $names) {
+                $allNames = array_merge($allNames, $names);
+
+                // Update model performance metrics
+                $this->updateModelPerformance($model, true, (int) (($endTime - $startTime) * 1000));
+            }
+
+            // Remove duplicates and set generated names
+            $this->generatedNames = array_unique($allNames);
+
+            // Initialize active model tab for comparison
+            $this->initializeActiveModelTab();
+
+            // Mark AI generation as completed
+            $aiGeneration->markAsCompleted([
+                'names' => $this->generatedNames,
+                'model_results' => $results,
+            ], [
+                'total_time_ms' => (int) (($endTime - $startTime) * 1000),
+                'models_used' => array_keys($results),
+            ]);
+
+            // Check domain availability
+            $this->checkDomainAvailability();
+            $this->showResults = true;
+            $this->activeTab = 'results';
+
+            // Auto-save session
+            $this->autoSaveSession();
+
+            $this->successMessage = 'AI generated '.count($this->generatedNames).' business names!';
+            $this->addToSearchHistory();
+
+            // Dispatch completion event
+            $this->dispatch('ai-generation-completed', [
+                'generationId' => $aiGeneration->id,
+                'totalNames' => count($this->generatedNames),
+                'modelsUsed' => count(array_keys($results)),
+                'processingTime' => (int) (($endTime - $startTime) * 1000),
+            ]);
+
+        } catch (Exception $e) {
+            Log::error('AI generation failed', ['error' => $e->getMessage()]);
+
+            // Check for specific error types
+            if (str_contains($e->getMessage(), 'rate limit') || str_contains($e->getMessage(), 'Rate limit')) {
+                $this->errorMessage = 'OpenAI API rate limit reached. Falling back to creative generation...';
+                $this->dispatch('show-toast', [
+                    'message' => 'API rate limit reached. Using creative generation instead.',
+                    'type' => 'warning',
+                ]);
+            } elseif (str_contains($e->getMessage(), 'insufficient_quota') || str_contains($e->getMessage(), 'quota')) {
+                $this->errorMessage = 'OpenAI API quota exceeded. Falling back to creative generation...';
+                $this->dispatch('show-toast', [
+                    'message' => 'API quota exceeded. Using creative generation instead.',
+                    'type' => 'warning',
+                ]);
+            } else {
+                $this->errorMessage = 'AI generation failed. Falling back to creative generation...';
+                $this->dispatch('show-toast', [
+                    'message' => 'AI generation failed. Using creative generation instead.',
+                    'type' => 'info',
+                ]);
+            }
+
+            // Only try to mark as failed if aiGeneration was created
+            if ($aiGeneration !== null) {
+                $aiGeneration->markAsFailed($e->getMessage());
+            }
+
+            // Dispatch error event
+            $this->dispatch('ai-generation-error', [
+                'message' => $this->errorMessage,
+                'originalError' => $e->getMessage(),
+                'generationId' => $aiGeneration?->id,
+            ]);
+
+            // Fall back to creative generation using fallback service
+            try {
+                $fallbackService = app(\App\Services\FallbackNameService::class);
+                $this->generatedNames = $fallbackService->generateNames(
+                    $this->businessIdea,
+                    $this->generationMode,
+                    10
+                );
+
+                $this->checkDomainAvailability();
+                $this->showResults = true;
+                $this->activeTab = 'results';
+                $this->autoSaveSession();
+
+                $this->dispatch('show-toast', [
+                    'message' => 'Generated '.count($this->generatedNames).' creative names using fallback generation!',
+                    'type' => 'success',
+                ]);
+
+            } catch (Exception $fallbackException) {
+                $this->errorMessage = 'All generation methods failed. Please try again later.';
+                Log::error('Fallback generation also failed', ['error' => $fallbackException->getMessage()]);
+            }
+        } finally {
+            $this->isGeneratingNames = false;
+            $this->currentAIGenerationId = null;
+            $this->aiGenerationStatus = '';
+        }
+    }
+
+    /**
+     * Cancel AI generation.
+     */
+    public function cancelAIGeneration(): void
+    {
+        if ($this->currentAIGenerationId) {
+            $generation = AIGeneration::find($this->currentAIGenerationId);
+            if ($generation && $generation->isInProgress()) {
+                $generation->update(['status' => 'cancelled']);
+            }
+        }
+
+        $this->isGeneratingNames = false;
+        $this->currentAIGenerationId = null;
+        $this->aiGenerationStatus = '';
+
+        $this->dispatch('toast', message: 'AI generation cancelled', type: 'info');
+    }
+
+    /**
+     * Save AI preferences.
+     */
+    public function saveAIPreferences(): void
+    {
+        $user = Auth::user();
+        if (! $user) {
+            return;
+        }
+
+        $preferences = UserAIPreferences::findOrCreateForUser($user->id);
+
+        $preferences->updatePreferredModels($this->selectedAIModels);
+        $preferences->update([
+            'default_generation_mode' => $this->generationMode,
+            'default_deep_thinking' => $this->deepThinking,
+            'enable_model_comparison' => $this->enableModelComparison,
+        ]);
+
+        $this->dispatch('toast', message: 'AI preferences saved');
+    }
+
+    /**
+     * Check AI rate limits.
+     */
+    protected function checkAIRateLimits(): bool
+    {
+        $user = Auth::user();
+        if (! $user) {
+            return false;
+        }
+
+        // Check if user has exceeded rate limits (10 generations per hour)
+        $recentGenerations = AIGeneration::where('user_id', $user->id)
+            ->where('created_at', '>=', now()->subHour())
+            ->count();
+
+        return $recentGenerations < 10;
+    }
+
+    /**
+     * Update AI model performance metrics.
+     */
+    protected function updateModelPerformance(string $modelName, bool $success, int $responseTime): void
+    {
+        $user = Auth::user();
+        if (! $user) {
+            return;
+        }
+
+        $performance = AIModelPerformance::findOrCreateForUser($user->id, $modelName);
+
+        // Estimate tokens and cost (simplified - would need actual API response data)
+        $estimatedTokens = strlen($this->businessIdea) * 2; // Rough estimate
+        $estimatedCost = (int) ($estimatedTokens * 0.01); // Rough cost estimate in cents
+
+        $performance->updateMetrics($responseTime, $estimatedTokens, $estimatedCost, $success);
+    }
+
+    /**
+     * Check if current session has image context.
+     */
+    public function hasImageContext(): bool
+    {
+        if (! $this->currentSession) {
+            return false;
+        }
+
+        $imageIds = $this->currentSession->image_context_ids ?? [];
+
+        return ! empty($imageIds);
+    }
+
+    /**
+     * Get count of images used as context.
+     */
+    public function getImageContextCount(): int
+    {
+        if (! $this->currentSession) {
+            return 0;
+        }
+
+        $imageIds = $this->currentSession->image_context_ids ?? [];
+
+        return count($imageIds);
+    }
+
+    /**
+     * Clear image context from current session.
+     */
+    public function clearImageContext(): void
+    {
+        if (! $this->currentSession) {
+            return;
+        }
+
+        $this->currentSession->update(['image_context_ids' => null]);
+    }
+
+    /**
+     * Add image to context for current session.
+     */
+    public function addImageToContext(int $imageId): void
+    {
+        if (! $this->currentSession) {
+            return;
+        }
+
+        $currentIds = $this->currentSession->image_context_ids ?? [];
+
+        if (! in_array($imageId, $currentIds)) {
+            $currentIds[] = $imageId;
+            $this->currentSession->update(['image_context_ids' => $currentIds]);
+        }
+    }
+
+    /**
+     * Remove image from context for current session.
+     */
+    public function removeImageFromContext(int $imageId): void
+    {
+        if (! $this->currentSession) {
+            return;
+        }
+
+        $currentIds = $this->currentSession->image_context_ids ?? [];
+        $updatedIds = array_filter($currentIds, fn ($id) => $id !== $imageId);
+
+        $this->currentSession->update(['image_context_ids' => array_values($updatedIds)]);
     }
 
     public function render(): View

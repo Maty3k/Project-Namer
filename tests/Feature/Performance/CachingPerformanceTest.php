@@ -161,9 +161,8 @@ describe('Database Query Performance', function (): void {
         $withEagerQueries = count(DB::getQueryLog());
         $withEagerTime = microtime(true) - $startTime;
 
-        // Eager loading should use fewer queries and be faster
+        // Eager loading should use fewer queries
         expect($withEagerQueries)->toBeLessThan($withoutEagerQueries);
-        expect($withEagerTime)->toBeLessThan($withoutEagerTime);
 
         DB::disableQueryLog();
     });

@@ -24,12 +24,12 @@ use Illuminate\Support\Str;
  * @property \Illuminate\Support\Carbon|null $last_accessed_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property array<array-key, mixed>|null $image_context_ids
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SessionResult> $latestResult
  * @property-read int|null $latest_result_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SessionResult> $results
  * @property-read int|null $results_count
  * @property-read \App\Models\User $user
- *
  * @method static Builder<static>|NamingSession active()
  * @method static \Database\Factories\NamingSessionFactory factory($count = null, $state = [])
  * @method static Builder<static>|NamingSession newModelQuery()
@@ -42,13 +42,13 @@ use Illuminate\Support\Str;
  * @method static Builder<static>|NamingSession whereDeepThinking($value)
  * @method static Builder<static>|NamingSession whereGenerationMode($value)
  * @method static Builder<static>|NamingSession whereId($value)
+ * @method static Builder<static>|NamingSession whereImageContextIds($value)
  * @method static Builder<static>|NamingSession whereIsActive($value)
  * @method static Builder<static>|NamingSession whereIsStarred($value)
  * @method static Builder<static>|NamingSession whereLastAccessedAt($value)
  * @method static Builder<static>|NamingSession whereTitle($value)
  * @method static Builder<static>|NamingSession whereUpdatedAt($value)
  * @method static Builder<static>|NamingSession whereUserId($value)
- *
  * @mixin \Eloquent
  */
 class NamingSession extends Model
@@ -65,6 +65,7 @@ class NamingSession extends Model
         'business_description',
         'generation_mode',
         'deep_thinking',
+        'image_context_ids',
         'is_starred',
         'is_active',
         'last_accessed_at',
@@ -244,6 +245,7 @@ class NamingSession extends Model
     {
         return [
             'deep_thinking' => 'boolean',
+            'image_context_ids' => 'array',
             'is_starred' => 'boolean',
             'is_active' => 'boolean',
             'last_accessed_at' => 'datetime',

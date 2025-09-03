@@ -17,7 +17,8 @@
         "livewire/flux-pro": "^2.2",
         "livewire/volt": "^1.7.0",
         "pragmarx/google2fa": "^8.0",
-        "pragmarx/google2fa-qrcode": "^3.0"
+        "pragmarx/google2fa-qrcode": "^3.0",
+        "spatie/laravel-medialibrary": "^11.14"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.15",

@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 
 /**
  * Logo color variant model.
- *
+ * 
  * Represents a color-customized version of a generated logo,
  * with a specific color scheme applied.
  *
@@ -25,7 +25,6 @@ use Illuminate\Support\Str;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\GeneratedLogo $generatedLogo
- *
  * @method static \Database\Factories\LogoColorVariantFactory factory($count = null, $state = [])
  * @method static Builder<static>|LogoColorVariant newModelQuery()
  * @method static Builder<static>|LogoColorVariant newQuery()
@@ -38,7 +37,6 @@ use Illuminate\Support\Str;
  * @method static Builder<static>|LogoColorVariant whereId($value)
  * @method static Builder<static>|LogoColorVariant whereUpdatedAt($value)
  * @method static Builder<static>|LogoColorVariant withColorScheme(string $colorScheme)
- *
  * @mixin \Eloquent
  */
 final class LogoColorVariant extends Model

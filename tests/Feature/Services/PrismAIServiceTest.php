@@ -20,15 +20,15 @@ describe('Prism AI Service', function (): void {
 
         $result = $this->service->generateNames(
             'A project management tool for creative teams',
-            ['gpt-4o'],
+            ['gpt-4'],
             'creative'
         );
 
-        expect($result)->toHaveKey('gpt-4o');
-        expect($result['gpt-4o']['names'])->toHaveCount(10);
-        expect($result['gpt-4o']['names'])->toContain('TechFlow');
-        expect($result['gpt-4o']['model'])->toBe('gpt-4o');
-        expect($result['gpt-4o']['status'])->toBe('completed');
+        expect($result)->toHaveKey('gpt-4');
+        expect($result['gpt-4']['names'])->toHaveCount(10);
+        expect($result['gpt-4']['names'])->toContain('TechFlow');
+        expect($result['gpt-4']['model'])->toBe('gpt-4');
+        expect($result['gpt-4']['status'])->toBe('completed');
     });
 
     it('can generate names using Claude-3.5-Sonnet model', function (): void {
@@ -97,14 +97,14 @@ describe('Prism AI Service', function (): void {
 
         $result = $this->service->generateNames(
             'A creative project management tool',
-            ['gpt-4o', 'claude-3.5-sonnet'],
+            ['gpt-4', 'claude-3.5-sonnet'],
             'creative'
         );
 
-        expect($result)->toHaveKeys(['gpt-4o', 'claude-3.5-sonnet']);
-        expect($result['gpt-4o']['names'])->toHaveCount(10);
+        expect($result)->toHaveKeys(['gpt-4', 'claude-3.5-sonnet']);
+        expect($result['gpt-4']['names'])->toHaveCount(10);
         expect($result['claude-3.5-sonnet']['names'])->toHaveCount(10);
-        expect($result['gpt-4o']['names'])->toContain('TechFlow');
+        expect($result['gpt-4']['names'])->toContain('TechFlow');
         expect($result['claude-3.5-sonnet']['names'])->toContain('CreativeCore');
     });
 
@@ -117,13 +117,13 @@ describe('Prism AI Service', function (): void {
 
         $result = $this->service->generateNames(
             'A business management platform',
-            ['gpt-4o'],
+            ['gpt-4'],
             'professional'
         );
 
-        expect($result['gpt-4o']['names'])->toContain('ProManage');
-        expect($result['gpt-4o']['names'])->toContain('Enterprise Solutions');
-        expect($result['gpt-4o']['generation_mode'])->toBe('professional');
+        expect($result['gpt-4']['names'])->toContain('ProManage');
+        expect($result['gpt-4']['names'])->toContain('Enterprise Solutions');
+        expect($result['gpt-4']['generation_mode'])->toBe('professional');
     });
 
     it('supports deep thinking mode with adjusted parameters', function (): void {
@@ -135,14 +135,14 @@ describe('Prism AI Service', function (): void {
 
         $result = $this->service->generateNames(
             'An AI-powered analytics platform',
-            ['gpt-4o'],
+            ['gpt-4'],
             'tech-focused',
             true // deep thinking enabled
         );
 
-        expect($result['gpt-4o']['names'])->toContain('IntelliFlow');
-        expect($result['gpt-4o']['deep_thinking'])->toBe(true);
-        expect($result['gpt-4o']['temperature'])->toBe(0.3); // Lower temperature for deep thinking
+        expect($result['gpt-4']['names'])->toContain('IntelliFlow');
+        expect($result['gpt-4']['deep_thinking'])->toBe(true);
+        expect($result['gpt-4']['temperature'])->toBe(0.3); // Lower temperature for deep thinking
     });
 
     it('handles API errors gracefully', function (): void {
@@ -156,7 +156,7 @@ describe('Prism AI Service', function (): void {
     });
 
     it('validates input parameters correctly', function (): void {
-        expect(fn () => $this->service->generateNames('', ['gpt-4o'], 'creative'))
+        expect(fn () => $this->service->generateNames('', ['gpt-4'], 'creative'))
             ->toThrow(InvalidArgumentException::class, 'Business idea cannot be empty');
 
         expect(fn () => $this->service->generateNames('Valid idea', [], 'creative'))
@@ -165,10 +165,10 @@ describe('Prism AI Service', function (): void {
         expect(fn () => $this->service->generateNames('Valid idea', ['invalid-model'], 'creative'))
             ->toThrow(InvalidArgumentException::class, 'Invalid model: invalid-model');
 
-        expect(fn () => $this->service->generateNames('Valid idea', ['gpt-4o'], 'invalid-mode'))
+        expect(fn () => $this->service->generateNames('Valid idea', ['gpt-4'], 'invalid-mode'))
             ->toThrow(InvalidArgumentException::class, 'Invalid generation mode: invalid-mode');
 
-        expect(fn () => $this->service->generateNames(str_repeat('a', 2001), ['gpt-4o'], 'creative'))
+        expect(fn () => $this->service->generateNames(str_repeat('a', 2001), ['gpt-4'], 'creative'))
             ->toThrow(InvalidArgumentException::class, 'Business idea is too long');
     });
 
@@ -181,11 +181,11 @@ describe('Prism AI Service', function (): void {
 
         $result = $this->service->generateNames(
             'A metadata management platform',
-            ['gpt-4o'],
+            ['gpt-4'],
             'tech-focused'
         );
 
-        expect($result['gpt-4o'])->toHaveKeys([
+        expect($result['gpt-4'])->toHaveKeys([
             'names',
             'model',
             'generation_mode',
@@ -196,9 +196,9 @@ describe('Prism AI Service', function (): void {
             'status',
             'created_at',
         ]);
-        expect($result['gpt-4o']['max_tokens'])->toBe(200);
-        expect($result['gpt-4o']['temperature'])->toBe(0.7);
-        expect($result['gpt-4o']['response_time_ms'])->toBeInt();
+        expect($result['gpt-4']['max_tokens'])->toBe(200);
+        expect($result['gpt-4']['temperature'])->toBe(0.7);
+        expect($result['gpt-4']['response_time_ms'])->toBeInt();
     });
 
     it('uses model-specific prompt optimization', function (): void {
@@ -212,7 +212,7 @@ describe('Prism AI Service', function (): void {
         // Test that different models get different prompt optimizations
         $gptResult = $this->service->generateNames(
             'An optimization platform',
-            ['gpt-4o'],
+            ['gpt-4'],
             'tech-focused'
         );
 
@@ -223,7 +223,7 @@ describe('Prism AI Service', function (): void {
         );
 
         // Both should succeed but may have different internal processing
-        expect($gptResult['gpt-4o']['names'])->toHaveCount(10);
+        expect($gptResult['gpt-4']['names'])->toHaveCount(10);
         expect($claudeResult['claude-3.5-sonnet']['names'])->toHaveCount(10);
     });
 
@@ -236,7 +236,7 @@ describe('Prism AI Service', function (): void {
 
         $result = $this->service->generateNames(
             'A configuration management tool',
-            ['gpt-4o'],
+            ['gpt-4'],
             'professional',
             false,
             [
@@ -246,9 +246,9 @@ describe('Prism AI Service', function (): void {
             ]
         );
 
-        expect($result['gpt-4o']['names'])->toHaveCount(10);
-        expect($result['gpt-4o']['temperature'])->toBe(0.8);
-        expect($result['gpt-4o']['max_tokens'])->toBe(250);
+        expect($result['gpt-4']['names'])->toHaveCount(10);
+        expect($result['gpt-4']['temperature'])->toBe(0.8);
+        expect($result['gpt-4']['max_tokens'])->toBe(250);
     });
 
     it('tracks performance metrics for each model', function (): void {
@@ -261,13 +261,13 @@ describe('Prism AI Service', function (): void {
 
         $result = $this->service->generateNames(
             'A performance monitoring platform',
-            ['gpt-4o', 'claude-3.5-sonnet'],
+            ['gpt-4', 'claude-3.5-sonnet'],
             'tech-focused'
         );
 
         // Check that performance metrics are tracked
-        expect($result['gpt-4o']['response_time_ms'])->toBeInt();
-        expect($result['gpt-4o']['response_time_ms'])->toBeGreaterThanOrEqual(0);
+        expect($result['gpt-4']['response_time_ms'])->toBeInt();
+        expect($result['gpt-4']['response_time_ms'])->toBeGreaterThanOrEqual(0);
         expect($result['claude-3.5-sonnet']['response_time_ms'])->toBeInt();
         expect($result['claude-3.5-sonnet']['response_time_ms'])->toBeGreaterThanOrEqual(0);
     });
@@ -281,15 +281,15 @@ describe('Prism AI Service', function (): void {
 
         $result = $this->service->generateNames(
             'A fallback testing platform',
-            ['gpt-4o'],
+            ['gpt-4'],
             'tech-focused'
         );
 
         // Check that fallback metadata is included
-        expect($result['gpt-4o'])->toHaveKey('fallback_used');
-        expect($result['gpt-4o'])->toHaveKey('retry_count');
-        expect($result['gpt-4o']['fallback_used'])->toBe(false);
-        expect($result['gpt-4o']['retry_count'])->toBe(0);
+        expect($result['gpt-4'])->toHaveKey('fallback_used');
+        expect($result['gpt-4'])->toHaveKey('retry_count');
+        expect($result['gpt-4']['fallback_used'])->toBe(false);
+        expect($result['gpt-4']['retry_count'])->toBe(0);
     });
 
     it('validates error categorization methods exist', function (): void {

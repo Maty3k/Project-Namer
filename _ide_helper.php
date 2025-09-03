@@ -27905,10 +27905,31 @@ namespace App\Livewire {
     /**
      * ProjectPage component for viewing and editing individual projects.
      * 
-     * Handles project display, inline name editing, and description auto-save functionality.
+     * Handles project display, inline name editing, description auto-save functionality,
+     * AI generation integration, and real-time progress tracking.
+     * 
+     * Dispatched Livewire Events:
+     * - ai-generation-started: When AI generation begins
+     * - ai-generation-created: When AI generation record is created
+     * - ai-generation-completed: When AI generation finishes successfully
+     * - ai-generation-failed: When AI generation encounters an error
+     * - ai-generation-cancelled: When AI generation is cancelled by user
+     * - ai-progress-updated: Real-time progress updates during generation
+     * - ai-name-selected: When user selects an AI-generated name
+     * - ai-name-deselected: When user deselects a name
+     * - ai-model-tab-changed: When user switches between model comparison tabs
+     * - ai-preferences-saved: When user saves their AI generation preferences
+     * - project-updated: When project data changes requiring sidebar refresh
+     * - show-toast: For user notifications and feedback
      *
      */
     class ProjectPage extends \Livewire\Component {
+            }
+    /**
+     * Logo Gallery Index component for displaying all user logo generations.
+     *
+     */
+    class LogoGalleryIndex extends \Livewire\Component {
             }
     /**
      * Logo Gallery component for displaying and managing generated logos.
@@ -27918,6 +27939,14 @@ namespace App\Livewire {
      *
      */
     class LogoGallery extends \Livewire\Component {
+            }
+    /**
+     */
+    class PhotoGallery extends \Livewire\Component {
+            }
+    /**
+     */
+    class ThemeCustomizer extends \Livewire\Component {
             }
     }
 
@@ -33266,11 +33295,6 @@ namespace  {
 }
 
 
-namespace Facades\Livewire\Features\SupportFileUploads {
-    /**
-     * @mixin \Livewire\Features\SupportFileUploads\GenerateSignedUploadUrl     */
-    class GenerateSignedUploadUrl extends \Livewire\Features\SupportFileUploads\GenerateSignedUploadUrl {}
-}
 
 
 

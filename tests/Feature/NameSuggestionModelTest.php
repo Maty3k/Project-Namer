@@ -14,7 +14,22 @@ test('a name suggestion belongs to a project', function (): void {
 });
 
 test('name suggestion has correct fillable attributes', function (): void {
-    $fillable = ['project_id', 'name', 'domains', 'logos', 'is_hidden', 'generation_metadata'];
+    $fillable = [
+        'project_id',
+        'name',
+        'domains',
+        'logos',
+        'is_hidden',
+        'generation_metadata',
+        'ai_model_used',
+        'ai_generation_mode',
+        'ai_deep_thinking',
+        'ai_response_time_ms',
+        'ai_tokens_used',
+        'ai_cost_cents',
+        'ai_generation_session_id',
+        'ai_prompt_metadata',
+    ];
     $suggestion = new NameSuggestion;
 
     expect($suggestion->getFillable())->toBe($fillable);

@@ -125,6 +125,39 @@ class Sidebar extends Component
         return strlen($name) > $length ? substr($name, 0, $length).'...' : $name;
     }
 
+    /**
+     * Handle Livewire serialization to prevent toJSON errors.
+     */
+    protected function serializeProperty(string $property): mixed
+    {
+        if ($this->$property instanceof Project) {
+            return $this->$property->id;
+        }
+
+        if ($this->$property instanceof \Illuminate\Database\Eloquent\Collection) {
+            return $this->$property->pluck('id')->toArray();
+        }
+
+        return $this->$property;
+    }
+
+    /**
+     * Handle Livewire hydration to restore objects from serialized data.
+     */
+    protected function hydrateProperty(string $property, mixed $value): mixed
+    {
+        if ($property === 'selectedProject' && is_int($value)) {
+            return Project::find($value);
+        }
+
+        // Don't hydrate computed properties - let them be computed fresh
+        if (in_array($property, ['projects', 'projectCount'])) {
+            return null;
+        }
+
+        return $value;
+    }
+
     public function render(): View
     {
         return view('livewire.sidebar');

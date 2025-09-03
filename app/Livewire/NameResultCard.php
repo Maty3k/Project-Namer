@@ -187,6 +187,30 @@ class NameResultCard extends Component
         return $this->suggestion->generation_metadata['ai_model'] ?? null;
     }
 
+    /**
+     * Serialize properties for Livewire state management.
+     */
+    protected function serializeProperty(string $property): mixed
+    {
+        if ($this->$property instanceof NameSuggestion) {
+            return $this->$property->id;
+        }
+
+        return $this->$property;
+    }
+
+    /**
+     * Hydrate properties from Livewire state.
+     */
+    protected function hydrateProperty(string $property, mixed $value): mixed
+    {
+        if ($property === 'suggestion' && is_int($value)) {
+            return NameSuggestion::find($value);
+        }
+
+        return $value;
+    }
+
     public function render(): View
     {
         return view('livewire.name-result-card');

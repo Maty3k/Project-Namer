@@ -21,7 +21,7 @@ describe('Generation Session Model', function (): void {
             'business_description' => 'A test platform',
             'generation_mode' => 'creative',
             'deep_thinking' => true,
-            'requested_models' => ['gpt-4o', 'claude-3.5-sonnet'],
+            'requested_models' => ['gpt-4', 'claude-3.5-sonnet'],
             'custom_parameters' => ['temperature' => 0.8],
             'generation_strategy' => 'parallel',
         ]);
@@ -30,7 +30,7 @@ describe('Generation Session Model', function (): void {
         expect($session->status)->toBe('pending');
         expect($session->business_description)->toBe('A test platform');
         expect($session->deep_thinking)->toBe(true);
-        expect($session->requested_models)->toBe(['gpt-4o', 'claude-3.5-sonnet']);
+        expect($session->requested_models)->toBe(['gpt-4', 'claude-3.5-sonnet']);
         expect($session->custom_parameters)->toBe(['temperature' => 0.8]);
         expect($session->progress_percentage)->toBeIn([0, null]);
     });
@@ -42,7 +42,7 @@ describe('Generation Session Model', function (): void {
             'business_description' => 'Pending platform',
             'generation_mode' => 'creative',
             'deep_thinking' => false,
-            'requested_models' => ['gpt-4o'],
+            'requested_models' => ['gpt-4'],
             'generation_strategy' => 'quick',
         ]);
 
@@ -62,7 +62,7 @@ describe('Generation Session Model', function (): void {
             'business_description' => 'Completed platform',
             'generation_mode' => 'brandable',
             'deep_thinking' => false,
-            'requested_models' => ['gpt-4o'],
+            'requested_models' => ['gpt-4'],
             'generation_strategy' => 'comprehensive',
         ]);
 
@@ -78,7 +78,7 @@ describe('Generation Session Model', function (): void {
             'business_description' => 'Completed platform',
             'generation_mode' => 'creative',
             'deep_thinking' => false,
-            'requested_models' => ['gpt-4o'],
+            'requested_models' => ['gpt-4'],
             'generation_strategy' => 'quick',
         ]);
 
@@ -105,7 +105,7 @@ describe('Generation Session Model', function (): void {
             'business_description' => 'Starting platform',
             'generation_mode' => 'tech-focused',
             'deep_thinking' => false,
-            'requested_models' => ['gpt-4o'],
+            'requested_models' => ['gpt-4'],
             'generation_strategy' => 'quick',
         ]);
 
@@ -152,11 +152,11 @@ describe('Generation Session Model', function (): void {
             'business_description' => 'Completing platform',
             'generation_mode' => 'professional',
             'deep_thinking' => true,
-            'requested_models' => ['gpt-4o', 'claude-3.5-sonnet'],
+            'requested_models' => ['gpt-4', 'claude-3.5-sonnet'],
             'generation_strategy' => 'comprehensive',
         ]);
 
-        $results = ['gpt-4o' => ['names' => ['TestName1', 'TestName2']]];
+        $results = ['gpt-4' => ['names' => ['TestName1', 'TestName2']]];
         $metadata = ['execution_time' => 5000, 'models_used' => 2];
 
         $session->markAsCompleted($results, $metadata);
@@ -199,7 +199,7 @@ describe('Generation Session Model', function (): void {
             'business_description' => 'Duration platform',
             'generation_mode' => 'creative',
             'deep_thinking' => false,
-            'requested_models' => ['gpt-4o'],
+            'requested_models' => ['gpt-4'],
             'generation_strategy' => 'quick',
             'started_at' => now()->subSeconds(120),
             'completed_at' => now(),
@@ -233,7 +233,7 @@ describe('Generation Session Model', function (): void {
             'business_description' => 'Snapshot platform',
             'generation_mode' => 'tech-focused',
             'deep_thinking' => true,
-            'requested_models' => ['gpt-4o', 'claude-3.5-sonnet'],
+            'requested_models' => ['gpt-4', 'claude-3.5-sonnet'],
             'generation_strategy' => 'parallel',
             'progress_percentage' => 75,
             'current_step' => 'Processing results...',
@@ -270,7 +270,7 @@ describe('Generation Session Model', function (): void {
             'business_description' => 'Full details platform',
             'generation_mode' => 'brandable',
             'deep_thinking' => true,
-            'requested_models' => ['gpt-4o', 'gemini-1.5-pro'],
+            'requested_models' => ['gpt-4', 'gemini-1.5-pro'],
             'custom_parameters' => ['temperature' => 0.9],
             'results' => ['test' => 'results'],
             'execution_metadata' => ['time' => 1000],
@@ -297,7 +297,7 @@ describe('Generation Session Model', function (): void {
         expect($details['business_description'])->toBe('Full details platform');
         expect($details['generation_mode'])->toBe('brandable');
         expect($details['deep_thinking'])->toBe(true);
-        expect($details['requested_models'])->toBe(['gpt-4o', 'gemini-1.5-pro']);
+        expect($details['requested_models'])->toBe(['gpt-4', 'gemini-1.5-pro']);
         expect($details['results'])->toBe(['test' => 'results']);
     });
 
@@ -308,7 +308,7 @@ describe('Generation Session Model', function (): void {
             'business_description' => 'Active pending',
             'generation_mode' => 'creative',
             'deep_thinking' => false,
-            'requested_models' => ['gpt-4o'],
+            'requested_models' => ['gpt-4'],
             'generation_strategy' => 'quick',
         ]);
 
@@ -328,7 +328,7 @@ describe('Generation Session Model', function (): void {
             'business_description' => 'Inactive completed',
             'generation_mode' => 'brandable',
             'deep_thinking' => false,
-            'requested_models' => ['gpt-4o'],
+            'requested_models' => ['gpt-4'],
             'generation_strategy' => 'comprehensive',
         ]);
 
@@ -346,7 +346,7 @@ describe('Generation Session Model', function (): void {
             'business_description' => 'Completed 1',
             'generation_mode' => 'creative',
             'deep_thinking' => false,
-            'requested_models' => ['gpt-4o'],
+            'requested_models' => ['gpt-4'],
             'generation_strategy' => 'quick',
         ]);
 
@@ -366,7 +366,7 @@ describe('Generation Session Model', function (): void {
             'business_description' => 'Failed 1',
             'generation_mode' => 'brandable',
             'deep_thinking' => false,
-            'requested_models' => ['gpt-4o'],
+            'requested_models' => ['gpt-4'],
             'generation_strategy' => 'comprehensive',
         ]);
 

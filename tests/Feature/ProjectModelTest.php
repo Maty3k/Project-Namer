@@ -52,7 +52,7 @@ test('uuid is automatically generated on creation', function (): void {
 });
 
 test('project has correct fillable attributes', function (): void {
-    $fillable = ['uuid', 'name', 'description', 'user_id', 'selected_name_id'];
+    $fillable = ['uuid', 'name', 'description', 'user_id', 'selected_name_id', 'default_mood_board_id'];
     $project = new Project;
 
     expect($project->getFillable())->toBe($fillable);
