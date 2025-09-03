@@ -660,6 +660,7 @@ class NameGeneratorDashboard extends Component
         // Check if there are unsaved changes and this is not the same session
         if ($this->hasUnsavedChanges && $this->currentSessionId !== $sessionId) {
             $this->dispatch('confirm-session-switch', newSessionId: $sessionId);
+
             return;
         }
 
@@ -691,7 +692,7 @@ class NameGeneratorDashboard extends Component
 
             $this->hasUnsavedChanges = false;
         } else {
-            $this->dispatch('toast', 
+            $this->dispatch('toast',
                 message: 'Session not found',
                 type: 'error'
             );
