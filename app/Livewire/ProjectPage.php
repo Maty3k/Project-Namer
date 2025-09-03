@@ -279,6 +279,11 @@ class ProjectPage extends Component
      */
     public function setResultsFilter(string $filter): void
     {
+        if (!in_array($filter, ['visible', 'hidden', 'all'])) {
+            $this->addError('resultsFilter', 'Invalid filter value. Must be one of: visible, hidden, all');
+            return;
+        }
+        
         $this->resultsFilter = $filter;
     }
 
@@ -521,12 +526,12 @@ class ProjectPage extends Component
     {
         // Validate that the mode is valid
         $validModes = ['creative', 'professional', 'brandable', 'tech-focused'];
-        
+
         if (! in_array($mode, $validModes)) {
             // Invalid mode, do nothing
             return;
         }
-        
+
         // If the same mode is already selected, deselect it
         if ($this->generationMode === $mode) {
             $this->generationMode = '';
@@ -548,7 +553,7 @@ class ProjectPage extends Component
             // Require generation mode when generating names
             $rules = $this->rules;
             $rules['generationMode'] = 'required|string|in:creative,professional,brandable,tech-focused';
-            
+
             $this->validate([
                 'selectedAIModels' => $rules['selectedAIModels'],
                 'selectedAIModels.*' => $rules['selectedAIModels.*'],

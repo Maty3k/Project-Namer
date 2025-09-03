@@ -413,14 +413,56 @@
                         // Add new theme styles to document head
                         const style = document.createElement('style');
                         style.id = 'live-theme-styles';
-                        style.textContent = css;
+                        
+                        // Enhanced CSS with smooth transitions for theme changes
+                        const enhancedCss = css + `
+                            
+                            /* Smooth transitions for theme changes */
+                            *, *::before, *::after {
+                                transition: 
+                                    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                                    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                                    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                                    fill 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                                    stroke 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                                    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                            }
+                            
+                            /* Preserve smooth animations for interactive elements */
+                            .transition-all, .transition-colors, .transition-opacity, 
+                            .transition-transform, .transition-shadow {
+                                transition-duration: 0.15s !important;
+                            }
+                            
+                            /* Enhanced hover transitions */
+                            button, [role="button"], a, input, select, textarea {
+                                transition: 
+                                    background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                                    border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                                    color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                                    box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                                    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                                    opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+                            }
+                            
+                            /* Optimize for reduced motion preferences */
+                            @media (prefers-reduced-motion: reduce) {
+                                *, *::before, *::after {
+                                    transition-duration: 0.01s !important;
+                                    animation-duration: 0.01s !important;
+                                }
+                            }
+                        `;
+                        
+                        style.textContent = enhancedCss;
                         document.head.appendChild(style);
                         
-                        // Apply theme immediately to body for global changes
-                        document.documentElement.style.setProperty('--color-primary', primaryColor);
-                        document.documentElement.style.setProperty('--color-accent', accentColor);
-                        document.documentElement.style.setProperty('--color-background', backgroundColor);
-                        document.documentElement.style.setProperty('--color-text', textColor);
+                        // Apply theme immediately to body for global changes with smooth transitions
+                        const root = document.documentElement;
+                        root.style.setProperty('--color-primary', primaryColor);
+                        root.style.setProperty('--color-accent', accentColor);
+                        root.style.setProperty('--color-background', backgroundColor);
+                        root.style.setProperty('--color-text', textColor);
                         
                     } catch (error) {
                         console.error('Theme update failed:', error);

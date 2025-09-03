@@ -304,4 +304,127 @@ describe('LogoGallery Upload Functionality', function (): void {
         // Check creation date is displayed
         $component->assertSee('Created');
     });
+
+    // Enhanced Upload Features Tests
+
+    it('can handle batch file upload with queue processing', function (): void {
+        $files = [
+            UploadedFile::fake()->image('batch1.png', 400, 400),
+            UploadedFile::fake()->image('batch2.jpg', 500, 500),
+            UploadedFile::fake()->create('batch3.svg', 50, 'image/svg+xml'),
+        ];
+
+        $component = Livewire::actingAs($this->user)
+            ->test(LogoGallery::class, ['logoGenerationId' => $this->logoGeneration->id]);
+
+        $component->set('uploadQueue', $files)
+            ->call('processBatchUpload')
+            ->assertHasNoErrors();
+
+        expect(UploadedLogo::count())->toBe(3);
+    });
+
+    it('can generate file preview thumbnails', function (): void {
+        $file = UploadedFile::fake()->image('preview-test.png', 800, 600);
+
+        $component = Livewire::actingAs($this->user)
+            ->test(LogoGallery::class, ['logoGenerationId' => $this->logoGeneration->id]);
+
+        $component->set('uploadedFiles', [$file])
+            ->call('generatePreviewThumbnails')
+            ->assertSet('filePreviews.0.name', 'preview-test.png')
+            ->assertSet('filePreviews.0.size', $file->getSize());
+    });
+
+    it('can detect duplicate files during upload', function (): void {
+        // Create existing uploaded logo
+        $existingLogo = UploadedLogo::factory()->forSession(session()->getId())->create([
+            'original_name' => 'duplicate-test.png',
+            'file_size' => 1024,
+        ]);
+
+        // Try to upload file with same name and size
+        $duplicateFile = UploadedFile::fake()->image('duplicate-test.png', 400, 400);
+
+        $component = Livewire::actingAs($this->user)
+            ->test(LogoGallery::class, ['logoGenerationId' => $this->logoGeneration->id]);
+
+        $component->set('uploadedFiles', [$duplicateFile])
+            ->call('checkForDuplicates')
+            ->assertSet('duplicateWarnings.0.message', 'File "duplicate-test.png" already exists');
+    });
+
+    it('can perform bulk operations on uploaded logos', function (): void {
+        // Create multiple uploaded logos
+        $logos = UploadedLogo::factory()->count(3)->forSession(session()->getId())->create();
+        $logoIds = $logos->pluck('id')->toArray();
+
+        $component = Livewire::actingAs($this->user)
+            ->test(LogoGallery::class, ['logoGenerationId' => $this->logoGeneration->id]);
+
+        // Test bulk selection
+        $component->set('selectedUploadedLogos', $logoIds)
+            ->assertSet('selectedUploadedLogos', $logoIds);
+
+        // Test bulk delete
+        $component->call('bulkDeleteUploadedLogos')
+            ->assertDispatched('toast', fn (string $name, array $data) => $data['type'] === 'success' && str_contains((string) $data['message'], '3 logos deleted'));
+
+        expect(UploadedLogo::whereIn('id', $logoIds)->count())->toBe(0);
+    });
+
+    it('provides enhanced drag and drop visual feedback', function (): void {
+        $component = Livewire::actingAs($this->user)
+            ->test(LogoGallery::class, ['logoGenerationId' => $this->logoGeneration->id]);
+
+        // Test drag enter
+        $component->call('dragEnterZone')
+            ->assertSet('isDraggedOver', true)
+            ->assertSet('dragFeedback', 'Drop files to upload');
+
+        // Test drag over with files
+        $component->call('dragOverWithFiles', 3)
+            ->assertSet('dragFileCount', 3)
+            ->assertSet('dragFeedback', 'Drop 3 files to upload');
+
+        // Test drag leave
+        $component->call('dragLeaveZone')
+            ->assertSet('isDraggedOver', false)
+            ->assertSet('dragFeedback', '')
+            ->assertSet('dragFileCount', 0);
+    });
+
+    it('handles individual file progress tracking for batch uploads', function (): void {
+        $files = [
+            UploadedFile::fake()->image('progress1.png', 400, 400),
+            UploadedFile::fake()->image('progress2.jpg', 500, 500),
+        ];
+
+        $component = Livewire::actingAs($this->user)
+            ->test(LogoGallery::class, ['logoGenerationId' => $this->logoGeneration->id]);
+
+        $component->set('uploadQueue', $files)
+            ->call('startBatchUpload');
+
+        // Check individual file progress is tracked
+        expect($component->get('fileProgress'))->toHaveKey('0')
+            ->and($component->get('fileProgress'))->toHaveKey('1');
+    });
+
+    it('validates file types and provides specific error messages', function (): void {
+        $invalidFiles = [
+            UploadedFile::fake()->create('document.pdf', 100, 'application/pdf'),
+            UploadedFile::fake()->create('archive.zip', 100, 'application/zip'),
+        ];
+
+        $component = Livewire::actingAs($this->user)
+            ->test(LogoGallery::class, ['logoGenerationId' => $this->logoGeneration->id]);
+
+        $component->set('uploadedFiles', $invalidFiles)
+            ->call('uploadLogos')
+            ->assertHasErrors(['uploadedFiles.0', 'uploadedFiles.1'])
+            ->assertDispatched('toast', fn (string $name, array $data) => $data['type'] === 'error');
+
+        expect(UploadedLogo::count())->toBe(0);
+    });
 });

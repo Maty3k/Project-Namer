@@ -1,6 +1,7 @@
-<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-200 hover:shadow-md
-             {{ $this->isSelected ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/10' : 'hover:border-gray-300 dark:hover:border-gray-600' }}
-             {{ $suggestion->is_hidden ? 'opacity-60 scale-95' : 'scale-100' }}"
+<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-300 ease-out hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-800/50 transform hover:-translate-y-1 
+             {{ $this->isSelected ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/10 shadow-lg shadow-blue-200/30 dark:shadow-blue-800/30' : 'hover:border-gray-300 dark:hover:border-gray-600' }}
+             {{ $suggestion->is_hidden ? 'opacity-60 scale-95' : 'scale-100 hover:scale-[1.02]' }}
+             focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:outline-none"
      wire:key="suggestion-{{ $suggestion->id }}">
     
     <!-- Card Header -->

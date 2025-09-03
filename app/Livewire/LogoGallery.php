@@ -72,11 +72,34 @@ class LogoGallery extends Component
     /** @var array<UploadedFile> */
     public array $uploadedFiles = [];
 
+    /** @var array<UploadedFile> */
+    public array $uploadQueue = [];
+
     public bool $isUploading = false;
 
     public int $uploadProgress = 0;
 
     public bool $isDraggedOver = false;
+
+    public string $dragFeedback = '';
+
+    public int $dragFileCount = 0;
+
+    // File preview and processing properties
+    /** @var array<int, array<string, mixed>> */
+    public array $filePreviews = [];
+
+    /** @var array<int, array<string, mixed>> */
+    public array $duplicateWarnings = [];
+
+    /** @var array<int, int> */
+    public array $fileProgress = [];
+
+    // Bulk operations properties
+    /** @var array<int, int> */
+    public array $selectedUploadedLogos = [];
+
+    public bool $showBulkActions = false;
 
     /** @var array<string, mixed> */
     protected array $rules = [
@@ -84,6 +107,9 @@ class LogoGallery extends Component
         'selectedLogos' => 'required|array|min:1',
         'selectedLogos.*' => 'exists:generated_logos,id',
         'uploadedFiles.*' => 'required|file|mimes:png,jpg,jpeg,svg|max:5120',
+        'uploadQueue.*' => 'required|file|mimes:png,jpg,jpeg,svg|max:5120',
+        'selectedUploadedLogos' => 'array',
+        'selectedUploadedLogos.*' => 'exists:uploaded_logos,id',
     ];
 
     /** @var array<string, string> */
@@ -94,6 +120,9 @@ class LogoGallery extends Component
         'uploadedFiles.*.mimes' => 'Only PNG, JPG, and SVG files are allowed',
         'uploadedFiles.*.max' => 'File size must be less than 5MB',
         'uploadedFiles.*.dimensions' => 'Images must be at least 100x100 pixels',
+        'uploadQueue.*.mimes' => 'Only PNG, JPG, and SVG files are allowed in queue',
+        'uploadQueue.*.max' => 'Queued file size must be less than 5MB',
+        'selectedUploadedLogos.*.exists' => 'Selected logo does not exist',
     ];
 
     public function mount(int $logoGenerationId): void
@@ -329,10 +358,21 @@ class LogoGallery extends Component
         $this->errorMessage = null;
 
         // Validate uploaded files
-        $this->validate([
-            'uploadedFiles' => 'required|array|min:1',
-            'uploadedFiles.*' => 'required|file|mimes:png,jpg,jpeg,svg|max:5120',
-        ]);
+        try {
+            $this->validate([
+                'uploadedFiles' => 'required|array|min:1',
+                'uploadedFiles.*' => 'required|file|mimes:png,jpg,jpeg,svg|max:5120',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->dispatch('toast', message: 'Invalid files detected', type: 'error');
+            throw $e;
+        }
+
+        // Check for duplicates before starting upload
+        $this->checkForDuplicates();
+
+        // Generate file previews
+        $this->generatePreviewThumbnails();
 
         try {
 
@@ -487,6 +527,170 @@ class LogoGallery extends Component
     public function dragLeave(): void
     {
         $this->isDraggedOver = false;
+    }
+
+    /**
+     * Enhanced drag and drop methods.
+     */
+    public function dragEnterZone(): void
+    {
+        $this->isDraggedOver = true;
+        $this->dragFeedback = 'Drop files to upload';
+    }
+
+    public function dragLeaveZone(): void
+    {
+        $this->isDraggedOver = false;
+        $this->dragFeedback = '';
+        $this->dragFileCount = 0;
+    }
+
+    public function dragOverWithFiles(int $fileCount): void
+    {
+        $this->isDraggedOver = true;
+        $this->dragFileCount = $fileCount;
+        $this->dragFeedback = "Drop {$fileCount} files to upload";
+    }
+
+    /**
+     * Generate preview thumbnails for uploaded files.
+     */
+    public function generatePreviewThumbnails(): void
+    {
+        $this->filePreviews = [];
+
+        foreach ($this->uploadedFiles as $index => $file) {
+            $this->filePreviews[$index] = [
+                'name' => $file->getClientOriginalName(),
+                'size' => $file->getSize(),
+                'type' => $file->getMimeType(),
+                'extension' => $file->getClientOriginalExtension(),
+            ];
+        }
+    }
+
+    /**
+     * Check for duplicate files before upload.
+     */
+    public function checkForDuplicates(): void
+    {
+        $this->duplicateWarnings = [];
+        $sessionId = session()->getId();
+
+        foreach ($this->uploadedFiles as $index => $file) {
+            $existingLogo = UploadedLogo::where('session_id', $sessionId)
+                ->where('original_name', $file->getClientOriginalName())
+                ->first();
+
+            if ($existingLogo) {
+                $this->duplicateWarnings[$index] = [
+                    'message' => 'File "'.$file->getClientOriginalName().'" already exists',
+                    'action' => 'replace', // 'skip' or 'replace'
+                ];
+            }
+        }
+    }
+
+    /**
+     * Process batch upload with queue management.
+     */
+    public function processBatchUpload(): void
+    {
+        $this->validate([
+            'uploadQueue' => 'required|array|min:1',
+            'uploadQueue.*' => 'required|file|mimes:png,jpg,jpeg,svg|max:5120',
+        ]);
+
+        $this->uploadedFiles = $this->uploadQueue;
+        $this->uploadLogos();
+        $this->uploadQueue = [];
+    }
+
+    /**
+     * Start batch upload with individual file progress tracking.
+     */
+    public function startBatchUpload(): void
+    {
+        $this->fileProgress = [];
+
+        foreach ($this->uploadQueue as $index => $file) {
+            $this->fileProgress[$index] = 0;
+        }
+
+        $this->processBatchUpload();
+    }
+
+    /**
+     * Bulk delete uploaded logos.
+     */
+    public function bulkDeleteUploadedLogos(): void
+    {
+        if (empty($this->selectedUploadedLogos)) {
+            $this->dispatch('toast', message: 'No logos selected', type: 'error');
+
+            return;
+        }
+
+        $sessionId = session()->getId();
+        $deletedCount = 0;
+
+        foreach ($this->selectedUploadedLogos as $logoId) {
+            $uploadedLogo = UploadedLogo::where('id', $logoId)
+                ->where('session_id', $sessionId)
+                ->first();
+
+            if ($uploadedLogo) {
+                // Delete file from storage
+                if (Storage::disk('public')->exists($uploadedLogo->file_path)) {
+                    Storage::disk('public')->delete($uploadedLogo->file_path);
+                }
+
+                // Delete database record
+                $uploadedLogo->delete();
+                $deletedCount++;
+            }
+        }
+
+        $this->selectedUploadedLogos = [];
+        $this->showBulkActions = false;
+
+        $this->dispatch('toast',
+            message: "{$deletedCount} logos deleted successfully",
+            type: 'success'
+        );
+    }
+
+    /**
+     * Toggle uploaded logo selection for bulk operations.
+     */
+    public function toggleUploadedLogoSelection(int $logoId): void
+    {
+        if (in_array($logoId, $this->selectedUploadedLogos)) {
+            $this->selectedUploadedLogos = array_diff($this->selectedUploadedLogos, [$logoId]);
+        } else {
+            $this->selectedUploadedLogos[] = $logoId;
+        }
+
+        $this->showBulkActions = ! empty($this->selectedUploadedLogos);
+    }
+
+    /**
+     * Select all uploaded logos.
+     */
+    public function selectAllUploadedLogos(): void
+    {
+        $uploadedLogos = $this->getUploadedLogosProperty();
+        $this->selectedUploadedLogos = $uploadedLogos->pluck('id')->toArray();
+        $this->showBulkActions = true;
+    }
+
+    /**
+     * Clear all logo selections.
+     */
+    public function clearLogoSelection(): void
+    {
+        $this->selectedUploadedLogos = [];
+        $this->showBulkActions = false;
     }
 
     /**
@@ -707,6 +911,28 @@ class LogoGallery extends Component
         }
 
         return null;
+    }
+
+    public function toggleSelectAll(): void
+    {
+        // Handle generated logos selection
+        if ($this->logoGeneration->status === 'completed' && $this->logoGeneration->generatedLogos->isNotEmpty()) {
+            if (count($this->selectedLogos) === $this->logoGeneration->generatedLogos->count()) {
+                $this->selectedLogos = [];
+            } else {
+                $this->selectedLogos = $this->logoGeneration->generatedLogos->pluck('id')->toArray();
+            }
+        }
+
+        // Handle uploaded logos selection
+        $filteredUploadedLogos = $this->getFilteredUploadedLogosProperty();
+        if ($filteredUploadedLogos->isNotEmpty()) {
+            if (count($this->selectedUploadedLogos) === $filteredUploadedLogos->count()) {
+                $this->selectedUploadedLogos = [];
+            } else {
+                $this->selectedUploadedLogos = $filteredUploadedLogos->pluck('id')->toArray();
+            }
+        }
     }
 
     public function render(): View

@@ -154,39 +154,66 @@
                     </div>
                 </div>
 
-                {{-- Drag and Drop Upload Zone --}}
+                {{-- Enhanced Drag and Drop Upload Zone --}}
                 <div 
                     x-data="{
                         draggedOver: @entangle('isDraggedOver'),
                         isUploading: @entangle('isUploading'),
-                        uploadProgress: @entangle('uploadProgress')
+                        uploadProgress: @entangle('uploadProgress'),
+                        dragFeedback: @entangle('dragFeedback'),
+                        dragFileCount: @entangle('dragFileCount')
                     }"
-                    @dragover.prevent="draggedOver = true"
-                    @dragleave.prevent="draggedOver = false"
+                    @dragenter.prevent="
+                        draggedOver = true;
+                        $wire.dragEnterZone();
+                    "
+                    @dragover.prevent="
+                        let files = $event.dataTransfer.files;
+                        if (files.length > 0) {
+                            $wire.dragOverWithFiles(files.length);
+                        }
+                    "
+                    @dragleave.prevent="
+                        draggedOver = false;
+                        $wire.dragLeaveZone();
+                    "
                     @drop.prevent="
                         draggedOver = false;
                         let files = Array.from($event.dataTransfer.files);
                         if (files.length > 0) {
-                            @this.set('uploadedFiles', files);
+                            @this.set('uploadQueue', files);
+                            $wire.processBatchUpload();
                         }
+                        $wire.dragLeaveZone();
                     "
-                    class="relative border-2 border-dashed rounded-lg p-8 text-center transition-colors duration-200"
+                    class="relative border-2 border-dashed rounded-lg p-8 text-center transition-all duration-300 ease-in-out transform"
                     :class="{
-                        'border-blue-500 bg-blue-50 dark:bg-blue-900/20': draggedOver,
-                        'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500': !draggedOver && !isUploading,
+                        'border-blue-500 bg-blue-50 dark:bg-blue-900/20 scale-105 shadow-lg': draggedOver,
+                        'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800/50': !draggedOver && !isUploading,
                         'border-green-500 bg-green-50 dark:bg-green-900/20': isUploading && uploadProgress === 100,
                         'border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20': isUploading && uploadProgress < 100
                     }"
                 >
                     <div x-show="!isUploading" class="space-y-4">
-                        <flux:icon.cloud-arrow-up class="mx-auto size-12 text-gray-400 dark:text-gray-500" />
+                        <div 
+                            class="mx-auto size-12 transition-all duration-200"
+                            :class="{
+                                'text-blue-500 animate-bounce': draggedOver,
+                                'text-gray-400 dark:text-gray-500': !draggedOver
+                            }"
+                        >
+                            <flux:icon.cloud-arrow-up class="size-full" />
+                        </div>
                         
                         <div class="space-y-2">
-                            <p class="text-lg font-medium text-gray-900 dark:text-white">
-                                Drop logo files here
+                            <p class="text-lg font-medium text-gray-900 dark:text-white transition-colors duration-200">
+                                <span x-show="!draggedOver">Drop logo files here</span>
+                                <span x-show="draggedOver && dragFileCount > 0" x-text="dragFeedback"></span>
+                                <span x-show="draggedOver && dragFileCount === 0">Drop files to upload</span>
                             </p>
                             <p class="text-sm text-gray-600 dark:text-gray-400">
-                                or click to browse your computer
+                                <span x-show="!draggedOver">or click to browse your computer</span>
+                                <span x-show="draggedOver" class="text-blue-600 dark:text-blue-400 font-medium">Release to start upload</span>
                             </p>
                         </div>
 
@@ -259,6 +286,64 @@
                                 <flux:icon.arrow-up-tray class="size-4 mr-1" />
                                 Upload Logos
                             </flux:button>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- File Previews --}}
+                @if(count($filePreviews) > 0 && !$isUploading)
+                    <div class="mt-6">
+                        <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-3">
+                            File Previews ({{ count($filePreviews) }} files)
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            @foreach($filePreviews as $index => $preview)
+                                <div class="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                                            @if(str_starts_with($preview['type'], 'image/'))
+                                                <flux:icon.photo class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                            @else
+                                                <flux:icon.document class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                            {{ $preview['name'] }}
+                                        </p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            {{ strtoupper($preview['extension']) }} • {{ number_format($preview['size'] / 1024, 1) }} KB
+                                        </p>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Duplicate Warnings --}}
+                @if(count($duplicateWarnings) > 0)
+                    <div class="mt-4">
+                        <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <flux:icon.exclamation-triangle class="w-5 h-5 text-amber-600 dark:text-amber-400 mr-2" />
+                                <h4 class="text-sm font-medium text-amber-800 dark:text-amber-200">
+                                    Duplicate Files Detected
+                                </h4>
+                            </div>
+                            <div class="mt-2 space-y-1">
+                                @foreach($duplicateWarnings as $index => $warning)
+                                    <p class="text-sm text-amber-700 dark:text-amber-300">
+                                        • {{ $warning['message'] }}
+                                    </p>
+                                @endforeach
+                            </div>
+                            <div class="mt-3">
+                                <p class="text-xs text-amber-600 dark:text-amber-400">
+                                    Files will be uploaded anyway, but you may want to review for duplicates.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 @endif
@@ -437,26 +522,78 @@
                     @if(($filterType === 'all' || $filterType === 'uploaded') && $this->filteredUploadedLogos->isNotEmpty())
                         <div class="space-y-4">
                             <div class="flex justify-between items-center">
-                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                    Uploaded Logos
-                                    <span class="text-sm font-normal text-gray-600 dark:text-gray-400">
-                                        ({{ $this->filteredUploadedLogos->count() }} 
-                                        @if($this->filteredUploadedLogos->count() !== $this->uploadedLogos->count())
-                                            of {{ $this->uploadedLogos->count() }}
+                                <div class="flex items-center gap-4">
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                        Uploaded Logos
+                                        <span class="text-sm font-normal text-gray-600 dark:text-gray-400">
+                                            ({{ $this->filteredUploadedLogos->count() }} 
+                                            @if($this->filteredUploadedLogos->count() !== $this->uploadedLogos->count())
+                                                of {{ $this->uploadedLogos->count() }}
+                                            @endif
+                                            logos)
+                                        </span>
+                                    </h3>
+                                    
+                                    {{-- Bulk Selection Controls --}}
+                                    <div class="flex items-center gap-2">
+                                        @if($this->filteredUploadedLogos->count() > 0)
+                                            <flux:button 
+                                                variant="ghost" 
+                                                size="sm" 
+                                                wire:click="selectAllUploadedLogos"
+                                                class="text-xs"
+                                            >
+                                                Select All
+                                            </flux:button>
                                         @endif
-                                        logos)
-                                    </span>
-                                </h3>
-                                <flux:badge variant="outline" class="text-xs">
-                                    Your uploads
-                                </flux:badge>
+                                        
+                                        @if(count($selectedUploadedLogos) > 0)
+                                            <flux:button 
+                                                variant="ghost" 
+                                                size="sm" 
+                                                wire:click="clearLogoSelection"
+                                                class="text-xs"
+                                            >
+                                                Clear ({{ count($selectedUploadedLogos) }})
+                                            </flux:button>
+                                        @endif
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center gap-2">
+                                    <flux:badge variant="outline" class="text-xs">
+                                        Your uploads
+                                    </flux:badge>
+                                    
+                                    {{-- Bulk Actions --}}
+                                    @if(count($selectedUploadedLogos) > 0)
+                                        <flux:button 
+                                            variant="danger" 
+                                            size="sm" 
+                                            wire:click="bulkDeleteUploadedLogos"
+                                            wire:confirm="Are you sure you want to delete {{ count($selectedUploadedLogos) }} selected logo(s)?"
+                                        >
+                                            <flux:icon.trash class="w-4 h-4 mr-1" />
+                                            Delete ({{ count($selectedUploadedLogos) }})
+                                        </flux:button>
+                                    @endif
+                                </div>
                             </div>
                             
                             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
                                 @foreach($this->filteredUploadedLogos as $uploadedLogo)
                                     <div class="relative group">
+                                        {{-- Selection Checkbox --}}
+                                        <div class="absolute top-2 left-2 z-10">
+                                            <input type="checkbox" 
+                                                   wire:model.live="selectedUploadedLogos" 
+                                                   value="{{ $uploadedLogo->id }}" 
+                                                   wire:click.stop="toggleUploadedLogoSelection({{ $uploadedLogo->id }})"
+                                                   class="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                        </div>
+                                        
                                         {{-- Logo Card --}}
-                                        <div class="aspect-square bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-lg transition-all duration-200 cursor-pointer" 
+                                        <div class="aspect-square bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-800/50 transition-all duration-300 ease-out cursor-pointer transform hover:scale-105 hover:-translate-y-1 focus-within:ring-2 focus-within:ring-blue-500/50" 
                                              wire:click="showLogoDetail({{ $uploadedLogo->id }}, 'uploaded')">
                                             {{-- Logo Image --}}
                                             <div class="w-full h-full flex items-center justify-center">
@@ -622,7 +759,8 @@
                                             <input 
                                                 type="checkbox" 
                                                 class="rounded"
-                                                @if(count($selectedLogos) === $this->logoGeneration->generatedLogos->count() && count($selectedLogos) > 0) checked @endif
+                                                wire:click="toggleSelectAll()"
+                                                @if((count($selectedLogos) === $this->logoGeneration->generatedLogos->count() && count($selectedLogos) > 0) || (count($selectedUploadedLogos) === $this->filteredUploadedLogos->count() && count($selectedUploadedLogos) > 0)) checked @endif
                                             >
                                         </th>
                                     @endif
@@ -648,8 +786,13 @@
                                         wire:click="showLogoDetail({{ $uploadedLogo->id }}, 'uploaded')">
                                         @if($this->logoGeneration->status === 'completed')
                                             <td class="px-6 py-4">
-                                                {{-- No checkbox for uploaded logos in color customization --}}
-                                                <span class="text-gray-400">-</span>
+                                                {{-- Checkbox for uploaded logos bulk selection --}}
+                                                <input 
+                                                    type="checkbox" 
+                                                    wire:model.live="selectedUploadedLogos" 
+                                                    value="{{ $uploadedLogo->id }}" 
+                                                    wire:click.stop="toggleUploadedLogoSelection({{ $uploadedLogo->id }})"
+                                                    class="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                             </td>
                                         @endif
                                         

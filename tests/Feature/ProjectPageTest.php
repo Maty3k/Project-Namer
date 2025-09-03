@@ -298,7 +298,7 @@ test('can switch between different generation modes', function (): void {
     $component = Livewire::test(ProjectPage::class, ['uuid' => $project->uuid]);
 
     $modes = ['creative', 'professional', 'brandable', 'tech-focused'];
-    
+
     foreach ($modes as $mode) {
         $component->call('toggleGenerationMode', $mode)
             ->assertSet('generationMode', $mode);

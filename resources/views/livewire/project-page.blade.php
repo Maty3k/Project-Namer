@@ -161,14 +161,42 @@
 
             <!-- Name Suggestions List -->
             <div class="relative">
-                <!-- Loading Overlay -->
-                <div wire:loading wire:target="setResultsFilter" class="absolute inset-0 bg-white/80 dark:bg-gray-900/80 flex items-center justify-center z-10 rounded-lg">
-                    <div class="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-                        <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span>Filtering suggestions...</span>
+                <!-- Enhanced Loading Overlay with Smooth Animations -->
+                <div 
+                    wire:loading 
+                    wire:target="setResultsFilter" 
+                    class="absolute inset-0 bg-white/80 dark:bg-gray-900/80 flex items-center justify-center z-10 rounded-lg backdrop-blur-sm transition-all duration-300 ease-out"
+                    x-data="{ show: false }"
+                    x-init="$nextTick(() => show = true)"
+                    x-show="show"
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 scale-95"
+                    x-transition:enter-end="opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="opacity-100 scale-100"
+                    x-transition:leave-end="opacity-0 scale-95"
+                >
+                    <div class="flex flex-col items-center space-y-3 text-gray-600 dark:text-gray-400">
+                        <!-- Enhanced Loading Spinner -->
+                        <div class="relative">
+                            <svg class="animate-spin w-8 h-8 text-blue-500" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <div class="absolute inset-0 animate-ping">
+                                <div class="w-8 h-8 border-2 border-blue-500/30 rounded-full"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Animated Text -->
+                        <span class="text-sm font-medium animate-pulse">Filtering suggestions...</span>
+                        
+                        <!-- Animated Dots -->
+                        <div class="flex space-x-1">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0s"></div>
+                            <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                            <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -423,9 +451,46 @@
                                 wire:loading.attr="disabled"
                                 wire:target="generateMoreNames"
                                 :disabled="$isGeneratingNames"
+                                class="relative overflow-hidden transition-all duration-200 ease-out transform hover:scale-105 active:scale-95"
+                                x-data="{ isLoading: false }"
+                                @generateMoreNames.window="isLoading = true"
+                                @name-generation-complete.window="isLoading = false"
                             >
-                                <span wire:loading.remove wire:target="generateMoreNames">Generate Names</span>
-                                <span wire:loading wire:target="generateMoreNames">Generating...</span>
+                                <!-- Loading Background Animation -->
+                                <div 
+                                    wire:loading 
+                                    wire:target="generateMoreNames" 
+                                    class="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 opacity-20 animate-pulse"
+                                ></div>
+                                
+                                <!-- Button Content -->
+                                <div class="relative flex items-center gap-2">
+                                    <svg 
+                                        wire:loading.remove 
+                                        wire:target="generateMoreNames" 
+                                        class="w-4 h-4 transition-transform duration-200 ease-out"
+                                        :class="{ 'rotate-12': isLoading }"
+                                        fill="none" 
+                                        viewBox="0 0 24 24" 
+                                        stroke="currentColor"
+                                    >
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                    
+                                    <svg 
+                                        wire:loading 
+                                        wire:target="generateMoreNames" 
+                                        class="w-4 h-4 animate-spin"
+                                        fill="none" 
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    
+                                    <span wire:loading.remove wire:target="generateMoreNames" class="transition-all duration-200">Generate Names</span>
+                                    <span wire:loading wire:target="generateMoreNames" class="animate-pulse">Generating...</span>
+                                </div>
                             </flux:button>
 
                             @if($isGeneratingNames && $currentAIGenerationId)

@@ -125,7 +125,7 @@ class ImageGenerationContext extends Model
         $this->update(['influence_score' => max(0, min(1, $score))]);
     }
 
-    protected function getAnalysisAttribute(string $key): mixed
+    public function getAnalysisAttribute(string $key): mixed
     {
         return $this->vision_analysis[$key] ?? null;
     }
