@@ -1,14 +1,38 @@
 <div class="max-w-7xl mx-auto w-full space-y-6">
     @if($this->logoGeneration)
+        {{-- Breadcrumb Navigation --}}
+        <nav class="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+            <a href="{{ route('logos.index') }}" wire:navigate class="hover:text-gray-900 dark:hover:text-white transition-colors">
+                Logo Gallery
+            </a>
+            <flux:icon.chevron-right class="size-4" />
+            <span class="text-gray-900 dark:text-white font-medium">{{ $this->logoGeneration->business_name }}</span>
+        </nav>
+
         {{-- Header with Progress --}}
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div>
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                    Logo Generation
-                </h2>
-                <p class="text-gray-600 dark:text-gray-300">
-                    {{ $this->logoGeneration->business_name }}
-                </p>
+            <div class="flex items-start gap-4">
+                {{-- Back Button --}}
+                <flux:button 
+                    variant="ghost" 
+                    size="sm" 
+                    href="{{ route('logos.index') }}" 
+                    wire:navigate
+                    icon="arrow-left"
+                    class="mt-1"
+                >
+                    Back
+                </flux:button>
+                
+                {{-- Title Section --}}
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                        {{ $this->logoGeneration->business_name }}
+                    </h2>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Logo Gallery • Created {{ $this->logoGeneration->created_at->format('M j, Y') }}
+                    </p>
+                </div>
             </div>
             
             {{-- Status and Actions --}}
@@ -33,6 +57,22 @@
                         <flux:icon.clock class="size-3 mr-1" />
                         Pending
                     </flux:badge>
+                @endif
+                
+                {{-- Quick Stats Summary --}}
+                @if($this->logoGeneration->status === 'completed')
+                    <div class="hidden md:flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 border-l border-gray-200 dark:border-gray-700 pl-4">
+                        <div class="flex items-center gap-1">
+                            <flux:icon.photo class="size-4" />
+                            <span>{{ $this->logoGeneration->generatedLogos->count() }} Generated</span>
+                        </div>
+                        @if($this->uploadedLogos->count() > 0)
+                            <div class="flex items-center gap-1">
+                                <flux:icon.cloud-arrow-up class="size-4" />
+                                <span>{{ $this->uploadedLogos->count() }} Uploaded</span>
+                            </div>
+                        @endif
+                    </div>
                 @endif
                 
                 {{-- View Mode Toggle --}}
@@ -328,19 +368,83 @@
             </flux:card>
         @endif
 
+        {{-- Search and Filter Section --}}
+        @if($this->logoGeneration->generatedLogos->isNotEmpty() || $this->uploadedLogos->isNotEmpty())
+            <flux:card class="p-4">
+                <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+                    <div class="flex flex-col sm:flex-row gap-4 flex-1">
+                        {{-- Search Input --}}
+                        <div class="flex-1 max-w-md">
+                            <flux:input 
+                                wire:model.live.debounce.300ms="searchTerm"
+                                placeholder="Search logos..."
+                                icon="magnifying-glass"
+                                size="sm"
+                            />
+                        </div>
+                        
+                        {{-- Type Filter --}}
+                        <div>
+                            <flux:select 
+                                wire:model.live="filterType" 
+                                placeholder="All Types"
+                                size="sm"
+                            >
+                                <option value="all">All Types</option>
+                                <option value="generated">Generated</option>
+                                <option value="uploaded">Uploaded</option>
+                            </flux:select>
+                        </div>
+                        
+                        {{-- Style Filter --}}
+                        @if(!empty($this->availableStyles))
+                            <div>
+                                <flux:select 
+                                    wire:model.live="filterStyle" 
+                                    placeholder="All Styles"
+                                    size="sm"
+                                >
+                                    <option value="">All Styles</option>
+                                    @foreach($this->availableStyles as $style)
+                                        <option value="{{ $style }}">{{ ucfirst($style) }}</option>
+                                    @endforeach
+                                </flux:select>
+                            </div>
+                        @endif
+                    </div>
+                    
+                    {{-- Clear Filters Button --}}
+                    @if(!empty($searchTerm) || $filterType !== 'all' || !empty($filterStyle))
+                        <flux:button 
+                            wire:click="clearFilters" 
+                            variant="ghost" 
+                            size="sm"
+                            icon="x-mark"
+                        >
+                            Clear Filters
+                        </flux:button>
+                    @endif
+                </div>
+            </flux:card>
+        @endif
+
         {{-- Logo Gallery --}}
         @if($this->logoGeneration->generatedLogos->isNotEmpty() || $this->uploadedLogos->isNotEmpty())
             @if($viewMode === 'grid')
                 {{-- Grid View --}}
                 <div class="space-y-8">
                     {{-- Uploaded Logos Section --}}
-                    @if($this->uploadedLogos->isNotEmpty())
+                    @if(($filterType === 'all' || $filterType === 'uploaded') && $this->filteredUploadedLogos->isNotEmpty())
                         <div class="space-y-4">
                             <div class="flex justify-between items-center">
                                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                                     Uploaded Logos
                                     <span class="text-sm font-normal text-gray-600 dark:text-gray-400">
-                                        ({{ $this->uploadedLogos->count() }} logos)
+                                        ({{ $this->filteredUploadedLogos->count() }} 
+                                        @if($this->filteredUploadedLogos->count() !== $this->uploadedLogos->count())
+                                            of {{ $this->uploadedLogos->count() }}
+                                        @endif
+                                        logos)
                                     </span>
                                 </h3>
                                 <flux:badge variant="outline" class="text-xs">
@@ -349,10 +453,11 @@
                             </div>
                             
                             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-                                @foreach($this->uploadedLogos as $uploadedLogo)
+                                @foreach($this->filteredUploadedLogos as $uploadedLogo)
                                     <div class="relative group">
                                         {{-- Logo Card --}}
-                                        <div class="aspect-square bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-lg transition-all duration-200">
+                                        <div class="aspect-square bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-lg transition-all duration-200 cursor-pointer" 
+                                             wire:click="showLogoDetail({{ $uploadedLogo->id }}, 'uploaded')">
                                             {{-- Logo Image --}}
                                             <div class="w-full h-full flex items-center justify-center">
                                                 @if($uploadedLogo->fileExists())
@@ -409,7 +514,8 @@
                     @endif
 
                     {{-- Generated Logos Sections --}}
-                    @foreach($this->logosByStyle as $styleGroup)
+                    @if($filterType === 'all' || $filterType === 'generated')
+                        @foreach($this->filteredLogosByStyle as $styleGroup)
                         <div class="space-y-4">
                             <div class="flex justify-between items-center">
                                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -427,13 +533,14 @@
                                 @foreach($styleGroup['logos'] as $logo)
                                     <div class="relative group">
                                         {{-- Logo Card --}}
-                                        <div class="aspect-square bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-lg transition-all duration-200 @if(in_array($logo->id, $selectedLogos)) ring-2 ring-blue-500 ring-offset-2 dark:ring-offset-gray-900 @endif">
+                                        <div class="aspect-square bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-lg transition-all duration-200 cursor-pointer @if(in_array($logo->id, $selectedLogos)) ring-2 ring-blue-500 ring-offset-2 dark:ring-offset-gray-900 @endif" 
+                                             wire:click="showLogoDetail({{ $logo->id }}, 'generated')">
                                             {{-- Selection Checkbox --}}
                                             @if($this->logoGeneration->status === 'completed')
                                                 <div class="absolute top-2 left-2 z-10">
                                                     <input 
                                                         type="checkbox" 
-                                                        wire:click="toggleLogoSelection({{ $logo->id }})"
+                                                        wire:click.stop="toggleLogoSelection({{ $logo->id }})"
                                                         @if(in_array($logo->id, $selectedLogos)) checked @endif
                                                         class="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                                     >
@@ -500,7 +607,8 @@
                                 @endforeach
                             </div>
                         </div>
-                    @endforeach
+                        @endforeach
+                    @endif
                 </div>
             @else
                 {{-- List View --}}
@@ -534,8 +642,10 @@
                             </thead>
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                 {{-- Uploaded Logos --}}
-                                @foreach($this->uploadedLogos as $uploadedLogo)
-                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+                                @if($filterType === 'all' || $filterType === 'uploaded')
+                                    @foreach($this->filteredUploadedLogos as $uploadedLogo)
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer" 
+                                        wire:click="showLogoDetail({{ $uploadedLogo->id }}, 'uploaded')">
                                         @if($this->logoGeneration->status === 'completed')
                                             <td class="px-6 py-4">
                                                 {{-- No checkbox for uploaded logos in color customization --}}
@@ -583,14 +693,14 @@
                                                 <flux:button 
                                                     variant="outline" 
                                                     size="sm"
-                                                    wire:click="downloadUploadedLogo({{ $uploadedLogo->id }})"
+                                                    wire:click.stop="downloadUploadedLogo({{ $uploadedLogo->id }})"
                                                 >
                                                     <flux:icon.arrow-down-tray class="size-4" />
                                                 </flux:button>
                                                 <flux:button 
                                                     variant="danger" 
                                                     size="sm"
-                                                    wire:click="deleteUploadedLogo({{ $uploadedLogo->id }})"
+                                                    wire:click.stop="deleteUploadedLogo({{ $uploadedLogo->id }})"
                                                     wire:confirm="Are you sure you want to delete this logo?"
                                                 >
                                                     <flux:icon.trash class="size-4" />
@@ -598,16 +708,19 @@
                                             </div>
                                         </td>
                                     </tr>
-                                @endforeach
+                                    @endforeach
+                                @endif
 
                                 {{-- Generated Logos --}}
-                                @foreach($this->logoGeneration->generatedLogos as $logo)
-                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 @if(in_array($logo->id, $selectedLogos)) bg-blue-50 dark:bg-blue-900/20 @endif">
+                                @if($filterType === 'all' || $filterType === 'generated')
+                                    @foreach($this->filteredGeneratedLogos as $logo)
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer @if(in_array($logo->id, $selectedLogos)) bg-blue-50 dark:bg-blue-900/20 @endif" 
+                                        wire:click="showLogoDetail({{ $logo->id }}, 'generated')">
                                         @if($this->logoGeneration->status === 'completed')
                                             <td class="px-6 py-4">
                                                 <input 
                                                     type="checkbox" 
-                                                    wire:click="toggleLogoSelection({{ $logo->id }})"
+                                                    wire:click.stop="toggleLogoSelection({{ $logo->id }})"
                                                     @if(in_array($logo->id, $selectedLogos)) checked @endif
                                                     class="rounded"
                                                 >
@@ -677,7 +790,8 @@
                                             </div>
                                         </td>
                                     </tr>
-                                @endforeach
+                                    @endforeach
+                                @endif
                             </tbody>
                         </table>
                     </div>
@@ -724,4 +838,166 @@
             </p>
         </flux:card>
     @endif
+
+    {{-- Logo Detail Modal --}}
+    <flux:modal wire:model.self="showDetailModal" class="max-w-4xl">
+        @if($this->detailLogo)
+            <div class="space-y-6">
+                {{-- Header --}}
+                <div class="flex items-center justify-between">
+                    <flux:heading size="lg">Logo Details</flux:heading>
+                    <flux:modal.close>
+                        <flux:button variant="ghost" size="sm" icon="x-mark" />
+                    </flux:modal.close>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {{-- Logo Preview --}}
+                    <div class="space-y-4">
+                        <div class="aspect-square bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 flex items-center justify-center">
+                            @if($detailLogoType === 'generated')
+                                <img 
+                                    src="{{ Storage::disk('public')->url($this->detailLogo->original_file_path) }}" 
+                                    alt="Generated Logo" 
+                                    class="max-w-full max-h-full object-contain"
+                                />
+                            @elseif($detailLogoType === 'uploaded')
+                                <img 
+                                    src="{{ $this->detailLogo->getFileUrl() }}" 
+                                    alt="{{ $this->detailLogo->display_name }}" 
+                                    class="max-w-full max-h-full object-contain"
+                                />
+                            @endif
+                        </div>
+                        
+                        {{-- Color Variants for Generated Logos --}}
+                        @if($detailLogoType === 'generated' && $this->detailLogo->colorVariants->isNotEmpty())
+                            <div class="space-y-2">
+                                <h4 class="font-medium text-gray-900 dark:text-white text-sm">Color Variants</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach($this->detailLogo->colorVariants as $variant)
+                                        <div class="relative group cursor-pointer border border-gray-200 dark:border-gray-700 rounded p-2 hover:border-gray-300 dark:hover:border-gray-600">
+                                            <img 
+                                                src="{{ Storage::disk('public')->url($variant->file_path) }}" 
+                                                alt="Color Variant" 
+                                                class="w-16 h-16 object-contain"
+                                            />
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- Logo Information --}}
+                    <div class="space-y-6">
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-medium text-gray-900 dark:text-white text-sm mb-1">Name</h4>
+                                @if($detailLogoType === 'generated')
+                                    <p class="text-gray-700 dark:text-gray-300">Generated Logo - {{ ucfirst($this->detailLogo->style) }} Style</p>
+                                @elseif($detailLogoType === 'uploaded')
+                                    <p class="text-gray-700 dark:text-gray-300">{{ $this->detailLogo->display_name }}</p>
+                                @endif
+                            </div>
+
+                            @if($detailLogoType === 'uploaded')
+                                <div>
+                                    <h4 class="font-medium text-gray-900 dark:text-white text-sm mb-1">File Information</h4>
+                                    <div class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                                        <div>Size: {{ $this->detailLogo->getFormattedFileSize() }}</div>
+                                        <div>Type: {{ strtoupper($this->detailLogo->getFileExtension()) }}</div>
+                                        @if($this->detailLogo->image_width && $this->detailLogo->image_height)
+                                            <div>Dimensions: {{ $this->detailLogo->image_width }} × {{ $this->detailLogo->image_height }} px</div>
+                                        @endif
+                                        <div>Uploaded: {{ $this->detailLogo->created_at->format('M j, Y g:i A') }}</div>
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if($detailLogoType === 'generated' && $this->detailLogo->description)
+                                <div>
+                                    <h4 class="font-medium text-gray-900 dark:text-white text-sm mb-1">Description</h4>
+                                    <p class="text-gray-700 dark:text-gray-300 text-sm">{{ $this->detailLogo->description }}</p>
+                                </div>
+                            @endif
+                        </div>
+
+                        {{-- Download Options --}}
+                        <div class="space-y-3">
+                            <h4 class="font-medium text-gray-900 dark:text-white text-sm">Download Options</h4>
+                            
+                            @if($detailLogoType === 'generated')
+                                <div class="grid grid-cols-2 gap-2">
+                                    <flux:button 
+                                        variant="outline" 
+                                        size="sm"
+                                        wire:click="downloadLogo({{ $this->detailLogo->id }}, 'svg')"
+                                        icon="arrow-down-tray"
+                                    >
+                                        Original SVG
+                                    </flux:button>
+                                    <flux:button 
+                                        variant="outline" 
+                                        size="sm"
+                                        wire:click="downloadLogo({{ $this->detailLogo->id }}, 'png')"
+                                        icon="arrow-down-tray"
+                                    >
+                                        PNG
+                                    </flux:button>
+                                </div>
+                                
+                                {{-- Color Variant Downloads --}}
+                                @if($this->detailLogo->colorVariants->isNotEmpty())
+                                    <div class="space-y-2">
+                                        <p class="text-xs font-medium text-gray-600 dark:text-gray-400">Color Variants</p>
+                                        <div class="space-y-1">
+                                            @foreach($this->detailLogo->colorVariants as $variant)
+                                                <flux:button 
+                                                    variant="ghost" 
+                                                    size="sm"
+                                                    wire:click="downloadLogo({{ $this->detailLogo->id }}, 'svg', '{{ $variant->color_scheme }}')"
+                                                    class="w-full justify-start text-xs"
+                                                    icon="arrow-down-tray"
+                                                >
+                                                    {{ ucwords(str_replace('_', ' ', $variant->color_scheme)) }}
+                                                </flux:button>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+                            @elseif($detailLogoType === 'uploaded')
+                                <flux:button 
+                                    variant="outline" 
+                                    size="sm"
+                                    wire:click="downloadUploadedLogo({{ $this->detailLogo->id }})"
+                                    icon="arrow-down-tray"
+                                    class="w-full"
+                                >
+                                    Download Original
+                                </flux:button>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                
+                {{-- Actions Footer --}}
+                <div class="flex justify-end gap-2 pt-4 border-t">
+                    @if($detailLogoType === 'uploaded')
+                        <flux:button 
+                            variant="danger" 
+                            wire:click="deleteUploadedLogo({{ $this->detailLogo->id }})"
+                            wire:confirm="Are you sure you want to delete this logo?"
+                        >
+                            Delete Logo
+                        </flux:button>
+                    @endif
+                    <flux:modal.close>
+                        <flux:button variant="ghost">
+                            Close
+                        </flux:button>
+                    </flux:modal.close>
+                </div>
+            </div>
+        @endif
+    </flux:modal>
 </div>

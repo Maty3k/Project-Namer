@@ -236,4 +236,84 @@ describe('LogoGallery Upload Functionality', function (): void {
         expect($uploadedLogo->image_width)->toBe(800);
         expect($uploadedLogo->image_height)->toBe(600);
     });
+
+    it('can filter logos by type', function (): void {
+        // Create uploaded logos
+        UploadedLogo::factory()->count(2)->forSession(session()->getId())->create();
+        
+        // Create generated logos
+        GeneratedLogo::factory()->count(3)->create([
+            'logo_generation_id' => $this->logoGeneration->id,
+        ]);
+
+        $component = Livewire::actingAs($this->user)
+            ->test(LogoGallery::class, ['logoGenerationId' => $this->logoGeneration->id]);
+
+        // Test showing all logos
+        $component->assertSet('filterType', 'all')
+            ->assertSee('Search logos...');
+
+        // Test filtering by uploaded only
+        $component->set('filterType', 'uploaded')
+            ->assertSet('filterType', 'uploaded');
+
+        // Test filtering by generated only  
+        $component->set('filterType', 'generated')
+            ->assertSet('filterType', 'generated');
+    });
+
+    it('can search logos', function (): void {
+        // Create uploaded logo with searchable name
+        UploadedLogo::factory()->forSession(session()->getId())->create([
+            'original_name' => 'company-logo.png'
+        ]);
+
+        $component = Livewire::actingAs($this->user)
+            ->test(LogoGallery::class, ['logoGenerationId' => $this->logoGeneration->id]);
+
+        // Test search functionality
+        $component->set('searchTerm', 'company')
+            ->assertSet('searchTerm', 'company');
+
+        // Test clear filters
+        $component->call('clearFilters')
+            ->assertSet('searchTerm', '')
+            ->assertSet('filterType', 'all')
+            ->assertSet('filterStyle', '');
+    });
+
+    it('can open and close logo detail modal', function (): void {
+        // Create uploaded logo
+        $uploadedLogo = UploadedLogo::factory()->forSession(session()->getId())->create();
+
+        $component = Livewire::actingAs($this->user)
+            ->test(LogoGallery::class, ['logoGenerationId' => $this->logoGeneration->id]);
+
+        // Test opening modal for uploaded logo
+        $component->call('showLogoDetail', $uploadedLogo->id, 'uploaded')
+            ->assertSet('showDetailModal', true)
+            ->assertSet('detailLogoId', $uploadedLogo->id)
+            ->assertSet('detailLogoType', 'uploaded');
+
+        // Test closing modal
+        $component->call('hideLogoDetail')
+            ->assertSet('showDetailModal', false)
+            ->assertSet('detailLogoId', null)
+            ->assertSet('detailLogoType', '');
+    });
+
+    it('displays navigation elements correctly', function (): void {
+        $component = Livewire::actingAs($this->user)
+            ->test(LogoGallery::class, ['logoGenerationId' => $this->logoGeneration->id]);
+
+        // Check breadcrumb navigation is present
+        $component->assertSee('Logo Gallery')
+            ->assertSee($this->logoGeneration->business_name);
+
+        // Check back button is present
+        $component->assertSee('Back');
+
+        // Check creation date is displayed
+        $component->assertSee('Created');
+    });
 });

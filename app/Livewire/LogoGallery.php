@@ -49,6 +49,20 @@ class LogoGallery extends Component
 
     public bool $showColorPicker = false;
 
+    // Search and filter properties
+    public string $searchTerm = '';
+
+    public string $filterType = 'all'; // 'all', 'generated', 'uploaded'
+
+    public string $filterStyle = ''; // Filter by logo style
+
+    // Modal properties
+    public bool $showDetailModal = false;
+
+    public ?int $detailLogoId = null;
+
+    public string $detailLogoType = ''; // 'generated' or 'uploaded'
+
     // Error handling
     public ?string $errorMessage = null;
 
@@ -508,6 +522,29 @@ class LogoGallery extends Component
     }
 
     /**
+     * Get filtered logos grouped by style.
+     */
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function getFilteredLogosByStyleProperty(): array
+    {
+        if (! $this->logoGeneration) {
+            return [];
+        }
+
+        $filteredLogos = $this->filteredGeneratedLogos;
+
+        return $filteredLogos
+            ->groupBy('style')
+            ->map(fn ($logos, $style) => [
+                'style' => $style,
+                'display_name' => ucfirst((string) $style),
+                'logos' => $logos,
+            ])->values()->toArray();
+    }
+
+    /**
      * Get the logo generation model.
      */
     public function getLogoGenerationProperty(): ?LogoGeneration
@@ -552,6 +589,128 @@ class LogoGallery extends Component
         return UploadedLogo::forSession(session()->getId())
             ->orderBy('created_at', 'desc')
             ->get();
+    }
+
+    /**
+     * Get filtered generated logos.
+     */
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, GeneratedLogo>
+     */
+    public function getFilteredGeneratedLogosProperty()
+    {
+        if (!$this->logoGeneration) {
+            return collect();
+        }
+
+        $query = $this->logoGeneration->generatedLogos();
+
+        // Filter by style if specified
+        if (!empty($this->filterStyle)) {
+            $query->where('style', $this->filterStyle);
+        }
+
+        $logos = $query->get();
+
+        // Apply search filter if specified
+        if (!empty($this->searchTerm)) {
+            $logos = $logos->filter(function ($logo) {
+                return str_contains(strtolower($logo->style ?? ''), strtolower($this->searchTerm)) ||
+                       str_contains(strtolower($logo->description ?? ''), strtolower($this->searchTerm));
+            });
+        }
+
+        return $logos;
+    }
+
+    /**
+     * Get filtered uploaded logos.
+     */
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, UploadedLogo>
+     */
+    public function getFilteredUploadedLogosProperty()
+    {
+        $logos = $this->uploadedLogos;
+
+        // Apply search filter if specified
+        if (!empty($this->searchTerm)) {
+            $logos = $logos->filter(function ($logo) {
+                return str_contains(strtolower($logo->original_name), strtolower($this->searchTerm)) ||
+                       str_contains(strtolower($logo->display_name), strtolower($this->searchTerm));
+            });
+        }
+
+        return $logos;
+    }
+
+    /**
+     * Get all available logo styles for filtering.
+     */
+    /**
+     * @return array<string>
+     */
+    public function getAvailableStylesProperty(): array
+    {
+        if (!$this->logoGeneration) {
+            return [];
+        }
+
+        return $this->logoGeneration->generatedLogos()
+            ->distinct('style')
+            ->pluck('style')
+            ->filter()
+            ->sort()
+            ->values()
+            ->toArray();
+    }
+
+    /**
+     * Clear all filters and search.
+     */
+    public function clearFilters(): void
+    {
+        $this->searchTerm = '';
+        $this->filterType = 'all';
+        $this->filterStyle = '';
+    }
+
+    /**
+     * Show logo detail modal.
+     */
+    public function showLogoDetail(int $logoId, string $type): void
+    {
+        $this->detailLogoId = $logoId;
+        $this->detailLogoType = $type;
+        $this->showDetailModal = true;
+    }
+
+    /**
+     * Hide logo detail modal.
+     */
+    public function hideLogoDetail(): void
+    {
+        $this->showDetailModal = false;
+        $this->detailLogoId = null;
+        $this->detailLogoType = '';
+    }
+
+    /**
+     * Get the current logo being viewed in detail.
+     */
+    public function getDetailLogoProperty()
+    {
+        if (!$this->detailLogoId || !$this->detailLogoType) {
+            return null;
+        }
+
+        if ($this->detailLogoType === 'generated') {
+            return GeneratedLogo::find($this->detailLogoId);
+        } elseif ($this->detailLogoType === 'uploaded') {
+            return UploadedLogo::find($this->detailLogoId);
+        }
+
+        return null;
     }
 
     public function render(): View
