@@ -71,13 +71,32 @@
                 @foreach($this->projects as $project)
                     <div
                         wire:click="selectProject('{{ $project->uuid }}')"
-                        class="cursor-pointer rounded-lg p-3 transition-all duration-200 
+                        class="cursor-pointer rounded-lg transition-all duration-200 
+                               {{ $collapsed ? 'p-2' : 'p-3' }}
                                {{ $this->isActiveProject($project) 
                                    ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 shadow-sm' 
                                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm transform hover:scale-[1.02]' }}"
                         wire:key="project-{{ $project->uuid }}"
+                        @if($collapsed)
+                            title="{{ $project->name }}"
+                        @endif
                     >
-                        @if(!$collapsed)
+                        @if($collapsed)
+                            <!-- Collapsed view - Show icon only -->
+                            <div class="flex items-center justify-center">
+                                @if($project->selectedName)
+                                    <!-- Project with selected name - show checkmark icon -->
+                                    <svg class="w-5 h-5 {{ $this->isActiveProject($project) ? 'text-blue-600 dark:text-blue-400' : 'text-green-600 dark:text-green-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                @else
+                                    <!-- Regular project icon -->
+                                    <svg class="w-5 h-5 {{ $this->isActiveProject($project) ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+                                    </svg>
+                                @endif
+                            </div>
+                        @else
                             <!-- Expanded view -->
                             <div class="flex items-start justify-between">
                                 <div class="flex-1 min-w-0">
