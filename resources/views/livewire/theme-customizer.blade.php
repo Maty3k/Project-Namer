@@ -21,11 +21,67 @@
         </div>
     </div>
 
-    <!-- Predefined Themes -->
+    <!-- Seasonal Recommendation -->
+    @if($recommendedSeasonalTheme)
+        <flux:card class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800">
+            <div class="p-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex-shrink-0">
+                            <div class="flex h-12 w-16 overflow-hidden rounded-lg shadow-md">
+                                <div class="w-1/2" style="background-color: {{ $recommendedSeasonalTheme['primary_color'] }}"></div>
+                                <div class="w-1/4" style="background-color: {{ $recommendedSeasonalTheme['accent_color'] }}"></div>
+                                <div class="w-1/4" style="background-color: {{ $recommendedSeasonalTheme['background_color'] }}"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                🎨 Recommended: {{ $recommendedSeasonalTheme['display_name'] }}
+                            </h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                Perfect for {{ ucfirst($recommendedSeasonalTheme['season'] ?? 'this time of year') }}
+                            </p>
+                        </div>
+                    </div>
+                    <flux:button 
+                        wire:click="applySeasonalRecommendation"
+                        variant="primary"
+                        size="sm"
+                    >
+                        Apply Theme
+                    </flux:button>
+                </div>
+            </div>
+        </flux:card>
+    @endif
+
+    <!-- Theme Categories -->
     <div class="space-y-4">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            Predefined Themes
-        </h3>
+        <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                Predefined Themes
+            </h3>
+            
+            <!-- Category Filter -->
+            <div class="flex items-center space-x-2">
+                <flux:button 
+                    wire:click="changeCategory('all')"
+                    variant="{{ $selectedCategory === 'all' ? 'primary' : 'ghost' }}"
+                    size="sm"
+                >
+                    All
+                </flux:button>
+                @foreach($this->availableCategories as $category)
+                    <flux:button 
+                        wire:click="changeCategory('{{ $category }}')"
+                        variant="{{ $selectedCategory === $category ? 'primary' : 'ghost' }}"
+                        size="sm"
+                    >
+                        {{ ucfirst($category) }}
+                    </flux:button>
+                @endforeach
+            </div>
+        </div>
         
         <div class="grid grid-cols-1 gap-4
                     sm:grid-cols-2 
@@ -46,9 +102,30 @@
                         
                         <!-- Theme Info -->
                         <div class="text-center">
-                            <h4 class="font-medium text-gray-900 dark:text-gray-100">
-                                {{ $theme['display_name'] }}
-                            </h4>
+                            <div class="flex items-center justify-center space-x-1 mb-1">
+                                @if(($theme['category'] ?? '') === 'seasonal')
+                                    @switch($theme['season'] ?? '')
+                                        @case('summer')
+                                            <span class="text-yellow-500">☀️</span>
+                                            @break
+                                        @case('winter') 
+                                            <span class="text-blue-500">❄️</span>
+                                            @break
+                                        @case('halloween')
+                                            <span class="text-orange-500">🎃</span>
+                                            @break
+                                        @case('spring')
+                                            <span class="text-green-500">🌸</span>
+                                            @break
+                                        @case('autumn')
+                                            <span class="text-orange-600">🍂</span>
+                                            @break
+                                    @endswitch
+                                @endif
+                                <h4 class="font-medium text-gray-900 dark:text-gray-100">
+                                    {{ $theme['display_name'] }}
+                                </h4>
+                            </div>
                             <p class="text-xs text-gray-500 dark:text-gray-400">
                                 {{ $theme['is_dark_mode'] ? 'Dark Mode' : 'Light Mode' }}
                             </p>
@@ -285,45 +362,130 @@
         </flux:callout>
     @endif
 
-    <!-- JavaScript for download functionality -->
+    <!-- JavaScript for theme functionality -->
     <script>
         document.addEventListener('livewire:init', () => {
+            // Download theme functionality
             Livewire.on('download-theme', (themeJson) => {
-                const blob = new Blob([themeJson], { type: 'application/json' });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `theme-${@this.themeName}.json`;
-                a.click();
-                window.URL.revokeObjectURL(url);
+                try {
+                    const blob = new Blob([themeJson], { type: 'application/json' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `theme-${@this.themeName}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    
+                    // Show success feedback
+                    showToast('Theme downloaded successfully', 'success');
+                } catch (error) {
+                    console.error('Download failed:', error);
+                    showToast('Failed to download theme', 'error');
+                }
             });
 
+            // Real-time theme updates
             Livewire.on('theme-updated', () => {
-                // Apply CSS custom properties in real-time
-                const css = @this.generatedCss;
+                requestAnimationFrame(() => {
+                    try {
+                        // Get current theme CSS from component
+                        const primaryColor = @this.primaryColor;
+                        const accentColor = @this.accentColor;
+                        const backgroundColor = @this.backgroundColor;
+                        const textColor = @this.textColor;
+                        
+                        // Apply CSS custom properties in real-time
+                        const css = `:root {
+                            --color-primary: ${primaryColor};
+                            --color-accent: ${accentColor};
+                            --color-background: ${backgroundColor};
+                            --color-text: ${textColor};
+                        }`;
+                        
+                        // Remove existing theme styles
+                        const existingStyle = document.getElementById('live-theme-styles');
+                        if (existingStyle) {
+                            existingStyle.remove();
+                        }
+                        
+                        // Add new theme styles to document head
+                        const style = document.createElement('style');
+                        style.id = 'live-theme-styles';
+                        style.textContent = css;
+                        document.head.appendChild(style);
+                        
+                        // Apply theme immediately to body for global changes
+                        document.documentElement.style.setProperty('--color-primary', primaryColor);
+                        document.documentElement.style.setProperty('--color-accent', accentColor);
+                        document.documentElement.style.setProperty('--color-background', backgroundColor);
+                        document.documentElement.style.setProperty('--color-text', textColor);
+                        
+                    } catch (error) {
+                        console.error('Theme update failed:', error);
+                    }
+                });
+            });
+
+            // Theme saved successfully
+            Livewire.on('theme-saved', () => {
+                showToast('Theme saved successfully! Your preferences have been updated.', 'success');
+            });
+
+            // Theme imported successfully
+            Livewire.on('theme-imported', () => {
+                showToast('Theme imported successfully!', 'success');
+                // Trigger theme update
+                Livewire.dispatch('theme-updated');
+            });
+
+            // Error handling for theme operations
+            Livewire.on('theme-error', (message) => {
+                showToast(message || 'An error occurred while processing the theme', 'error');
+            });
+
+            // Toast notification function
+            function showToast(message, type = 'info') {
+                // Check if Flux toast is available
+                if (window.Flux && window.Flux.toast) {
+                    window.Flux.toast({
+                        message: message,
+                        type: type,
+                        duration: 4000
+                    });
+                    return;
+                }
                 
-                // Remove existing theme styles
+                // Fallback to Livewire events if available
+                if (window.Livewire) {
+                    Livewire.dispatch('toast', { 
+                        message: message, 
+                        type: type 
+                    });
+                    return;
+                }
+                
+                // Ultimate fallback to console and basic alert
+                console.log(`${type.toUpperCase()}: ${message}`);
+                if (type === 'error') {
+                    alert(message);
+                }
+            }
+
+            // Initialize theme on page load
+            Livewire.on('init', () => {
+                // Apply current theme immediately
+                Livewire.dispatch('theme-updated');
+            });
+
+            // Handle theme persistence across page navigation
+            window.addEventListener('beforeunload', () => {
+                // The theme is already saved via Livewire, so this is just for cleanup
                 const existingStyle = document.getElementById('live-theme-styles');
                 if (existingStyle) {
                     existingStyle.remove();
                 }
-                
-                // Add new theme styles
-                const style = document.createElement('style');
-                style.id = 'live-theme-styles';
-                style.textContent = css;
-                document.head.appendChild(style);
-            });
-
-            Livewire.on('theme-saved', () => {
-                // Show success notification
-                console.log('Theme saved successfully');
-            });
-
-            Livewire.on('theme-imported', () => {
-                // Show success notification and apply styles
-                console.log('Theme imported successfully');
-                Livewire.dispatch('theme-updated');
             });
         });
     </script>

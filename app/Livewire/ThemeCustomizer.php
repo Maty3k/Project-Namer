@@ -46,6 +46,10 @@ final class ThemeCustomizer extends Component
 
     public float $accessibilityScore = 1.0;
 
+    public string $selectedCategory = 'all';
+
+    public ?array $recommendedSeasonalTheme = null;
+
     /**
      * Initialize component with user's current theme.
      */
@@ -66,6 +70,7 @@ final class ThemeCustomizer extends Component
             }
         }
 
+        $this->loadSeasonalRecommendation();
         $this->validateAccessibility();
     }
 
@@ -97,27 +102,34 @@ final class ThemeCustomizer extends Component
      */
     public function save(): void
     {
-        $this->validate();
+        try {
+            $this->validate();
 
-        $user = auth()->user();
+            $user = auth()->user();
 
-        if (! $user) {
-            return;
+            if (! $user) {
+                $this->dispatch('theme-error', 'You must be logged in to save themes');
+                return;
+            }
+
+            UserThemePreference::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'primary_color' => $this->primaryColor,
+                    'accent_color' => $this->accentColor,
+                    'background_color' => $this->backgroundColor,
+                    'text_color' => $this->textColor,
+                    'theme_name' => $this->themeName,
+                    'is_dark_mode' => $this->isDarkMode,
+                ]
+            );
+
+            $this->dispatch('theme-saved');
+            $this->dispatch('theme-updated'); // Apply theme immediately
+        } catch (\Exception $e) {
+            logger()->error('Theme save failed: ' . $e->getMessage());
+            $this->dispatch('theme-error', 'Failed to save theme preferences');
         }
-
-        UserThemePreference::updateOrCreate(
-            ['user_id' => $user->id],
-            [
-                'primary_color' => $this->primaryColor,
-                'accent_color' => $this->accentColor,
-                'background_color' => $this->backgroundColor,
-                'text_color' => $this->textColor,
-                'theme_name' => $this->themeName,
-                'is_dark_mode' => $this->isDarkMode,
-            ]
-        );
-
-        $this->dispatch('theme-saved');
     }
 
     /**
@@ -155,31 +167,45 @@ final class ThemeCustomizer extends Component
      */
     public function importTheme(): void
     {
-        $this->validate(['themeFile']);
+        try {
+            $this->validate(['themeFile']);
 
-        if (! $this->themeFile) {
-            return;
+            if (! $this->themeFile) {
+                $this->dispatch('theme-error', 'No theme file provided');
+                return;
+            }
+
+            $content = file_get_contents($this->themeFile->path());
+            $themeData = json_decode($content, true);
+
+            if (! $themeData || ! is_array($themeData)) {
+                $this->dispatch('theme-error', 'Invalid theme file format. Please upload a valid JSON theme file.');
+                return;
+            }
+
+            // Validate required theme properties
+            $requiredFields = ['primary_color', 'background_color', 'text_color'];
+            foreach ($requiredFields as $field) {
+                if (! isset($themeData[$field]) || ! preg_match('/^#[0-9a-fA-F]{6}$/', $themeData[$field])) {
+                    $this->dispatch('theme-error', "Invalid or missing {$field} in theme file");
+                    return;
+                }
+            }
+
+            $this->primaryColor = $themeData['primary_color'];
+            $this->accentColor = $themeData['accent_color'] ?? $themeData['primary_color'];
+            $this->backgroundColor = $themeData['background_color'];
+            $this->textColor = $themeData['text_color'];
+            $this->themeName = $themeData['theme_name'] ?? 'imported';
+            $this->isDarkMode = $themeData['is_dark_mode'] ?? false;
+
+            $this->themeFile = null;
+            $this->validateAccessibility();
+            $this->dispatch('theme-imported');
+        } catch (\Exception $e) {
+            logger()->error('Theme import failed: ' . $e->getMessage());
+            $this->dispatch('theme-error', 'Failed to import theme file');
         }
-
-        $content = file_get_contents($this->themeFile->path());
-        $themeData = json_decode($content, true);
-
-        if (! $themeData || ! is_array($themeData)) {
-            session()->flash('error', 'Invalid theme file format');
-
-            return;
-        }
-
-        $this->primaryColor = $themeData['primary_color'] ?? '#3b82f6';
-        $this->accentColor = $themeData['accent_color'] ?? '#10b981';
-        $this->backgroundColor = $themeData['background_color'] ?? '#ffffff';
-        $this->textColor = $themeData['text_color'] ?? '#111827';
-        $this->themeName = $themeData['theme_name'] ?? 'imported';
-        $this->isDarkMode = $themeData['is_dark_mode'] ?? false;
-
-        $this->themeFile = null;
-        $this->validateAccessibility();
-        $this->dispatch('theme-imported');
     }
 
     /**
@@ -245,6 +271,33 @@ final class ThemeCustomizer extends Component
     }
 
     /**
+     * Change theme category filter.
+     */
+    public function changeCategory(string $category): void
+    {
+        $this->selectedCategory = $category;
+    }
+
+    /**
+     * Load seasonal theme recommendation.
+     */
+    protected function loadSeasonalRecommendation(): void
+    {
+        $themeService = app(ThemeService::class);
+        $this->recommendedSeasonalTheme = $themeService->getCurrentSeasonalTheme();
+    }
+
+    /**
+     * Apply the recommended seasonal theme.
+     */
+    public function applySeasonalRecommendation(): void
+    {
+        if ($this->recommendedSeasonalTheme) {
+            $this->applyPreset($this->recommendedSeasonalTheme['name']);
+        }
+    }
+
+    /**
      * Get predefined themes for display.
      *
      * @return list<array<string, mixed>>
@@ -254,7 +307,20 @@ final class ThemeCustomizer extends Component
     {
         $themeService = app(ThemeService::class);
 
-        return $themeService->getPredefinedThemes();
+        return $themeService->getThemesByCategory($this->selectedCategory);
+    }
+
+    /**
+     * Get available theme categories.
+     *
+     * @return list<string>
+     */
+    #[Computed]
+    public function availableCategories(): array
+    {
+        $themeService = app(ThemeService::class);
+
+        return $themeService->getAvailableCategories();
     }
 
     /**

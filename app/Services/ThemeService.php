@@ -106,6 +106,7 @@ final class ThemeService
                 'theme_name' => 'default',
                 'is_dark_mode' => false,
                 'preview_url' => '/images/theme-previews/default.png',
+                'category' => 'standard',
             ],
             [
                 'name' => 'dark',
@@ -117,6 +118,7 @@ final class ThemeService
                 'theme_name' => 'dark',
                 'is_dark_mode' => true,
                 'preview_url' => '/images/theme-previews/dark.png',
+                'category' => 'standard',
             ],
             [
                 'name' => 'ocean',
@@ -128,6 +130,7 @@ final class ThemeService
                 'theme_name' => 'ocean',
                 'is_dark_mode' => false,
                 'preview_url' => '/images/theme-previews/ocean.png',
+                'category' => 'standard',
             ],
             [
                 'name' => 'sunset',
@@ -139,6 +142,7 @@ final class ThemeService
                 'theme_name' => 'sunset',
                 'is_dark_mode' => false,
                 'preview_url' => '/images/theme-previews/sunset.png',
+                'category' => 'standard',
             ],
             [
                 'name' => 'forest',
@@ -150,8 +154,133 @@ final class ThemeService
                 'theme_name' => 'forest',
                 'is_dark_mode' => false,
                 'preview_url' => '/images/theme-previews/forest.png',
+                'category' => 'standard',
+            ],
+            // Seasonal Themes
+            [
+                'name' => 'summer',
+                'display_name' => 'Summer Coral',
+                'primary_color' => '#ff6b6b',
+                'accent_color' => '#4ecdc4',
+                'background_color' => '#fff5f5',
+                'text_color' => '#2d3748',
+                'theme_name' => 'summer',
+                'is_dark_mode' => false,
+                'preview_url' => '/images/theme-previews/summer.png',
+                'category' => 'seasonal',
+                'season' => 'summer',
+            ],
+            [
+                'name' => 'winter',
+                'display_name' => 'Winter Frost',
+                'primary_color' => '#4a90e2',
+                'accent_color' => '#b8d4f0',
+                'background_color' => '#f8fafc',
+                'text_color' => '#1a202c',
+                'theme_name' => 'winter',
+                'is_dark_mode' => false,
+                'preview_url' => '/images/theme-previews/winter.png',
+                'category' => 'seasonal',
+                'season' => 'winter',
+            ],
+            [
+                'name' => 'halloween',
+                'display_name' => 'Halloween Night',
+                'primary_color' => '#ff8c00',
+                'accent_color' => '#9932cc',
+                'background_color' => '#2d1b69',
+                'text_color' => '#f7fafc',
+                'theme_name' => 'halloween',
+                'is_dark_mode' => true,
+                'preview_url' => '/images/theme-previews/halloween.png',
+                'category' => 'seasonal',
+                'season' => 'halloween',
+            ],
+            [
+                'name' => 'spring',
+                'display_name' => 'Spring Bloom',
+                'primary_color' => '#48bb78',
+                'accent_color' => '#f687b3',
+                'background_color' => '#f0fff4',
+                'text_color' => '#2d3748',
+                'theme_name' => 'spring',
+                'is_dark_mode' => false,
+                'preview_url' => '/images/theme-previews/spring.png',
+                'category' => 'seasonal',
+                'season' => 'spring',
+            ],
+            [
+                'name' => 'autumn',
+                'display_name' => 'Autumn Harvest',
+                'primary_color' => '#d69e2e',
+                'accent_color' => '#c53030',
+                'background_color' => '#fffaf0',
+                'text_color' => '#744210',
+                'theme_name' => 'autumn',
+                'is_dark_mode' => false,
+                'preview_url' => '/images/theme-previews/autumn.png',
+                'category' => 'seasonal',
+                'season' => 'autumn',
             ],
         ];
+    }
+
+    /**
+     * Get themes filtered by category.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function getThemesByCategory(string $category = 'all'): array
+    {
+        $themes = $this->getPredefinedThemes();
+        
+        if ($category === 'all') {
+            return $themes;
+        }
+        
+        return array_filter($themes, function ($theme) use ($category) {
+            return ($theme['category'] ?? 'standard') === $category;
+        });
+    }
+
+    /**
+     * Get available theme categories.
+     *
+     * @return list<string>
+     */
+    public function getAvailableCategories(): array
+    {
+        return ['standard', 'seasonal'];
+    }
+
+    /**
+     * Get current seasonal theme recommendation based on date.
+     */
+    public function getCurrentSeasonalTheme(): ?array
+    {
+        $month = (int) date('n'); // 1-12
+        
+        $seasonThemes = [
+            'spring' => [3, 4, 5],     // March, April, May
+            'summer' => [6, 7, 8],     // June, July, August  
+            'autumn' => [9, 10, 11],   // September, October, November
+            'winter' => [12, 1, 2],    // December, January, February
+        ];
+        
+        // Special case for Halloween in October
+        if ($month === 10) {
+            $themes = $this->getPredefinedThemes();
+            return collect($themes)->firstWhere('name', 'halloween');
+        }
+        
+        foreach ($seasonThemes as $season => $months) {
+            if (in_array($month, $months)) {
+                $themes = $this->getPredefinedThemes();
+                return collect($themes)->firstWhere('season', $season);
+            }
+        }
+        
+        return null;
     }
 
     /**
