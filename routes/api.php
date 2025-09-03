@@ -89,6 +89,13 @@ Route::middleware('api')->group(function (): void {
             ->name('api.logos.download-batch');
     });
 
+    // Uploaded Logo Download Routes
+    Route::prefix('uploaded-logos')->group(function (): void {
+        Route::get('{uploadedLogo}/download', [LogoDownloadController::class, 'downloadUploaded'])
+            ->middleware('throttle.downloads')
+            ->name('api.uploaded-logos.download');
+    });
+
     // Sharing API Routes - CSRF protected state-changing operations
     Route::prefix('shares')->middleware(['auth', 'web'])->group(function (): void {
         // List user's shares with filtering and pagination (read-only, no CSRF needed)

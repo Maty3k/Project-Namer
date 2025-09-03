@@ -100,6 +100,138 @@
             </flux:card>
         @endif
 
+        {{-- File Upload Section --}}
+        <flux:card class="p-6">
+            <div class="space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-900 dark:text-white">
+                            Upload Your Own Logos
+                        </h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                            Upload PNG, JPG, or SVG logo files (max 5MB each)
+                        </p>
+                    </div>
+                </div>
+
+                {{-- Drag and Drop Upload Zone --}}
+                <div 
+                    x-data="{
+                        draggedOver: @entangle('isDraggedOver'),
+                        isUploading: @entangle('isUploading'),
+                        uploadProgress: @entangle('uploadProgress')
+                    }"
+                    @dragover.prevent="draggedOver = true"
+                    @dragleave.prevent="draggedOver = false"
+                    @drop.prevent="
+                        draggedOver = false;
+                        let files = Array.from($event.dataTransfer.files);
+                        if (files.length > 0) {
+                            @this.set('uploadedFiles', files);
+                        }
+                    "
+                    class="relative border-2 border-dashed rounded-lg p-8 text-center transition-colors duration-200"
+                    :class="{
+                        'border-blue-500 bg-blue-50 dark:bg-blue-900/20': draggedOver,
+                        'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500': !draggedOver && !isUploading,
+                        'border-green-500 bg-green-50 dark:bg-green-900/20': isUploading && uploadProgress === 100,
+                        'border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20': isUploading && uploadProgress < 100
+                    }"
+                >
+                    <div x-show="!isUploading" class="space-y-4">
+                        <flux:icon.cloud-arrow-up class="mx-auto size-12 text-gray-400 dark:text-gray-500" />
+                        
+                        <div class="space-y-2">
+                            <p class="text-lg font-medium text-gray-900 dark:text-white">
+                                Drop logo files here
+                            </p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                or click to browse your computer
+                            </p>
+                        </div>
+
+                        <div class="flex flex-wrap justify-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                            <span class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">PNG</span>
+                            <span class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">JPG</span>
+                            <span class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">SVG</span>
+                            <span class="text-gray-400">•</span>
+                            <span>Max 5MB each</span>
+                            <span class="text-gray-400">•</span>
+                            <span>Min 100x100px</span>
+                        </div>
+
+                        {{-- File Input --}}
+                        <input 
+                            type="file" 
+                            wire:model="uploadedFiles"
+                            accept=".png,.jpg,.jpeg,.svg"
+                            multiple
+                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        >
+                    </div>
+
+                    {{-- Upload Progress --}}
+                    <div x-show="isUploading" class="space-y-4">
+                        <flux:icon.arrow-path class="mx-auto size-12 animate-spin text-blue-500" />
+                        
+                        <div class="space-y-2">
+                            <p class="text-lg font-medium text-gray-900 dark:text-white">
+                                <span x-show="uploadProgress < 100">Uploading logos...</span>
+                                <span x-show="uploadProgress === 100">Upload complete!</span>
+                            </p>
+                            
+                            {{-- Progress Bar --}}
+                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                                <div 
+                                    class="bg-blue-600 h-3 rounded-full transition-all duration-300 ease-out"
+                                    :style="{ width: uploadProgress + '%' }"
+                                ></div>
+                            </div>
+                            
+                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                <span x-text="uploadProgress"></span>% complete
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Upload Button --}}
+                @if(count($uploadedFiles) > 0 && !$isUploading)
+                    <div class="flex justify-between items-center">
+                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                            {{ count($uploadedFiles) }} file(s) selected
+                        </p>
+                        
+                        <div class="flex gap-2">
+                            <flux:button 
+                                variant="ghost" 
+                                wire:click="$set('uploadedFiles', [])"
+                                size="sm"
+                            >
+                                Clear
+                            </flux:button>
+                            
+                            <flux:button 
+                                variant="primary" 
+                                wire:click="uploadLogos"
+                                size="sm"
+                            >
+                                <flux:icon.arrow-up-tray class="size-4 mr-1" />
+                                Upload Logos
+                            </flux:button>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Upload Errors --}}
+                @error('uploadedFiles.*')
+                    <div class="text-sm text-red-600 dark:text-red-400 mt-2">
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+        </flux:card>
+
         {{-- Color Customization Panel --}}
         @if($this->logoGeneration->status === 'completed' && $this->logoGeneration->generatedLogos->isNotEmpty())
             <flux:card class="p-6">
@@ -197,18 +329,99 @@
         @endif
 
         {{-- Logo Gallery --}}
-        @if($this->logoGeneration->generatedLogos->isNotEmpty())
+        @if($this->logoGeneration->generatedLogos->isNotEmpty() || $this->uploadedLogos->isNotEmpty())
             @if($viewMode === 'grid')
                 {{-- Grid View --}}
                 <div class="space-y-8">
+                    {{-- Uploaded Logos Section --}}
+                    @if($this->uploadedLogos->isNotEmpty())
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                    Uploaded Logos
+                                    <span class="text-sm font-normal text-gray-600 dark:text-gray-400">
+                                        ({{ $this->uploadedLogos->count() }} logos)
+                                    </span>
+                                </h3>
+                                <flux:badge variant="outline" class="text-xs">
+                                    Your uploads
+                                </flux:badge>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                                @foreach($this->uploadedLogos as $uploadedLogo)
+                                    <div class="relative group">
+                                        {{-- Logo Card --}}
+                                        <div class="aspect-square bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-lg transition-all duration-200">
+                                            {{-- Logo Image --}}
+                                            <div class="w-full h-full flex items-center justify-center">
+                                                @if($uploadedLogo->fileExists())
+                                                    <img 
+                                                        src="{{ $uploadedLogo->getFileUrl() }}" 
+                                                        alt="{{ $uploadedLogo->getDisplayName() }}"
+                                                        class="max-w-full max-h-full object-contain"
+                                                        loading="lazy"
+                                                    >
+                                                @else
+                                                    <div class="w-full h-full bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center">
+                                                        <flux:icon.photo class="size-8 text-gray-400" />
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            
+                                            {{-- Logo Actions Overlay --}}
+                                            <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center gap-2">
+                                                <flux:button 
+                                                    variant="primary" 
+                                                    size="sm"
+                                                    wire:click="downloadUploadedLogo({{ $uploadedLogo->id }})"
+                                                    class="text-xs"
+                                                >
+                                                    <flux:icon.arrow-down-tray class="size-3 mr-1" />
+                                                    Download
+                                                </flux:button>
+                                                <flux:button 
+                                                    variant="danger" 
+                                                    size="sm"
+                                                    wire:click="deleteUploadedLogo({{ $uploadedLogo->id }})"
+                                                    wire:confirm="Are you sure you want to delete this logo?"
+                                                    class="text-xs"
+                                                >
+                                                    <flux:icon.trash class="size-3 mr-1" />
+                                                    Delete
+                                                </flux:button>
+                                            </div>
+                                        </div>
+                                        
+                                        {{-- Logo Info --}}
+                                        <div class="mt-2 text-center">
+                                            <p class="text-xs text-gray-600 dark:text-gray-400 truncate" title="{{ $uploadedLogo->original_name }}">
+                                                {{ $uploadedLogo->getDisplayName() }}
+                                            </p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-500">
+                                                {{ $uploadedLogo->getFormattedFileSize() }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- Generated Logos Sections --}}
                     @foreach($this->logosByStyle as $styleGroup)
                         <div class="space-y-4">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ $styleGroup['display_name'] }} Style
-                                <span class="text-sm font-normal text-gray-600 dark:text-gray-400">
-                                    ({{ $styleGroup['logos']->count() }} logos)
-                                </span>
-                            </h3>
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                    {{ $styleGroup['display_name'] }} Style
+                                    <span class="text-sm font-normal text-gray-600 dark:text-gray-400">
+                                        ({{ $styleGroup['logos']->count() }} logos)
+                                    </span>
+                                </h3>
+                                <flux:badge variant="outline" class="text-xs">
+                                    AI Generated
+                                </flux:badge>
+                            </div>
                             
                             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
                                 @foreach($styleGroup['logos'] as $logo)
@@ -312,7 +525,7 @@
                                         Style
                                     </th>
                                     <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                        Color Variants
+                                        Details
                                     </th>
                                     <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Actions
@@ -320,6 +533,74 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                {{-- Uploaded Logos --}}
+                                @foreach($this->uploadedLogos as $uploadedLogo)
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+                                        @if($this->logoGeneration->status === 'completed')
+                                            <td class="px-6 py-4">
+                                                {{-- No checkbox for uploaded logos in color customization --}}
+                                                <span class="text-gray-400">-</span>
+                                            </td>
+                                        @endif
+                                        
+                                        <td class="px-6 py-4">
+                                            <div class="w-16 h-16 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded p-2 flex items-center justify-center">
+                                                @if($uploadedLogo->fileExists())
+                                                    <img 
+                                                        src="{{ $uploadedLogo->getFileUrl() }}" 
+                                                        alt="{{ $uploadedLogo->getDisplayName() }}"
+                                                        class="max-w-full max-h-full object-contain"
+                                                        loading="lazy"
+                                                    >
+                                                @else
+                                                    <flux:icon.photo class="size-6 text-gray-400" />
+                                                @endif
+                                            </div>
+                                        </td>
+                                        
+                                        <td class="px-6 py-4">
+                                            <flux:badge variant="info" class="text-xs">
+                                                Uploaded
+                                            </flux:badge>
+                                        </td>
+                                        
+                                        <td class="px-6 py-4">
+                                            <div class="space-y-1">
+                                                <p class="text-sm font-medium text-gray-900 dark:text-white truncate" title="{{ $uploadedLogo->original_name }}">
+                                                    {{ $uploadedLogo->getDisplayName() }}
+                                                </p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                    {{ $uploadedLogo->getFormattedFileSize() }}
+                                                    @if($uploadedLogo->image_width && $uploadedLogo->image_height)
+                                                        • {{ $uploadedLogo->image_width }}x{{ $uploadedLogo->image_height }}px
+                                                    @endif
+                                                </p>
+                                            </div>
+                                        </td>
+                                        
+                                        <td class="px-6 py-4 text-right">
+                                            <div class="flex items-center justify-end gap-2">
+                                                <flux:button 
+                                                    variant="outline" 
+                                                    size="sm"
+                                                    wire:click="downloadUploadedLogo({{ $uploadedLogo->id }})"
+                                                >
+                                                    <flux:icon.arrow-down-tray class="size-4" />
+                                                </flux:button>
+                                                <flux:button 
+                                                    variant="danger" 
+                                                    size="sm"
+                                                    wire:click="deleteUploadedLogo({{ $uploadedLogo->id }})"
+                                                    wire:confirm="Are you sure you want to delete this logo?"
+                                                >
+                                                    <flux:icon.trash class="size-4" />
+                                                </flux:button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+
+                                {{-- Generated Logos --}}
                                 @foreach($this->logoGeneration->generatedLogos as $logo)
                                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 @if(in_array($logo->id, $selectedLogos)) bg-blue-50 dark:bg-blue-900/20 @endif">
                                         @if($this->logoGeneration->status === 'completed')
@@ -402,15 +683,15 @@
                     </div>
                 </flux:card>
             @endif
-        @elseif($this->logoGeneration->status === 'completed')
-            {{-- No Logos Generated --}}
+        @elseif($this->logoGeneration->status === 'completed' && $this->uploadedLogos->isEmpty())
+            {{-- No Logos Available --}}
             <flux:card class="p-12 text-center">
                 <flux:icon.photo class="size-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                    No logos generated
+                    No logos available
                 </h3>
                 <p class="text-gray-600 dark:text-gray-400">
-                    The logo generation completed but no logos were created.
+                    No logos have been generated or uploaded yet.
                 </p>
             </flux:card>
         @endif

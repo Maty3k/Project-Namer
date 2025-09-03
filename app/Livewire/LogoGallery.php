@@ -8,14 +8,19 @@ use App\Enums\ColorScheme;
 use App\Models\GeneratedLogo;
 use App\Models\LogoColorVariant;
 use App\Models\LogoGeneration;
+use App\Models\UploadedLogo;
 use App\Services\ColorPaletteService;
 use App\Services\SvgColorProcessor;
 use Exception;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rules\File;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 /**
  * Logo Gallery component for displaying and managing generated logos.
@@ -25,6 +30,8 @@ use Livewire\Component;
  */
 class LogoGallery extends Component
 {
+    use WithFileUploads;
+
     public int $logoGenerationId;
 
     protected ?LogoGeneration $logoGeneration = null;
@@ -47,11 +54,22 @@ class LogoGallery extends Component
 
     public ?string $successMessage = null;
 
-    /** @var array<string, string> */
+    // File upload properties
+    /** @var array<UploadedFile> */
+    public array $uploadedFiles = [];
+
+    public bool $isUploading = false;
+
+    public int $uploadProgress = 0;
+
+    public bool $isDraggedOver = false;
+
+    /** @var array<string, mixed> */
     protected array $rules = [
         'selectedColorScheme' => 'required|string',
         'selectedLogos' => 'required|array|min:1',
         'selectedLogos.*' => 'exists:generated_logos,id',
+        'uploadedFiles.*' => 'required|file|mimes:png,jpg,jpeg,svg|max:5120',
     ];
 
     /** @var array<string, string> */
@@ -59,6 +77,9 @@ class LogoGallery extends Component
         'selectedColorScheme.required' => 'Please select a color scheme',
         'selectedLogos.required' => 'Please select at least one logo',
         'selectedLogos.min' => 'Please select at least one logo',
+        'uploadedFiles.*.mimes' => 'Only PNG, JPG, and SVG files are allowed',
+        'uploadedFiles.*.max' => 'File size must be less than 5MB',
+        'uploadedFiles.*.dimensions' => 'Images must be at least 100x100 pixels',
     ];
 
     public function mount(int $logoGenerationId): void
@@ -285,6 +306,176 @@ class LogoGallery extends Component
     }
 
     /**
+     * Upload logo files.
+     */
+    public function uploadLogos(): void
+    {
+        $this->isUploading = true;
+        $this->uploadProgress = 0;
+        $this->errorMessage = null;
+
+        // Validate uploaded files
+        $this->validate([
+            'uploadedFiles' => 'required|array|min:1',
+            'uploadedFiles.*' => 'required|file|mimes:png,jpg,jpeg,svg|max:5120',
+        ]);
+
+        try {
+
+            $uploadedCount = 0;
+            $totalFiles = count($this->uploadedFiles);
+
+            foreach ($this->uploadedFiles as $index => $file) {
+                // Validate image dimensions for raster images (skip SVG)
+                if (in_array($file->getMimeType(), ['image/png', 'image/jpeg', 'image/jpg'])) {
+                    $imageInfo = getimagesize($file->getPathname());
+                    if ($imageInfo !== false && ($imageInfo[0] < 100 || $imageInfo[1] < 100)) {
+                        $this->addError("uploadedFiles.{$index}", 'Images must be at least 100x100 pixels');
+
+                        continue;
+                    }
+                    // If getimagesize fails, we'll skip dimension validation
+                    // This can happen with fake files or corrupted images
+                }
+
+                // Generate unique file path
+                $sessionId = session()->getId();
+                $fileName = uniqid().'_'.time().'.'.$file->getClientOriginalExtension();
+                $filePath = "logos/uploaded/{$sessionId}/{$fileName}";
+
+                // Store the file
+                $storedPath = $file->storeAs("logos/uploaded/{$sessionId}", $fileName, 'public');
+
+                if ($storedPath) {
+                    // Get image dimensions (only for raster images, not SVG)
+                    $width = null;
+                    $height = null;
+                    if (in_array($file->getMimeType(), ['image/png', 'image/jpeg', 'image/jpg'])) {
+                        $imageInfo = getimagesize($file->getPathname());
+                        if ($imageInfo) {
+                            $width = $imageInfo[0];
+                            $height = $imageInfo[1];
+                        }
+                    }
+
+                    // Create database record
+                    UploadedLogo::create([
+                        'session_id' => $sessionId,
+                        'user_id' => Auth::id(),
+                        'original_name' => $file->getClientOriginalName(),
+                        'file_path' => $storedPath,
+                        'file_size' => $file->getSize(),
+                        'mime_type' => $file->getMimeType(),
+                        'image_width' => $width,
+                        'image_height' => $height,
+                    ]);
+
+                    $uploadedCount++;
+                }
+
+                // Update progress
+                $this->uploadProgress = (int) round((($index + 1) / $totalFiles) * 100);
+            }
+
+            if ($uploadedCount > 0) {
+                $this->dispatch('toast',
+                    message: "{$uploadedCount} logo(s) uploaded successfully!",
+                    type: 'success'
+                );
+
+                // Clear uploaded files
+                $this->uploadedFiles = [];
+            } else {
+                $this->dispatch('toast',
+                    message: 'No files were uploaded. Please check file requirements.',
+                    type: 'error'
+                );
+            }
+
+        } catch (Exception $e) {
+            $this->errorMessage = 'Upload failed: '.$e->getMessage();
+            $this->dispatch('toast', message: $this->errorMessage, type: 'error');
+            Log::error('Logo upload failed', [
+                'error' => $e->getMessage(),
+                'session_id' => session()->getId(),
+            ]);
+        } finally {
+            $this->isUploading = false;
+            $this->uploadProgress = 100;
+        }
+    }
+
+    /**
+     * Delete an uploaded logo.
+     */
+    public function deleteUploadedLogo(int $uploadedLogoId): void
+    {
+        try {
+            $uploadedLogo = UploadedLogo::where('id', $uploadedLogoId)
+                ->where('session_id', session()->getId())
+                ->first();
+
+            if (! $uploadedLogo) {
+                $this->dispatch('toast', message: 'Logo not found', type: 'error');
+
+                return;
+            }
+
+            // Delete file from storage
+            if ($uploadedLogo->file_path && Storage::disk('public')->exists($uploadedLogo->file_path)) {
+                Storage::disk('public')->delete($uploadedLogo->file_path);
+            }
+
+            // Delete database record
+            $uploadedLogo->delete();
+
+            $this->dispatch('toast', message: 'Logo deleted successfully', type: 'success');
+
+        } catch (Exception $e) {
+            $this->dispatch('toast', message: 'Failed to delete logo', type: 'error');
+            Log::error('Failed to delete uploaded logo', [
+                'logo_id' => $uploadedLogoId,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Download an uploaded logo.
+     */
+    public function downloadUploadedLogo(int $uploadedLogoId): void
+    {
+        $uploadedLogo = UploadedLogo::where('id', $uploadedLogoId)
+            ->where('session_id', session()->getId())
+            ->first();
+
+        if (! $uploadedLogo) {
+            $this->dispatch('toast', message: 'Logo not found', type: 'error');
+
+            return;
+        }
+
+        $downloadUrl = route('api.uploaded-logos.download', $uploadedLogo->id);
+        $this->dispatch('download-file', url: $downloadUrl);
+    }
+
+    /**
+     * Handle drag enter event.
+     */
+    public function dragEnter(): void
+    {
+        $this->isDraggedOver = true;
+    }
+
+    /**
+     * Handle drag leave event.
+     */
+    public function dragLeave(): void
+    {
+        $this->isDraggedOver = false;
+    }
+
+    /**
      * Get available color schemes.
      */
     /**
@@ -348,6 +539,19 @@ class LogoGallery extends Component
             'completed' => $completed,
             'total' => $total,
         ];
+    }
+
+    /**
+     * Get uploaded logos for the current session.
+     */
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, UploadedLogo>
+     */
+    public function getUploadedLogosProperty()
+    {
+        return UploadedLogo::forSession(session()->getId())
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 
     public function render(): View
