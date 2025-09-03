@@ -354,47 +354,38 @@
                             <flux:field>
                                 <flux:label>Generation Style</flux:label>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
-                                    <flux:field>
-                                        <div class="flex items-center gap-2">
-                                            <flux:radio
-                                                wire:model.live="generationMode"
-                                                value="creative"
-                                                id="creative"
-                                            />
-                                            <flux:label for="creative">🎨 Creative</flux:label>
-                                        </div>
-                                    </flux:field>
-                                    <flux:field>
-                                        <div class="flex items-center gap-2">
-                                            <flux:radio
-                                                wire:model.live="generationMode"
-                                                value="professional"
-                                                id="professional"
-                                            />
-                                            <flux:label for="professional">💼 Professional</flux:label>
-                                        </div>
-                                    </flux:field>
-                                    <flux:field>
-                                        <div class="flex items-center gap-2">
-                                            <flux:radio
-                                                wire:model.live="generationMode"
-                                                value="brandable"
-                                                id="brandable"
-                                            />
-                                            <flux:label for="brandable">🚀 Brandable</flux:label>
-                                        </div>
-                                    </flux:field>
-                                    <flux:field>
-                                        <div class="flex items-center gap-2">
-                                            <flux:radio
-                                                wire:model.live="generationMode"
-                                                value="tech-focused"
-                                                id="tech-focused"
-                                            />
-                                            <flux:label for="tech-focused">⚡ Tech-Focused</flux:label>
-                                        </div>
-                                    </flux:field>
+                                    @php
+                                        $modes = [
+                                            'creative' => ['emoji' => '🎨', 'label' => 'Creative'],
+                                            'professional' => ['emoji' => '💼', 'label' => 'Professional'],
+                                            'brandable' => ['emoji' => '🚀', 'label' => 'Brandable'],
+                                            'tech-focused' => ['emoji' => '⚡', 'label' => 'Tech-Focused'],
+                                        ];
+                                    @endphp
+                                    
+                                    @foreach($modes as $mode => $config)
+                                        <button
+                                            type="button"
+                                            wire:click="toggleGenerationMode('{{ $mode }}')"
+                                            class="flex items-center justify-center gap-3 p-4 rounded-lg border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 hover:scale-105 touch-manipulation {{ $generationMode === $mode 
+                                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 shadow-md' 
+                                                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700' }}"
+                                            role="button"
+                                            aria-pressed="{{ $generationMode === $mode ? 'true' : 'false' }}"
+                                            tabindex="0"
+                                            onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }"
+                                        >
+                                            <span class="text-xl">{{ $config['emoji'] }}</span>
+                                            <span class="font-medium">{{ $config['label'] }}</span>
+                                            @if($generationMode === $mode)
+                                                <svg class="w-4 h-4 ml-auto text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                                </svg>
+                                            @endif
+                                        </button>
+                                    @endforeach
                                 </div>
+                                <flux:error name="generationMode" />
                             </flux:field>
 
                             <!-- Deep Thinking Mode -->

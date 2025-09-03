@@ -32,13 +32,13 @@ use Illuminate\Support\Str;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User|null $user
  *
+ * @method static \Database\Factories\UploadedLogoFactory factory($count = null, $state = [])
  * @method static Builder<static>|UploadedLogo forSession(string $sessionId)
  * @method static Builder<static>|UploadedLogo forUser(int $userId)
- * @method static Builder<static>|UploadedLogo ofCategory(string $category)
- * @method static Builder<static>|UploadedLogo ofMimeType(string $mimeType)
- * @method static \Database\Factories\UploadedLogoFactory factory($count = null, $state = [])
  * @method static Builder<static>|UploadedLogo newModelQuery()
  * @method static Builder<static>|UploadedLogo newQuery()
+ * @method static Builder<static>|UploadedLogo ofCategory(string $category)
+ * @method static Builder<static>|UploadedLogo ofMimeType(string $mimeType)
  * @method static Builder<static>|UploadedLogo query()
  * @method static Builder<static>|UploadedLogo whereCategory($value)
  * @method static Builder<static>|UploadedLogo whereCreatedAt($value)

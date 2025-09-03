@@ -262,3 +262,84 @@ test('component does not auto-trigger generation without parameter', function ()
         ->assertSet('useAIGeneration', false)
         ->assertNotDispatched('trigger-auto-generation');
 });
+
+// Generation Mode Toggle Tests
+
+test('can select generation mode with toggle buttons', function (): void {
+    $user = User::factory()->create();
+    $project = Project::factory()->create(['user_id' => $user->id]);
+
+    $this->actingAs($user);
+
+    Livewire::test(ProjectPage::class, ['uuid' => $project->uuid])
+        ->assertSet('generationMode', '') // Default is empty
+        ->call('toggleGenerationMode', 'professional')
+        ->assertSet('generationMode', 'professional');
+});
+
+test('can deselect generation mode by clicking same toggle button', function (): void {
+    $user = User::factory()->create();
+    $project = Project::factory()->create(['user_id' => $user->id]);
+
+    $this->actingAs($user);
+
+    Livewire::test(ProjectPage::class, ['uuid' => $project->uuid])
+        ->set('generationMode', 'professional')
+        ->call('toggleGenerationMode', 'professional')
+        ->assertSet('generationMode', ''); // Deselected
+});
+
+test('can switch between different generation modes', function (): void {
+    $user = User::factory()->create();
+    $project = Project::factory()->create(['user_id' => $user->id]);
+
+    $this->actingAs($user);
+
+    $component = Livewire::test(ProjectPage::class, ['uuid' => $project->uuid]);
+
+    $modes = ['creative', 'professional', 'brandable', 'tech-focused'];
+    
+    foreach ($modes as $mode) {
+        $component->call('toggleGenerationMode', $mode)
+            ->assertSet('generationMode', $mode);
+    }
+});
+
+test('handles invalid generation mode gracefully', function (): void {
+    $user = User::factory()->create();
+    $project = Project::factory()->create(['user_id' => $user->id]);
+
+    $this->actingAs($user);
+
+    Livewire::test(ProjectPage::class, ['uuid' => $project->uuid])
+        ->call('toggleGenerationMode', 'invalid-mode')
+        ->assertSet('generationMode', ''); // Should remain unchanged (empty)
+});
+
+test('generation mode can be empty when deselected', function (): void {
+    $user = User::factory()->create();
+    $project = Project::factory()->create(['user_id' => $user->id]);
+
+    $this->actingAs($user);
+
+    Livewire::test(ProjectPage::class, ['uuid' => $project->uuid])
+        ->set('generationMode', 'brandable')
+        ->call('toggleGenerationMode', 'brandable')
+        ->assertSet('generationMode', '') // Should be empty
+        ->call('toggleGenerationMode', 'creative')
+        ->assertSet('generationMode', 'creative'); // Should work from empty state
+});
+
+test('generation requires mode to be selected when AI is enabled', function (): void {
+    $user = User::factory()->create();
+    $project = Project::factory()->create(['user_id' => $user->id]);
+
+    $this->actingAs($user);
+
+    Livewire::test(ProjectPage::class, ['uuid' => $project->uuid])
+        ->set('useAIGeneration', true)
+        ->set('selectedAIModels', ['gpt-4'])
+        ->set('generationMode', '') // Empty generation mode
+        ->call('generateMoreNames')
+        ->assertHasErrors(['generationMode' => 'required']);
+});

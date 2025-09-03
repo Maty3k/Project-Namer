@@ -33,9 +33,7 @@ describe('LogoGallery Upload Functionality', function (): void {
             ->set('uploadedFiles', [$file])
             ->call('uploadLogos')
             ->assertHasNoErrors()
-            ->assertDispatched('toast', function (string $name, array $data) {
-                return $data['type'] === 'success' && str_contains($data['message'], 'uploaded successfully');
-            });
+            ->assertDispatched('toast', fn (string $name, array $data) => $data['type'] === 'success' && str_contains((string) $data['message'], 'uploaded successfully'));
 
         expect(UploadedLogo::count())->toBe(1);
         $uploadedLogo = UploadedLogo::first();
@@ -99,9 +97,7 @@ describe('LogoGallery Upload Functionality', function (): void {
             ->test(LogoGallery::class, ['logoGenerationId' => $this->logoGeneration->id])
             ->set('uploadedFiles', [$file])
             ->call('uploadLogos')
-            ->assertDispatched('toast', function (string $name, array $data) {
-                return $data['type'] === 'error';
-            });
+            ->assertDispatched('toast', fn (string $name, array $data) => $data['type'] === 'error');
     })->skip('Storage mocking in tests is complex, skipping for now');
 
     it('can delete uploaded logos', function (): void {
@@ -115,9 +111,7 @@ describe('LogoGallery Upload Functionality', function (): void {
         Livewire::actingAs($this->user)
             ->test(LogoGallery::class, ['logoGenerationId' => $this->logoGeneration->id])
             ->call('deleteUploadedLogo', $uploadedLogo->id)
-            ->assertDispatched('toast', function (string $name, array $data) {
-                return $data['type'] === 'success' && str_contains($data['message'], 'deleted');
-            });
+            ->assertDispatched('toast', fn (string $name, array $data) => $data['type'] === 'success' && str_contains((string) $data['message'], 'deleted'));
 
         expect(UploadedLogo::find($uploadedLogo->id))->toBeNull();
         Storage::disk('public')->assertMissing('logos/uploaded/test-logo.png');
@@ -129,9 +123,7 @@ describe('LogoGallery Upload Functionality', function (): void {
         Livewire::actingAs($this->user)
             ->test(LogoGallery::class, ['logoGenerationId' => $this->logoGeneration->id])
             ->call('deleteUploadedLogo', $uploadedLogo->id)
-            ->assertDispatched('toast', function (string $name, array $data) {
-                return $data['type'] === 'error';
-            });
+            ->assertDispatched('toast', fn (string $name, array $data) => $data['type'] === 'error');
 
         expect(UploadedLogo::find($uploadedLogo->id))->not->toBeNull();
     });
@@ -165,9 +157,7 @@ describe('LogoGallery Upload Functionality', function (): void {
         Livewire::actingAs($this->user)
             ->test(LogoGallery::class, ['logoGenerationId' => $this->logoGeneration->id])
             ->call('downloadUploadedLogo', $uploadedLogo->id)
-            ->assertDispatched('download-file', function (string $name, array $data) use ($uploadedLogo) {
-                return str_contains($data['url'], (string) $uploadedLogo->id);
-            });
+            ->assertDispatched('download-file', fn (string $name, array $data) => str_contains((string) $data['url'], (string) $uploadedLogo->id));
     });
 
     it('tracks upload progress for multiple files', function (): void {
@@ -215,9 +205,7 @@ describe('LogoGallery Upload Functionality', function (): void {
             ->test(LogoGallery::class, ['logoGenerationId' => $this->logoGeneration->id])
             ->set('uploadedFiles', [$tooSmallFile])
             ->call('uploadLogos')
-            ->assertDispatched('toast', function (string $name, array $data) {
-                return $data['type'] === 'error' && str_contains($data['message'], 'No files were uploaded');
-            });
+            ->assertDispatched('toast', fn (string $name, array $data) => $data['type'] === 'error' && str_contains((string) $data['message'], 'No files were uploaded'));
 
         // Still should be 1 from the previous successful upload
         expect(UploadedLogo::count())->toBe(1);
@@ -240,7 +228,7 @@ describe('LogoGallery Upload Functionality', function (): void {
     it('can filter logos by type', function (): void {
         // Create uploaded logos
         UploadedLogo::factory()->count(2)->forSession(session()->getId())->create();
-        
+
         // Create generated logos
         GeneratedLogo::factory()->count(3)->create([
             'logo_generation_id' => $this->logoGeneration->id,
@@ -257,7 +245,7 @@ describe('LogoGallery Upload Functionality', function (): void {
         $component->set('filterType', 'uploaded')
             ->assertSet('filterType', 'uploaded');
 
-        // Test filtering by generated only  
+        // Test filtering by generated only
         $component->set('filterType', 'generated')
             ->assertSet('filterType', 'generated');
     });
@@ -265,7 +253,7 @@ describe('LogoGallery Upload Functionality', function (): void {
     it('can search logos', function (): void {
         // Create uploaded logo with searchable name
         UploadedLogo::factory()->forSession(session()->getId())->create([
-            'original_name' => 'company-logo.png'
+            'original_name' => 'company-logo.png',
         ]);
 
         $component = Livewire::actingAs($this->user)

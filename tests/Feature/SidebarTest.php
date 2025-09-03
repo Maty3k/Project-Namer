@@ -220,14 +220,14 @@ test('sidebar hides project names when collapsed and shows icons only', function
     // When collapsed, should NOT see project name or description in visible content
     $component->call('toggleCollapse')
         ->assertSet('collapsed', true);
-    
+
     // Check that the expanded view content is not present
     $html = $component->html();
     expect($html)->not->toContain('<h3 class="text-sm font-medium text-gray-900 dark:text-white truncate">');
-    
+
     // Should have tooltip with project name when collapsed (in title attribute)
     $component->assertSeeHtml('title="Test Project Name"');
-    
+
     // Should see project icon when collapsed
     $component->assertSeeHtml('<svg class="w-5 h-5');
 });

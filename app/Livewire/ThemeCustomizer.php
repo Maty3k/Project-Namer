@@ -48,6 +48,7 @@ final class ThemeCustomizer extends Component
 
     public string $selectedCategory = 'all';
 
+    /** @var array<string, mixed>|null */
     public ?array $recommendedSeasonalTheme = null;
 
     /**
@@ -109,6 +110,7 @@ final class ThemeCustomizer extends Component
 
             if (! $user) {
                 $this->dispatch('theme-error', 'You must be logged in to save themes');
+
                 return;
             }
 
@@ -127,7 +129,7 @@ final class ThemeCustomizer extends Component
             $this->dispatch('theme-saved');
             $this->dispatch('theme-updated'); // Apply theme immediately
         } catch (\Exception $e) {
-            logger()->error('Theme save failed: ' . $e->getMessage());
+            logger()->error('Theme save failed: '.$e->getMessage());
             $this->dispatch('theme-error', 'Failed to save theme preferences');
         }
     }
@@ -172,6 +174,7 @@ final class ThemeCustomizer extends Component
 
             if (! $this->themeFile) {
                 $this->dispatch('theme-error', 'No theme file provided');
+
                 return;
             }
 
@@ -180,14 +183,16 @@ final class ThemeCustomizer extends Component
 
             if (! $themeData || ! is_array($themeData)) {
                 $this->dispatch('theme-error', 'Invalid theme file format. Please upload a valid JSON theme file.');
+
                 return;
             }
 
             // Validate required theme properties
             $requiredFields = ['primary_color', 'background_color', 'text_color'];
             foreach ($requiredFields as $field) {
-                if (! isset($themeData[$field]) || ! preg_match('/^#[0-9a-fA-F]{6}$/', $themeData[$field])) {
+                if (! isset($themeData[$field]) || ! preg_match('/^#[0-9a-fA-F]{6}$/', (string) $themeData[$field])) {
                     $this->dispatch('theme-error', "Invalid or missing {$field} in theme file");
+
                     return;
                 }
             }
@@ -203,7 +208,7 @@ final class ThemeCustomizer extends Component
             $this->validateAccessibility();
             $this->dispatch('theme-imported');
         } catch (\Exception $e) {
-            logger()->error('Theme import failed: ' . $e->getMessage());
+            logger()->error('Theme import failed: '.$e->getMessage());
             $this->dispatch('theme-error', 'Failed to import theme file');
         }
     }

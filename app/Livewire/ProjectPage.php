@@ -58,7 +58,7 @@ class ProjectPage extends Component
     /** @var array<int, string> */
     public array $selectedAIModels = [];
 
-    public string $generationMode = 'creative';
+    public string $generationMode = '';
 
     public bool $deepThinking = false;
 
@@ -102,7 +102,7 @@ class ProjectPage extends Component
         'editableDescription' => 'required|string|min:10|max:2000',
         'selectedAIModels' => 'required_if:useAIGeneration,true|array|min:1',
         'selectedAIModels.*' => 'string|in:gpt-4,claude-3.5-sonnet,gemini-1.5-pro,grok-beta',
-        'generationMode' => 'string|in:creative,professional,brandable,tech-focused',
+        'generationMode' => 'nullable|string|in:creative,professional,brandable,tech-focused',
         'deepThinking' => 'boolean',
     ];
 
@@ -117,6 +117,7 @@ class ProjectPage extends Component
         'selectedAIModels.required_if' => 'Please select at least one AI model when using AI generation',
         'selectedAIModels.min' => 'Please select at least one AI model',
         'selectedAIModels.*.in' => 'Selected AI model is not supported',
+        'generationMode.required' => 'Please select a generation style',
         'generationMode.in' => 'Invalid generation mode selected',
     ];
 
@@ -367,7 +368,7 @@ class ProjectPage extends Component
 
         if ($preferences) {
             $this->selectedAIModels = $preferences->preferred_models ?? [];
-            $this->generationMode = $preferences->default_generation_mode ?? 'creative';
+            $this->generationMode = $preferences->default_generation_mode ?? '';
             $this->deepThinking = $preferences->default_deep_thinking ?? false;
             $this->enableModelComparison = $preferences->enable_model_comparison ?? false;
         } else {
@@ -393,7 +394,7 @@ class ProjectPage extends Component
             }
 
             // Set other defaults
-            $this->generationMode = 'creative';
+            $this->generationMode = '';
             $this->deepThinking = false;
         }
     }
@@ -514,6 +515,28 @@ class ProjectPage extends Component
     }
 
     /**
+     * Toggle generation mode selection/deselection.
+     */
+    public function toggleGenerationMode(string $mode): void
+    {
+        // Validate that the mode is valid
+        $validModes = ['creative', 'professional', 'brandable', 'tech-focused'];
+        
+        if (! in_array($mode, $validModes)) {
+            // Invalid mode, do nothing
+            return;
+        }
+        
+        // If the same mode is already selected, deselect it
+        if ($this->generationMode === $mode) {
+            $this->generationMode = '';
+        } else {
+            // Otherwise, select the new mode
+            $this->generationMode = $mode;
+        }
+    }
+
+    /**
      * Generate more names using AI with project context.
      */
     public function generateMoreNames(): void
@@ -522,11 +545,15 @@ class ProjectPage extends Component
 
         // Validate AI generation settings
         if ($this->useAIGeneration) {
+            // Require generation mode when generating names
+            $rules = $this->rules;
+            $rules['generationMode'] = 'required|string|in:creative,professional,brandable,tech-focused';
+            
             $this->validate([
-                'selectedAIModels' => $this->rules['selectedAIModels'],
-                'selectedAIModels.*' => $this->rules['selectedAIModels.*'],
-                'generationMode' => $this->rules['generationMode'],
-                'deepThinking' => $this->rules['deepThinking'],
+                'selectedAIModels' => $rules['selectedAIModels'],
+                'selectedAIModels.*' => $rules['selectedAIModels.*'],
+                'generationMode' => $rules['generationMode'],
+                'deepThinking' => $rules['deepThinking'],
             ]);
         }
 

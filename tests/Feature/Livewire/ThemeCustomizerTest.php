@@ -13,7 +13,7 @@ it('renders successfully', function (): void {
 
 it('displays seasonal themes correctly', function (): void {
     $user = User::factory()->create();
-    
+
     Livewire::actingAs($user)
         ->test(ThemeCustomizer::class)
         ->assertSee('Summer Coral')
@@ -25,16 +25,16 @@ it('displays seasonal themes correctly', function (): void {
 
 it('can filter themes by category', function (): void {
     $user = User::factory()->create();
-    
+
     $component = Livewire::actingAs($user)
         ->test(ThemeCustomizer::class);
-    
+
     // Test filtering by seasonal category
     $component->call('changeCategory', 'seasonal')
         ->assertSet('selectedCategory', 'seasonal')
         ->assertSee('Summer Coral')
         ->assertSee('Winter Frost');
-    
+
     // Test filtering by standard category
     $component->call('changeCategory', 'standard')
         ->assertSet('selectedCategory', 'standard')
@@ -44,7 +44,7 @@ it('can filter themes by category', function (): void {
 
 it('can apply seasonal themes', function (): void {
     $user = User::factory()->create();
-    
+
     Livewire::actingAs($user)
         ->test(ThemeCustomizer::class)
         ->call('applyPreset', 'summer')
@@ -58,13 +58,13 @@ it('can apply seasonal themes', function (): void {
 
 it('shows seasonal recommendation when available', function (): void {
     $user = User::factory()->create();
-    
+
     $component = Livewire::actingAs($user)
         ->test(ThemeCustomizer::class);
-    
+
     // Check if seasonal recommendation is loaded
     $recommendation = $component->get('recommendedSeasonalTheme');
-    
+
     if ($recommendation) {
         $component->assertSee('Recommended:')
             ->assertSee($recommendation['display_name']);
@@ -73,12 +73,12 @@ it('shows seasonal recommendation when available', function (): void {
 
 it('can apply seasonal recommendation', function (): void {
     $user = User::factory()->create();
-    
+
     $component = Livewire::actingAs($user)
         ->test(ThemeCustomizer::class);
-    
+
     $recommendation = $component->get('recommendedSeasonalTheme');
-    
+
     if ($recommendation) {
         $component->call('applySeasonalRecommendation')
             ->assertSet('primaryColor', $recommendation['primary_color'])

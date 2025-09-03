@@ -233,14 +233,12 @@ final class ThemeService
     public function getThemesByCategory(string $category = 'all'): array
     {
         $themes = $this->getPredefinedThemes();
-        
+
         if ($category === 'all') {
             return $themes;
         }
-        
-        return array_filter($themes, function ($theme) use ($category) {
-            return ($theme['category'] ?? 'standard') === $category;
-        });
+
+        return array_filter($themes, fn ($theme) => ($theme['category'] ?? 'standard') === $category);
     }
 
     /**
@@ -256,30 +254,35 @@ final class ThemeService
     /**
      * Get current seasonal theme recommendation based on date.
      */
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getCurrentSeasonalTheme(): ?array
     {
         $month = (int) date('n'); // 1-12
-        
+
         $seasonThemes = [
             'spring' => [3, 4, 5],     // March, April, May
-            'summer' => [6, 7, 8],     // June, July, August  
+            'summer' => [6, 7, 8],     // June, July, August
             'autumn' => [9, 10, 11],   // September, October, November
             'winter' => [12, 1, 2],    // December, January, February
         ];
-        
+
         // Special case for Halloween in October
         if ($month === 10) {
             $themes = $this->getPredefinedThemes();
+
             return collect($themes)->firstWhere('name', 'halloween');
         }
-        
+
         foreach ($seasonThemes as $season => $months) {
             if (in_array($month, $months)) {
                 $themes = $this->getPredefinedThemes();
+
                 return collect($themes)->firstWhere('season', $season);
             }
         }
-        
+
         return null;
     }
 

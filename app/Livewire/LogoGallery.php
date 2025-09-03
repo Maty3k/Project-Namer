@@ -533,7 +533,7 @@ class LogoGallery extends Component
             return [];
         }
 
-        $filteredLogos = $this->filteredGeneratedLogos;
+        $filteredLogos = $this->getFilteredGeneratedLogosProperty();
 
         return $filteredLogos
             ->groupBy('style')
@@ -599,25 +599,23 @@ class LogoGallery extends Component
      */
     public function getFilteredGeneratedLogosProperty()
     {
-        if (!$this->logoGeneration) {
+        if (! $this->logoGeneration) {
             return collect();
         }
 
         $query = $this->logoGeneration->generatedLogos();
 
         // Filter by style if specified
-        if (!empty($this->filterStyle)) {
+        if (! empty($this->filterStyle)) {
             $query->where('style', $this->filterStyle);
         }
 
         $logos = $query->get();
 
         // Apply search filter if specified
-        if (!empty($this->searchTerm)) {
-            $logos = $logos->filter(function ($logo) {
-                return str_contains(strtolower($logo->style ?? ''), strtolower($this->searchTerm)) ||
-                       str_contains(strtolower($logo->description ?? ''), strtolower($this->searchTerm));
-            });
+        if (! empty($this->searchTerm)) {
+            $logos = $logos->filter(fn ($logo) => str_contains(strtolower($logo->style ?? ''), strtolower($this->searchTerm)) ||
+                   str_contains(strtolower($logo->prompt_used ?? ''), strtolower($this->searchTerm)));
         }
 
         return $logos;
@@ -631,14 +629,12 @@ class LogoGallery extends Component
      */
     public function getFilteredUploadedLogosProperty()
     {
-        $logos = $this->uploadedLogos;
+        $logos = $this->getUploadedLogosProperty();
 
         // Apply search filter if specified
-        if (!empty($this->searchTerm)) {
-            $logos = $logos->filter(function ($logo) {
-                return str_contains(strtolower($logo->original_name), strtolower($this->searchTerm)) ||
-                       str_contains(strtolower($logo->display_name), strtolower($this->searchTerm));
-            });
+        if (! empty($this->searchTerm)) {
+            $logos = $logos->filter(fn ($logo) => str_contains(strtolower((string) $logo->original_name), strtolower($this->searchTerm)) ||
+                   str_contains(strtolower((string) $logo->description), strtolower($this->searchTerm)));
         }
 
         return $logos;
@@ -652,7 +648,7 @@ class LogoGallery extends Component
      */
     public function getAvailableStylesProperty(): array
     {
-        if (!$this->logoGeneration) {
+        if (! $this->logoGeneration) {
             return [];
         }
 
@@ -698,9 +694,9 @@ class LogoGallery extends Component
     /**
      * Get the current logo being viewed in detail.
      */
-    public function getDetailLogoProperty()
+    public function getDetailLogoProperty(): \App\Models\GeneratedLogo|\App\Models\UploadedLogo|null
     {
-        if (!$this->detailLogoId || !$this->detailLogoType) {
+        if (! $this->detailLogoId || ! $this->detailLogoType) {
             return null;
         }
 
