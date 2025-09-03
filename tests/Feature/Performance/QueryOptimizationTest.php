@@ -21,17 +21,17 @@ describe('Database Query Optimization', function (): void {
     it('optimizes getUserSessions with eager loading to prevent N+1 queries', function (): void {
         // Create sessions with results
         $sessions = NamingSession::factory()->count(20)->create(['user_id' => $this->user->id]);
-        
+
         foreach ($sessions as $session) {
             SessionResult::factory()->count(5)->create(['session_id' => $session->id]);
         }
 
         DB::enableQueryLog();
         $queriesBefore = count(DB::getQueryLog());
-        
+
         // Get sessions with service
         $userSessions = $this->sessionService->getUserSessions($this->user, 20, 0);
-        
+
         $queriesAfter = count(DB::getQueryLog());
         $totalQueries = $queriesAfter - $queriesBefore;
         DB::disableQueryLog();
@@ -41,16 +41,16 @@ describe('Database Query Optimization', function (): void {
         // 2. Load results for all sessions at once
         expect($totalQueries)->toBeLessThanOrEqual(2);
         expect($userSessions->count())->toBe(20);
-        
+
         // Verify results are loaded without additional queries
         DB::enableQueryLog();
         $queriesBefore = count(DB::getQueryLog());
-        
+
         foreach ($userSessions as $session) {
             // Access results - should not trigger additional queries
             $session->results->count();
         }
-        
+
         $queriesAfter = count(DB::getQueryLog());
         $additionalQueries = $queriesAfter - $queriesBefore;
         DB::disableQueryLog();
@@ -73,16 +73,16 @@ describe('Database Query Optimization', function (): void {
         ]);
 
         // Add results to all sessions
-        NamingSession::where('user_id', $this->user->id)->get()->each(function ($session) {
+        NamingSession::where('user_id', $this->user->id)->get()->each(function ($session): void {
             SessionResult::factory()->count(3)->create(['session_id' => $session->id]);
         });
 
         DB::enableQueryLog();
         $queriesBefore = count(DB::getQueryLog());
-        
+
         // Search sessions
         $searchResults = $this->sessionService->searchSessions($this->user, 'ecommerce');
-        
+
         $queriesAfter = count(DB::getQueryLog());
         $totalQueries = $queriesAfter - $queriesBefore;
         DB::disableQueryLog();
@@ -105,16 +105,16 @@ describe('Database Query Optimization', function (): void {
         ]);
 
         // Add results to all sessions
-        NamingSession::where('user_id', $this->user->id)->get()->each(function ($session) {
+        NamingSession::where('user_id', $this->user->id)->get()->each(function ($session): void {
             SessionResult::factory()->count(2)->create(['session_id' => $session->id]);
         });
 
         DB::enableQueryLog();
         $queriesBefore = count(DB::getQueryLog());
-        
+
         // Filter starred sessions
         $starredSessions = $this->sessionService->filterSessions($this->user, ['is_starred' => true]);
-        
+
         $queriesAfter = count(DB::getQueryLog());
         $totalQueries = $queriesAfter - $queriesBefore;
         DB::disableQueryLog();
@@ -122,7 +122,7 @@ describe('Database Query Optimization', function (): void {
         // Should use eager loading
         expect($totalQueries)->toBeLessThanOrEqual(2);
         expect($starredSessions->count())->toBe(15);
-        expect($starredSessions->every(fn($session) => $session->is_starred))->toBe(true);
+        expect($starredSessions->every(fn ($session) => $session->is_starred))->toBe(true);
     });
 
     it('limits results loading for performance', function (): void {
@@ -131,17 +131,15 @@ describe('Database Query Optimization', function (): void {
         SessionResult::factory()->count(20)->create(['session_id' => $session->id]);
 
         DB::enableQueryLog();
-        
+
         // Get sessions
         $userSessions = $this->sessionService->getUserSessions($this->user, 1, 0);
-        
+
         $queries = DB::getQueryLog();
         DB::disableQueryLog();
 
         // Check that results query includes LIMIT
-        $resultsQuery = collect($queries)->first(function ($query) {
-            return str_contains($query['query'], 'session_results');
-        });
+        $resultsQuery = collect($queries)->first(fn ($query) => str_contains((string) $query['query'], 'session_results'));
 
         expect($resultsQuery)->not->toBeNull();
         expect($userSessions->first()->results->count())->toBeLessThanOrEqual(3);
@@ -157,12 +155,12 @@ describe('Database Query Optimization', function (): void {
         // Measure performance with optimized queries
         $startTime = microtime(true);
         $optimizedSessions = $this->sessionService->getUserSessions($this->user, 50, 0);
-        
+
         // Access results to trigger loading
         foreach ($optimizedSessions as $session) {
             $session->results->count();
         }
-        
+
         $endTime = microtime(true);
         $optimizedTime = ($endTime - $startTime) * 1000;
 
@@ -177,17 +175,17 @@ describe('Database Query Optimization', function (): void {
         for ($i = 0; $i < 100; $i++) {
             $session = NamingSession::factory()->create(['user_id' => $this->user->id]);
             $sessions->push($session);
-            
+
             // Add varying numbers of results
-            SessionResult::factory()->count(rand(1, 10))->create(['session_id' => $session->id]);
+            SessionResult::factory()->count(random_int(1, 10))->create(['session_id' => $session->id]);
         }
 
         DB::enableQueryLog();
         $startTime = microtime(true);
-        
+
         // Load sessions with optimized query
         $loadedSessions = $this->sessionService->getUserSessions($this->user, 20, 0);
-        
+
         $endTime = microtime(true);
         $queries = DB::getQueryLog();
         DB::disableQueryLog();
@@ -213,22 +211,22 @@ describe('Database Query Optimization', function (): void {
         $loadedSessions = $this->sessionService->getUserSessions($this->user, 10, 0);
 
         DB::enableQueryLog();
-        
+
         // Access patterns that should not trigger additional queries
         foreach ($loadedSessions as $session) {
             // Check if results exist
             $hasResults = $session->results->isNotEmpty();
-            
+
             if ($hasResults) {
                 // Access first result
                 $firstResult = $session->results->first();
                 $firstResult?->generated_names;
-                
+
                 // Count results
                 $resultCount = $session->results->count();
             }
         }
-        
+
         $queries = DB::getQueryLog();
         DB::disableQueryLog();
 
@@ -270,7 +268,7 @@ describe('Database Query Optimization', function (): void {
 
         expect($ecommerceSession)->not->toBeNull();
         expect($fintechSession)->not->toBeNull();
-        
+
         expect($ecommerceSession->results->first()->generated_names)->toBe(['ShopEasy', 'CommercePro', 'StoreFront']);
         expect($fintechSession->results->first()->generated_names)->toBe(['FinanceHub', 'MoneyWise', 'CashFlow']);
     });

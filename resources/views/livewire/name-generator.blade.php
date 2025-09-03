@@ -1699,6 +1699,7 @@ new class extends Component {
         $this->screenReaderAnnouncement = 'Form cleared';
     }
 
+
 } ?>
 <div class="mx-auto max-w-4xl fade-in pull-to-refresh refreshable gesture-support gesture-state swipe-persistence mobile-scroll-optimized gpu-accelerated transform3d memory-efficient mobile-nav
             xs:p-4

@@ -112,6 +112,24 @@ new class extends Component {
             'json' => 'Technical format with complete data structure',
         ];
     }
+    
+    protected function serializeProperty($property)
+    {
+        if ($property instanceof \App\Models\LogoGeneration) {
+            return $property->id;
+        }
+
+        return parent::serializeProperty($property);
+    }
+
+    protected function hydrateProperty($property, $value)
+    {
+        if ($property === 'logoGeneration' && is_int($value)) {
+            return \App\Models\LogoGeneration::find($value);
+        }
+
+        return parent::hydrateProperty($property, $value);
+    }
 }; ?>
 
 <div>

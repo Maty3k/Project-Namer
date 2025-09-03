@@ -1,6 +1,6 @@
 <aside 
     class="h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col transition-all duration-300 ease-out
-           {{ $isCollapsed ? 'w-0 opacity-0 overflow-hidden' : 'w-80' }}"
+           {{ $isCollapsed ? 'w-0 opacity-0 overflow-hidden invisible' : 'w-80' }}"
     x-data="{
         showActionMenu: null,
         focusMode: $wire.isCollapsed,
@@ -308,7 +308,7 @@
 @if($isCollapsed)
     <button
         wire:click="toggleFocusMode"
-        class="fixed top-4 left-4 z-50 bg-black dark:bg-white text-white dark:text-black p-3 rounded-lg shadow-lg 
+        class="fixed top-4 left-4 z-50 bg-black dark:bg-white p-3 rounded-lg shadow-lg 
                hover:bg-gray-800 dark:hover:bg-gray-100 transition-all duration-200 hover:scale-105"
         title="Show sidebar (Cmd+/)"
     >

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Livewire\Dashboard;
+use App\Livewire\NameGeneratorDashboard;
 use App\Models\NamingSession;
 use App\Models\User;
 use App\Services\SessionService;
@@ -28,7 +28,7 @@ describe('Dashboard Session Integration', function (): void {
                 'deep_thinking' => true,
             ]);
 
-            $component = Livewire::test(Dashboard::class)
+            $component = Livewire::test(NameGeneratorDashboard::class)
                 ->call('loadSession', $session->id);
 
             expect($component->get('businessIdea'))->toBe('A test business description');
@@ -58,7 +58,7 @@ describe('Dashboard Session Integration', function (): void {
                 'deep_thinking' => false,
             ]);
 
-            $component = Livewire::test(Dashboard::class)
+            $component = Livewire::test(NameGeneratorDashboard::class)
                 ->call('loadSession', $session->id);
 
             expect($component->get('generatedNames'))->toBe(['TechFlow', 'DataSync', 'CloudCore']);
@@ -67,7 +67,7 @@ describe('Dashboard Session Integration', function (): void {
         });
 
         it('handles loading non-existent session gracefully', function (): void {
-            $component = Livewire::test(Dashboard::class)
+            $component = Livewire::test(NameGeneratorDashboard::class)
                 ->call('loadSession', 'non-existent-id');
 
             $component->assertDispatched('toast',
@@ -79,7 +79,7 @@ describe('Dashboard Session Integration', function (): void {
 
     describe('Auto-save Functionality', function (): void {
         it('auto-saves session when generating names', function (): void {
-            $component = Livewire::test(Dashboard::class)
+            $component = Livewire::test(NameGeneratorDashboard::class)
                 ->set('businessIdea', 'Online marketplace for handmade goods')
                 ->set('generationMode', 'creative')
                 ->set('deepThinking', false);
@@ -103,7 +103,7 @@ describe('Dashboard Session Integration', function (): void {
                 'generation_mode' => 'creative',
             ]);
 
-            $component = Livewire::test(Dashboard::class)
+            $component = Livewire::test(NameGeneratorDashboard::class)
                 ->call('loadSession', $session->id)
                 ->set('businessIdea', 'Updated business description')
                 ->set('generationMode', 'professional');
@@ -117,7 +117,7 @@ describe('Dashboard Session Integration', function (): void {
         })->skip('OpenAI service integration will be tested separately');
 
         it('auto-saves periodically while typing', function (): void {
-            $component = Livewire::test(Dashboard::class)
+            $component = Livewire::test(NameGeneratorDashboard::class)
                 ->set('businessIdea', 'A business idea in progress')
                 ->set('generationMode', 'brandable');
 
@@ -145,7 +145,7 @@ describe('Dashboard Session Integration', function (): void {
                 'business_description' => 'Second session',
             ]);
 
-            $component = Livewire::test(Dashboard::class)
+            $component = Livewire::test(NameGeneratorDashboard::class)
                 ->call('loadSession', $session1->id)
                 ->set('businessIdea', 'Modified first session content');
 
@@ -167,7 +167,7 @@ describe('Dashboard Session Integration', function (): void {
                 'business_description' => 'Second session',
             ]);
 
-            $component = Livewire::test(Dashboard::class)
+            $component = Livewire::test(NameGeneratorDashboard::class)
                 ->call('loadSession', $session1->id)
                 ->set('businessIdea', 'Modified content')
                 ->call('confirmSessionSwitch', $session2->id, true); // true = save current
@@ -191,7 +191,7 @@ describe('Dashboard Session Integration', function (): void {
                 'business_description' => 'Second session',
             ]);
 
-            $component = Livewire::test(Dashboard::class)
+            $component = Livewire::test(NameGeneratorDashboard::class)
                 ->call('loadSession', $session1->id)
                 ->set('businessIdea', 'Modified content')
                 ->call('confirmSessionSwitch', $session2->id, false); // false = don't save
@@ -213,7 +213,7 @@ describe('Dashboard Session Integration', function (): void {
                 'generation_mode' => 'professional',
             ]);
 
-            $component = Livewire::test(Dashboard::class);
+            $component = Livewire::test(NameGeneratorDashboard::class);
 
             // Simulate event dispatch from sidebar
             $component->dispatch('sessionLoaded', ['sessionId' => $session->id]);
@@ -230,7 +230,7 @@ describe('Dashboard Session Integration', function (): void {
                 'generation_mode' => 'creative',
             ]);
 
-            $component = Livewire::test(Dashboard::class);
+            $component = Livewire::test(NameGeneratorDashboard::class);
 
             // Simulate event dispatch from sidebar
             $component->dispatch('sessionCreated', ['sessionId' => $session->id]);
@@ -246,7 +246,7 @@ describe('Dashboard Session Integration', function (): void {
                 'business_description' => 'To be deleted',
             ]);
 
-            $component = Livewire::test(Dashboard::class)
+            $component = Livewire::test(NameGeneratorDashboard::class)
                 ->call('loadSession', $session->id);
 
             // Delete the session
@@ -269,14 +269,14 @@ describe('Dashboard Session Integration', function (): void {
                 'business_description' => 'Test session',
             ]);
 
-            $component = Livewire::test(Dashboard::class)
+            $component = Livewire::test(NameGeneratorDashboard::class)
                 ->call('loadSession', $session->id);
 
             expect($component->get('currentSessionId'))->toBe($session->id);
         });
 
         it('clears current session ID when creating new session', function (): void {
-            $component = Livewire::test(Dashboard::class)
+            $component = Livewire::test(NameGeneratorDashboard::class)
                 ->call('newSession');
 
             expect($component->get('currentSessionId'))->toBeNull();

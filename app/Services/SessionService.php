@@ -82,7 +82,7 @@ class SessionService
     {
         if (empty(trim($query))) {
             return $user->namingSessions()
-                ->with(['results' => function ($query) {
+                ->with(['results' => function ($query): void {
                     $query->select(['id', 'session_id', 'generated_names', 'generation_timestamp'])
                         ->orderBy('generation_timestamp', 'desc');
                 }])
@@ -103,7 +103,7 @@ class SessionService
                 $sessionIds = array_column($matchingIds, 'id');
 
                 return $user->namingSessions()
-                    ->with(['results' => function ($query) {
+                    ->with(['results' => function ($query): void {
                         $query->select(['id', 'session_id', 'generated_names', 'generation_timestamp'])
                             ->orderBy('generation_timestamp', 'desc');
                     }])
@@ -123,7 +123,7 @@ class SessionService
         $trimmedQuery = trim($query);
 
         return $user->namingSessions()
-            ->with(['results' => function ($query) {
+            ->with(['results' => function ($query): void {
                 $query->select(['id', 'session_id', 'generated_names', 'generation_timestamp'])
                     ->orderBy('generation_timestamp', 'desc');
             }])
@@ -144,7 +144,7 @@ class SessionService
     public function filterSessions(User $user, array $filters): Collection
     {
         $query = $user->namingSessions()
-            ->with(['results' => function ($query) {
+            ->with(['results' => function ($query): void {
                 $query->select(['id', 'session_id', 'generated_names', 'generation_timestamp'])
                     ->orderBy('generation_timestamp', 'desc');
             }]);
@@ -178,7 +178,7 @@ class SessionService
     public function getUserSessions(User $user, int $limit = 20, int $offset = 0): Collection
     {
         return $user->namingSessions()
-            ->with(['results' => function ($query) {
+            ->with(['results' => function ($query): void {
                 $query->select(['id', 'session_id', 'generated_names', 'generation_timestamp'])
                     ->orderBy('generation_timestamp', 'desc')
                     ->limit(3); // Only load latest 3 results for preview

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Domain availability cache model.
- *
+ * 
  * Stores domain availability results to avoid repeated API calls
  * and improve application performance.
  *
@@ -19,7 +19,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon $checked_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
  * @method static Builder<static>|DomainCache expired()
  * @method static Builder<static>|DomainCache fresh()
  * @method static Builder<static>|DomainCache newModelQuery()
@@ -31,7 +30,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static Builder<static>|DomainCache whereDomain($value)
  * @method static Builder<static>|DomainCache whereId($value)
  * @method static Builder<static>|DomainCache whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 final class DomainCache extends Model

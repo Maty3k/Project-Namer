@@ -1,0 +1,544 @@
+/*
+ * AI Interface Accessibility Enhancements
+ * 
+ * Provides comprehensive accessibility improvements for AI generation interfaces
+ * following WCAG 2.1 AA standards for keyboard navigation, screen readers,
+ * color contrast, and interactive element accessibility.
+ */
+
+/* ====================================================================
+   Focus Management and Keyboard Navigation
+   ==================================================================== */
+
+/* High-contrast focus indicators for AI interface elements */
+.ai-interface [role="button"]:focus-visible,
+.ai-interface button:focus-visible,
+.ai-interface .ai-model-card:focus-visible,
+.ai-interface .ai-generation-mode:focus-visible {
+    outline: 3px solid #2563eb;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px white, 0 0 0 5px #2563eb;
+}
+
+/* Dark mode focus indicators */
+.dark .ai-interface [role="button"]:focus-visible,
+.dark .ai-interface button:focus-visible,
+.dark .ai-interface .ai-model-card:focus-visible,
+.dark .ai-interface .ai-generation-mode:focus-visible {
+    outline: 3px solid #60a5fa;
+    box-shadow: 0 0 0 2px #1f2937, 0 0 0 5px #60a5fa;
+}
+
+/* Skip link for keyboard users */
+.ai-skip-link {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    background-color: #2563eb;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    z-index: 999999;
+}
+
+.ai-skip-link:focus {
+    position: fixed;
+    left: 6px;
+    top: 6px;
+    width: auto;
+    height: auto;
+    overflow: auto;
+}
+
+/* Enhanced keyboard navigation for model selection */
+.ai-model-selector {
+    display: grid;
+    gap: 12px;
+}
+
+.ai-model-card {
+    position: relative;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    padding: 16px;
+    border: 2px solid transparent;
+    background-color: #f9fafb;
+}
+
+.ai-model-card:hover {
+    background-color: #f3f4f6;
+    transform: translateY(-1px);
+}
+
+.ai-model-card:focus-visible {
+    border-color: #2563eb;
+    background-color: #eff6ff;
+}
+
+.ai-model-card[aria-pressed="true"] {
+    background-color: #dbeafe;
+    border-color: #3b82f6;
+}
+
+/* Dark mode model cards */
+.dark .ai-model-card {
+    background-color: #374151;
+    border-color: transparent;
+}
+
+.dark .ai-model-card:hover {
+    background-color: #4b5563;
+}
+
+.dark .ai-model-card:focus-visible {
+    border-color: #60a5fa;
+    background-color: #1e3a8a;
+}
+
+.dark .ai-model-card[aria-pressed="true"] {
+    background-color: #1e40af;
+    border-color: #60a5fa;
+}
+
+/* ====================================================================
+   Screen Reader Enhancements
+   ==================================================================== */
+
+/* Screen reader only content for context */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Enhanced progress indicators for screen readers */
+.ai-progress-container {
+    position: relative;
+}
+
+.ai-progress-text {
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.ai-progress-bar {
+    width: 100%;
+    height: 8px;
+    background-color: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.dark .ai-progress-bar {
+    background-color: #4b5563;
+}
+
+.ai-progress-fill {
+    height: 100%;
+    background-color: #3b82f6;
+    transition: width 0.3s ease;
+    border-radius: 4px;
+}
+
+.dark .ai-progress-fill {
+    background-color: #60a5fa;
+}
+
+/* Status announcements for screen readers */
+.ai-status-announcement {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* ====================================================================
+   High Contrast and Color Accessibility
+   ==================================================================== */
+
+/* High contrast mode detection and enhancement */
+@media (prefers-contrast: high) {
+    .ai-interface .ai-model-card {
+        border: 2px solid currentColor;
+        background-color: #ffffff;
+    }
+    
+    .ai-interface .ai-model-card:focus-visible {
+        border: 4px solid #000000;
+        background-color: #ffff00;
+        color: #000000;
+    }
+    
+    .ai-interface .ai-generation-button {
+        border: 2px solid currentColor;
+        background-color: #000000;
+        color: #ffffff;
+    }
+    
+    .ai-interface .ai-generation-button:focus-visible {
+        background-color: #ffff00;
+        color: #000000;
+        border: 4px solid #000000;
+    }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .ai-model-card,
+    .ai-progress-fill,
+    .ai-generation-animation {
+        transition: none;
+        animation: none;
+    }
+    
+    .ai-loading-spinner {
+        animation: none;
+    }
+    
+    /* Replace spinning animation with pulsing for reduced motion */
+    .ai-loading-spinner::after {
+        content: "⋯";
+        animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 50%, 100% { opacity: 1; }
+        25%, 75% { opacity: 0.5; }
+    }
+}
+
+/* ====================================================================
+   Touch and Mobile Accessibility
+   ==================================================================== */
+
+/* Larger touch targets for mobile accessibility */
+@media (max-width: 768px) {
+    .ai-interface button,
+    .ai-interface [role="button"],
+    .ai-model-card,
+    .ai-generation-mode {
+        min-height: 48px;
+        min-width: 48px;
+        padding: 12px 16px;
+    }
+    
+    /* Increased spacing between interactive elements */
+    .ai-model-selector {
+        gap: 16px;
+    }
+    
+    .ai-generation-controls {
+        gap: 16px;
+    }
+}
+
+/* ====================================================================
+   Form and Input Accessibility
+   ==================================================================== */
+
+/* Enhanced textarea and input styling */
+.ai-input-container {
+    position: relative;
+}
+
+.ai-input-field {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 16px; /* Prevents zoom on iOS */
+    line-height: 1.5;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ai-input-field:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.ai-input-field[aria-invalid="true"] {
+    border-color: #dc2626;
+}
+
+.ai-input-field[aria-invalid="true"]:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+/* Dark mode input styling */
+.dark .ai-input-field {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+}
+
+.dark .ai-input-field:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+}
+
+/* Input labels and descriptions */
+.ai-input-label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #374151;
+}
+
+.dark .ai-input-label {
+    color: #f9fafb;
+}
+
+.ai-input-description {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+.dark .ai-input-description {
+    color: #9ca3af;
+}
+
+.ai-input-error {
+    font-size: 0.875rem;
+    color: #dc2626;
+    margin-top: 4px;
+}
+
+.dark .ai-input-error {
+    color: #f87171;
+}
+
+/* Character count indicator */
+.ai-character-count {
+    font-size: 0.875rem;
+    color: #6b7280;
+    text-align: right;
+    margin-top: 4px;
+}
+
+.ai-character-count[aria-label*="exceeded"] {
+    color: #dc2626;
+    font-weight: 500;
+}
+
+.dark .ai-character-count {
+    color: #9ca3af;
+}
+
+.dark .ai-character-count[aria-label*="exceeded"] {
+    color: #f87171;
+}
+
+/* ====================================================================
+   Results and Content Accessibility
+   ==================================================================== */
+
+/* Results container with proper headings and structure */
+.ai-results-container {
+    margin-top: 24px;
+}
+
+.ai-results-heading {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #111827;
+}
+
+.dark .ai-results-heading {
+    color: #f9fafb;
+}
+
+.ai-result-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background-color: #ffffff;
+}
+
+.dark .ai-result-item {
+    background-color: #374151;
+    border-color: #4b5563;
+}
+
+.ai-result-name {
+    font-weight: 500;
+    color: #111827;
+}
+
+.dark .ai-result-name {
+    color: #f9fafb;
+}
+
+.ai-result-status {
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.ai-result-status[data-status="available"] {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.ai-result-status[data-status="unavailable"] {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.dark .ai-result-status[data-status="available"] {
+    background-color: #064e3b;
+    color: #6ee7b7;
+}
+
+.dark .ai-result-status[data-status="unavailable"] {
+    background-color: #7f1d1d;
+    color: #fca5a5;
+}
+
+/* ====================================================================
+   Loading and Status Indicators
+   ==================================================================== */
+
+/* Accessible loading states */
+.ai-loading-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.ai-loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.ai-loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e5e7eb;
+    border-top: 3px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.dark .ai-loading-spinner {
+    border-color: #4b5563;
+    border-top-color: #60a5fa;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.ai-loading-text {
+    font-weight: 500;
+    color: #6b7280;
+    text-align: center;
+}
+
+.dark .ai-loading-text {
+    color: #9ca3af;
+}
+
+/* Error states */
+.ai-error-container {
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #f87171;
+    background-color: #fef2f2;
+    margin-top: 16px;
+}
+
+.dark .ai-error-container {
+    background-color: #7f1d1d;
+    border-color: #dc2626;
+}
+
+.ai-error-title {
+    font-weight: 600;
+    color: #991b1b;
+    margin-bottom: 8px;
+}
+
+.dark .ai-error-title {
+    color: #fca5a5;
+}
+
+.ai-error-message {
+    color: #7f1d1d;
+}
+
+.dark .ai-error-message {
+    color: #f87171;
+}
+
+/* ====================================================================
+   Utility Classes for Accessibility
+   ==================================================================== */
+
+/* Focus trap utility */
+.ai-focus-trap {
+    position: relative;
+}
+
+.ai-focus-trap:focus {
+    outline: none;
+}
+
+/* Aria live regions for dynamic content */
+.ai-live-region[aria-live="polite"] {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* High contrast mode utilities */
+@media (prefers-contrast: high) {
+    .ai-high-contrast {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        border: 2px solid #000000 !important;
+    }
+    
+    .ai-high-contrast:focus {
+        background-color: #ffff00 !important;
+        color: #000000 !important;
+        border: 4px solid #000000 !important;
+    }
+}
+
+/* Reduced motion utilities */
+@media (prefers-reduced-motion: reduce) {
+    .ai-no-motion * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

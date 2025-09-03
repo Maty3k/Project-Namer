@@ -23,12 +23,12 @@ describe('SessionSidebar Accessibility Compliance', function (): void {
         // Should have main heading
         expect($html)->toContain('<h2');
         expect($html)->toContain('Sessions');
-        
+
         // Date group headers should be h3 when sessions exist
         NamingSession::factory()->create(['user_id' => $this->user->id]);
         $component = Livewire::test(SessionSidebar::class); // Create new instance
         $html = $component->html();
-        
+
         expect($html)->toContain('<h3');
     });
 
@@ -43,11 +43,11 @@ describe('SessionSidebar Accessibility Compliance', function (): void {
 
         // Search input should have proper labels
         expect($html)->toContain('placeholder="Search sessions..."');
-        
+
         // Buttons should have titles or aria-labels
         expect($html)->toContain('title="Show starred only"');
         expect($html)->toContain('title="Toggle focus mode');
-        
+
         // Clear search button only shows when there's a search query
         $component->set('searchQuery', 'test');
         $html = $component->html();
@@ -61,7 +61,7 @@ describe('SessionSidebar Accessibility Compliance', function (): void {
         // Focus mode keyboard shortcut should be documented
         $html = $component->html();
         expect($html)->toContain('(Cmd+/)');
-        
+
         // Keyboard events only appear when in rename mode
         $component->call('startRename', $session->id);
         $html = $component->html();
@@ -89,13 +89,13 @@ describe('SessionSidebar Accessibility Compliance', function (): void {
 
     it('handles focus management correctly', function (): void {
         NamingSession::factory()->create(['user_id' => $this->user->id]);
-        
+
         $component = Livewire::test(SessionSidebar::class);
 
         // Start renaming should set focus
         $component->call('startRename', NamingSession::first()->id);
         $html = $component->html();
-        
+
         expect($html)->toContain('autofocus');
     });
 
@@ -132,7 +132,7 @@ describe('SessionSidebar Accessibility Compliance', function (): void {
     it('provides loading state accessibility', function (): void {
         // Create enough sessions to trigger hasMoreSessions
         NamingSession::factory()->count(30)->create(['user_id' => $this->user->id]);
-        
+
         $component = Livewire::test(SessionSidebar::class)
             ->set('isLoadingSessions', true);
 
@@ -140,11 +140,11 @@ describe('SessionSidebar Accessibility Compliance', function (): void {
 
         // Loading skeletons should not interfere with screen readers
         expect($html)->toContain('animate-pulse');
-        
+
         // Loading more should be announced when conditions are met
         $component->set('isLoadingMore', true)
-                   ->set('isLoadingSessions', false)
-                   ->set('hasMoreSessions', true);
+            ->set('isLoadingSessions', false)
+            ->set('hasMoreSessions', true);
         $html = $component->html();
         expect($html)->toContain('Loading more sessions...');
     });
@@ -178,16 +178,16 @@ describe('SessionSidebar Accessibility Compliance', function (): void {
         // Date groups should be properly structured
         expect($html)->toContain('Today');
         expect($html)->toContain('Yesterday');
-        
+
         // Group headers should be semantic
         expect($html)->toContain('<h3');
     });
 
     it('provides proper form labels and descriptions', function (): void {
         $session = NamingSession::factory()->create(['user_id' => $this->user->id]);
-        
+
         $component = Livewire::test(SessionSidebar::class);
-        
+
         // Start renaming to show form input
         $component->call('startRename', $session->id);
         $html = $component->html();
@@ -199,14 +199,14 @@ describe('SessionSidebar Accessibility Compliance', function (): void {
 
     it('handles focus mode accessibility correctly', function (): void {
         $component = Livewire::test(SessionSidebar::class);
-        
+
         // Toggle focus mode
         $component->call('toggleFocusMode');
         $html = $component->html();
 
         // Collapsed sidebar should still be accessible
         expect($component->get('isCollapsed'))->toBe(true);
-        
+
         // Focus mode toggle should have proper attributes
         expect($html)->toContain('title="Toggle focus mode');
     });
@@ -237,7 +237,7 @@ describe('SessionSidebar Accessibility Compliance', function (): void {
         expect($html)->toContain('dark:bg-');
         expect($html)->toContain('dark:text-');
         expect($html)->toContain('dark:border-');
-        
+
         // Focus indicators should be visible
         expect($html)->toContain('hover:bg-');
     });
@@ -249,11 +249,11 @@ describe('SessionSidebar Accessibility Compliance', function (): void {
         // In test environment, FluxUI components are rendered as placeholders
         // We verify that icons are used in contextually appropriate places
         // and that descriptive text provides meaning for screen readers
-        
+
         // Empty state should have descriptive content for accessibility
         expect($html)->toContain('No sessions yet');
         expect($html)->toContain('Create your first naming session to get started');
-        
+
         // Verify that icon usage is semantic and accompanied by text
         // The actual SVG icons will render properly in the browser
         expect(strlen($html))->toBeGreaterThan(1000); // Component renders substantial content
@@ -262,17 +262,17 @@ describe('SessionSidebar Accessibility Compliance', function (): void {
     it('handles reduced motion preferences', function (): void {
         // Create enough sessions to show load more
         NamingSession::factory()->count(30)->create(['user_id' => $this->user->id]);
-        
+
         $component = Livewire::test(SessionSidebar::class);
         $html = $component->html();
 
         // Animations should be CSS-based and respect motion preferences
         expect($html)->toContain('transition-all');
         expect($html)->toContain('duration-');
-        
+
         // Loading states should work without animations
         $component->set('isLoadingMore', true)
-                   ->set('hasMoreSessions', true);
+            ->set('hasMoreSessions', true);
         $html = $component->html();
         expect($html)->toContain('Loading more sessions...');
     });
@@ -280,13 +280,13 @@ describe('SessionSidebar Accessibility Compliance', function (): void {
     it('maintains accessibility during virtual scrolling', function (): void {
         // Create many sessions
         NamingSession::factory()->count(50)->create(['user_id' => $this->user->id]);
-        
+
         $component = Livewire::test(SessionSidebar::class);
         $html = $component->html();
 
         // Virtual scroll trigger should be accessible
         expect($html)->toContain('x-ref="loadMore"');
-        
+
         // Load more functionality should be accessible
         $component->call('loadMore');
         expect($component->get('offset'))->toBe(20);
@@ -305,7 +305,7 @@ describe('SessionSidebar Accessibility Compliance', function (): void {
 
         // Search should provide live feedback
         expect($html)->toContain('aria-live="polite"');
-        
+
         // Clear button should be accessible
         expect($html)->toContain('title="Clear search"');
         expect($html)->toContain('clear-search');
@@ -313,7 +313,7 @@ describe('SessionSidebar Accessibility Compliance', function (): void {
 
     it('handles session actions accessibly', function (): void {
         $session = NamingSession::factory()->create(['user_id' => $this->user->id]);
-        
+
         $component = Livewire::test(SessionSidebar::class)
             ->set('deletingSessionId', $session->id);
 
@@ -322,7 +322,7 @@ describe('SessionSidebar Accessibility Compliance', function (): void {
         // Deleting state should be announced
         expect($html)->toContain('Deleting...');
         expect($html)->toContain('animate-spin');
-        
+
         // Actions should have proper labels
         expect($html)->toContain('Delete');
         expect($html)->toContain('Rename');

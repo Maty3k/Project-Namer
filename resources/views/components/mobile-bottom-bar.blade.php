@@ -38,9 +38,10 @@
         </button>
 
         {{-- Logo Gallery Action --}}
-        <a href="#" 
-           onclick="window.location.href = '{{ url('/logo-gallery/placeholder') }}'"
-           class="flex flex-col items-center justify-center touch-target btn-modern focus-modern transition-all duration-300 text-gray-600 dark:text-gray-400"
+        <a href="{{ route('logos.index') }}" 
+           wire:navigate
+           class="flex flex-col items-center justify-center touch-target btn-modern focus-modern transition-all duration-300 
+                  {{ request()->routeIs('logos.*') ? 'text-accent' : 'text-gray-600 dark:text-gray-400' }}"
            aria-label="Logo Gallery">
             <div class="w-6 h-6 mb-1 flex items-center justify-center">
                 @if(request()->routeIs('logo-gallery.*'))

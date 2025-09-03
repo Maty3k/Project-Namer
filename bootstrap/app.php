@@ -14,6 +14,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Global middleware for API routes
+        $middleware->api(append: [
+            \App\Http\Middleware\SecurityHeaders::class,
+            \App\Http\Middleware\ResponseTime::class,
+        ]);
+
         $middleware->alias([
             'throttle.logos' => \Illuminate\Routing\Middleware\ThrottleRequests::class.':60,1',
             'throttle.downloads' => \Illuminate\Routing\Middleware\ThrottleRequests::class.':30,1',
