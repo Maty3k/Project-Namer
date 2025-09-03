@@ -193,6 +193,8 @@ final class ThemeService
 
     /**
      * Convert hex color to RGB array.
+     *
+     * @return array{r: int, g: int, b: int}
      */
     protected function hexToRgb(string $hex): array
     {
@@ -207,6 +209,8 @@ final class ThemeService
 
     /**
      * Calculate relative luminance for contrast calculations.
+     *
+     * @param  array{r: int, g: int, b: int}  $rgb
      */
     protected function calculateLuminance(array $rgb): float
     {
