@@ -93,6 +93,7 @@ class ProjectPage extends Component
         'name-deselected' => 'handleNameDeselected',
         'suggestion-hidden' => 'handleSuggestionVisibilityChanged',
         'suggestion-shown' => 'handleSuggestionVisibilityChanged',
+        'trigger-auto-generation' => 'handleAutoGeneration',
     ];
 
     /** @var array<string, string> */
@@ -137,6 +138,28 @@ class ProjectPage extends Component
 
         // Load AI generation history for this project
         $this->loadAIGenerationHistory();
+
+        // Check for auto-generation parameter
+        if (request()->get('auto_generate') === '1') {
+            $this->showAIControls = true;
+            $this->useAIGeneration = true;
+
+            // Auto-trigger generation if models are selected
+            if (! empty($this->selectedAIModels)) {
+                // Use a deferred method to trigger generation after mount completes
+                $this->dispatch('trigger-auto-generation');
+            }
+        }
+    }
+
+    /**
+     * Handle auto-generation trigger after mount.
+     */
+    public function handleAutoGeneration(): void
+    {
+        if ($this->useAIGeneration && ! empty($this->selectedAIModels) && ! $this->isGeneratingNames) {
+            $this->generateMoreNames();
+        }
     }
 
     /**

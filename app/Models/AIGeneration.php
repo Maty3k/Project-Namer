@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * AI generation tracking model.
- * 
+ *
  * Tracks individual AI generation requests with comprehensive metadata,
  * status management, and performance analytics.
  *
@@ -38,6 +38,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Project $project
  * @property-read \App\Models\User $user
+ *
  * @method static Builder<static>|AIGeneration active()
  * @method static Builder<static>|AIGeneration completed()
  * @method static \Database\Factories\AIGenerationFactory factory($count = null, $state = [])
@@ -69,6 +70,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|AIGeneration whereTotalTokensUsed($value)
  * @method static Builder<static>|AIGeneration whereUpdatedAt($value)
  * @method static Builder<static>|AIGeneration whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 final class AIGeneration extends Model

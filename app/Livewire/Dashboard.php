@@ -53,8 +53,8 @@ class Dashboard extends Component
         // Dispatch event to update sidebar
         $this->dispatch('project-created', $project->uuid);
 
-        // Redirect to the project page
-        $this->redirect("/project/{$project->uuid}");
+        // Redirect to the project page with auto-generation parameter
+        $this->redirect("/project/{$project->uuid}?auto_generate=1");
     }
 
     public function render(): View

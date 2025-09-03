@@ -197,7 +197,7 @@ final class ThemeService
     protected function hexToRgb(string $hex): array
     {
         $hex = ltrim($hex, '#');
-        
+
         return [
             'r' => hexdec(substr($hex, 0, 2)),
             'g' => hexdec(substr($hex, 2, 2)),

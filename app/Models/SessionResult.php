@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read mixed $available_domains_count
  * @property-read mixed $generated_names_count
  * @property-read \App\Models\NamingSession $session
+ *
  * @method static \Database\Factories\SessionResultFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SessionResult newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SessionResult newQuery()
@@ -32,6 +33,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SessionResult whereSelectedForLogos($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SessionResult whereSessionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SessionResult whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class SessionResult extends Model

@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 
 /**
  * AI generation session tracking model.
- * 
+ *
  * Tracks the progress and status of AI name generation sessions
  * with real-time status updates and comprehensive metadata.
  *
@@ -40,6 +40,7 @@ use Illuminate\Support\Str;
  * @property int $used_image_context
  * @property int $context_image_count
  * @property-read \App\Models\User|null $user
+ *
  * @method static Builder<static>|GenerationSession active()
  * @method static Builder<static>|GenerationSession byStatus(string $status)
  * @method static \Database\Factories\GenerationSessionFactory factory($count = null, $state = [])
@@ -70,6 +71,7 @@ use Illuminate\Support\Str;
  * @method static Builder<static>|GenerationSession whereUpdatedAt($value)
  * @method static Builder<static>|GenerationSession whereUsedImageContext($value)
  * @method static Builder<static>|GenerationSession whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 final class GenerationSession extends Model

@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $ai_generation_session_id
  * @property array<array-key, mixed>|null $ai_prompt_metadata
  * @property-read \App\Models\Project $project
+ *
  * @method static Builder<static>|NameSuggestion aiGenerated()
  * @method static Builder<static>|NameSuggestion byAiModel(string $modelName)
  * @method static \Database\Factories\NameSuggestionFactory factory($count = null, $state = [])
@@ -53,6 +54,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|NameSuggestion whereName($value)
  * @method static Builder<static>|NameSuggestion whereProjectId($value)
  * @method static Builder<static>|NameSuggestion whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 final class NameSuggestion extends Model

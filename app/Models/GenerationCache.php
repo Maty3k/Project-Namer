@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * AI generation result cache model.
- * 
+ *
  * Stores AI generation results to avoid repeated API calls
  * and improve application performance.
  *
@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon $cached_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @method static Builder<static>|GenerationCache expired()
  * @method static Builder<static>|GenerationCache fresh()
  * @method static Builder<static>|GenerationCache newModelQuery()
@@ -36,6 +37,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static Builder<static>|GenerationCache whereInputHash($value)
  * @method static Builder<static>|GenerationCache whereMode($value)
  * @method static Builder<static>|GenerationCache whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 final class GenerationCache extends Model

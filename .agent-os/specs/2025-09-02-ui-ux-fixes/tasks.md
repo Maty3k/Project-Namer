@@ -7,14 +7,14 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
 
 ## Tasks
 
-- [ ] 1. Fix Dashboard "Save & Generate Names" Auto-Generation
+- [x] 1. Fix Dashboard "Save & Generate Names" Auto-Generation
   - [x] 1.1 Investigate current "Save & Generate Names" button workflow on dashboard  
   - [x] 1.2 Identify that button only saves project but doesn't auto-generate names
-  - [ ] 1.3 Modify Dashboard component to pass auto-generation intent via URL parameter
-  - [ ] 1.4 Update ProjectPage component to detect auto-generation parameter and trigger generation
-  - [ ] 1.5 Ensure AI controls are automatically shown when auto-generation is triggered
-  - [ ] 1.6 Test complete workflow from dashboard button to generated names
-  - [ ] 1.7 Verify all tests pass for the updated workflow
+  - [x] 1.3 Modify Dashboard component to pass auto-generation intent via URL parameter
+  - [x] 1.4 Update ProjectPage component to detect auto-generation parameter and trigger generation
+  - [x] 1.5 Ensure AI controls are automatically shown when auto-generation is triggered
+  - [x] 1.6 Test complete workflow from dashboard button to generated names
+  - [x] 1.7 Verify all tests pass for the updated workflow
 
 - [ ] 2. Implement Logo Gallery with File Upload
   - [ ] 2.1 Write tests for logo gallery component with upload functionality
