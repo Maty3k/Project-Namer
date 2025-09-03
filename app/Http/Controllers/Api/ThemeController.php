@@ -48,10 +48,10 @@ final class ThemeController extends Controller
     public function updatePreferences(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'primary_color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
-            'accent_color' => ['nullable', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
-            'background_color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
-            'text_color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'primary_color' => ['required', 'string', 'size:7', 'starts_with:#'],
+            'accent_color' => ['nullable', 'string', 'size:7', 'starts_with:#'],
+            'background_color' => ['required', 'string', 'size:7', 'starts_with:#'],
+            'text_color' => ['required', 'string', 'size:7', 'starts_with:#'],
             'theme_name' => ['required', 'string', 'max:50'],
             'is_dark_mode' => ['boolean'],
         ]);
@@ -87,10 +87,10 @@ final class ThemeController extends Controller
     public function generateCss(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'primary_color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
-            'accent_color' => ['nullable', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
-            'background_color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
-            'text_color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'primary_color' => ['required', 'string', 'size:7', 'starts_with:#'],
+            'accent_color' => ['nullable', 'string', 'size:7', 'starts_with:#'],
+            'background_color' => ['required', 'string', 'size:7', 'starts_with:#'],
+            'text_color' => ['required', 'string', 'size:7', 'starts_with:#'],
         ]);
 
         if ($validator->fails()) {
@@ -126,9 +126,9 @@ final class ThemeController extends Controller
     public function validateAccessibility(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'primary_color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
-            'background_color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
-            'text_color' => ['nullable', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'primary_color' => ['required', 'string', 'size:7', 'starts_with:#'],
+            'background_color' => ['required', 'string', 'size:7', 'starts_with:#'],
+            'text_color' => ['nullable', 'string', 'size:7', 'starts_with:#'],
         ]);
 
         if ($validator->fails()) {
@@ -188,10 +188,10 @@ final class ThemeController extends Controller
 
         $validator = Validator::make($themeData, [
             'theme_name' => ['required', 'string', 'max:50'],
-            'primary_color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
-            'accent_color' => ['nullable', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
-            'background_color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
-            'text_color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'primary_color' => ['required', 'string', 'size:7', 'starts_with:#'],
+            'accent_color' => ['nullable', 'string', 'size:7', 'starts_with:#'],
+            'background_color' => ['required', 'string', 'size:7', 'starts_with:#'],
+            'text_color' => ['required', 'string', 'size:7', 'starts_with:#'],
             'is_dark_mode' => ['boolean'],
         ]);
 

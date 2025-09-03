@@ -10,15 +10,6 @@
             </p>
         </div>
         
-        <div class="flex space-x-3">
-            <flux:button wire:click="resetToDefault" variant="ghost" size="sm">
-                Reset to Default
-            </flux:button>
-            
-            <flux:button wire:click="save" variant="primary" size="sm">
-                Save Theme
-            </flux:button>
-        </div>
     </div>
 
     <!-- Seasonal Recommendation -->
@@ -89,12 +80,41 @@
                     xl:grid-cols-5">
             @foreach($this->predefinedThemes as $theme)
                 <div wire:click="applyPreset('{{ $theme['name'] }}')"
-                     class="cursor-pointer rounded-lg border-2 p-4 transition-all duration-200
-                            hover:border-gray-400 dark:hover:border-gray-600
-                            {{ $themeName === $theme['name'] ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800' : 'border-gray-200 dark:border-gray-700' }}">
+                     class="group cursor-pointer rounded-lg border-2 p-4 transition-all duration-300 transform
+                            hover:border-gray-400 hover:scale-105 hover:shadow-lg dark:hover:border-gray-600
+                            {{ $themeName === $theme['name'] ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800 scale-105 shadow-lg' : 'border-gray-200 dark:border-gray-700' }}">
                     <div class="space-y-3">
-                        <!-- Theme Preview -->
-                        <div class="flex h-12 overflow-hidden rounded">
+                        <!-- Theme Preview with Emoji/Sticker -->
+                        <div class="relative flex h-12 overflow-hidden rounded">
+                            <!-- Theme Emoji/Sticker -->
+                            <div class="absolute top-1 left-1 text-2xl animate-bounce z-10">
+                                @php
+                                    $themeEmojis = [
+                                        'ocean_blue' => '🌊',
+                                        'forest_green' => '🌲',
+                                        'sunset_orange' => '🌅', 
+                                        'royal_purple' => '👑',
+                                        'midnight_dark' => '🌙',
+                                        'coral_reef' => '🪸',
+                                        'autumn_warm' => '🍂',
+                                        'arctic_cool' => '❄️',
+                                        'cherry_blossom' => '🌸',
+                                        'golden_hour' => '✨',
+                                        'monochrome' => '🎩',
+                                        'neon_lights' => '💫',
+                                        'earth_tones' => '🌍',
+                                        'pastel_dream' => '🦄',
+                                        'cyberpunk' => '🤖',
+                                        'vintage' => '📻',
+                                        'minimalist' => '⚪',
+                                        'bold' => '🔥',
+                                        'professional' => '💼',
+                                        'playful' => '🎈',
+                                        'default' => '🎨'
+                                    ];
+                                @endphp
+                                {{ $themeEmojis[$theme['name']] ?? '🎨' }}
+                            </div>
                             <div class="w-1/2" style="background-color: {{ $theme['primary_color'] }}"></div>
                             <div class="w-1/4" style="background-color: {{ $theme['accent_color'] }}"></div>
                             <div class="w-1/4" style="background-color: {{ $theme['background_color'] }}"></div>
@@ -106,27 +126,27 @@
                                 @if(($theme['category'] ?? '') === 'seasonal')
                                     @switch($theme['season'] ?? '')
                                         @case('summer')
-                                            <span class="text-yellow-500">☀️</span>
+                                            <span class="text-yellow-500 animate-pulse">☀️</span>
                                             @break
                                         @case('winter') 
-                                            <span class="text-blue-500">❄️</span>
+                                            <span class="text-blue-500 animate-pulse">❄️</span>
                                             @break
                                         @case('halloween')
-                                            <span class="text-orange-500">🎃</span>
+                                            <span class="text-orange-500 animate-bounce">🎃</span>
                                             @break
                                         @case('spring')
-                                            <span class="text-green-500">🌸</span>
+                                            <span class="text-green-500 animate-pulse">🌸</span>
                                             @break
                                         @case('autumn')
-                                            <span class="text-orange-600">🍂</span>
+                                            <span class="text-orange-600 animate-bounce">🍂</span>
                                             @break
                                     @endswitch
                                 @endif
-                                <h4 class="font-medium text-gray-900 dark:text-gray-100">
+                                <h4 class="font-medium text-gray-900 dark:text-gray-100 group-hover:font-bold transition-all duration-300">
                                     {{ $theme['display_name'] }}
                                 </h4>
                             </div>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors duration-300">
                                 {{ $theme['is_dark_mode'] ? 'Dark Mode' : 'Light Mode' }}
                             </p>
                         </div>
@@ -347,11 +367,17 @@
 
     <!-- Loading States -->
     <div wire:loading.flex 
-         wire:target="save,applyPreset,importTheme,resetToDefault"
+         wire:target="applyTheme,applyPreset,importTheme"
          class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 text-center">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-8 text-center shadow-2xl border border-gray-200 dark:border-gray-600">
+            <div class="text-6xl mb-4 animate-bounce">🎨</div>
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <p class="text-gray-600 dark:text-gray-300">Processing theme changes...</p>
+            <p class="text-gray-600 dark:text-gray-300 font-medium">Applying your magical theme...</p>
+            <div class="flex justify-center gap-2 mt-4">
+                <span class="animate-bounce text-2xl" style="animation-delay: 0s;">✨</span>
+                <span class="animate-bounce text-2xl" style="animation-delay: 0.2s;">🌈</span>
+                <span class="animate-bounce text-2xl" style="animation-delay: 0.4s;">✨</span>
+            </div>
         </div>
     </div>
 
@@ -386,7 +412,7 @@
                 }
             });
 
-            // Real-time theme updates
+            // Real-time theme updates with subtle background changes
             Livewire.on('theme-updated', () => {
                 requestAnimationFrame(() => {
                     try {
@@ -410,12 +436,21 @@
                             existingStyle.remove();
                         }
                         
+                        // Create subtle tinted background for whole UI
+                        const tintedBg = blendColors(backgroundColor, primaryColor, 0.02); // 2% blend
+                        
                         // Add new theme styles to document head
                         const style = document.createElement('style');
                         style.id = 'live-theme-styles';
                         
-                        // Enhanced CSS with smooth transitions for theme changes
+                        // Enhanced CSS with smooth transitions and subtle background tinting
                         const enhancedCss = css + `
+                            
+                            /* Apply subtle background tinting to the whole UI */
+                            body {
+                                background-color: ${tintedBg} !important;
+                                transition: background-color 0.5s ease !important;
+                            }
                             
                             /* Smooth transitions for theme changes */
                             *, *::before, *::after {
@@ -464,11 +499,40 @@
                         root.style.setProperty('--color-background', backgroundColor);
                         root.style.setProperty('--color-text', textColor);
                         
+                        // Dispatch global theme-applied event
+                        Livewire.dispatch('theme-applied', {
+                            primaryColor: primaryColor,
+                            accentColor: accentColor,
+                            backgroundColor: backgroundColor,
+                            textColor: textColor
+                        });
+                        
                     } catch (error) {
                         console.error('Theme update failed:', error);
                     }
                 });
             });
+            
+            // Helper function to blend two colors for subtle background tinting
+            function blendColors(color1, color2, percentage) {
+                const hex = (color) => {
+                    const hex = color.replace('#', '');
+                    return {
+                        r: parseInt(hex.substr(0, 2), 16),
+                        g: parseInt(hex.substr(2, 2), 16),
+                        b: parseInt(hex.substr(4, 2), 16)
+                    };
+                };
+                
+                const rgb1 = hex(color1);
+                const rgb2 = hex(color2);
+                
+                const r = Math.round(rgb1.r * (1 - percentage) + rgb2.r * percentage);
+                const g = Math.round(rgb1.g * (1 - percentage) + rgb2.g * percentage);
+                const b = Math.round(rgb1.b * (1 - percentage) + rgb2.b * percentage);
+                
+                return `rgb(${r}, ${g}, ${b})`;
+            }
 
             // Theme saved successfully
             Livewire.on('theme-saved', () => {
@@ -489,30 +553,12 @@
 
             // Toast notification function
             function showToast(message, type = 'info') {
-                // Check if Flux toast is available
-                if (window.Flux && window.Flux.toast) {
-                    window.Flux.toast({
-                        message: message,
-                        type: type,
-                        duration: 4000
-                    });
-                    return;
-                }
-                
-                // Fallback to Livewire events if available
-                if (window.Livewire) {
-                    Livewire.dispatch('toast', { 
-                        message: message, 
-                        type: type 
-                    });
-                    return;
-                }
-                
-                // Ultimate fallback to console and basic alert
-                console.log(`${type.toUpperCase()}: ${message}`);
-                if (type === 'error') {
-                    alert(message);
-                }
+                // Dispatch to Livewire with object format
+                Livewire.dispatch('show-toast', {
+                    message: message,
+                    type: type,
+                    duration: type === 'error' ? 8000 : 4000
+                });
             }
 
             // Initialize theme on page load

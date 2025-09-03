@@ -16,16 +16,16 @@ final class ThemeCustomizer extends Component
 {
     use WithFileUploads;
 
-    #[Rule('required|string|regex:/^#[0-9a-fA-F]{6}$/')]
+    #[Rule(['required', 'string', 'size:7', 'starts_with:#'])]
     public string $primaryColor = '#3b82f6';
 
-    #[Rule('nullable|string|regex:/^#[0-9a-fA-F]{6}$/')]
+    #[Rule(['nullable', 'string', 'size:7', 'starts_with:#'])]
     public ?string $accentColor = '#10b981';
 
-    #[Rule('required|string|regex:/^#[0-9a-fA-F]{6}$/')]
+    #[Rule(['required', 'string', 'size:7', 'starts_with:#'])]
     public string $backgroundColor = '#ffffff';
 
-    #[Rule('required|string|regex:/^#[0-9a-fA-F]{6}$/')]
+    #[Rule(['required', 'string', 'size:7', 'starts_with:#'])]
     public string $textColor = '#111827';
 
     #[Rule('required|string|max:50')]
@@ -36,10 +36,6 @@ final class ThemeCustomizer extends Component
 
     #[Rule('nullable|file|mimetypes:application/json|max:1024')]
     public mixed $themeFile = null;
-
-    public bool $showColorPicker = false;
-
-    public string $activeColorField = '';
 
     /** @var array<string, array<string>> */
     public array $accessibilityFeedback = [];
@@ -99,9 +95,9 @@ final class ThemeCustomizer extends Component
     }
 
     /**
-     * Save current theme preferences.
+     * Apply and save current theme preferences with enhanced feedback.
      */
-    public function save(): void
+    public function applyTheme(): void
     {
         try {
             $this->validate();
@@ -109,7 +105,7 @@ final class ThemeCustomizer extends Component
             $user = auth()->user();
 
             if (! $user) {
-                $this->dispatch('theme-error', 'You must be logged in to save themes');
+                $this->dispatch('theme-error', 'You must be logged in to apply themes');
 
                 return;
             }
@@ -126,42 +122,32 @@ final class ThemeCustomizer extends Component
                 ]
             );
 
+            // Validate accessibility and provide feedback
+            $this->validateAccessibility();
+
+            // Dispatch events for UI updates
             $this->dispatch('theme-saved');
-            $this->dispatch('theme-updated'); // Apply theme immediately
+            $this->dispatch('theme-updated');
+            $this->dispatch('theme-applied', [
+                'primaryColor' => $this->primaryColor,
+                'accentColor' => $this->accentColor,
+                'backgroundColor' => $this->backgroundColor,
+                'textColor' => $this->textColor,
+            ]);
+
         } catch (\Exception $e) {
-            logger()->error('Theme save failed: '.$e->getMessage());
-            $this->dispatch('theme-error', 'Failed to save theme preferences');
+            logger()->error('Theme application failed: '.$e->getMessage());
+            $this->dispatch('theme-error', 'Failed to apply theme preferences');
         }
     }
 
     /**
-     * Open color picker for specific field.
+     * Save current theme preferences.
      */
-    public function openColorPicker(string $field): void
+    public function save(): void
     {
-        $this->activeColorField = $field;
-        $this->showColorPicker = true;
-    }
-
-    /**
-     * Update color and close picker.
-     */
-    public function updateColor(string $color): void
-    {
-        if ($this->activeColorField === 'primary') {
-            $this->primaryColor = $color;
-        } elseif ($this->activeColorField === 'accent') {
-            $this->accentColor = $color;
-        } elseif ($this->activeColorField === 'background') {
-            $this->backgroundColor = $color;
-        } elseif ($this->activeColorField === 'text') {
-            $this->textColor = $color;
-        }
-
-        $this->showColorPicker = false;
-        $this->activeColorField = '';
-        $this->validateAccessibility();
-        $this->dispatch('theme-updated');
+        // Redirect to the new unified apply method
+        $this->applyTheme();
     }
 
     /**
