@@ -655,8 +655,14 @@ class NameGeneratorDashboard extends Component
     /**
      * Load a session by ID.
      */
-    private function loadSession(string $sessionId): void
+    public function loadSession(string $sessionId): void
     {
+        // Check if there are unsaved changes and this is not the same session
+        if ($this->hasUnsavedChanges && $this->currentSessionId !== $sessionId) {
+            $this->dispatch('confirm-session-switch', newSessionId: $sessionId);
+            return;
+        }
+
         $user = Auth::user();
         if (! $user) {
             return;
@@ -668,9 +674,9 @@ class NameGeneratorDashboard extends Component
         if ($session) {
             $this->currentSession = $session;
             $this->currentSessionId = $session->id;
-            $this->businessIdea = $session->data['business_description'] ?? '';
-            $this->generationMode = $session->data['generation_mode'] ?? 'creative';
-            $this->deepThinking = $session->data['deep_thinking'] ?? false;
+            $this->businessIdea = $session->business_description ?? '';
+            $this->generationMode = $session->generation_mode ?? 'creative';
+            $this->deepThinking = $session->deep_thinking ?? false;
 
             // Load results if available
             $latestResult = $session->results()->latest()->first();
@@ -684,6 +690,11 @@ class NameGeneratorDashboard extends Component
             }
 
             $this->hasUnsavedChanges = false;
+        } else {
+            $this->dispatch('toast', 
+                message: 'Session not found',
+                type: 'error'
+            );
         }
     }
 
