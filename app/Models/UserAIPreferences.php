@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * User AI preferences configuration model.
- *
+ * 
  * Stores user-specific AI configuration preferences including
  * model selection, generation parameters, and notification settings.
  *
@@ -28,18 +28,33 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $max_concurrent_generations
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
- * @property-read User $user
- *
+ * @property-read \App\Models\User $user
+ * @method static \Database\Factories\UserAIPreferencesFactory factory($count = null, $state = [])
+ * @method static Builder<static>|UserAIPreferences newModelQuery()
+ * @method static Builder<static>|UserAIPreferences newQuery()
+ * @method static Builder<static>|UserAIPreferences query()
+ * @method static Builder<static>|UserAIPreferences whereAutoSelectBestModel($value)
+ * @method static Builder<static>|UserAIPreferences whereCreatedAt($value)
+ * @method static Builder<static>|UserAIPreferences whereCustomParameters($value)
+ * @method static Builder<static>|UserAIPreferences whereDefaultDeepThinking($value)
+ * @method static Builder<static>|UserAIPreferences whereDefaultGenerationMode($value)
+ * @method static Builder<static>|UserAIPreferences whereEnableModelComparison($value)
+ * @method static Builder<static>|UserAIPreferences whereId($value)
+ * @method static Builder<static>|UserAIPreferences whereMaxConcurrentGenerations($value)
+ * @method static Builder<static>|UserAIPreferences whereModelPriorities($value)
+ * @method static Builder<static>|UserAIPreferences whereNotificationSettings($value)
+ * @method static Builder<static>|UserAIPreferences wherePreferredModels($value)
+ * @method static Builder<static>|UserAIPreferences whereUpdatedAt($value)
+ * @method static Builder<static>|UserAIPreferences whereUserId($value)
  * @method static Builder<static>|UserAIPreferences withPreferredModel(string $modelName)
- * @method static UserAIPreferences findOrCreateForUser(int $userId)
- *
  * @mixin \Eloquent
  */
 final class UserAIPreferences extends Model
 {
     /** @use HasFactory<\Database\Factories\UserAIPreferencesFactory> */
     use HasFactory;
+
+    protected $table = 'user_ai_preferences';
 
     protected $fillable = [
         'user_id',
@@ -97,11 +112,11 @@ final class UserAIPreferences extends Model
         return self::firstOrCreate(
             ['user_id' => $userId],
             [
-                'preferred_models' => ['gpt-4o', 'claude-3.5-sonnet'],
+                'preferred_models' => ['gpt-4', 'claude-3.5-sonnet'],
                 'default_generation_mode' => 'creative',
                 'default_deep_thinking' => false,
                 'model_priorities' => [
-                    'gpt-4o' => 1,
+                    'gpt-4' => 1,
                     'claude-3.5-sonnet' => 2,
                     'gemini-1.5-pro' => 3,
                     'grok-beta' => 4,

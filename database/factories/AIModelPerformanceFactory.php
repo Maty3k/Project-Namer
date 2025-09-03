@@ -58,7 +58,7 @@ final class AIModelPerformanceFactory extends Factory
     {
         $totalRequests = $this->faker->numberBetween(50, 100);
         $successfulRequests = $this->faker->numberBetween((int) ($totalRequests * 0.9), $totalRequests);
-        
+
         return $this->state([
             'total_requests' => $totalRequests,
             'successful_requests' => $successfulRequests,
@@ -73,7 +73,7 @@ final class AIModelPerformanceFactory extends Factory
     {
         $totalRequests = $this->faker->numberBetween(20, 50);
         $successfulRequests = $this->faker->numberBetween(1, (int) ($totalRequests * 0.3));
-        
+
         return $this->state([
             'total_requests' => $totalRequests,
             'successful_requests' => $successfulRequests,

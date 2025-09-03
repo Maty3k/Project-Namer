@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * AI model performance tracking model.
- *
+ * 
  * Tracks performance metrics for individual AI models per user,
  * including success rates, response times, and cost analytics.
  *
@@ -28,20 +28,35 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property array<array-key, mixed>|null $performance_metrics
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
- * @property-read User $user
- *
+ * @property-read \App\Models\User $user
+ * @method static \Database\Factories\AIModelPerformanceFactory factory($count = null, $state = [])
  * @method static Builder<static>|AIModelPerformance forModel(string $modelName)
- * @method static Builder<static>|AIModelPerformance recentlyUsed()
  * @method static Builder<static>|AIModelPerformance forUser(int $userId)
- * @method static AIModelPerformance findOrCreateForUser(int $userId, string $modelName)
- *
+ * @method static Builder<static>|AIModelPerformance newModelQuery()
+ * @method static Builder<static>|AIModelPerformance newQuery()
+ * @method static Builder<static>|AIModelPerformance query()
+ * @method static Builder<static>|AIModelPerformance recentlyUsed()
+ * @method static Builder<static>|AIModelPerformance whereAverageResponseTimeMs($value)
+ * @method static Builder<static>|AIModelPerformance whereCreatedAt($value)
+ * @method static Builder<static>|AIModelPerformance whereFailedRequests($value)
+ * @method static Builder<static>|AIModelPerformance whereId($value)
+ * @method static Builder<static>|AIModelPerformance whereLastUsedAt($value)
+ * @method static Builder<static>|AIModelPerformance whereModelName($value)
+ * @method static Builder<static>|AIModelPerformance wherePerformanceMetrics($value)
+ * @method static Builder<static>|AIModelPerformance whereSuccessfulRequests($value)
+ * @method static Builder<static>|AIModelPerformance whereTotalCostCents($value)
+ * @method static Builder<static>|AIModelPerformance whereTotalRequests($value)
+ * @method static Builder<static>|AIModelPerformance whereTotalTokensUsed($value)
+ * @method static Builder<static>|AIModelPerformance whereUpdatedAt($value)
+ * @method static Builder<static>|AIModelPerformance whereUserId($value)
  * @mixin \Eloquent
  */
 final class AIModelPerformance extends Model
 {
     /** @use HasFactory<\Database\Factories\AIModelPerformanceFactory> */
     use HasFactory;
+
+    protected $table = 'ai_model_performance';
 
     protected $fillable = [
         'user_id',
@@ -180,7 +195,7 @@ final class AIModelPerformance extends Model
         $oldTotalTime = $this->average_response_time_ms * $this->total_requests;
         $newTotalTime = $oldTotalTime + $responseTime;
         $newTotalRequests = $this->total_requests + 1;
-        
+
         $this->update([
             'total_requests' => $newTotalRequests,
             'successful_requests' => $this->successful_requests + ($wasSuccessful ? 1 : 0),

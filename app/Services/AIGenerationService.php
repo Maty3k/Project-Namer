@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\GenerationSession;
 use InvalidArgumentException;
 
 /**
@@ -14,7 +15,10 @@ use InvalidArgumentException;
  */
 final readonly class AIGenerationService
 {
-    public function __construct(private PrismAIService $prismService) {}
+    public function __construct(
+        private PrismAIService $prismService,
+        private VisionAnalysisService $visionService
+    ) {}
 
     /**
      * Generate business names using multiple AI models in parallel.
@@ -74,7 +78,7 @@ final readonly class AIGenerationService
         bool $deepThinking = false
     ): array {
         // Use only the fastest, most reliable models for quick generation
-        $quickModels = ['gpt-4o', 'claude-3.5-sonnet'];
+        $quickModels = ['gpt-4', 'claude-3.5-sonnet'];
 
         return $this->generateNamesParallel(
             $businessIdea,
@@ -95,7 +99,7 @@ final readonly class AIGenerationService
         string $mode = 'creative'
     ): array {
         // Use all available models for maximum coverage and quality
-        $allModels = ['gpt-4o', 'claude-3.5-sonnet', 'gemini-1.5-pro', 'grok-beta'];
+        $allModels = ['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro', 'grok-beta'];
 
         return $this->generateNamesParallel(
             $businessIdea,
@@ -210,14 +214,14 @@ final readonly class AIGenerationService
             'quick' => [
                 'name' => 'Quick Generation',
                 'description' => 'Fast results using reliable models',
-                'models' => ['gpt-4o', 'claude-3.5-sonnet'],
+                'models' => ['gpt-4', 'claude-3.5-sonnet'],
                 'estimated_time' => '2-5 seconds',
                 'best_for' => 'Rapid prototyping and iteration',
             ],
             'comprehensive' => [
                 'name' => 'Comprehensive Generation',
                 'description' => 'High-quality results from all models with deep thinking',
-                'models' => ['gpt-4o', 'claude-3.5-sonnet', 'gemini-1.5-pro', 'grok-beta'],
+                'models' => ['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro', 'grok-beta'],
                 'estimated_time' => '5-15 seconds',
                 'best_for' => 'Final name selection and brand development',
             ],
@@ -229,5 +233,38 @@ final readonly class AIGenerationService
                 'best_for' => 'Specific requirements and advanced use cases',
             ],
         ];
+    }
+
+    /**
+     * Generate names with image context from a generation session.
+     *
+     * @param  array<string>  $models
+     * @param  array<string, mixed>  $customParams
+     * @return array<string, mixed>
+     */
+    public function generateNamesWithContext(
+        string $businessIdea,
+        GenerationSession $session,
+        array $models = ['gpt-4'],
+        string $mode = 'creative',
+        bool $deepThinking = false,
+        array $customParams = []
+    ): array {
+        $imageContext = '';
+
+        if ($session->image_context_ids !== null && ! empty($session->image_context_ids)) {
+            $images = $session->getImageContexts();
+            $imageContext = $this->visionService->getImageContextForGeneration($images->all());
+        }
+
+        $enhancedBusinessIdea = $businessIdea.$imageContext;
+
+        return $this->generateNamesParallel(
+            $enhancedBusinessIdea,
+            $models,
+            $mode,
+            $deepThinking,
+            $customParams
+        );
     }
 }

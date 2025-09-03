@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * AI generation tracking model.
- *
+ * 
  * Tracks individual AI generation requests with comprehensive metadata,
  * status management, and performance analytics.
  *
@@ -36,23 +36,47 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $error_message
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
- * @property-read Project $project
- * @property-read User $user
- *
+ * @property-read \App\Models\Project $project
+ * @property-read \App\Models\User $user
  * @method static Builder<static>|AIGeneration active()
  * @method static Builder<static>|AIGeneration completed()
+ * @method static \Database\Factories\AIGenerationFactory factory($count = null, $state = [])
  * @method static Builder<static>|AIGeneration failed()
- * @method static Builder<static>|AIGeneration recent()
  * @method static Builder<static>|AIGeneration forProject(int $projectId)
  * @method static Builder<static>|AIGeneration forUser(int $userId)
- *
+ * @method static Builder<static>|AIGeneration newModelQuery()
+ * @method static Builder<static>|AIGeneration newQuery()
+ * @method static Builder<static>|AIGeneration query()
+ * @method static Builder<static>|AIGeneration recent()
+ * @method static Builder<static>|AIGeneration whereCompletedAt($value)
+ * @method static Builder<static>|AIGeneration whereCreatedAt($value)
+ * @method static Builder<static>|AIGeneration whereDeepThinking($value)
+ * @method static Builder<static>|AIGeneration whereErrorMessage($value)
+ * @method static Builder<static>|AIGeneration whereExecutionMetadata($value)
+ * @method static Builder<static>|AIGeneration whereFailedAt($value)
+ * @method static Builder<static>|AIGeneration whereGenerationMode($value)
+ * @method static Builder<static>|AIGeneration whereGenerationSessionId($value)
+ * @method static Builder<static>|AIGeneration whereId($value)
+ * @method static Builder<static>|AIGeneration whereModelsRequested($value)
+ * @method static Builder<static>|AIGeneration whereProjectId($value)
+ * @method static Builder<static>|AIGeneration wherePromptUsed($value)
+ * @method static Builder<static>|AIGeneration whereResultsData($value)
+ * @method static Builder<static>|AIGeneration whereStartedAt($value)
+ * @method static Builder<static>|AIGeneration whereStatus($value)
+ * @method static Builder<static>|AIGeneration whereTotalCostCents($value)
+ * @method static Builder<static>|AIGeneration whereTotalNamesGenerated($value)
+ * @method static Builder<static>|AIGeneration whereTotalResponseTimeMs($value)
+ * @method static Builder<static>|AIGeneration whereTotalTokensUsed($value)
+ * @method static Builder<static>|AIGeneration whereUpdatedAt($value)
+ * @method static Builder<static>|AIGeneration whereUserId($value)
  * @mixin \Eloquent
  */
 final class AIGeneration extends Model
 {
     /** @use HasFactory<\Database\Factories\AIGenerationFactory> */
     use HasFactory;
+
+    protected $table = 'ai_generations';
 
     protected $fillable = [
         'project_id',

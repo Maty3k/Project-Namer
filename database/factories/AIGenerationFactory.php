@@ -24,7 +24,7 @@ final class AIGenerationFactory extends Factory
         return [
             'project_id' => Project::factory(),
             'user_id' => User::factory(),
-            'generation_session_id' => 'session_' . $this->faker->uuid(),
+            'generation_session_id' => 'session_'.$this->faker->uuid(),
             'models_requested' => $this->faker->randomElements(['gpt-4o', 'claude-3.5-sonnet', 'gemini-1.5-pro', 'grok-beta'], 2),
             'generation_mode' => $this->faker->randomElement(['creative', 'professional', 'brandable', 'tech-focused']),
             'deep_thinking' => $this->faker->boolean(30),
