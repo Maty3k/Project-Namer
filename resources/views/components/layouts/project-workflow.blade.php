@@ -1,7 +1,30 @@
+@php
+    $userTheme = null;
+    if (auth()->check()) {
+        $userTheme = \App\Models\UserThemePreference::where('user_id', auth()->id())->first();
+    }
+    $isDarkMode = $userTheme ? $userTheme->is_dark_mode : false;
+@endphp
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="{{ $isDarkMode ? 'dark' : '' }}">
 <head>
     @include('partials.head')
+    @if($userTheme)
+        <style>
+            :root {
+                --color-primary: {{ $userTheme->primary_color }};
+                --color-accent: {{ $userTheme->accent_color }};
+                --color-background: {{ $userTheme->background_color }};
+                --color-text: {{ $userTheme->text_color }};
+            }
+            @if($isDarkMode)
+            .dark {
+                --color-background: {{ $userTheme->background_color }};
+                --color-text: {{ $userTheme->text_color }};
+            }
+            @endif
+        </style>
+    @endif
 </head>
 <body class="min-h-screen bg-white dark:bg-zinc-800 flex">
     

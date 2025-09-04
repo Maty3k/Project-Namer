@@ -302,26 +302,34 @@
             Live Preview
         </h3>
         
-        <div class="rounded-lg border p-6 space-y-4"
+        <div class="rounded-lg border p-6 space-y-4 {{ $isDarkMode ? 'border-gray-600 dark:border-gray-600' : 'border-gray-300' }}"
              style="background-color: {{ $backgroundColor }}; color: {{ $textColor }};">
-            <flux:button style="background-color: {{ $primaryColor }}; color: {{ $backgroundColor }};">
-                Primary Button
-            </flux:button>
+            <div class="space-y-3">
+                <flux:button style="background-color: {{ $primaryColor }}; color: {{ $this->getContrastingColor($primaryColor) }};">
+                    Primary Button
+                </flux:button>
+                
+                <flux:button style="background-color: {{ $accentColor }}; color: {{ $this->getContrastingColor($accentColor) }};">
+                    Accent Button
+                </flux:button>
+            </div>
             
-            <flux:button style="background-color: {{ $accentColor }}; color: {{ $backgroundColor }};">
-                Accent Button
-            </flux:button>
-            
-            <p class="text-sm">
-                This is sample text showing how your chosen colors work together.
-                {{ $themeName }} theme provides 
-                @if($isDarkMode)
-                    dark mode styling
-                @else
-                    light mode styling
-                @endif
-                for optimal user experience.
-            </p>
+            <div class="border-t pt-4" style="border-color: {{ $isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}">
+                <h4 class="font-semibold mb-2" style="color: {{ $textColor }};">
+                    {{ $themeName }} Theme
+                </h4>
+                <p class="text-sm opacity-90">
+                    This is sample text showing how your chosen colors work together.
+                    @if($isDarkMode)
+                        Dark mode is enabled for better visibility in low-light environments.
+                    @else
+                        Light mode provides optimal readability in bright conditions.
+                    @endif
+                </p>
+                <p class="text-xs mt-2 opacity-75">
+                    Background: {{ $backgroundColor }} | Text: {{ $textColor }} | Primary: {{ $primaryColor }}
+                </p>
+            </div>
         </div>
     </div>
 
@@ -331,8 +339,8 @@
             Generated CSS
         </h3>
         
-        <div class="rounded-lg bg-gray-100 dark:bg-gray-800 p-4">
-            <pre class="text-sm text-gray-800 dark:text-gray-200 overflow-x-auto">{{ $this->generatedCss }}</pre>
+        <div class="rounded-lg {{ $isDarkMode ? 'bg-gray-900 border border-gray-700' : 'bg-gray-100' }} p-4">
+            <pre class="text-sm {{ $isDarkMode ? 'text-gray-300' : 'text-gray-800' }} overflow-x-auto font-mono">{{ $this->generatedCss }}</pre>
         </div>
     </div>
 
@@ -534,9 +542,24 @@
                 return `rgb(${r}, ${g}, ${b})`;
             }
 
+            // Theme applied with dark mode handling
+            Livewire.on('theme-applied', (data) => {
+                // Handle dark mode toggle
+                const html = document.documentElement;
+                if (data.isDarkMode) {
+                    html.classList.add('dark');
+                } else {
+                    html.classList.remove('dark');
+                }
+            });
+
             // Theme saved successfully
             Livewire.on('theme-saved', () => {
                 showToast('Theme saved successfully! Your preferences have been updated.', 'success');
+                // Force page reload to apply all theme changes
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
             });
 
             // Theme imported successfully

@@ -133,6 +133,7 @@ final class ThemeCustomizer extends Component
                 'accentColor' => $this->accentColor,
                 'backgroundColor' => $this->backgroundColor,
                 'textColor' => $this->textColor,
+                'isDarkMode' => $this->isDarkMode,
             ]);
 
         } catch (\Exception $e) {
@@ -328,6 +329,26 @@ final class ThemeCustomizer extends Component
             'background_color' => $this->backgroundColor,
             'text_color' => $this->textColor,
         ]);
+    }
+
+    /**
+     * Get contrasting color for text on a given background.
+     */
+    public function getContrastingColor(string $backgroundColor): string
+    {
+        // Remove # if present
+        $hex = str_replace('#', '', $backgroundColor);
+        
+        // Convert to RGB
+        $r = hexdec(substr($hex, 0, 2));
+        $g = hexdec(substr($hex, 2, 2));
+        $b = hexdec(substr($hex, 4, 2));
+        
+        // Calculate luminance
+        $luminance = (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
+        
+        // Return white or black based on luminance
+        return $luminance > 0.5 ? '#000000' : '#ffffff';
     }
 
     public function render(): \Illuminate\View\View
