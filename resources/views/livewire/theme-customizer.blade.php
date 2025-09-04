@@ -242,7 +242,7 @@
 
             <flux:field>
                 <flux:label>Theme Mode</flux:label>
-                <flux:switch wire:model.live="isDarkMode">
+                <flux:switch wire:model.live="isDarkMode" wire:change="toggleDarkMode">
                     Dark Mode
                 </flux:switch>
             </flux:field>

@@ -1,5 +1,5 @@
 <aside 
-    class="h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col transition-all duration-300 ease-in-out transform
+    class="h-full bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-700 flex flex-col transition-all duration-300 ease-in-out transform
            {{ $isCollapsed ? 'w-0 opacity-0 overflow-hidden invisible -translate-x-full' : 'w-80 opacity-100 translate-x-0' }}"
     x-data="{
         showActionMenu: null,
@@ -15,7 +15,7 @@
     x-on:focus-mode-toggled="focusMode = $event.detail.enabled"
 >
     <!-- Header -->
-    <header class="p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+    <header class="p-4 border-b border-gray-200 dark:border-slate-600 flex-shrink-0">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Sessions</h2>
             <div class="flex items-center gap-2">

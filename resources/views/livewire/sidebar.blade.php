@@ -1,6 +1,6 @@
-<div class="{{ $collapsed ? 'w-16' : 'w-64' }} transition-all duration-300 ease-in-out transform {{ $collapsed ? '-translate-x-2' : 'translate-x-0' }} bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 h-screen flex flex-col">
+<div class="{{ $collapsed ? 'w-16' : 'w-64' }} transition-all duration-300 ease-in-out transform {{ $collapsed ? '-translate-x-2' : 'translate-x-0' }} bg-gray-50 dark:bg-slate-900 border-r border-gray-200 dark:border-slate-700 h-screen flex flex-col">
     <!-- Sidebar Header -->
-    <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+    <div class="p-4 border-b border-gray-200 dark:border-slate-600">
         <div class="flex items-center justify-between">
             @if(!$collapsed)
                 <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Projects</h2>
@@ -131,7 +131,7 @@
 
     <!-- Sidebar Footer (if expanded) -->
     @if(!$collapsed)
-        <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+        <div class="p-4 border-t border-gray-200 dark:border-slate-600">
             <div class="text-xs text-gray-400 dark:text-gray-500 text-center">
                 Project Workflow UI
             </div>

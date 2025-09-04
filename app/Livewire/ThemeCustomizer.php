@@ -234,6 +234,27 @@ final class ThemeCustomizer extends Component
     }
 
     /**
+     * Toggle dark mode and update colors accordingly.
+     */
+    public function toggleDarkMode(): void
+    {
+        $this->isDarkMode = !$this->isDarkMode;
+        
+        if ($this->isDarkMode) {
+            // Set appropriate dark mode colors
+            $this->backgroundColor = '#1f2937';
+            $this->textColor = '#f9fafb';
+        } else {
+            // Set appropriate light mode colors
+            $this->backgroundColor = '#ffffff';
+            $this->textColor = '#111827';
+        }
+        
+        $this->validateAccessibility();
+        $this->dispatch('theme-updated');
+    }
+
+    /**
      * Validate accessibility of current color combination.
      */
     protected function validateAccessibility(): void

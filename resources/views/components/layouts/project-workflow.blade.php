@@ -22,11 +22,19 @@
                 --color-background: {{ $userTheme->background_color }};
                 --color-text: {{ $userTheme->text_color }};
             }
+            /* Enhanced dark mode styling */
+            .dark body {
+                background: linear-gradient(135deg, {{ $userTheme->background_color }}ee 0%, {{ $userTheme->primary_color }}22 100%);
+                color: {{ $userTheme->text_color }};
+            }
             @endif
         </style>
     @endif
 </head>
-<body class="min-h-screen bg-white dark:bg-zinc-800 flex">
+<body class="min-h-screen bg-white dark:bg-slate-900 flex" 
+      @if($isDarkMode && $userTheme) 
+        style="background: linear-gradient(135deg, {{ $userTheme->background_color }} 0%, {{ $userTheme->primary_color }}22 100%); color: {{ $userTheme->text_color }};" 
+      @endif>
     
     <!-- Custom Project Sidebar -->
     <div class="flex-shrink-0">
