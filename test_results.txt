@@ -1,0 +1,1039 @@
+
+   PASS  Tests\Unit\Enums\ColorSchemeTest
+  ✓ ColorScheme Enum → it has correct enum values                        0.01s  
+  ✓ ColorScheme Enum → it can get display names for all schemes
+  ✓ ColorScheme Enum → it can get descriptions for all schemes
+  ✓ ColorScheme Enum → it can create from string value
+  ✓ ColorScheme Enum → it can try from string value
+  ✓ ColorScheme Enum → it can get all values as array
+  ✓ ColorScheme Enum → it can get all display names as array
+  ✓ ColorScheme Enum → it can check if value exists
+
+   PASS  Tests\Unit\ExampleTest
+  ✓ that true is true                                                    0.01s  
+
+   PASS  Tests\Unit\Models\ExportTest
+  ✓ Export Model → it creates an export with required attributes         0.52s  
+  ✓ Export Model → it generates UUID automatically if not provided       0.02s  
+  ✓ Export Model → it belongs to a user                                  0.03s  
+  ✓ Export Model → it has polymorphic relationship to exportable models  0.02s  
+  ✓ Export Model → it provides download URL generation                   0.02s  
+  ✓ Export Model → it checks if export is expired                        0.02s  
+  ✓ Export Model → it increments download count                          0.03s  
+  ✓ Export Model → it formats file size for display                      0.03s  
+  ✓ Export Model → it handles null file size gracefully                  0.02s  
+  ✓ Export Model → it checks file existence                              0.03s  
+  ✓ Export Model → it deletes associated file when export is deleted     0.03s  
+  ✓ Export Model → it scopes to non-expired exports                      0.03s  
+  ✓ Export Model → it scopes by export type                              0.03s  
+  ✓ Export Model → it validates export type enum values                  0.02s  
+  ✓ Export Model → it provides content type based on export type         0.02s  
+  ✓ Export Model → it generates appropriate filename based on export ty… 0.02s  
+  ✓ Export Model → it has proper fillable attributes                     0.02s  
+
+   PASS  Tests\Unit\Models\ShareAccessTest
+  ✓ ShareAccess Model → it creates a share access record with required…  0.03s  
+  ✓ ShareAccess Model → it belongs to a share                            0.02s  
+  ✓ ShareAccess Model → it automatically sets accessed_at timestamp      0.02s  
+  ✓ ShareAccess Model → it handles IPv6 addresses                        0.02s  
+  ✓ ShareAccess Model → it handles long user agent strings               0.02s  
+  ✓ ShareAccess Model → it handles null optional fields gracefully       0.02s  
+  ✓ ShareAccess Model → it scopes by date range                          0.02s  
+  ✓ ShareAccess Model → it provides analytics methods                    0.02s  
+  ✓ ShareAccess Model → it has proper fillable attributes                0.02s  
+  ✓ ShareAccess Model → it cascades delete when share is deleted         0.02s  
+
+   PASS  Tests\Unit\Models\ShareTest
+  ✓ Share Model → it creates a share with required attributes            0.03s  
+  ✓ Share Model → it generates UUID automatically if not provided        0.02s  
+  ✓ Share Model → it handles password-protected shares with proper hash… 0.52s  
+  ✓ Share Model → it belongs to a user                                   0.03s  
+  ✓ Share Model → it has polymorphic relationship to shareable models    0.02s  
+  ✓ Share Model → it has many share accesses for analytics               0.02s  
+  ✓ Share Model → it provides share URL generation                       0.02s  
+  ✓ Share Model → it checks if share is expired                          0.03s  
+  ✓ Share Model → it checks if share is accessible                       0.02s  
+  ✓ Share Model → it records share access and updates view count         0.03s  
+  ✓ Share Model → it validates password for protected shares             0.78s  
+  ✓ Share Model → it scopes to active shares                             0.04s  
+  ✓ Share Model → it scopes to accessible shares                         0.03s  
+  ✓ Share Model → it casts settings as array                             0.02s  
+  ✓ Share Model → it has proper fillable attributes                      0.02s  
+
+   PASS  Tests\Unit\Performance\PerformanceUtilsTest
+  ✓ Performance Utilities → it measures execution time accurately        0.02s  
+  ✓ Performance Utilities → it measures memory usage patterns
+  ✓ Performance Utilities → it tests array chunking performance for large datasets
+  ✓ Performance Utilities → it compares array vs collection performance
+  ✓ Performance Utilities → it tests string manipulation performance
+  ✓ Performance Utilities → it benchmarks JSON encoding performance
+  ✓ Performance Utilities → it measures regex performance vs string functions
+
+   PASS  Tests\Unit\Services\ComponentMappingServiceTest
+  ✓ can identify flux ui free components in blade templates
+  ✓ can map free components to pro variants
+  ✓ can determine component upgrade priority
+  ✓ can find component dependencies
+  ✓ can scan directory for flux components
+  ✓ can generate upgrade suggestions
+  ✓ can handle flux icon components
+  ✓ can generate comprehensive audit report
+
+   PASS  Tests\Unit\Services\ExportServiceTest
+  ✓ ExportService → it creates a PDF export with proper formatting       0.24s  
+  ✓ ExportService → it creates a CSV export with proper headers and dat… 0.03s  
+  ✓ ExportService → it creates a JSON export with complete data structu… 0.03s  
+  ✓ ExportService → it validates export data before creation             0.03s  
+  ✓ ExportService → it sets appropriate expiration dates for exports     0.20s  
+  ✓ ExportService → it serves export files with proper headers and down… 0.03s  
+  ✓ ExportService → it handles large exports with memory management      0.05s  
+  ✓ ExportService → it cleans up expired exports                         0.03s  
+  ✓ ExportService → it generates appropriate filenames for different ex… 0.21s  
+  ✓ ExportService → it handles export errors gracefully                  0.03s  
+  ✓ ExportService → it respects user export limits and rate limiting     0.21s  
+  ✓ ExportService → it provides export analytics and statistics          0.03s  
+  ✓ ExportService → it supports custom export templates and styling      0.10s  
+  ✓ ExportService → it handles concurrent export requests safely         0.98s  
+
+   PASS  Tests\Unit\Services\ShareServiceTest
+  ✓ ShareService → it creates a public share with valid data             0.04s  
+  ✓ ShareService → it creates a password-protected share with hashed pa… 0.78s  
+  ✓ ShareService → it validates share data before creation               0.03s  
+  ✓ ShareService → it requires password for password-protected shares    0.02s  
+  ✓ ShareService → it handles share expiration correctly                 0.02s  
+  ✓ ShareService → it validates share access with proper authentication  0.79s  
+  ✓ ShareService → it records share access with analytics                0.03s  
+  ✓ ShareService → it generates social media metadata for shares         0.03s  
+  ✓ ShareService → it enforces rate limiting for share creation          0.03s  
+  ✓ ShareService → it allows rate limiting bypass for valid requests     0.02s  
+  ✓ ShareService → it updates share settings and preferences             0.02s  
+  ✓ ShareService → it deactivates shares instead of hard delete          0.02s  
+  ✓ ShareService → it gets user shares with pagination and filtering     0.04s  
+  ✓ ShareService → it generates share analytics data                     0.03s  
+  ✓ ShareService → it validates expired shares are not accessible        0.02s  
+  ✓ ShareService → it handles inactive shares properly                   0.02s  
+
+   PASS  Tests\Unit\Utils\DomainUtilsTest
+  ✓ DomainUtils → formatDomain → it converts domain to lowercase         0.01s  
+  ✓ DomainUtils → formatDomain → it trims whitespace
+  ✓ DomainUtils → formatDomain → it removes protocol prefixes
+  ✓ DomainUtils → formatDomain → it removes www prefix
+  ✓ DomainUtils → formatDomain → it removes trailing slash
+  ✓ DomainUtils → formatDomain → it handles complex URLs
+  ✓ DomainUtils → isValidDomain → it validates correct domain formats
+  ✓ DomainUtils → isValidDomain → it rejects invalid domain formats
+  ✓ DomainUtils → isValidDomain → it rejects domains with invalid characters
+  ✓ DomainUtils → sanitizeBusinessName → it converts to lowercase
+  ✓ DomainUtils → sanitizeBusinessName → it removes spaces
+  ✓ DomainUtils → sanitizeBusinessName → it removes special characters
+  ✓ DomainUtils → sanitizeBusinessName → it preserves alphanumeric characters
+  ✓ DomainUtils → sanitizeBusinessName → it handles empty results
+  ✓ DomainUtils → sanitizeBusinessName → it trims whitespace before processing
+  ✓ DomainUtils → extractTLD → it extracts correct TLD from domains
+  ✓ DomainUtils → extractTLD → it handles domains without TLD
+  ✓ DomainUtils → buildDomainsFromName → it builds domains with default TLDs
+  ✓ DomainUtils → buildDomainsFromName → it builds domains with custom TLDs
+  ✓ DomainUtils → buildDomainsFromName → it sanitizes business name before building domains
+  ✓ DomainUtils → isDomainCacheFresh → it returns true for fresh cache entries
+  ✓ DomainUtils → isDomainCacheFresh → it returns false for expired cache entries
+  ✓ DomainUtils → isDomainCacheFresh → it handles boundary conditions
+  ✓ DomainUtils → getAvailabilityStatus → it returns correct status for available domains
+  ✓ DomainUtils → getAvailabilityStatus → it returns correct status for unavailable domains
+  ✓ DomainUtils → getAvailabilityStatus → it returns error status when availability is null
+  ✓ DomainUtils → getAvailabilityStatus → it returns checking status when specified
+
+   PASS  AIEdgeCasesTest
+  ✓ ai generation with malformed api responses                           0.21s  
+  ✓ ai generation with empty business description                        0.08s  
+  ✓ ai generation with extremely long description                        0.09s  
+  ✓ ai generation with special characters and unicode                    0.14s  
+  ✓ ai generation with no models selected                                0.08s  
+  ✓ ai generation with invalid model names                               0.14s  
+  ✓ ai generation timeout scenarios                                      0.13s  
+  ✓ concurrent ai generation sessions                                    0.03s  
+  ✓ ai generation with corrupted cache                                   0.14s  
+  ✓ ai generation database connection failure                            0.07s  
+  ✓ ai generation with memory exhaustion protection                      0.07s  
+  ✓ ai generation partial model failures                                 0.14s  
+  ✓ ai generation session state corruption                               0.02s  
+  ✓ ai generation with rate limit edge cases                             0.13s  
+  ✓ ai generation with invalid json in response                          0.14s  
+  ✓ ai generation with sql injection attempts                            0.14s  
+  ✓ ai generation with xss attempts                                      0.14s  
+  ✓ ai generation with extremely large responses                         0.13s  
+  ✓ ai generation with null and undefined values                         0.13s  
+  ✓ ai generation network interruption simulation                        0.13s  
+  ✓ ai generation with duplicate model selections                        0.13s  
+  ✓ ai generation session cleanup on browser close                       0.03s  
+  ✓ ai generation with mixed encoding characters                         0.13s  
+
+   WARN  ToastNotificationsTest
+  - ai generation started event dispatched from dashboard → Skipping co… 0.04s  
+  - ai generation completed event dispatched from dashboard → Skipping…  0.02s  
+  - ai generation error event dispatched from dashboard → Skipping comp… 0.02s  
+  - ai rate limit event dispatched from dashboard → Skipping complex AI… 0.02s  
+  - ai preferences saved event dispatched from dashboard → Skipping com… 0.03s  
+  - ai generation started event dispatched from project page → Skipping… 0.03s  
+  - ai generation completed event dispatched from project page → Skippi… 0.03s  
+  - deep thinking activation event dispatched from project page → Skipp… 0.02s  
+  - ai preferences saved event dispatched from project page → Skipping…  0.02s  
+  - ai generation error event dispatched from project page → Skipping c… 0.02s  
+  - toast notification component renders correctly → Skipping complex A… 0.02s  
+  - toast notification positions work correctly → Skipping complex AI i… 0.02s  
+  - toast notification types render with correct styling → Skipping com… 0.02s  
+  - toast notification actions work correctly → Skipping complex AI int… 0.02s  
+
+   PASS  Tests\Feature\AIGenerationDeletionTest
+  ✓ AI generation can be deleted with proper cleanup                     0.03s  
+  ✓ only authorized users can delete AI generations                      0.03s  
+  ✓ in-progress AI generations cannot be deleted                         0.03s  
+  ✓ bulk delete removes multiple AI generations                          0.03s  
+  ✓ bulk delete only removes authorized generations                      0.03s  
+  ✓ deletion clears cache entries                                        0.02s  
+
+   PASS  Tests\Feature\Accessibility\SessionSidebarAccessibilityTest
+  ✓ SessionSidebar Accessibility Compliance → it has proper heading str… 0.05s  
+  ✓ SessionSidebar Accessibility Compliance → it has proper aria labels… 0.05s  
+  ✓ SessionSidebar Accessibility Compliance → it has proper keyboard na… 0.05s  
+  ✓ SessionSidebar Accessibility Compliance → it provides screen reader… 0.06s  
+  ✓ SessionSidebar Accessibility Compliance → it handles focus manageme… 0.05s  
+  ✓ SessionSidebar Accessibility Compliance → it provides proper semant… 0.05s  
+  ✓ SessionSidebar Accessibility Compliance → it has appropriate contra… 0.05s  
+  ✓ SessionSidebar Accessibility Compliance → it provides loading state… 0.11s  
+  ✓ SessionSidebar Accessibility Compliance → it handles error states a… 0.03s  
+  ✓ SessionSidebar Accessibility Compliance → it supports screen reader… 0.04s  
+  ✓ SessionSidebar Accessibility Compliance → it provides proper form l… 0.07s  
+  ✓ SessionSidebar Accessibility Compliance → it handles focus mode acc… 0.04s  
+  ✓ SessionSidebar Accessibility Compliance → it provides proper button… 0.03s  
+  ✓ SessionSidebar Accessibility Compliance → it supports high contrast… 0.05s  
+  ✓ SessionSidebar Accessibility Compliance → it provides meaningful al… 0.03s  
+  ✓ SessionSidebar Accessibility Compliance → it handles reduced motion… 0.10s  
+  ✓ SessionSidebar Accessibility Compliance → it maintains accessibilit… 0.10s  
+  ✓ SessionSidebar Accessibility Compliance → it provides proper search… 0.07s  
+  ✓ SessionSidebar Accessibility Compliance → it handles session action… 0.05s  
+
+   PASS  Tests\Feature\AdvancedTableFeaturesTest
+  ✓ Advanced Table Features → Table Sorting Functionality → it sorts re… 0.09s  
+  ✓ Advanced Table Features → Table Sorting Functionality → it sorts re… 0.07s  
+  ✓ Advanced Table Features → Table Sorting Functionality → it sorts re… 0.07s  
+  ✓ Advanced Table Features → Table Sorting Functionality → it sorts re… 0.08s  
+  ✓ Advanced Table Features → Table Sorting Functionality → it maintain… 0.09s  
+  ✓ Advanced Table Features → Table Filtering Functionality → it filter… 0.06s  
+  ✓ Advanced Table Features → Table Filtering Functionality → it filter… 0.07s  
+  ✓ Advanced Table Features → Table Filtering Functionality → it filter… 0.06s  
+  ✓ Advanced Table Features → Table Filtering Functionality → it combin… 0.07s  
+  ✓ Advanced Table Features → Table Filtering Functionality → it clears… 0.07s  
+  ✓ Advanced Table Features → Table UI Integration → it displays sortin… 0.06s  
+  ✓ Advanced Table Features → Table UI Integration → it shows active fi… 0.06s  
+  ✓ Advanced Table Features → Table UI Integration → it maintains table… 0.07s  
+  ✓ Advanced Table Features → Performance and Edge Cases → it handles e… 0.06s  
+  ✓ Advanced Table Features → Performance and Edge Cases → it handles l… 0.39s  
+  ✓ Advanced Table Features → Performance and Edge Cases → it preserves… 0.06s  
+
+   PASS  Tests\Feature\Api\AIGenerationApiTest
+  ✓ POST /api/ai/generate-names → it generates names with valid request… 0.04s  
+  ✓ POST /api/ai/generate-names → it validates required fields           0.03s  
+  ✓ POST /api/ai/generate-names → it validates business description len… 0.03s  
+  ✓ POST /api/ai/generate-names → it validates model names               0.03s  
+  ✓ POST /api/ai/generate-names → it validates generation mode           0.02s  
+  ✓ POST /api/ai/generate-names → it prevents access to other users pro… 0.03s  
+  ✓ POST /api/ai/generate-names → it creates generation session with co… 0.02s  
+  ✓ GET /api/ai/generation/{id} → it returns generation status and resu… 0.02s  
+  ✓ GET /api/ai/generation/{id} → it returns 404 for non-existent gener… 0.02s  
+  ✓ GET /api/ai/generation/{id} → it tracks progress for running genera… 0.02s  
+  ✓ POST /api/ai/cancel-generation/{id} → it cancels a running generati… 0.02s  
+  ✓ POST /api/ai/cancel-generation/{id} → it returns error for complete… 0.02s  
+  ✓ POST /api/ai/cancel-generation/{id} → it returns 404 for non-existe… 0.03s  
+  ✓ GET /api/ai/models → it returns available AI models and their statu… 0.02s  
+  ✓ GET /api/ai/models → it includes user preferences if available       0.02s  
+  ✓ PUT /api/ai/preferences → it updates user AI preferences             0.03s  
+  ✓ PUT /api/ai/preferences → it validates preferred models              0.02s  
+  ✓ PUT /api/ai/preferences → it validates generation mode               0.02s  
+  ✓ PUT /api/ai/preferences → it creates preferences if not exists       0.02s  
+  ✓ GET /api/ai/preferences → it returns current user preferences        0.02s  
+  ✓ GET /api/ai/preferences → it returns default preferences if none ex… 0.02s  
+  ✓ GET /api/ai/history → it returns generation history with pagination  0.03s  
+  ✓ GET /api/ai/history → it filters history by project                  0.03s  
+  ✓ GET /api/ai/history → it filters history by status                   0.03s  
+  ✓ API Authentication → it requires authentication for all endpoints    0.03s  
+  ✓ Rate Limiting → it applies rate limiting to generation endpoint      0.04s  
+
+   PASS  Tests\Feature\Api\LogoApiCachingTest
+  ✓ Logo API Response Caching → it caches completed logo generation sta… 0.04s  
+  ✓ Logo API Response Caching → it uses shorter cache time for processi… 0.03s  
+  ✓ Logo API Response Caching → it caches logo generation show response… 0.03s  
+  ✓ Logo API Response Caching → it caches color schemes for API respons… 0.03s  
+  ✓ Logo API Response Caching → it invalidates cache when logos are cus… 0.03s  
+  ✓ Logo API Response Caching → it handles cache misses gracefully       0.03s  
+  ✓ Logo API Response Caching → it measures cache performance improveme… 0.03s  
+  ✓ Logo API Response Caching → it respects different cache times for d… 0.03s  
+  ✓ Logo API Response Caching → it caches logo generation show response… 0.03s  
+
+   PASS  Tests\Feature\Api\LogoDownloadApiTest
+  ✓ Logo Download API → GET /api/logos/{logoGeneration}/download/{gener… 0.03s  
+  ✓ Logo Download API → GET /api/logos/{logoGeneration}/download/{gener… 0.03s  
+  ✓ Logo Download API → GET /api/logos/{logoGeneration}/download/{gener… 0.03s  
+  ✓ Logo Download API → GET /api/logos/{logoGeneration}/download/{gener… 0.03s  
+  ✓ Logo Download API → GET /api/logos/{logoGeneration}/download/{gener… 0.03s  
+  ✓ Logo Download API → GET /api/logos/{logoGeneration}/download/{gener… 0.03s  
+  ✓ Logo Download API → GET /api/logos/{logoGeneration}/download/{gener… 0.03s  
+  ✓ Logo Download API → GET /api/logos/{logoGeneration}/download/{gener… 0.03s  
+  ✓ Logo Download API → GET /api/logos/{logoGeneration}/download/{gener… 0.03s  
+  ✓ Logo Download API → GET /api/logos/{logoGeneration}/download-batch…  0.03s  
+  ✓ Logo Download API → GET /api/logos/{logoGeneration}/download-batch…  0.04s  
+  ✓ Logo Download API → GET /api/logos/{logoGeneration}/download-batch…  0.03s  
+  ✓ Logo Download API → GET /api/logos/{logoGeneration}/download-batch…  0.03s  
+  ✓ Logo Download API → GET /api/logos/{logoGeneration}/download-batch…  0.03s  
+  ✓ Logo Download API → GET /api/logos/{logoGeneration}/download-batch…  0.03s  
+  ✓ Logo Download API → Rate Limiting → it implements rate limiting for… 0.04s  
+
+   PASS  Tests\Feature\Api\LogoErrorHandlingTest
+  ✓ Logo Generation Error Handling → API Connection Failures → it handl… 0.05s  
+  ✓ Logo Generation Error Handling → API Connection Failures → it handl… 0.03s  
+  ✓ Logo Generation Error Handling → API Connection Failures → it handl… 0.02s  
+  ✓ Logo Generation Error Handling → File System Errors → it handles fi… 0.03s  
+  ✓ Logo Generation Error Handling → File System Errors → it handles st… 0.03s  
+  ✓ Logo Generation Error Handling → File System Errors → it handles co… 0.03s  
+  ✓ Logo Generation Error Handling → Validation Errors → it provides cl… 0.02s  
+  ✓ Logo Generation Error Handling → Validation Errors → it validates c… 0.03s  
+  ✓ Logo Generation Error Handling → Validation Errors → it handles att… 0.03s  
+  ✓ Logo Generation Error Handling → Service Degradation Scenarios → it… 0.03s  
+  ✓ Logo Generation Error Handling → Service Degradation Scenarios → it… 0.02s  
+  ✓ Logo Generation Error Handling → Service Degradation Scenarios → it… 0.02s  
+  ✓ Logo Generation Error Handling → Recovery Operations → it allows re… 0.03s  
+  ✓ Logo Generation Error Handling → Recovery Operations → it prevents…  0.02s  
+  ✓ Logo Generation Error Handling → Recovery Operations → it allows co… 0.03s  
+  ✓ Logo Generation Error Handling → Recovery Operations → it prevents…  0.03s  
+  ✓ Status API Error Handling → it provides detailed progress informati… 0.02s  
+  ✓ Status API Error Handling → it handles failed generation status wit… 0.03s  
+  ✓ Status API Error Handling → it handles partial generation status     0.03s  
+
+   PASS  Tests\Feature\Api\LogoGenerationApiTest
+  ✓ Logo Generation API → POST /api/logos/generate → it can generate lo… 0.03s  
+  ✓ Logo Generation API → POST /api/logos/generate → it validates requi… 0.02s  
+  ✓ Logo Generation API → POST /api/logos/generate → it validates busin… 0.02s  
+  ✓ Logo Generation API → POST /api/logos/generate → it handles busines… 0.02s  
+  ✓ Logo Generation API → POST /api/logos/generate → it validates sessi… 0.02s  
+  ✓ Logo Generation API → POST /api/logos/generate → it limits business… 0.02s  
+  ✓ Logo Generation API → GET /api/logos/{logoGeneration}/status → it r… 0.03s  
+  ✓ Logo Generation API → GET /api/logos/{logoGeneration}/status → it r… 0.02s  
+  ✓ Logo Generation API → GET /api/logos/{logoGeneration}/status → it r… 0.02s  
+  ✓ Logo Generation API → GET /api/logos/{logoGeneration}/status → it r… 0.02s  
+  ✓ Logo Generation API → GET /api/logos/{logoGeneration}/status → it i… 0.02s  
+  ✓ Logo Generation API → GET /api/logos/{logoGeneration} → it returns…  0.03s  
+  ✓ Logo Generation API → GET /api/logos/{logoGeneration} → it groups l… 0.03s  
+  ✓ Logo Generation API → GET /api/logos/{logoGeneration} → it returns…  0.02s  
+  ✓ Logo Generation API → GET /api/logos/{logoGeneration} → it returns…  0.02s  
+  ✓ Logo Generation API → GET /api/logos/{logoGeneration} → it includes… 0.02s  
+  ✓ Logo Generation API → POST /api/logos/{logoGeneration}/customize →…  0.03s  
+  ✓ Logo Generation API → POST /api/logos/{logoGeneration}/customize →…  0.03s  
+  ✓ Logo Generation API → POST /api/logos/{logoGeneration}/customize →…  0.03s  
+  ✓ Logo Generation API → POST /api/logos/{logoGeneration}/customize →…  0.02s  
+
+   PASS  Tests\Feature\Api\ThemeCustomizationApiTest
+  ✓ Theme API Endpoints → can get current user theme preferences         0.03s  
+  ✓ Theme API Endpoints → returns default theme when no preferences exi… 0.02s  
+  ✓ Theme API Endpoints → can update user theme preferences              0.03s  
+  ✓ Theme API Endpoints → validates color hex codes                      0.02s  
+  ✓ Theme API Endpoints → can get predefined theme collection            0.02s  
+  ✓ Theme API Endpoints → can generate custom CSS for theme              0.02s  
+  ✓ Theme API Endpoints → validates accessibility of color combinations  0.02s  
+  ✓ Theme API Endpoints → can import theme from file                     0.03s  
+  ✓ Theme API Endpoints → can export current theme as file               0.03s  
+  ✓ Theme API Endpoints → requires authentication for all theme operati… 0.02s  
+
+   PASS  Tests\Feature\Auth\AuthenticationTest
+  ✓ login screen can be rendered                                         0.06s  
+  ✓ users can authenticate using the login screen                        0.30s  
+  ✓ users can not authenticate with invalid password                     0.30s  
+  ✓ users can logout                                                     0.02s  
+
+   PASS  Tests\Feature\Auth\EmailVerificationTest
+  ✓ email verification screen can be rendered                            0.03s  
+  ✓ email can be verified                                                0.03s  
+  ✓ email is not verified with invalid hash                              0.03s  
+
+   PASS  Tests\Feature\Auth\PasswordConfirmationTest
+  ✓ confirm password screen can be rendered                              0.04s  
+  ✓ password can be confirmed                                            0.28s  
+  ✓ password is not confirmed with invalid password                      0.29s  
+
+   PASS  Tests\Feature\Auth\PasswordResetTest
+  ✓ reset password link screen can be rendered                           0.03s  
+  ✓ reset password link can be requested                                 0.29s  
+  ✓ reset password screen can be rendered                                0.29s  
+  ✓ password can be reset with valid token                               0.82s  
+
+   PASS  Tests\Feature\Auth\RegistrationTest
+  ✓ registration screen can be rendered                                  0.05s  
+  ✓ new users can register                                               0.31s  
+
+   PASS  Tests\Feature\Auth\TwoFactorAuthenticatableTest
+  ✓ two factor enabled attribute returns correct value                   0.03s  
+  ✓ generate two factor secret creates a valid secret                    0.03s  
+  ✓ generate recovery codes creates valid codes                          0.02s  
+  ✓ verify two factor code validates correct codes                       0.03s  
+  ✓ verify recovery code validates and removes used codes                0.02s  
+  ✓ confirm two factor sets confirmed timestamp                          0.03s  
+  ✓ disable two factor clears all two factor fields                      0.02s  
+  ✓ cookie name is generated correctly                                   0.52s  
+  ✓ device id is created and retrieved correctly                         0.03s  
+  ✓ trusted device methods work correctly                                0.31s  
+
+   PASS  Tests\Feature\Auth\TwoFactorAuthenticationTest
+  ✓ users with two factor authentication are redirected to the two fact… 0.33s  
+  ✓ users can complete the two factor challenge with a valid code        0.31s  
+  ✓ users can complete the two factor challenge with a valid recovery c… 0.31s  
+  ✓ users cannot complete the two factor challenge with an invalid code  0.31s  
+  ✓ users cannot complete the two factor challenge with an invalid reco… 0.31s  
+  ✓ users can toggle between code and recovery code forms                0.03s  
+  ✓ users can remember the device when completing the two factor challe… 0.32s  
+
+   PASS  Tests\Feature\Components\IconComponentTest
+  ✓ Icon Component → icon component renders successfully                 0.03s  
+  ✓ Icon Component → icon component renders with default size            0.02s  
+  ✓ Icon Component → icon component accepts different sizes              0.04s  
+  ✓ Icon Component → icon component accepts custom classes               0.02s  
+  ✓ Icon Component → icon component includes accessibility attributes    0.02s  
+  ✓ Icon Component → icon component renders outline style by default     0.02s  
+  ✓ Icon Component → icon component can render solid style               0.02s  
+  ✓ Icon Component → icon component renders common icon types            0.02s  
+  ✓ Icon Component → icon component handles unknown icon gracefully      0.02s  
+  ✓ Icon Component → icon component supports contextual icons for actio… 0.02s  
+  ✓ Icon Component → icon component supports stroke width customization  0.02s  
+  ✓ Icon Component → icon component supports title attribute for toolti… 0.02s  
+  ✓ Icon Component → icon component works with alpine.js directives      0.02s  
+  ✓ Icon Component → icon component supports color variants              0.02s  
+  ✓ Icon Component → icon component supports loading state               0.02s  
+  ✓ Icon Component → icon component is compatible with flux ui           0.03s  
+  ✓ Icon Component → icon component renders multiple icons efficiently   0.02s  
+  ✓ Icon Component → icon component renders consistently across variant… 0.02s  
+  ✓ Icon Component Integration → icon component integrates with button…  0.02s  
+  ✓ Icon Component Integration → icon component works in navigation con… 0.02s  
+  ✓ Icon Component Integration → icon component works with status indic… 0.02s  
+
+   PASS  Tests\Feature\Components\ToastNotificationTest
+  ✓ Toast Notification System → Success Notifications → it displays suc… 0.03s  
+  ✓ Toast Notification System → Success Notifications → it displays suc… 0.03s  
+  ✓ Toast Notification System → Success Notifications → it displays suc… 0.03s  
+  ✓ Toast Notification System → Error Notifications → it displays error… 0.03s  
+  ✓ Toast Notification System → Error Notifications → it displays error… 0.03s  
+  ✓ Toast Notification System → Error Notifications → it displays error… 0.03s  
+  ✓ Toast Notification System → Info and Warning Notifications → it dis… 0.03s  
+  ✓ Toast Notification System → Info and Warning Notifications → it dis… 0.03s  
+  ✓ Toast Notification System → Info and Warning Notifications → it dis… 0.03s  
+  ✓ Toast Notification System → Toast Message Formatting → it formats p… 0.02s  
+  ✓ Toast Notification System → Toast Message Formatting → it formats t… 0.03s  
+
+   PASS  Tests\Feature\DashboardLivewireTest
+  ✓ dashboard page loads successfully for authenticated user             0.05s  
+  ✓ dashboard page redirects unauthenticated users                       0.02s  
+  ✓ dashboard component renders correctly                                0.03s  
+  ✓ project creation with valid description                              0.03s  
+  ✓ validation error with empty description                              0.03s  
+  ✓ validation error with description less than 10 characters            0.03s  
+  ✓ successful redirect to project page after creation                   0.03s  
+  ✓ default project name generation                                      0.03s  
+  ✓ UUID uniqueness on project creation                                  0.03s  
+  ✓ description field is cleared after successful project creation       0.03s  
+  ✓ character counter updates in real-time                               0.04s  
+  ✓ save and generate names button adds auto_generate parameter to redi… 0.03s  
+
+   PASS  Tests\Feature\DashboardTest
+  ✓ guests are redirected to the login page                              0.03s  
+  ✓ authenticated users can visit the dashboard                          0.03s  
+
+   PASS  Tests\Feature\EnhancedNotificationsSimpleTest
+  ✓ Enhanced Notifications and Form Validation - Simple Tests → Toast N… 0.05s  
+  ✓ Enhanced Notifications and Form Validation - Simple Tests → Toast N… 0.05s  
+  ✓ Enhanced Notifications and Form Validation - Simple Tests → Toast N… 0.04s  
+  ✓ Enhanced Notifications and Form Validation - Simple Tests → Toast N… 0.04s  
+  ✓ Enhanced Notifications and Form Validation - Simple Tests → Form Va… 0.05s  
+  ✓ Enhanced Notifications and Form Validation - Simple Tests → Form Va… 0.03s  
+  ✓ Enhanced Notifications and Form Validation - Simple Tests → Form Va… 0.04s  
+  ✓ Enhanced Notifications and Form Validation - Simple Tests → Form Va… 0.04s  
+  ✓ Enhanced Notifications and Form Validation - Simple Tests → Form Va… 0.04s  
+  ✓ Enhanced Notifications and Form Validation - Simple Tests → Integra… 0.05s  
+  ✓ Enhanced Notifications and Form Validation - Simple Tests → Integra… 0.04s  
+  ✓ Enhanced Notifications and Form Validation - Simple Tests → Integra… 0.04s  
+
+   PASS  Tests\Feature\ErrorHandlingTest
+  ✓ Error Handling and User Experience → API Failure Handling → it hand… 0.04s  
+  ✓ Error Handling and User Experience → API Failure Handling → it hand… 0.03s  
+  ✓ Error Handling and User Experience → API Failure Handling → it hand… 0.03s  
+  ✓ Error Handling and User Experience → API Failure Handling → it hand… 0.02s  
+  ✓ Error Handling and User Experience → Validation Error Messages → it… 0.02s  
+  ✓ Error Handling and User Experience → Validation Error Messages → it… 0.02s  
+  ✓ Error Handling and User Experience → Validation Error Messages → it… 0.02s  
+  ✓ Error Handling and User Experience → File Processing Errors → it ha… 0.02s  
+  ✓ Error Handling and User Experience → File Processing Errors → it ha… 0.02s  
+  ✓ Error Handling and User Experience → File Processing Errors → it ha… 0.04s  
+  ✓ Error Handling and User Experience → Queue and Job Failures → it ha… 0.03s  
+  ✓ Error Handling and User Experience → Queue and Job Failures → it tr… 0.02s  
+  ✓ Error Handling and User Experience → Recovery Options → it provides… 0.02s  
+  ✓ Error Handling and User Experience → Recovery Options → it allows p… 0.02s  
+  ✓ Error Handling and User Experience → Recovery Options → it provides… 0.02s  
+  ✓ Error Handling and User Experience → User Feedback and Progress → i… 0.02s  
+  ✓ Error Handling and User Experience → User Feedback and Progress → i… 0.02s  
+  ✓ Error Handling and User Experience → User Feedback and Progress → i… 0.02s  
+  ✓ Error Handling and User Experience → Graceful Degradation → it fall… 0.03s  
+  ✓ Error Handling and User Experience → Graceful Degradation → it prov… 0.02s  
+  ✓ Error Handling and User Experience → Graceful Degradation → it degr… 0.02s  
+  ✓ Error Handling and User Experience → Accessibility Error Messages →… 0.02s  
+  ✓ Error Handling and User Experience → Accessibility Error Messages →… 0.02s  
+
+   PASS  Tests\Feature\ExampleTest
+  ✓ it returns a successful response                                     0.03s  
+
+   PASS  Tests\Feature\Feature\AIVisionIntegrationTest
+  ✓ name generation incorporates image analysis context                  0.04s  
+  ✓ multiple images provide richer context for name generation           0.03s  
+  ✓ image context can be cleared and updated in session                  0.03s  
+  ✓ handles missing image analysis gracefully                            0.02s  
+  ✓ vision analysis results influence name creativity and relevance      0.03s  
+
+   PASS  Tests\Feature\Feature\Livewire\NameGeneratorDashboardAITest
+  ✓ example                                                              0.03s  
+
+   PASS  Tests\Feature\Feature\Models\ImageGenerationContextTest
+  ✓ can create image generation context with required attributes         0.03s  
+  ✓ belongs to project image relationship works                          0.03s  
+  ✓ belongs to generation session relationship works                     0.03s  
+  ✓ scope for session filters correctly                                  0.04s  
+  ✓ scope for generation type filters correctly                          0.03s  
+  ✓ scope high influence filters correctly                               0.03s  
+  ✓ scope high influence with custom threshold works                     0.03s  
+  ✓ is high influence method returns correct boolean                     0.03s  
+  ✓ get analysis attribute returns correct values                        0.03s  
+  ✓ set influence score clamps values between 0 and 1                    0.03s  
+
+   PASS  Tests\Feature\Feature\Models\MoodBoardImageTest
+  ✓ can create mood board image with required attributes                 0.03s  
+  ✓ belongs to mood board relationship works                             0.03s  
+  ✓ belongs to project image relationship works                          0.02s  
+  ✓ scope by mood board filters correctly                                0.03s  
+  ✓ scope ordered by position works correctly                            0.03s  
+  ✓ scope within bounds filters correctly                                0.03s  
+  ✓ update position method works correctly                               0.03s  
+  ✓ update position method with nulls works correctly                    0.03s  
+  ✓ update dimensions method works correctly                             0.03s  
+
+   PASS  Tests\Feature\Feature\Models\MoodBoardTest
+  ✓ can create mood board with required attributes                       0.03s  
+  ✓ belongs to project relationship works                                0.02s  
+  ✓ belongs to user relationship works                                   0.03s  
+  ✓ has many mood board images relationship works                        0.03s  
+  ✓ has many project images through mood board images works              0.04s  
+  ✓ scope for project filters correctly                                  0.02s  
+  ✓ scope by layout type filters correctly                               0.02s  
+  ✓ scope publicly shared filters correctly                              0.02s  
+  ✓ add image to mood board works                                        0.03s  
+  ✓ remove image from mood board works                                   0.03s  
+  ✓ reorder images works correctly                                       0.03s  
+  ✓ generates uuid on creation                                           0.02s  
+
+   PASS  Tests\Feature\Feature\Models\ProjectImageTest
+  ✓ can create project image with required attributes                    0.03s  
+  ✓ belongs to project relationship works                                0.02s  
+  ✓ belongs to user relationship works                                   0.03s  
+  ✓ has many mood board images relationship works                        0.02s  
+  ✓ has many image generation context relationship works                 0.02s  
+  ✓ scope for project filters correctly                                  0.02s  
+  ✓ scope with tags filters correctly                                    0.02s  
+  ✓ scope processed filters correctly                                    0.02s  
+  ✓ scope recent returns most recent images                              0.02s  
+  ✓ get file size formatted returns correct format                       0.02s  
+  ✓ get file size formatted handles bytes                                0.02s  
+  ✓ has tag method works correctly                                       0.02s  
+  ✓ update processing status works                                       0.02s  
+  ✓ generates uuid on creation                                           0.02s  
+
+   PASS  Tests\Feature\Feature\Models\ProjectModelUpdatesTest
+  ✓ project has many project images relationship works                   0.04s  
+  ✓ project has many mood boards relationship works                      0.02s  
+  ✓ project belongs to default mood board relationship works             0.02s  
+  ✓ project can have multiple images and mood boards                     0.02s  
+
+   PASS  Tests\Feature\Feature\Models\UserModelUpdatesTest
+  ✓ user has many project images relationship works                      0.02s  
+  ✓ user has many mood boards relationship works                         0.02s  
+  ✓ user has one theme preferences relationship works                    0.03s  
+  ✓ user can have multiple project images and mood boards                0.03s  
+  ✓ user can have only one theme preference                              0.02s  
+
+   PASS  Tests\Feature\Feature\Models\UserThemePreferenceTest
+  ✓ can create user theme preference with required attributes            0.02s  
+  ✓ belongs to user relationship works                                   0.03s  
+  ✓ scope for theme filters correctly                                    0.02s  
+  ✓ scope custom themes filters correctly                                0.03s  
+  ✓ validate color hex returns true for valid colors                     0.02s  
+  ✓ validate color hex returns false for invalid colors                  0.02s  
+  ✓ get light mode colors returns correct array                          0.02s  
+  ✓ get dark mode colors returns correct array                           0.02s  
+  ✓ generate css variables for light mode works correctly                0.02s  
+  ✓ generate css variables for dark mode works correctly                 0.02s  
+  ✓ get default theme returns correct configuration                      0.02s  
+
+   PASS  Tests\Feature\FluxProComponentMigrationTest
+  ✓ FluxUI Pro Component Migration → Button Component Migration → it re… 0.04s  
+  ✓ FluxUI Pro Component Migration → Button Component Migration → it su… 0.02s  
+  ✓ FluxUI Pro Component Migration → Button Component Migration → it ma… 0.02s  
+  ✓ FluxUI Pro Component Migration → Button Component Migration → it su… 0.02s  
+  ✓ FluxUI Pro Component Migration → Button Component Migration → it su… 0.02s  
+  ✓ FluxUI Pro Component Migration → Button Component Migration → it su… 0.02s  
+  ✓ FluxUI Pro Component Migration → Button Component Migration → it su… 0.02s  
+  ✓ FluxUI Pro Component Migration → Button Component Migration → it su… 0.02s  
+  ✓ FluxUI Pro Component Migration → Input Component Migration → it ren… 0.02s  
+  ✓ FluxUI Pro Component Migration → Input Component Migration → it sup… 0.02s  
+  ✓ FluxUI Pro Component Migration → Input Component Migration → it mai… 0.02s  
+  ✓ FluxUI Pro Component Migration → Input Component Migration → it sup… 0.02s  
+  ✓ FluxUI Pro Component Migration → Input Component Migration → it sup… 0.02s  
+  ✓ FluxUI Pro Component Migration → Input Component Migration → it sup… 0.03s  
+  ✓ FluxUI Pro Component Migration → Input Component Migration → it sup… 0.02s  
+  ✓ FluxUI Pro Component Migration → Input Component Migration → it sup… 0.02s  
+  ✓ FluxUI Pro Component Migration → Field Component Migration → it ren… 0.03s  
+  ✓ FluxUI Pro Component Migration → Field Component Migration → it int… 0.02s  
+  ✓ FluxUI Pro Component Migration → Field Component Migration → it mai… 0.02s  
+  ✓ FluxUI Pro Component Migration → Checkbox Component Migration → it…  0.02s  
+  ✓ FluxUI Pro Component Migration → Checkbox Component Migration → it…  0.02s  
+  ✓ FluxUI Pro Component Migration → Checkbox Component Migration → it…  0.02s  
+  ✓ FluxUI Pro Component Migration → Layout Components Migration → it r… 0.02s  
+  ✓ FluxUI Pro Component Migration → Layout Components Migration → it s… 0.03s  
+  ✓ FluxUI Pro Component Migration → Layout Components Migration → it r… 0.02s  
+  ✓ FluxUI Pro Component Migration → Responsive Behavior → it maintains… 0.02s  
+  ✓ FluxUI Pro Component Migration → Responsive Behavior → it supports…  0.03s  
+  ✓ FluxUI Pro Component Migration → Responsive Behavior → it handles r… 0.02s  
+  ✓ FluxUI Pro Component Migration → Alpine.js Integration → it preserv… 0.02s  
+  ✓ FluxUI Pro Component Migration → Alpine.js Integration → it maintai… 0.02s  
+  ✓ FluxUI Pro Component Migration → Alpine.js Integration → it support… 0.02s  
+  ✓ FluxUI Pro Component Migration → Backward Compatibility → it mainta… 0.02s  
+  ✓ FluxUI Pro Component Migration → Backward Compatibility → it preser… 0.02s  
+  ✓ FluxUI Pro Component Migration → Backward Compatibility → it suppor… 0.02s  
+  ✓ FluxUI Pro Component Migration → Livewire Integration → it integrat… 0.03s  
+  ✓ FluxUI Pro Component Migration → Livewire Integration → it maintain… 0.03s  
+  ✓ FluxUI Pro Component Migration → Livewire Integration → it supports… 0.03s  
+
+   WARN  Tests\Feature\Http\Controllers\ExportControllerTest
+  ✓ ExportController → it creates a PDF export via API                   0.24s  
+  ✓ ExportController → it creates a CSV export via API                   0.03s  
+  ✓ ExportController → it creates a JSON export via API                  0.03s  
+  ✓ ExportController → it validates export creation data                 0.03s  
+  ✓ ExportController → it lists user exports with pagination             0.03s  
+  ✓ ExportController → it filters exports by type                        0.03s  
+  ✓ ExportController → it shows a single export                          0.03s  
+  ✓ ExportController → it downloads export files with proper headers     0.04s  
+  ✓ ExportController → it prevents downloading non-existent files        0.02s  
+  ✓ ExportController → it prevents downloading expired exports           0.03s  
+  ✓ ExportController → it deletes exports and associated files           0.02s  
+  ✓ ExportController → it prevents unauthorized access to other users e… 0.03s  
+  ✓ ExportController → it provides export analytics                      0.03s  
+  ✓ ExportController → it supports custom export templates               0.11s  
+  ✓ ExportController → it handles concurrent export requests             0.03s  
+  ✓ ExportController → it sets custom expiration dates                   0.20s  
+  - ExportController → it requires authentication for all endpoints → W… 0.03s  
+  ✓ ExportController → it provides public download for exports via UUID  0.03s  
+  ✓ ExportController → it tracks download timestamps                     0.03s  
+
+   PASS  Tests\Feature\Http\Controllers\PublicShareControllerTest
+  ✓ PublicShareController → it displays a public share                   0.12s  
+  ✓ PublicShareController → it shows password form for protected shares  0.35s  
+  ✓ PublicShareController → it authenticates password-protected shares   0.62s  
+  ✓ PublicShareController → it rejects invalid passwords                 0.53s  
+  ✓ PublicShareController → it returns 404 for non-existent shares       0.03s  
+  ✓ PublicShareController → it returns 404 for inactive shares           0.03s  
+  ✓ PublicShareController → it returns 404 for expired shares            0.03s  
+  ✓ PublicShareController → it records access analytics                  0.10s  
+  ✓ PublicShareController → it generates social media metadata           0.10s  
+  ✓ PublicShareController → it handles shares with missing shareable mo… 0.03s  
+  ✓ PublicShareController → it displays share in different formats base… 0.03s  
+  ✓ PublicShareController → it prevents access to shares requiring auth… 0.33s  
+  ✓ PublicShareController → it tracks referrer information when availab… 0.11s  
+  ✓ PublicShareController → it handles concurrent access requests safel… 0.13s  
+  ✓ PublicShareController → it respects share settings for public displ… 0.11s  
+  ✓ PublicShareController → it provides download links when available    0.11s  
+
+   WARN  Tests\Feature\Http\Controllers\ShareControllerTest
+  ✓ ShareController → it creates a public share via API                  0.05s  
+  ✓ ShareController → it creates a password-protected share via API      0.80s  
+  ✓ ShareController → it validates share creation data                   0.03s  
+  ✓ ShareController → it requires password for password-protected share… 0.03s  
+  ✓ ShareController → it lists user shares with pagination               0.04s  
+  ✓ ShareController → it filters shares by type                          0.03s  
+  ✓ ShareController → it searches shares by title and description        0.03s  
+  ✓ ShareController → it shows a single share                            0.03s  
+  - ShareController → it updates a share → ShareRequest validation conf… 0.03s  
+  ✓ ShareController → it deactivates a share                             0.03s  
+  ✓ ShareController → it prevents unauthorized access to other users sh… 0.03s  
+  - ShareController → it enforces rate limiting on share creation → Wit… 0.02s  
+  ✓ ShareController → it returns share analytics                         0.03s  
+  - ShareController → it requires authentication for all endpoints → Wi… 0.02s  
+  ✓ ShareController → it validates share ownership on updates and delet… 0.02s  
+
+   PASS  Tests\Feature\ImageUploadControllerTest
+  ✓ can upload single image to project                                   0.05s  
+  ✓ can upload multiple images to project                                0.08s  
+  ✓ validates file types during upload                                   0.03s  
+  ✓ validates file size limits                                           0.03s  
+  ✓ requires authentication for image upload                             0.03s  
+  ✓ validates user can only upload to their own projects                 0.03s  
+  ✓ stores image metadata correctly                                      0.03s  
+  ✓ generates unique uuid for each image                                 0.03s  
+  ✓ returns proper error for missing images array                        0.03s  
+  ✓ processes image upload with background job                           0.04s  
+
+   PASS  Tests\Feature\Integration\AIWorkflowIntegrationTest
+  ✓ complete ai workflow from dashboard to name suggestions              0.18s  
+  ✓ project page contextual generation with existing data                0.11s  
+  ✓ multi model comparison with parallel generation                      0.16s  
+  ✓ error handling with api failures                                     0.17s  
+  ✓ user preferences integration                                         0.04s  
+  ✓ caching for repeated requests                                        0.27s  
+  ✓ rate limiting protection                                             0.15s  
+  ✓ model performance tracking                                           0.16s  
+  ✓ generation session management                                        0.02s  
+  ✓ domain checking integration                                          0.15s  
+
+🚀 Starting complete user workflow test
+✅ Dashboard loads successfully
+✅ Project page loads successfully
+✅ Project description updated
+✅ AI generation settings configured
+✅ Name suggestions generated
+✅ Name filtering works correctly
+✅ Logo gallery loaded
+✅ Logo upload completed
+✅ Bulk operations working
+✅ Theme customization completed
+✅ Data persistence verified
+🎉 Complete user workflow test passed successfully!
+🛡️ Testing error handling in workflow
+✅ Invalid project handling works
+✅ Authorization protection works
+✅ Invalid input validation works
+🛡️ Error handling tests passed
+🎨 Testing animations throughout workflow
+✅ Animation CSS loaded
+✅ Enhanced transitions present
+✅ Animated operations completed in 21.873950958252ms
+🎨 Animation consistency tests passed
+📱 Testing mobile responsive workflow
+✅ Responsive design classes present
+✅ Mobile project page loads
+✅ Mobile Livewire interactions work
+📱 Mobile responsive tests passed
+♿ Testing accessibility features
+✅ ARIA attributes present
+✅ Focus management implemented
+✅ Reduced motion support present
+✅ Keyboard interactions functional
+♿ Accessibility tests passed
+⚡ Testing performance during complete workflow
+✅ Complete workflow completed in 95.411062240601ms
+✅ Memory usage: 169.53652954102MB
+⚡ Performance tests passed
+🔗 Testing all enhanced features integration
+✅ Enhanced file upload: 22.228002548218ms
+✅ Smooth theme transitions: 45.073986053467ms
+✅ AI button state management working
+🔗 All enhanced features integration passed
+   PASS  Tests\Feature\Integration\CompleteUserWorkflowTest
+  ✓ complete user workflow works end to end                              0.34s  
+  ✓ workflow handles errors gracefully                                   0.07s  
+  ✓ animation states work throughout workflow                            0.09s  
+  ✓ mobile responsive workflow functions correctly                       0.08s  
+  ✓ accessibility features work in complete workflow                     0.07s  
+  ✓ performance remains optimal during complete workflow                 0.12s  
+  ✓ all enhanced features work together                                  0.17s  
+
+   PASS  Tests\Feature\Integration\SimplifiedWorkflowTest
+  ✓ Simplified Integration Workflow Tests → name generation workflow wi… 1.48s  
+  ✓ Simplified Integration Workflow Tests → different generation modes…  0.16s  
+  ✓ Simplified Integration Workflow Tests → deep thinking mode creates…  0.16s  
+  ✓ Simplified Integration Workflow Tests → input validation prevents i… 0.21s  
+  ✓ Simplified Integration Workflow Tests → rate limiting prevents rapi… 0.05s  
+  ✓ Simplified Integration Workflow Tests → error message clears when b… 0.05s  
+  ✓ Simplified Integration Workflow Tests → mode changes clear generate… 0.13s  
+  ✓ Simplified Integration Workflow Tests → component state management…  0.05s  
+  ✓ Simplified Integration Workflow Tests → workflow performance meets…  0.10s  
+  ✓ Simplified Integration Workflow Tests → domain results structure su… 0.10s  
+
+   PASS  Tests\Feature\Integration\WorkflowIntegrationTest
+  ✓ Workflow Integration Tests → complete workflow with cached generati… 0.09s  
+  ✓ Workflow Integration Tests → workflow with domain caching integrati… 0.10s  
+  ✓ Workflow Integration Tests → mode switching clears results and crea… 0.11s  
+  ✓ Workflow Integration Tests → deep thinking mode creates separate ca… 0.07s  
+  ✓ Workflow Integration Tests → settings can be changed and maintained… 0.11s  
+  ✓ Workflow Integration Tests → input validation prevents invalid subm… 0.15s  
+  ✓ Workflow Integration Tests → rate limiting prevents rapid successiv… 0.05s  
+  ✓ Workflow Integration Tests → error message clearing on input change… 0.05s  
+  ✓ Workflow Integration Tests → performance benchmarks within acceptab… 0.09s  
+
+   PASS  Tests\Feature\Jobs\AnalyzeImageWithAIJobTest
+  ✓ job can be dispatched and queued                                     0.03s  
+  ✓ job processes image analysis successfully                            0.03s  
+  ✓ job handles analysis failure gracefully                              0.03s  
+  ✓ job skips analysis if image already analyzed                         0.03s  
+  ✓ job handles image file not found                                     0.02s  
+  ✓ job can be serialized and unserialized                               0.02s  
+
+   PASS  Tests\Feature\Jobs\CleanupOldFilesJobTest
+  ✓ Cleanup Old Files Job → it cleans up logo generations older than sp… 0.07s  
+  ✓ Cleanup Old Files Job → it does not clean up active logo generation… 0.03s  
+  ✓ Cleanup Old Files Job → it cleans up temporary files based on age    0.03s  
+  ✓ Cleanup Old Files Job → it cleans up orphaned files without databas… 0.03s  
+  ✓ Cleanup Old Files Job → it cleans up failed generations when enable… 0.03s  
+  ✓ Cleanup Old Files Job → it preserves recent failed generations for…  0.03s  
+  ✓ Cleanup Old Files Job → it skips failed generations when disabled    0.03s  
+  ✓ Cleanup Old Files Job → it handles cleanup errors gracefully         0.03s  
+  ✓ Cleanup Old Files Job → it calculates storage freed during cleanup   0.03s  
+  ✓ Job Configuration → it has correct queue configuration               0.02s  
+  ✓ Job Configuration → it has appropriate backoff strategy              0.02s  
+  ✓ Job Configuration → it generates correct tags                        0.02s  
+  ✓ Job Configuration → it has descriptive display name                  0.02s  
+
+   PASS  Tests\Feature\Jobs\GenerateLogosJobTest
+  ✓ GenerateLogosJob → it can be dispatched successfully                 0.03s  
+  ✓ GenerateLogosJob → it can call OpenAI service directly like the job… 0.03s  
+  ✓ GenerateLogosJob → it can call job generateSingleLogo method direct… 0.02s  
+  ✓ GenerateLogosJob → it generates logos for all 4 styles with 3 varia… 0.04s  
+  ✓ GenerateLogosJob → it updates logo generation status to processing…  0.04s  
+  ✓ GenerateLogosJob → it stores logos in correct directory structure    0.04s  
+  ✓ GenerateLogosJob → it handles API failures gracefully and continues… 0.05s  
+  ✓ GenerateLogosJob → it updates cost tracking during generation        0.04s  
+  ✓ GenerateLogosJob → it handles image download failures                0.04s  
+  ✓ GenerateLogosJob → it marks generation as failed if all API calls f… 0.03s  
+  ✓ GenerateLogosJob → it calculates file sizes correctly                0.04s  
+  ✓ GenerateLogosJob → it generates unique filenames for each logo       0.05s  
+  ✓ GenerateLogosJob → it can be retried after failure                   0.03s  
+  ✓ GenerateLogosJob → it cleans up partial files on job failure         0.03s  
+  ✓ GenerateLogosJob → it creates proper directory structure             0.04s  
+  ✓ GenerateLogosJob → it handles concurrent job execution safely        0.05s  
+  ✓ GenerateLogosJob → it tracks generation progress in real time        0.05s  
+  ✓ GenerateLogosJob → it validates logo generation model exists before… 0.03s  
+  ✓ GenerateLogosJob → it respects timeout configuration                 0.03s  
+  ✓ GenerateLogosJob → it tags job for monitoring                        0.02s  
+  ✓ GenerateLogosJob → it provides meaningful job display name           0.02s  
+
+   WARN  Tests\Feature\Livewire\DashboardComponentTest
+  ✓ Dashboard Component → it can mount successfully                      0.05s  
+  ✓ Dashboard Component → it displays the name generation interface      0.04s  
+  ✓ Dashboard Component → it validates business idea input               0.05s  
+  ✓ Dashboard Component → it validates business idea length              0.07s  
+  ✓ Dashboard Component → it can generate names with valid input         0.12s  
+  ✓ Dashboard Component → it can toggle name selection for logo generat… 0.11s  
+  ✓ Dashboard Component → it limits logo selection to 5 names            0.12s  
+  ✓ Dashboard Component → it can generate logos for selected names       0.10s  
+  ✓ Dashboard Component → it validates logo generation requires selecte… 0.05s  
+  - Dashboard Component → it can share results → Sharing name results i… 0.03s  
+  - Dashboard Component → it can export results in different formats →…  0.02s  
+  ✓ Dashboard Component → it can load search history                     0.04s  
+  ✓ Dashboard Component → it can load from search history                0.08s  
+  ✓ Dashboard Component → it can clear results                           0.10s  
+  ✓ Dashboard Component → it displays different generation modes correc… 0.04s  
+  ✓ Dashboard Component → it can set example business ideas              0.05s  
+  ✓ Dashboard Component → it handles domain checking errors gracefully   0.08s  
+  ✓ Dashboard Component → it detects active logo generation on mount     0.05s  
+  ✓ Dashboard Component → it can refresh logo generation status          0.06s  
+  ✓ Dashboard Component → it handles export with no results              0.06s  
+  ✓ Dashboard Component → it handles share with no results               0.05s  
+  ✓ Dashboard Component → it shows loading state during name generation  0.10s  
+  - Dashboard Component → it displays error messages for API failures →… 0.02s  
+
+   WARN  Tests\Feature\Livewire\DashboardSessionIntegrationTest
+  ✓ Dashboard Session Integration → Session Loading and State Restorati… 0.06s  
+  ✓ Dashboard Session Integration → Session Loading and State Restorati… 0.05s  
+  ✓ Dashboard Session Integration → Session Loading and State Restorati… 0.06s  
+  - Dashboard Session Integration → Auto-save Functionality → it auto-s… 0.02s  
+  - Dashboard Session Integration → Auto-save Functionality → it update… 0.02s  
+  ✓ Dashboard Session Integration → Auto-save Functionality → it auto-s… 0.07s  
+  ✓ Dashboard Session Integration → Session Switching Without Data Loss… 0.07s  
+  ✓ Dashboard Session Integration → Session Switching Without Data Loss… 0.07s  
+  ✓ Dashboard Session Integration → Session Switching Without Data Loss… 0.07s  
+  ✓ Dashboard Session Integration → Integration with Sidebar Events → i… 0.06s  
+  ✓ Dashboard Session Integration → Integration with Sidebar Events → i… 0.06s  
+  ✓ Dashboard Session Integration → Integration with Sidebar Events → i… 0.09s  
+  ✓ Dashboard Session Integration → Current Session Tracking → it track… 0.05s  
+  ✓ Dashboard Session Integration → Current Session Tracking → it clear… 0.05s  
+
+   PASS  Tests\Feature\Livewire\ExportGeneratorTest
+  ✓ it can render                                                        0.04s  
+
+   PASS  Tests\Feature\Livewire\ImageUploaderTest
+  ✓ it renders successfully                                              0.03s  
+
+   WARN  Tests\Feature\Livewire\LogoGalleryComponentTest
+  ✓ LogoGallery Component → it can mount with valid logo generation      0.03s  
+  ✓ LogoGallery Component → it handles non-existent logo generation      0.03s  
+  ✓ LogoGallery Component → it displays processing status with progress  0.05s  
+  ✓ LogoGallery Component → it displays completed logos in grid view     0.06s  
+  ✓ LogoGallery Component → it can toggle between grid and list view mo… 0.04s  
+  ✓ LogoGallery Component → it can select logos for customization        0.06s  
+  ✓ LogoGallery Component → it can clear logo selection                  0.06s  
+  ✓ LogoGallery Component → it validates color scheme application        0.06s  
+  - LogoGallery Component → it can apply color scheme to selected logos… 0.02s  
+  - LogoGallery Component → it handles color customization errors grace… 0.02s  
+  ✓ LogoGallery Component → it can download individual logos             0.05s  
+  ✓ LogoGallery Component → it can download batch of logos               0.08s  
+  ✓ LogoGallery Component → it prevents batch download with no logos     0.04s  
+  ✓ LogoGallery Component → it refreshes status when triggered           0.04s  
+  ✓ LogoGallery Component → it shows completion toast when status chang… 0.04s  
+  ✓ LogoGallery Component → it groups logos by style correctly           0.06s  
+  - LogoGallery Component → it displays existing color variants → Color… 0.02s  
+  ✓ LogoGallery Component → it displays failed status with error messag… 0.03s  
+  ✓ LogoGallery Component → it displays empty state when no logos gener… 0.03s  
+  ✓ LogoGallery Component → it prevents download of non-existent logo    0.04s  
+  - LogoGallery Component → it skips existing color variants during cus… 0.04s  
+
+   WARN  Tests\Feature\Livewire\LogoGalleryUploadTest
+  ✓ LogoGallery Upload Functionality → it can upload a single logo file  0.07s  
+  ✓ LogoGallery Upload Functionality → it can upload multiple logo file… 0.07s  
+  ✓ LogoGallery Upload Functionality → it validates file types correctl… 0.06s  
+  - LogoGallery Upload Functionality → it validates file size limits →…  0.03s  
+  - LogoGallery Upload Functionality → it handles upload errors gracefu… 0.02s  
+  ✓ LogoGallery Upload Functionality → it can delete uploaded logos      0.04s  
+  ✓ LogoGallery Upload Functionality → it prevents deleting uploaded lo… 0.05s  
+  ✓ LogoGallery Upload Functionality → it displays both generated and u… 0.06s  
+  ✓ LogoGallery Upload Functionality → it can download uploaded logo     0.04s  
+  ✓ LogoGallery Upload Functionality → it tracks upload progress for mu… 0.08s  
+  ✓ LogoGallery Upload Functionality → it handles drag and drop state c… 0.04s  
+  ✓ LogoGallery Upload Functionality → it validates image dimensions fo… 0.09s  
+  ✓ LogoGallery Upload Functionality → it stores image dimensions for u… 0.08s  
+  ✓ LogoGallery Upload Functionality → it can filter logos by type       0.07s  
+  ✓ LogoGallery Upload Functionality → it can search logos               0.06s  
+  ✓ LogoGallery Upload Functionality → it can open and close logo detai… 0.05s  
+  ✓ LogoGallery Upload Functionality → it displays navigation elements…  0.03s  
+  ✓ LogoGallery Upload Functionality → it can handle batch file upload…  0.07s  
+  ✓ LogoGallery Upload Functionality → it can generate file preview thu… 0.08s  
+  ✓ LogoGallery Upload Functionality → it can detect duplicate files du… 0.07s  
+  ✓ LogoGallery Upload Functionality → it can perform bulk operations o… 0.05s  
+  ✓ LogoGallery Upload Functionality → it provides enhanced drag and dr… 0.04s  
+  ✓ LogoGallery Upload Functionality → it handles individual file progr… 0.08s  
+  ✓ LogoGallery Upload Functionality → it validates file types and prov… 0.06s  
+
+   PASS  Tests\Feature\Livewire\MoodBoardCanvasTest
+  ✓ it renders successfully                                              0.05s  
+  ✓ it can create and load mood boards                                   0.09s  
+
+   WARN  Tests\Feature\Livewire\NameGeneratorDashboardAITest
+  ✓ Dashboard displays AI generation controls                            0.05s  
+  ✓ Dashboard can toggle AI generation on/off                            0.06s  
+  ✓ Dashboard shows available AI models with real-time status            0.08s  
+  ✓ Dashboard can select multiple AI models for comparison               0.07s  
+  ✓ Dashboard validates AI model selection                               0.07s  
+  ✓ Dashboard can set generation mode for AI                             0.08s  
+  ✓ Dashboard can toggle deep thinking mode                              0.06s  
+  ✓ Dashboard generates names with AI when enabled                       0.16s  
+  ✓ Dashboard creates AIGeneration record when using AI                  0.15s  
+  - Dashboard shows real-time AI generation progress → Skipping AI test… 0.02s  
+  ✓ Dashboard handles AI service failures gracefully                     0.13s  
+  ✓ Dashboard falls back to standard generation on AI failure            0.14s  
+  ✓ Dashboard updates AI model performance metrics                       0.02s  
+  ✓ Dashboard saves user AI preferences                                  0.08s  
+  ✓ Dashboard loads user AI preferences on mount                         0.04s  
+  ✓ Dashboard displays model comparison results in tabs                  0.16s  
+  ✓ Dashboard can cancel AI generation in progress                       0.06s  
+  ✓ Dashboard enforces AI generation rate limits                         0.09s  
+  ✓ Dashboard tracks AI generation costs                                 0.13s  
+
+   PASS  Tests\Feature\Livewire\NameGeneratorTest
+  ✓ it can render                                                        0.03s  
+
+   PASS  Tests\Feature\Livewire\Pages\LogoGalleryTest
+  ✓ it can render                                                        0.04s  
+
+   PASS  Tests\Feature\Livewire\PhotoGalleryTest
+  ✓ renders photo gallery component                                      0.03s  
+  ✓ can search images by filename                                        0.03s  
+  ✓ can filter images by tags                                            0.03s  
+  ✓ can change sort order                                                0.03s  
+  ✓ can toggle view mode between grid and list                           0.03s  
+  ✓ can select and deselect images                                       0.03s  
+  ✓ can select all images                                                0.03s  
+  ✓ can clear selection                                                  0.05s  
+  ✓ can open and close image modal                                       0.03s  
+  ✓ can update image metadata from modal                                 0.04s  
+  ✓ can delete image from modal                                          0.03s  
+  ✓ can perform bulk delete action                                       0.04s  
+  ✓ can perform bulk add tags action                                     0.04s  
+  ✓ can handle keyboard navigation in modal                              0.04s  
+  ✓ clears filters correctly                                             0.04s  
+  ✓ filters work correctly                                               0.03s  
+
+   PASS  Tests\Feature\Livewire\SessionSidebarFocusModeTest
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode Toggle → it st… 0.04s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode Toggle → it ca… 0.03s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode Toggle → it ca… 0.03s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode Toggle → it di… 0.03s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode Toggle → it di… 0.03s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode UI Elements →…  0.03s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode UI Elements →…  0.03s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode UI Elements →…  0.03s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode UI Elements →…  0.04s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode UI Elements →…  0.03s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode Keyboard Short… 0.03s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode Keyboard Short… 0.03s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode Keyboard Short… 0.03s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode State Manageme… 0.03s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode State Manageme… 0.04s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode State Manageme… 0.03s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode Accessibility…  0.03s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode Accessibility…  0.04s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode Accessibility…  0.03s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode Integration →…  0.03s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode Integration →…  0.03s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode Integration →…  0.14s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode Animation Clas… 0.03s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode Animation Clas… 0.03s  
+  ✓ SessionSidebar Focus Mode Functionality → Focus Mode Animation Clas… 0.03s  
+
+   PASS  Tests\Feature\Livewire\SessionSidebarLoadingStatesTest
+  ✓ SessionSidebar Loading States and Optimistic UI → it displays loadi… 0.04s  
+  ✓ SessionSidebar Loading States and Optimistic UI → it shows optimist… 0.03s  
+  ✓ SessionSidebar Loading States and Optimistic UI → it shows optimist… 0.13s  
+  ✓ SessionSidebar Loading States and Optimistic UI → it handles sessio… 0.13s  
+  ✓ SessionSidebar Loading States and Optimistic UI → it handles sessio… 0.13s  
+  ✓ SessionSidebar Loading States and Optimistic UI → it shows loading…  0.17s  
+  ✓ SessionSidebar Loading States and Optimistic UI → it displays skele… 0.03s  
+  ✓ SessionSidebar Loading States and Optimistic UI → it handles empty…  0.03s  
+  ✓ SessionSidebar Loading States and Optimistic UI → it shows proper s… 0.14s  
+  ✓ SessionSidebar Loading States and Optimistic UI → it maintains opti… 0.14s  
+  ✓ SessionSidebar Loading States and Optimistic UI → it provides prope… 0.03s  
+  ✓ SessionSidebar Loading States and Optimistic UI → it handles error…  0.03s  
+  ✓ SessionSidebar Loading States and Optimistic UI → it optimizes rend… 0.16s  
+  ✓ SessionSidebar Loading States and Optimistic UI → it handles rapid…  0.16s  
+
+   FAIL  Tests\Feature\Livewire\SessionSidebarSearchTest
+  ✓ SessionSidebar Search Functionality → Search Bar UI → it displays s… 0.13s  
+  ✓ SessionSidebar Search Functionality → Search Bar UI → it shows sear… 0.13s  
+  ✓ SessionSidebar Search Functionality → Search Bar UI → it displays c… 0.13s  
+  ✓ SessionSidebar Search Functionality → Search Bar UI → it hides clea… 0.15s  
+  ✓ SessionSidebar Search Functionality → Search Functionality → it sea… 0.13s  
+  ✓ SessionSidebar Search Functionality → Search Functionality → it sea… 0.15s  
+  ✓ SessionSidebar Search Functionality → Search Functionality → it per… 0.14s  
+  ✓ SessionSidebar Search Functionality → Search Functionality → it han… 0.14s  
+  ✓ SessionSidebar Search Functionality → Search Functionality → it ret… 0.34s  
+  ✓ SessionSidebar Search Functionality → Search Functionality → it ret… 0.45s  
+  ✓ SessionSidebar Search Functionality → Search Functionality → it tri… 0.28s  
+  ✓ SessionSidebar Search Functionality → Search Performance → it handl… 0.29s  
+  ⨯ SessionSidebar Search Functionality → Search Performance → it searc… 0.69s  
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Livewire\SessionSidebarSearchTest > `SessionSidebar…   
+  Failed asserting that 0.6104848384857178 is less than 0.5.
+
+  at tests/Feature/Livewire/SessionSidebarSearchTest.php:165
+    161▕             $endTime = microtime(true);
+    162▕             $searchTime = $endTime - $startTime;
+    163▕ 
+    164▕             // Search should complete within 0.5 seconds
+  ➜ 165▕             expect($searchTime)->toBeLessThan(0.5);
+    166▕         });
+    167▕     });
+    168▕ 
+    169▕     describe('Search State Management', function (): void {
+
+  1   tests/Feature/Livewire/SessionSidebarSearchTest.php:165
+
+
+  Tests:    1 failed, 30 skipped, 804 passed, [2m1276 pending[22m (3114 assertions)
+  Duration: 51.92s
+

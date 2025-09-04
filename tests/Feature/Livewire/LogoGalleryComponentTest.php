@@ -29,7 +29,7 @@ describe('LogoGallery Component', function (): void {
             ->assertOk()
             ->assertSet('logoGenerationId', $logoGeneration->id)
             ->assertSee('Test Company')
-            ->assertSee('Logo Generation');
+            ->assertSee('Logo Gallery');
     });
 
     it('handles non-existent logo generation', function (): void {

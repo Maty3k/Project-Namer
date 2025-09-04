@@ -137,7 +137,7 @@ class LoadingPerformanceTest extends TestCase
         $startTime = microtime(true);
 
         $response = $this->actingAs($this->user)
-            ->get('/customize-theme');
+            ->get('/themes');
 
         $endTime = microtime(true);
         $loadTime = ($endTime - $startTime) * 1000;
@@ -251,7 +251,7 @@ class LoadingPerformanceTest extends TestCase
         $routes = [
             '/dashboard',
             "/project/{$this->project->uuid}",
-            '/customize-theme',
+            '/themes',
         ];
 
         $totalStartTime = microtime(true);

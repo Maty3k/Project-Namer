@@ -9,6 +9,7 @@ use App\Models\AIGeneration;
 use App\Models\AIModelPerformance;
 use App\Models\GenerationCache;
 use App\Models\LogoGeneration;
+use App\Models\NameSuggestion;
 use App\Models\NamingSession;
 use App\Models\Share;
 use App\Models\UserAIPreferences;
@@ -20,6 +21,7 @@ use App\Services\OpenAINameService;
 use App\Services\SessionService;
 use App\Services\ShareService;
 use Exception;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
@@ -34,6 +36,8 @@ use Livewire\Component;
  */
 class NameGeneratorDashboard extends Component
 {
+    use AuthorizesRequests;
+
     // Business idea input
     public string $businessIdea = '';
 
@@ -406,6 +410,60 @@ class NameGeneratorDashboard extends Component
     {
         if ($this->currentLogoGeneration) {
             $this->currentLogoGeneration->refresh();
+        }
+    }
+
+    /**
+     * Handle logo generation request from name result cards.
+     */
+    #[On('logos-requested')]
+    public function handleLogoRequest(int $suggestionId): void
+    {
+        try {
+            // Find the name suggestion
+            $suggestion = NameSuggestion::findOrFail($suggestionId);
+
+            // Ensure user has permission to generate logos for this suggestion
+            $this->authorize('update', $suggestion->project);
+
+            // Create logo generation record for this specific name
+            $logoGeneration = LogoGeneration::create([
+                'user_id' => auth()->id(),
+                'session_id' => session()->getId(),
+                'business_name' => $suggestion->name,
+                'business_description' => $suggestion->project->description ?? $this->businessIdea,
+                'generation_mode' => $this->generationMode,
+                'status' => 'processing',
+                'total_logos_requested' => 4, // 4 different styles
+                'logos_completed' => 0,
+            ]);
+
+            // Store the current logo generation
+            $this->currentLogoGeneration = $logoGeneration;
+
+            // Dispatch logo generation job
+            GenerateLogosJob::dispatch($logoGeneration);
+
+            // Show success message
+            $this->dispatch('show-toast', [
+                'message' => "Started generating logos for '{$suggestion->name}'! This may take a few minutes.",
+                'type' => 'success',
+            ]);
+
+            // Trigger UI updates
+            $this->dispatch('logo-generation-started', $logoGeneration->id);
+
+        } catch (\Exception $e) {
+            Log::error('Logo generation request failed', [
+                'suggestion_id' => $suggestionId,
+                'error' => $e->getMessage(),
+                'user_id' => auth()->id(),
+            ]);
+
+            $this->dispatch('show-toast', [
+                'message' => 'Failed to start logo generation. Please try again.',
+                'type' => 'error',
+            ]);
         }
     }
 

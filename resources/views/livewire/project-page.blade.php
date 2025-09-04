@@ -24,8 +24,14 @@
                             wire:loading.attr="disabled"
                             class="flex-1 sm:flex-none"
                         >
-                            <span wire:loading.remove wire:target="saveName">Save</span>
-                            <span wire:loading wire:target="saveName">Saving...</span>
+                            <span wire:loading.remove wire:target="saveName" class="flex items-center gap-1.5">
+                                <x-app-icon name="save" size="sm" />
+                                Save
+                            </span>
+                            <span wire:loading wire:target="saveName" class="flex items-center gap-1.5">
+                                <x-app-icon name="loading" size="sm" :loading="true" />
+                                Saving...
+                            </span>
                         </flux:button>
                         
                         <flux:button 
@@ -34,7 +40,10 @@
                             size="sm"
                             class="flex-1 sm:flex-none"
                         >
-                            Cancel
+                            <div class="flex items-center gap-1.5">
+                                <x-app-icon name="cancel" size="sm" />
+                                Cancel
+                            </div>
                         </flux:button>
                     </div>
                 </div>
@@ -210,7 +219,10 @@
                         <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Ready to generate names</h4>
                         <p class="text-gray-500 dark:text-gray-400 mb-4">Start by describing your project above, then generate AI-powered name suggestions.</p>
                         <flux:button wire:click="$set('showAIControls', true)" variant="primary">
-                            Generate More Names
+                            <div class="flex items-center gap-2">
+                                <x-app-icon name="refresh" size="sm" />
+                                Generate More Names
+                            </div>
                         </flux:button>
                     @else
                         <!-- No suggestions for current filter -->
@@ -240,7 +252,10 @@
                         variant="primary"
                         class="fixed bottom-6 right-6 z-40 shadow-lg text-lg px-6 py-3"
                     >
-                        Generate More Names
+                        <div class="flex items-center gap-2">
+                            <x-app-icon name="refresh" size="md" />
+                            Generate More Names
+                        </div>
                     </flux:button>
                 </div>
             @endif
@@ -826,7 +841,10 @@
                                                                 class="text-xs"
                                                                 wire:click="handleNameSelected('{{ $name }}')"
                                                             >
-                                                                Add to Project
+                                                                <div class="flex items-center gap-1">
+                                                                    <x-app-icon name="add" size="xs" />
+                                                                    Add to Project
+                                                                </div>
                                                             </flux:button>
                                                             <div class="text-xs text-gray-500 dark:text-gray-400 text-center">
                                                                 ~${{ number_format($estimatedCost / 100, 3) }}
@@ -908,6 +926,125 @@
                         @endforeach
                     </flux:tabs>
                 </div>
+            </div>
+        @endif
+
+        <!-- AI Generation History Section -->
+        @if(!empty($aiGenerationHistory))
+            <div class="mt-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        Generation History
+                    </h3>
+                    <div class="flex gap-2">
+                        <flux:button 
+                            wire:click="deleteAllCompletedGenerations"
+                            variant="ghost" 
+                            size="sm"
+                            wire:confirm="Are you sure you want to delete all completed AI generations? This action cannot be undone."
+                            class="text-red-600 hover:text-red-700 dark:text-red-400"
+                        >
+                            🗑️ Clear All Completed
+                        </flux:button>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    @foreach($aiGenerationHistory as $generation)
+                        <div class="bg-white dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex items-center gap-2">
+                                        @if($generation->status === 'completed')
+                                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                            <span class="text-sm font-medium text-green-700 dark:text-green-400">Completed</span>
+                                        @elseif($generation->status === 'failed')
+                                            <span class="w-2 h-2 bg-red-500 rounded-full"></span>
+                                            <span class="text-sm font-medium text-red-700 dark:text-red-400">Failed</span>
+                                        @elseif($generation->status === 'running')
+                                            <span class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span>
+                                            <span class="text-sm font-medium text-yellow-700 dark:text-yellow-400">Running</span>
+                                        @else
+                                            <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                                            <span class="text-sm font-medium text-blue-700 dark:text-blue-400">{{ ucfirst($generation->status) }}</span>
+                                        @endif
+                                    </div>
+                                    
+                                    <div class="text-sm text-gray-600 dark:text-gray-400">
+                                        {{ $generation->created_at->diffForHumans() }}
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-2">
+                                    @if($generation->canBeDeletedBy(auth()->user()))
+                                        <flux:button 
+                                            wire:click="deleteAIGeneration({{ $generation->id }})"
+                                            variant="ghost" 
+                                            size="sm"
+                                            wire:confirm="Are you sure you want to delete this AI generation? This will also remove all associated name suggestions."
+                                            class="text-red-600 hover:text-red-700 dark:text-red-400"
+                                        >
+                                            🗑️ Delete
+                                        </flux:button>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                                @if($generation->generation_mode)
+                                    <div>
+                                        <span class="text-gray-500 dark:text-gray-400">Mode:</span>
+                                        <span class="ml-1 font-medium">{{ ucfirst($generation->generation_mode) }}</span>
+                                    </div>
+                                @endif
+                                
+                                @if($generation->models_requested)
+                                    <div>
+                                        <span class="text-gray-500 dark:text-gray-400">Models:</span>
+                                        <span class="ml-1 font-medium">{{ count($generation->models_requested) }} model(s)</span>
+                                    </div>
+                                @endif
+                                
+                                @if($generation->total_names_generated)
+                                    <div>
+                                        <span class="text-gray-500 dark:text-gray-400">Names:</span>
+                                        <span class="ml-1 font-medium">{{ $generation->total_names_generated }}</span>
+                                    </div>
+                                @endif
+                                
+                                @if($generation->getDurationInSeconds())
+                                    <div>
+                                        <span class="text-gray-500 dark:text-gray-400">Duration:</span>
+                                        <span class="ml-1 font-medium">{{ $generation->getDurationInSeconds() }}s</span>
+                                    </div>
+                                @endif
+                            </div>
+
+                            @if($generation->deep_thinking)
+                                <div class="mt-2">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300">
+                                        🧠 Deep Thinking Mode
+                                    </span>
+                                </div>
+                            @endif
+
+                            @if($generation->error_message)
+                                <div class="mt-3 p-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded text-sm">
+                                    <span class="text-red-700 dark:text-red-400">Error:</span>
+                                    <span class="ml-1 text-red-600 dark:text-red-300">{{ $generation->error_message }}</span>
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+
+                @if(count($aiGenerationHistory) > 5)
+                    <div class="mt-4 text-center">
+                        <flux:button variant="ghost" size="sm" class="text-gray-600 dark:text-gray-400">
+                            View All History
+                        </flux:button>
+                    </div>
+                @endif
             </div>
         @endif
 

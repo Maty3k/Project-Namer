@@ -50,7 +50,10 @@
 
         <div class="flex items-center justify-end">
             <flux:button type="submit" variant="primary" class="w-full">
-                {{ __('Create account') }}
+                <div class="flex items-center justify-center gap-2">
+                    <x-app-icon name="add" size="sm" />
+                    {{ __('Create account') }}
+                </div>
             </flux:button>
         </div>
     </form>

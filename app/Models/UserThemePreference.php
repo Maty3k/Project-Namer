@@ -108,17 +108,16 @@ class UserThemePreference extends Model
     }
 
     /**
-     * Get text_color attribute (alias for text_primary_color).
+     * Get text_color attribute.
      *
      * @return \Illuminate\Database\Eloquent\Casts\Attribute<string, string>
      */
     protected function textColor(): \Illuminate\Database\Eloquent\Casts\Attribute
     {
-        return \Illuminate\Database\Eloquent\Casts\Attribute::make(get: fn () => $this->text_primary_color, set: function (?string $value) {
-            $this->text_primary_color = $value;
-
-            return [];
-        });
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+            get: fn () => $this->attributes['text_color'] ?? '#1F2937',
+            set: fn (?string $value) => ['text_color' => $value]
+        );
     }
 
     /**

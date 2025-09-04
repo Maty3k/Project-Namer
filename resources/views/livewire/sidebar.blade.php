@@ -1,4 +1,4 @@
-<div class="{{ $collapsed ? 'w-16' : 'w-64' }} transition-all duration-300 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 h-screen flex flex-col">
+<div class="{{ $collapsed ? 'w-16' : 'w-64' }} transition-all duration-300 ease-in-out transform {{ $collapsed ? '-translate-x-2' : 'translate-x-0' }} bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 h-screen flex flex-col">
     <!-- Sidebar Header -->
     <div class="p-4 border-b border-gray-200 dark:border-gray-700">
         <div class="flex items-center justify-between">
@@ -12,15 +12,9 @@
                 class="flex-shrink-0"
             >
                 @if($collapsed)
-                    <!-- Expand icon -->
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
+                    <x-app-icon name="expand" size="sm" />
                 @else
-                    <!-- Collapse icon -->
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
+                    <x-app-icon name="collapse" size="sm" />
                 @endif
             </flux:button>
         </div>
@@ -38,14 +32,12 @@
             class="w-full {{ $collapsed ? 'px-3' : '' }}"
         >
             @if($collapsed)
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
+                <x-app-icon name="add" size="sm" />
             @else
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
-                New Project
+                <div class="flex items-center gap-2">
+                    <x-app-icon name="add" size="sm" />
+                    New Project
+                </div>
             @endif
         </flux:button>
     </div>

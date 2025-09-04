@@ -301,4 +301,109 @@ final class AIGeneration extends Model
             'updated_at' => $this->updated_at?->toISOString(),
         ];
     }
+
+    /**
+     * Check if this generation can be deleted.
+     */
+    public function canBeDeleted(): bool
+    {
+        return ! $this->isInProgress();
+    }
+
+    /**
+     * Check if this generation can be deleted by a specific user.
+     */
+    public function canBeDeletedBy(User $user): bool
+    {
+        return $this->user_id === $user->id && $this->canBeDeleted();
+    }
+
+    /**
+     * Delete this AI generation with proper cleanup of associated records.
+     */
+    public function deleteWithCleanup(): bool
+    {
+        if (! $this->canBeDeleted()) {
+            return false;
+        }
+
+        try {
+            \DB::transaction(function (): void {
+                // Delete associated name suggestions
+                NameSuggestion::where('ai_generation_session_id', $this->generation_session_id)->delete();
+
+                // Clear related cache entries
+                $this->clearRelatedCache();
+
+                // Delete the generation record
+                $this->delete();
+            });
+
+            return true;
+        } catch (\Exception $e) {
+            \Log::error('Failed to delete AI generation with cleanup', [
+                'generation_id' => $this->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
+    }
+
+    /**
+     * Bulk delete multiple AI generations with proper cleanup.
+     *
+     * @param  array<int>  $generationIds
+     * @return int Number of generations successfully deleted
+     */
+    public static function bulkDeleteWithCleanup(array $generationIds, User $user): int
+    {
+        $deletedCount = 0;
+
+        try {
+            \DB::transaction(function () use ($generationIds, $user, &$deletedCount): void {
+                $generations = self::whereIn('id', $generationIds)
+                    ->where('user_id', $user->id)
+                    ->whereNotIn('status', ['pending', 'running'])
+                    ->get();
+
+                foreach ($generations as $generation) {
+                    // Delete associated name suggestions
+                    NameSuggestion::where('ai_generation_session_id', $generation->generation_session_id)->delete();
+
+                    // Clear related cache
+                    $generation->clearRelatedCache();
+
+                    // Delete the generation
+                    $generation->delete();
+                    $deletedCount++;
+                }
+            });
+        } catch (\Exception $e) {
+            \Log::error('Failed to bulk delete AI generations', [
+                'generation_ids' => $generationIds,
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        return $deletedCount;
+    }
+
+    /**
+     * Clear cache entries related to this generation.
+     */
+    protected function clearRelatedCache(): void
+    {
+        $cacheKeys = [
+            "ai_generation_{$this->id}",
+            "ai_generation_results_{$this->generation_session_id}",
+            "project_generations_{$this->project_id}",
+            "user_generations_{$this->user_id}",
+        ];
+
+        foreach ($cacheKeys as $key) {
+            \Cache::forget($key);
+        }
+    }
 }
