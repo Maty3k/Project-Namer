@@ -608,8 +608,49 @@
                 return `rgb(${r}, ${g}, ${b})`;
             }
 
-            // Theme applied with dark mode handling
+            // Theme applied with enhanced 1-second animation and dark mode handling
             Livewire.on('theme-applied', (data) => {
+                // Add pulse animation to all themed elements
+                const animateThemeChange = () => {
+                    const themedElements = document.querySelectorAll('.themed-sidebar, .themed-create-box, header');
+                    themedElements.forEach(element => {
+                        element.style.transform = 'scale(1.02)';
+                        element.style.transition = 'all 1s cubic-bezier(0.4, 0, 0.2, 1)';
+                        
+                        // Reset after animation
+                        setTimeout(() => {
+                            element.style.transform = 'scale(1)';
+                        }, 500);
+                    });
+                };
+                
+                // Apply theme colors to themed elements
+                const applyThemeColors = () => {
+                    // Update sidebar
+                    const sidebar = document.querySelector('.themed-sidebar');
+                    if (sidebar) {
+                        sidebar.style.background = `linear-gradient(180deg, ${data.backgroundColor}f8 0%, ${data.primaryColor}10 100%)`;
+                        sidebar.style.borderColor = `${data.primaryColor}50`;
+                        sidebar.style.transition = 'all 1s ease-in-out';
+                    }
+                    
+                    // Update create project box
+                    const createBox = document.querySelector('.themed-create-box');
+                    if (createBox) {
+                        createBox.style.background = `linear-gradient(135deg, ${data.backgroundColor}f0 0%, ${data.accentColor}20 100%)`;
+                        createBox.style.boxShadow = `0 10px 25px ${data.primaryColor}20`;
+                        createBox.style.transition = 'all 1s ease-in-out';
+                    }
+                    
+                    // Update header
+                    const header = document.querySelector('header');
+                    if (header) {
+                        header.style.background = `linear-gradient(135deg, ${data.backgroundColor}f5 0%, ${data.primaryColor}15 100%)`;
+                        header.style.borderColor = `${data.primaryColor}40`;
+                        header.style.transition = 'all 1s ease-in-out';
+                    }
+                };
+                
                 // Handle dark mode toggle
                 const html = document.documentElement;
                 if (data.isDarkMode) {
@@ -619,11 +660,13 @@
                     const sidebarElements = document.querySelectorAll('[class*="bg-slate-900"]');
                     sidebarElements.forEach(element => {
                         element.style.backgroundColor = data.backgroundColor;
+                        element.style.transition = 'background-color 1s ease-in-out';
                     });
                     
                     const borderElements = document.querySelectorAll('[class*="border-slate-"]');
                     borderElements.forEach(element => {
                         element.style.borderColor = data.primaryColor + '44';
+                        element.style.transition = 'border-color 1s ease-in-out';
                     });
                     
                     // Ensure text is white in dark mode
@@ -635,16 +678,29 @@
                     const sidebarElements = document.querySelectorAll('[class*="bg-slate-900"]');
                     sidebarElements.forEach(element => {
                         element.style.backgroundColor = '';
+                        element.style.transition = 'background-color 1s ease-in-out';
                     });
                     
                     const borderElements = document.querySelectorAll('[class*="border-slate-"]');
                     borderElements.forEach(element => {
                         element.style.borderColor = '';
+                        element.style.transition = 'border-color 1s ease-in-out';
                     });
                     
                     // Reset text color for light mode
                     document.body.style.color = '';
                 }
+                
+                // Execute animations with timing
+                requestAnimationFrame(() => {
+                    applyThemeColors();
+                    setTimeout(() => {
+                        animateThemeChange();
+                    }, 100);
+                });
+                
+                // Show visual feedback with themed notification
+                showThemedNotification(data);
             });
 
             // Theme saved successfully
@@ -675,6 +731,43 @@
                     message: message,
                     type: type,
                     duration: type === 'error' ? 8000 : 4000
+                });
+            }
+            
+            // Show themed notification with colors
+            function showThemedNotification(data) {
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-4 right-4 z-50 p-4 rounded-lg shadow-xl transform transition-all duration-1000';
+                notification.style.background = `linear-gradient(135deg, ${data.primaryColor} 0%, ${data.accentColor} 100%)`;
+                notification.style.color = 'white';
+                notification.style.fontWeight = 'bold';
+                notification.style.transform = 'translateX(100%) scale(0.8)';
+                notification.style.opacity = '0';
+                
+                notification.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="text-2xl animate-pulse">🎨</span>
+                        <span>Theme Applied!</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Animate in
+                requestAnimationFrame(() => {
+                    notification.style.transform = 'translateX(0) scale(1)';
+                    notification.style.opacity = '1';
+                    
+                    // Animate out after 2 seconds
+                    setTimeout(() => {
+                        notification.style.transform = 'translateX(100%) scale(0.8)';
+                        notification.style.opacity = '0';
+                        
+                        // Remove after animation
+                        setTimeout(() => {
+                            notification.remove();
+                        }, 1000);
+                    }, 2000);
                 });
             }
 

@@ -1,5 +1,17 @@
 <div class="max-w-2xl mx-auto p-6">
-    <div class="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-8">
+    <div class="rounded-lg shadow-lg p-8 transition-all duration-300 themed-create-box"
+         @php
+             $userTheme = null;
+             if (auth()->check()) {
+                 $userTheme = \App\Models\UserThemePreference::where('user_id', auth()->id())->first();
+             }
+         @endphp
+         @if($userTheme)
+             style="background: linear-gradient(135deg, {{ $userTheme->background_color }}f0 0%, {{ $userTheme->accent_color }}20 100%);
+                    box-shadow: 0 10px 25px {{ $userTheme->primary_color }}20;"
+         @else
+             class="bg-white dark:bg-gray-900"
+         @endif>
         <div class="text-center mb-8">
             <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                 Create New Project

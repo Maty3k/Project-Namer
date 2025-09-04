@@ -1,4 +1,16 @@
-<div class="{{ $collapsed ? 'w-16' : 'w-64' }} transition-all duration-300 ease-in-out transform {{ $collapsed ? '-translate-x-2' : 'translate-x-0' }} bg-gray-50 dark:bg-slate-900 border-r border-gray-200 dark:border-slate-700 h-screen flex flex-col">
+<div class="{{ $collapsed ? 'w-16' : 'w-64' }} transition-all duration-300 ease-in-out transform {{ $collapsed ? '-translate-x-2' : 'translate-x-0' }} border-r h-screen flex flex-col themed-sidebar" 
+     @php
+         $userTheme = null;
+         if (auth()->check()) {
+             $userTheme = \App\Models\UserThemePreference::where('user_id', auth()->id())->first();
+         }
+     @endphp
+     @if($userTheme)
+         style="background: linear-gradient(180deg, {{ $userTheme->background_color }}f8 0%, {{ $userTheme->primary_color }}10 100%);
+                border-color: {{ $userTheme->primary_color }}50;"
+     @else
+         class="bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-700"
+     @endif>
     <!-- Sidebar Header -->
     <div class="p-4 border-b border-gray-200 dark:border-slate-600">
         <div class="flex items-center justify-between">

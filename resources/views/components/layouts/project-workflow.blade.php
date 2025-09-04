@@ -51,7 +51,13 @@
     <!-- Main Content Area -->
     <div class="flex-1 flex flex-col min-h-screen">
         <!-- Header -->
-        <header class="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700 px-6 py-4">
+        <header class="border-b px-6 py-4 transition-all duration-300"
+                @if($userTheme)
+                  style="background: linear-gradient(135deg, {{ $userTheme->background_color }}f5 0%, {{ $userTheme->primary_color }}15 100%); 
+                         border-color: {{ $userTheme->primary_color }}40;"
+                @else
+                  class="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700"
+                @endif>
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-4">
                     <x-app-logo />
