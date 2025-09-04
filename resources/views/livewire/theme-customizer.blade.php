@@ -1,6 +1,76 @@
-<div class="space-y-8">
+<div class="space-y-8 relative overflow-hidden">
+    <!-- Seasonal Background Decorations -->
+    <div class="fixed inset-0 pointer-events-none z-0 opacity-20">
+        @php
+            $currentMonth = date('n');
+            $currentDay = date('j');
+            
+            // Determine current season with more specific date ranges
+            $season = 'default';
+            if (($currentMonth == 12 && $currentDay >= 21) || $currentMonth == 1 || $currentMonth == 2 || ($currentMonth == 3 && $currentDay < 20)) {
+                $season = 'winter';
+            } elseif (($currentMonth == 3 && $currentDay >= 20) || $currentMonth == 4 || $currentMonth == 5 || ($currentMonth == 6 && $currentDay < 21)) {
+                $season = 'spring';
+            } elseif (($currentMonth == 6 && $currentDay >= 21) || $currentMonth == 7 || $currentMonth == 8 || ($currentMonth == 9 && $currentDay < 22)) {
+                $season = 'summer';
+            } elseif (($currentMonth == 9 && $currentDay >= 22) || ($currentMonth == 10 && $currentDay < 31)) {
+                $season = 'autumn';
+            } elseif ($currentMonth == 10 && $currentDay == 31) {
+                $season = 'halloween';
+            } elseif ($currentMonth == 11) {
+                $season = 'autumn';
+            }
+        @endphp
+        
+        @if($season === 'winter')
+            <!-- Winter Decorations -->
+            <div class="absolute top-4 left-8 text-6xl animate-bounce" style="animation-delay: 0s; animation-duration: 3s;">❄️</div>
+            <div class="absolute top-20 right-12 text-4xl animate-pulse" style="animation-delay: 1s;">⛄</div>
+            <div class="absolute top-40 left-20 text-5xl animate-bounce" style="animation-delay: 2s; animation-duration: 4s;">🌨️</div>
+            <div class="absolute bottom-32 right-8 text-4xl animate-pulse" style="animation-delay: 3s;">❄️</div>
+            <div class="absolute bottom-8 left-12 text-5xl animate-bounce" style="animation-delay: 1.5s; animation-duration: 3.5s;">⛷️</div>
+        @elseif($season === 'spring')
+            <!-- Spring Decorations -->
+            <div class="absolute top-4 left-8 text-6xl animate-bounce" style="animation-delay: 0s; animation-duration: 2.5s;">🌸</div>
+            <div class="absolute top-20 right-12 text-5xl animate-pulse" style="animation-delay: 1s;">🌱</div>
+            <div class="absolute top-40 left-20 text-4xl animate-bounce" style="animation-delay: 2s; animation-duration: 3s;">🦋</div>
+            <div class="absolute bottom-32 right-8 text-5xl animate-pulse" style="animation-delay: 3s;">🌷</div>
+            <div class="absolute bottom-8 left-12 text-4xl animate-bounce" style="animation-delay: 1.5s; animation-duration: 2.8s;">🐝</div>
+        @elseif($season === 'summer')
+            <!-- Summer Decorations -->
+            <div class="absolute top-4 left-8 text-6xl animate-bounce" style="animation-delay: 0s; animation-duration: 3s;">☀️</div>
+            <div class="absolute top-20 right-12 text-5xl animate-pulse" style="animation-delay: 1s;">🏖️</div>
+            <div class="absolute top-40 left-20 text-4xl animate-bounce" style="animation-delay: 2s; animation-duration: 2.5s;">🌊</div>
+            <div class="absolute bottom-32 right-8 text-4xl animate-pulse" style="animation-delay: 3s;">🍉</div>
+            <div class="absolute bottom-8 left-12 text-5xl animate-bounce" style="animation-delay: 1.5s; animation-duration: 3.5s;">🐚</div>
+        @elseif($season === 'halloween')
+            <!-- Halloween Decorations -->
+            <div class="absolute top-4 left-8 text-6xl animate-bounce" style="animation-delay: 0s; animation-duration: 2s;">🎃</div>
+            <div class="absolute top-20 right-12 text-5xl animate-pulse" style="animation-delay: 1s;">💀</div>
+            <div class="absolute top-40 left-20 text-4xl animate-bounce" style="animation-delay: 2s; animation-duration: 3s;">👻</div>
+            <div class="absolute bottom-32 right-8 text-4xl animate-pulse" style="animation-delay: 3s;">🕷️</div>
+            <div class="absolute bottom-8 left-12 text-5xl animate-bounce" style="animation-delay: 1.5s; animation-duration: 2.5s;">🦇</div>
+            <div class="absolute top-60 right-20 text-3xl animate-pulse" style="animation-delay: 2.5s;">🕸️</div>
+            <div class="absolute bottom-60 left-32 text-4xl animate-bounce" style="animation-delay: 0.5s; animation-duration: 3.2s;">🍬</div>
+        @elseif($season === 'autumn')
+            <!-- Autumn Decorations -->
+            <div class="absolute top-4 left-8 text-6xl animate-bounce" style="animation-delay: 0s; animation-duration: 3s;">🍂</div>
+            <div class="absolute top-20 right-12 text-5xl animate-pulse" style="animation-delay: 1s;">🍁</div>
+            <div class="absolute top-40 left-20 text-4xl animate-bounce" style="animation-delay: 2s; animation-duration: 2.8s;">🌰</div>
+            <div class="absolute bottom-32 right-8 text-5xl animate-pulse" style="animation-delay: 3s;">🦃</div>
+            <div class="absolute bottom-8 left-12 text-4xl animate-bounce" style="animation-delay: 1.5s; animation-duration: 3.5s;">🥧</div>
+        @else
+            <!-- Default/Year-round Decorations -->
+            <div class="absolute top-4 left-8 text-6xl animate-bounce" style="animation-delay: 0s; animation-duration: 3s;">🎨</div>
+            <div class="absolute top-20 right-12 text-5xl animate-pulse" style="animation-delay: 1s;">✨</div>
+            <div class="absolute top-40 left-20 text-4xl animate-bounce" style="animation-delay: 2s; animation-duration: 2.5s;">🌈</div>
+            <div class="absolute bottom-32 right-8 text-4xl animate-pulse" style="animation-delay: 3s;">💫</div>
+            <div class="absolute bottom-8 left-12 text-5xl animate-bounce" style="animation-delay: 1.5s; animation-duration: 3.5s;">🎭</div>
+        @endif
+    </div>
+
     <!-- Theme Customizer Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between relative z-10">
         <div>
             <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 Theme Customizer
@@ -14,7 +84,7 @@
 
     <!-- Seasonal Recommendation -->
     @if($recommendedSeasonalTheme)
-        <flux:card class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800 cursor-pointer hover:shadow-lg transition-all duration-200" 
+        <flux:card class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800 cursor-pointer hover:shadow-lg transition-all duration-200 relative z-10" 
                    wire:click="applySeasonalRecommendation">
             <div class="p-6">
                 <div class="flex items-center justify-between">
@@ -42,7 +112,7 @@
     @endif
 
     <!-- Theme Categories -->
-    <div class="space-y-4">
+    <div class="space-y-4 relative z-10">
         <div class="flex items-center justify-between">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 Predefined Themes
@@ -152,7 +222,7 @@
     </div>
 
     <!-- Custom Color Controls -->
-    <div class="space-y-6">
+    <div class="space-y-6 relative z-10">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Custom Colors
         </h3>
@@ -237,7 +307,7 @@
 
             <flux:field>
                 <flux:label>Theme Mode</flux:label>
-                <flux:switch wire:model.live="isDarkMode" wire:change="toggleDarkMode">
+                <flux:switch wire:model.live="isDarkMode" wire:click="toggleDarkMode">
                     Dark Mode
                 </flux:switch>
             </flux:field>
@@ -245,7 +315,7 @@
     </div>
 
     <!-- Accessibility Feedback -->
-    <div class="space-y-4">
+    <div class="space-y-4 relative z-10">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Accessibility Analysis
         </h3>
@@ -292,7 +362,7 @@
     </div>
 
     <!-- Live Preview -->
-    <div class="space-y-4">
+    <div class="space-y-4 relative z-10">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Live Preview
         </h3>
@@ -329,7 +399,7 @@
     </div>
 
     <!-- CSS Output -->
-    <div class="space-y-4">
+    <div class="space-y-4 relative z-10">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Generated CSS
         </h3>
@@ -340,7 +410,7 @@
     </div>
 
     <!-- Import/Export -->
-    <div class="flex flex-col space-y-4
+    <div class="flex flex-col space-y-4 relative z-10
                 sm:flex-row sm:space-y-0 sm:space-x-6 sm:items-end">
         <div class="flex-1">
             <flux:field>
@@ -507,7 +577,8 @@
                             primaryColor: primaryColor,
                             accentColor: accentColor,
                             backgroundColor: backgroundColor,
-                            textColor: textColor
+                            textColor: textColor,
+                            isDarkMode: @this.isDarkMode
                         });
                         
                     } catch (error) {

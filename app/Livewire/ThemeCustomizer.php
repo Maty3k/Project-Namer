@@ -265,6 +265,13 @@ final class ThemeCustomizer extends Component
 
         $this->validateAccessibility();
         $this->dispatch('theme-updated');
+        $this->dispatch('theme-applied', [
+            'primaryColor' => $this->primaryColor,
+            'accentColor' => $this->accentColor,
+            'backgroundColor' => $this->backgroundColor,
+            'textColor' => $this->textColor,
+            'isDarkMode' => $this->isDarkMode,
+        ]);
     }
 
     /**
