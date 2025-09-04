@@ -14,7 +14,8 @@
 
     <!-- Seasonal Recommendation -->
     @if($recommendedSeasonalTheme)
-        <flux:card class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800">
+        <flux:card class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800 cursor-pointer hover:shadow-lg transition-all duration-200" 
+                   wire:click="applySeasonalRecommendation">
             <div class="p-6">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-4">
@@ -34,13 +35,7 @@
                             </p>
                         </div>
                     </div>
-                    <flux:button 
-                        wire:click="applySeasonalRecommendation"
-                        variant="primary"
-                        size="sm"
-                    >
-                        Apply Theme
-                    </flux:button>
+                    <!-- Theme can be applied by clicking on the card itself -->
                 </div>
             </div>
         </flux:card>
@@ -548,8 +543,36 @@
                 const html = document.documentElement;
                 if (data.isDarkMode) {
                     html.classList.add('dark');
+                    
+                    // Apply consistent sidebar colors in dark mode
+                    const sidebarElements = document.querySelectorAll('[class*="bg-slate-900"]');
+                    sidebarElements.forEach(element => {
+                        element.style.backgroundColor = data.backgroundColor;
+                    });
+                    
+                    const borderElements = document.querySelectorAll('[class*="border-slate-"]');
+                    borderElements.forEach(element => {
+                        element.style.borderColor = data.primaryColor + '44';
+                    });
+                    
+                    // Ensure text is white in dark mode
+                    document.body.style.color = '#f9fafb';
                 } else {
                     html.classList.remove('dark');
+                    
+                    // Reset sidebar colors for light mode
+                    const sidebarElements = document.querySelectorAll('[class*="bg-slate-900"]');
+                    sidebarElements.forEach(element => {
+                        element.style.backgroundColor = '';
+                    });
+                    
+                    const borderElements = document.querySelectorAll('[class*="border-slate-"]');
+                    borderElements.forEach(element => {
+                        element.style.borderColor = '';
+                    });
+                    
+                    // Reset text color for light mode
+                    document.body.style.color = '';
                 }
             });
 

@@ -75,7 +75,7 @@ describe('Theme API Endpoints', function (): void {
                 'accent_color' => 'invalid-color',
                 'background_color' => '#12345',  // too short
                 'text_color' => 'nothex',
-                'theme_name' => 'test'
+                'theme_name' => 'test',
             ]);
 
         $response->assertUnprocessable()

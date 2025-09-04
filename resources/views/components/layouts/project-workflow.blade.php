@@ -27,6 +27,13 @@
                 background: linear-gradient(135deg, {{ $userTheme->background_color }}ee 0%, {{ $userTheme->primary_color }}22 100%);
                 color: {{ $userTheme->text_color }};
             }
+            /* Consistent sidebar colors in dark mode */
+            .dark [class*="bg-slate-900"] {
+                background-color: {{ $userTheme->background_color }} !important;
+            }
+            .dark [class*="border-slate-"] {
+                border-color: {{ $userTheme->primary_color }}44 !important;
+            }
             @endif
         </style>
     @endif

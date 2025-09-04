@@ -89,8 +89,21 @@ final class ThemeCustomizer extends Component
             $this->themeName = $theme['theme_name'];
             $this->isDarkMode = $theme['is_dark_mode'];
 
+            // Ensure proper text colors for dark mode
+            if ($this->isDarkMode) {
+                // Force white text for dark mode themes
+                $this->textColor = '#f9fafb';
+            }
+
             $this->validateAccessibility();
             $this->dispatch('theme-updated');
+            $this->dispatch('theme-applied', [
+                'primaryColor' => $this->primaryColor,
+                'accentColor' => $this->accentColor,
+                'backgroundColor' => $this->backgroundColor,
+                'textColor' => $this->textColor,
+                'isDarkMode' => $this->isDarkMode,
+            ]);
         }
     }
 
@@ -238,8 +251,8 @@ final class ThemeCustomizer extends Component
      */
     public function toggleDarkMode(): void
     {
-        $this->isDarkMode = !$this->isDarkMode;
-        
+        $this->isDarkMode = ! $this->isDarkMode;
+
         if ($this->isDarkMode) {
             // Set appropriate dark mode colors
             $this->backgroundColor = '#1f2937';
@@ -249,7 +262,7 @@ final class ThemeCustomizer extends Component
             $this->backgroundColor = '#ffffff';
             $this->textColor = '#111827';
         }
-        
+
         $this->validateAccessibility();
         $this->dispatch('theme-updated');
     }
@@ -359,15 +372,15 @@ final class ThemeCustomizer extends Component
     {
         // Remove # if present
         $hex = str_replace('#', '', $backgroundColor);
-        
+
         // Convert to RGB
         $r = hexdec(substr($hex, 0, 2));
         $g = hexdec(substr($hex, 2, 2));
         $b = hexdec(substr($hex, 4, 2));
-        
+
         // Calculate luminance
         $luminance = (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
-        
+
         // Return white or black based on luminance
         return $luminance > 0.5 ? '#000000' : '#ffffff';
     }
