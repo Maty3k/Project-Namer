@@ -35,6 +35,7 @@ use Illuminate\Support\Str;
  * @property-read int|null $project_images_count
  * @property-read mixed $share_url
  * @property-read \App\Models\User $user
+ *
  * @method static Builder<static>|MoodBoard active()
  * @method static Builder<static>|MoodBoard byLayoutType(string $layoutType)
  * @method static Builder<static>|MoodBoard byShareToken(string $token)
@@ -57,6 +58,7 @@ use Illuminate\Support\Str;
  * @method static Builder<static>|MoodBoard whereUpdatedAt($value)
  * @method static Builder<static>|MoodBoard whereUserId($value)
  * @method static Builder<static>|MoodBoard whereUuid($value)
+ *
  * @mixin \Eloquent
  */
 class MoodBoard extends Model

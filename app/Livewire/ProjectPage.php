@@ -58,7 +58,7 @@ class ProjectPage extends Component
     /** @var array<int, string> */
     public array $selectedAIModels = [];
 
-    public string $generationMode = 'creative';
+    public string $generationMode = '';
 
     public bool $deepThinking = false;
 
@@ -74,8 +74,8 @@ class ProjectPage extends Component
     /** @var array<int, int> */
     public array $selectedSuggestions = [];
 
-    /** @var array<int, AIGeneration> */
-    public array $aiGenerationHistory = [];
+    /** @var \Illuminate\Database\Eloquent\Collection<int, AIGeneration> */
+    public \Illuminate\Database\Eloquent\Collection $aiGenerationHistory;
 
     public ?int $currentAIGenerationId = null;
 
@@ -93,6 +93,7 @@ class ProjectPage extends Component
         'name-deselected' => 'handleNameDeselected',
         'suggestion-hidden' => 'handleSuggestionVisibilityChanged',
         'suggestion-shown' => 'handleSuggestionVisibilityChanged',
+        'trigger-auto-generation' => 'handleAutoGeneration',
     ];
 
     /** @var array<string, string> */
@@ -101,7 +102,7 @@ class ProjectPage extends Component
         'editableDescription' => 'required|string|min:10|max:2000',
         'selectedAIModels' => 'required_if:useAIGeneration,true|array|min:1',
         'selectedAIModels.*' => 'string|in:gpt-4,claude-3.5-sonnet,gemini-1.5-pro,grok-beta',
-        'generationMode' => 'string|in:creative,professional,brandable,tech-focused',
+        'generationMode' => 'nullable|string|in:creative,professional,brandable,tech-focused',
         'deepThinking' => 'boolean',
     ];
 
@@ -116,6 +117,7 @@ class ProjectPage extends Component
         'selectedAIModels.required_if' => 'Please select at least one AI model when using AI generation',
         'selectedAIModels.min' => 'Please select at least one AI model',
         'selectedAIModels.*.in' => 'Selected AI model is not supported',
+        'generationMode.required' => 'Please select a generation style',
         'generationMode.in' => 'Invalid generation mode selected',
     ];
 
@@ -137,6 +139,28 @@ class ProjectPage extends Component
 
         // Load AI generation history for this project
         $this->loadAIGenerationHistory();
+
+        // Check for auto-generation parameter
+        if (request()->get('auto_generate') === '1') {
+            $this->showAIControls = true;
+            $this->useAIGeneration = true;
+
+            // Auto-trigger generation if models are selected
+            if (! empty($this->selectedAIModels)) {
+                // Use a deferred method to trigger generation after mount completes
+                $this->dispatch('trigger-auto-generation');
+            }
+        }
+    }
+
+    /**
+     * Handle auto-generation trigger after mount.
+     */
+    public function handleAutoGeneration(): void
+    {
+        if ($this->useAIGeneration && ! empty($this->selectedAIModels) && ! $this->isGeneratingNames) {
+            $this->generateMoreNames();
+        }
     }
 
     /**
@@ -255,6 +279,12 @@ class ProjectPage extends Component
      */
     public function setResultsFilter(string $filter): void
     {
+        if (! in_array($filter, ['visible', 'hidden', 'all'])) {
+            $this->addError('resultsFilter', 'Invalid filter value. Must be one of: visible, hidden, all');
+
+            return;
+        }
+
         $this->resultsFilter = $filter;
     }
 
@@ -344,7 +374,7 @@ class ProjectPage extends Component
 
         if ($preferences) {
             $this->selectedAIModels = $preferences->preferred_models ?? [];
-            $this->generationMode = $preferences->default_generation_mode ?? 'creative';
+            $this->generationMode = $preferences->default_generation_mode ?? '';
             $this->deepThinking = $preferences->default_deep_thinking ?? false;
             $this->enableModelComparison = $preferences->enable_model_comparison ?? false;
         } else {
@@ -370,7 +400,7 @@ class ProjectPage extends Component
             }
 
             // Set other defaults
-            $this->generationMode = 'creative';
+            $this->generationMode = '';
             $this->deepThinking = false;
         }
     }
@@ -384,8 +414,7 @@ class ProjectPage extends Component
             ->where('user_id', auth()->id())
             ->latest()
             ->limit(10)
-            ->get()
-            ->toArray();
+            ->get();
     }
 
     /**
@@ -491,6 +520,28 @@ class ProjectPage extends Component
     }
 
     /**
+     * Toggle generation mode selection/deselection.
+     */
+    public function toggleGenerationMode(string $mode): void
+    {
+        // Validate that the mode is valid
+        $validModes = ['creative', 'professional', 'brandable', 'tech-focused'];
+
+        if (! in_array($mode, $validModes)) {
+            // Invalid mode, do nothing
+            return;
+        }
+
+        // If the same mode is already selected, deselect it
+        if ($this->generationMode === $mode) {
+            $this->generationMode = '';
+        } else {
+            // Otherwise, select the new mode
+            $this->generationMode = $mode;
+        }
+    }
+
+    /**
      * Generate more names using AI with project context.
      */
     public function generateMoreNames(): void
@@ -499,11 +550,15 @@ class ProjectPage extends Component
 
         // Validate AI generation settings
         if ($this->useAIGeneration) {
+            // Require generation mode when generating names
+            $rules = $this->rules;
+            $rules['generationMode'] = 'required|string|in:creative,professional,brandable,tech-focused';
+
             $this->validate([
-                'selectedAIModels' => $this->rules['selectedAIModels'],
-                'selectedAIModels.*' => $this->rules['selectedAIModels.*'],
-                'generationMode' => $this->rules['generationMode'],
-                'deepThinking' => $this->rules['deepThinking'],
+                'selectedAIModels' => $rules['selectedAIModels'],
+                'selectedAIModels.*' => $rules['selectedAIModels.*'],
+                'generationMode' => $rules['generationMode'],
+                'deepThinking' => $rules['deepThinking'],
             ]);
         }
 
@@ -921,6 +976,120 @@ class ProjectPage extends Component
             'message' => 'AI preferences saved',
             'type' => 'success',
         ]);
+    }
+
+    /**
+     * Delete a single AI generation with confirmation.
+     */
+    public function deleteAIGeneration(int $generationId): void
+    {
+        $this->authorize('update', $this->project);
+
+        $generation = AIGeneration::find($generationId);
+
+        if (! $generation) {
+            $this->dispatch('show-toast', [
+                'message' => 'AI generation not found',
+                'type' => 'error',
+            ]);
+
+            return;
+        }
+
+        if (! $generation->canBeDeletedBy(auth()->user())) {
+            $this->dispatch('show-toast', [
+                'message' => 'You cannot delete this AI generation',
+                'type' => 'error',
+            ]);
+
+            return;
+        }
+
+        if ($generation->deleteWithCleanup()) {
+            // Refresh the AI generation history
+            $this->loadAIGenerationHistory();
+
+            $this->dispatch('show-toast', [
+                'message' => 'AI generation deleted successfully',
+                'type' => 'success',
+            ]);
+
+            $this->dispatch('ai-generation-deleted', [
+                'generation_id' => $generationId,
+                'project_uuid' => $this->project->uuid,
+            ]);
+        } else {
+            $this->dispatch('show-toast', [
+                'message' => 'Failed to delete AI generation',
+                'type' => 'error',
+            ]);
+        }
+    }
+
+    /**
+     * Delete multiple AI generations in bulk.
+     *
+     * @param  array<int>  $generationIds
+     */
+    public function bulkDeleteAIGenerations(array $generationIds): void
+    {
+        $this->authorize('update', $this->project);
+
+        if (empty($generationIds)) {
+            $this->dispatch('show-toast', [
+                'message' => 'No AI generations selected for deletion',
+                'type' => 'error',
+            ]);
+
+            return;
+        }
+
+        $deletedCount = AIGeneration::bulkDeleteWithCleanup($generationIds, auth()->user());
+
+        if ($deletedCount > 0) {
+            // Refresh the AI generation history
+            $this->loadAIGenerationHistory();
+
+            $this->dispatch('show-toast', [
+                'message' => "Successfully deleted {$deletedCount} AI generation(s)",
+                'type' => 'success',
+            ]);
+
+            $this->dispatch('ai-generations-bulk-deleted', [
+                'deleted_count' => $deletedCount,
+                'project_uuid' => $this->project->uuid,
+            ]);
+        } else {
+            $this->dispatch('show-toast', [
+                'message' => 'No AI generations were deleted',
+                'type' => 'warning',
+            ]);
+        }
+    }
+
+    /**
+     * Delete all completed AI generations for this project.
+     */
+    public function deleteAllCompletedGenerations(): void
+    {
+        $this->authorize('update', $this->project);
+
+        $generationIds = AIGeneration::forProject($this->project->id)
+            ->forUser(auth()->id())
+            ->whereNotIn('status', ['pending', 'running'])
+            ->pluck('id')
+            ->toArray();
+
+        if (empty($generationIds)) {
+            $this->dispatch('show-toast', [
+                'message' => 'No completed AI generations to delete',
+                'type' => 'info',
+            ]);
+
+            return;
+        }
+
+        $this->bulkDeleteAIGenerations($generationIds);
     }
 
     /**

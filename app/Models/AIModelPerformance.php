@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * AI model performance tracking model.
- * 
+ *
  * Tracks performance metrics for individual AI models per user,
  * including success rates, response times, and cost analytics.
  *
@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User $user
+ *
  * @method static \Database\Factories\AIModelPerformanceFactory factory($count = null, $state = [])
  * @method static Builder<static>|AIModelPerformance forModel(string $modelName)
  * @method static Builder<static>|AIModelPerformance forUser(int $userId)
@@ -49,6 +50,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|AIModelPerformance whereTotalTokensUsed($value)
  * @method static Builder<static>|AIModelPerformance whereUpdatedAt($value)
  * @method static Builder<static>|AIModelPerformance whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 final class AIModelPerformance extends Model

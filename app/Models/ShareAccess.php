@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * ShareAccess model for tracking share analytics.
- * 
+ *
  * Records each access to a shared resource with IP address,
  * user agent, and referrer information for analytics purposes.
  *
@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $referrer
  * @property \Illuminate\Support\Carbon $accessed_at
  * @property-read \App\Models\Share $share
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShareAccess betweenDates(\Carbon\Carbon $startDate, \Carbon\Carbon $endDate)
  * @method static \Database\Factories\ShareAccessFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShareAccess fromIp(string $ipAddress)
@@ -34,6 +35,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShareAccess whereReferrer($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShareAccess whereShareId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ShareAccess whereUserAgent($value)
+ *
  * @mixin \Eloquent
  */
 final class ShareAccess extends Model

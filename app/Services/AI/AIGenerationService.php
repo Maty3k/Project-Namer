@@ -69,17 +69,10 @@ class AIGenerationService
     ): array {
         $aiGeneration->markAsStarted();
 
-        // In testing environment, use synchronous execution to avoid timeout issues
-        if (app()->environment('testing')) {
-            return $this->generateSequentially($aiGeneration, $models, $prompt, $parameters);
-        }
-
-        // Use parallel execution if multiple models, otherwise single model
-        if (count($models) > 1) {
-            return $this->generateInParallel($aiGeneration, $models, $prompt, $parameters);
-        } else {
-            return $this->generateSequentially($aiGeneration, $models, $prompt, $parameters);
-        }
+        // Use synchronous execution to avoid timeout issues until queue workers are properly configured
+        // In web requests, parallel execution with polling can exceed PHP execution time limits
+        // TODO: Re-enable parallel execution once queue workers are running in production
+        return $this->generateSequentially($aiGeneration, $models, $prompt, $parameters);
     }
 
     /**

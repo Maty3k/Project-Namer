@@ -30,6 +30,7 @@ use Illuminate\Support\Str;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SessionResult> $results
  * @property-read int|null $results_count
  * @property-read \App\Models\User $user
+ *
  * @method static Builder<static>|NamingSession active()
  * @method static \Database\Factories\NamingSessionFactory factory($count = null, $state = [])
  * @method static Builder<static>|NamingSession newModelQuery()
@@ -49,6 +50,7 @@ use Illuminate\Support\Str;
  * @method static Builder<static>|NamingSession whereTitle($value)
  * @method static Builder<static>|NamingSession whereUpdatedAt($value)
  * @method static Builder<static>|NamingSession whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class NamingSession extends Model

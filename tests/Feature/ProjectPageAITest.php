@@ -212,17 +212,24 @@ describe('ProjectPage AI Generation', function (): void {
     });
 
     test('ProjectPage tracks AI generation history', function (): void {
+        // Create a real AIGeneration record
+        AIGeneration::factory()->create([
+            'project_id' => $this->project->id,
+            'user_id' => $this->user->id,
+            'generation_session_id' => 'test-session-1',
+            'status' => 'completed',
+        ]);
+
         $component = Livewire::test(ProjectPage::class, ['uuid' => $this->project->uuid])
             ->set('useAIGeneration', true)
-            ->set('selectedAIModels', ['gpt-4'])
-            ->set('aiGenerationHistory', [
-                ['session_id' => 'test-session-1', 'model' => 'gpt-4', 'count' => 5],
-            ]);
+            ->set('selectedAIModels', ['gpt-4']);
 
-        // Should have generation history available
+        // Should have generation history available from the database
         $history = $component->get('aiGenerationHistory');
-        expect($history)->toBeArray();
+        expect($history)->toBeInstanceOf(\Illuminate\Database\Eloquent\Collection::class);
         expect($history)->toHaveCount(1);
+        expect($history->first())->toBeInstanceOf(AIGeneration::class);
+        expect($history->first()->generation_session_id)->toBe('test-session-1');
     });
 
     test('ProjectPage prevents duplicate AI generations', function (): void {

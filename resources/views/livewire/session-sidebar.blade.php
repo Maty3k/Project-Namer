@@ -1,6 +1,6 @@
 <aside 
-    class="h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col transition-all duration-300 ease-out
-           {{ $isCollapsed ? 'w-0 opacity-0 overflow-hidden invisible' : 'w-80' }}"
+    class="h-full bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-700 flex flex-col transition-all duration-300 ease-in-out transform
+           {{ $isCollapsed ? 'w-0 opacity-0 overflow-hidden invisible -translate-x-full' : 'w-80 opacity-100 translate-x-0' }}"
     x-data="{
         showActionMenu: null,
         focusMode: $wire.isCollapsed,
@@ -15,7 +15,7 @@
     x-on:focus-mode-toggled="focusMode = $event.detail.enabled"
 >
     <!-- Header -->
-    <header class="p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+    <header class="p-4 border-b border-gray-200 dark:border-slate-600 flex-shrink-0">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Sessions</h2>
             <div class="flex items-center gap-2">
@@ -309,7 +309,8 @@
     <button
         wire:click="toggleFocusMode"
         class="fixed top-4 left-4 z-50 bg-black dark:bg-white p-3 rounded-lg shadow-lg 
-               hover:bg-gray-800 dark:hover:bg-gray-100 transition-all duration-200 hover:scale-105"
+               hover:bg-gray-800 dark:hover:bg-gray-100 transition-all duration-300 ease-in-out 
+               hover:scale-105 transform animate-slide-in-left"
         title="Show sidebar (Cmd+/)"
     >
         <flux:icon name="bars-3" size="sm" />

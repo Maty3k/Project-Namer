@@ -201,6 +201,67 @@ test('sidebar is responsive and collapsible', function (): void {
         ->assertSet('collapsed', false);
 });
 
+test('sidebar hides project names when collapsed and shows icons only', function (): void {
+    $user = User::factory()->create();
+    $project = Project::factory()->create([
+        'user_id' => $user->id,
+        'name' => 'Test Project Name',
+        'description' => 'Test description',
+    ]);
+
+    $this->actingAs($user);
+
+    $component = Livewire::test(Sidebar::class);
+
+    // When expanded, should see project name and description in content
+    $component->assertSee('Test Project Name')
+        ->assertSee('Test description');
+
+    // When collapsed, should NOT see project name or description in visible content
+    $component->call('toggleCollapse')
+        ->assertSet('collapsed', true);
+
+    // Check that the expanded view content is not present
+    $html = $component->html();
+    expect($html)->not->toContain('<h3 class="text-sm font-medium text-gray-900 dark:text-white truncate">');
+
+    // Should have tooltip with project name when collapsed (in title attribute)
+    $component->assertSeeHtml('title="Test Project Name"');
+
+    // Should see project icon when collapsed
+    $component->assertSeeHtml('<svg class="w-5 h-5');
+});
+
+test('sidebar responsive behavior works across different states', function (): void {
+    $user = User::factory()->create();
+    $project = Project::factory()->create([
+        'user_id' => $user->id,
+        'name' => 'Responsive Test Project',
+    ]);
+
+    $this->actingAs($user);
+
+    $component = Livewire::test(Sidebar::class);
+
+    // Initial state - expanded (64 width)
+    $component->assertSet('collapsed', false)
+        ->assertSeeHtml('class="w-64 transition-all duration-300');
+
+    // Collapse - should switch to 16 width
+    $component->call('toggleCollapse')
+        ->assertSet('collapsed', true)
+        ->assertSeeHtml('class="w-16 transition-all duration-300');
+
+    // Project items should have different padding when collapsed
+    $component->assertSeeHtml('class="cursor-pointer rounded-lg transition-all duration-200 
+                               p-2');
+
+    // Expand again - should go back to full width
+    $component->call('toggleCollapse')
+        ->assertSet('collapsed', false)
+        ->assertSeeHtml('class="w-64 transition-all duration-300');
+});
+
 test('sidebar shows selected project name in project', function (): void {
     $user = User::factory()->create();
     $project = Project::factory()->create([

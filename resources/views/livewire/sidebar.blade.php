@@ -1,6 +1,18 @@
-<div class="{{ $collapsed ? 'w-16' : 'w-64' }} transition-all duration-300 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 h-screen flex flex-col">
+<div class="{{ $collapsed ? 'w-16' : 'w-64' }} transition-all duration-300 ease-in-out transform {{ $collapsed ? '-translate-x-2' : 'translate-x-0' }} border-r h-screen flex flex-col themed-sidebar" 
+     @php
+         $userTheme = null;
+         if (auth()->check()) {
+             $userTheme = \App\Models\UserThemePreference::where('user_id', auth()->id())->first();
+         }
+     @endphp
+     @if($userTheme)
+         style="background: linear-gradient(180deg, {{ $userTheme->background_color }}f8 0%, {{ $userTheme->primary_color }}10 100%);
+                border-color: {{ $userTheme->primary_color }}50;"
+     @else
+         class="bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-700"
+     @endif>
     <!-- Sidebar Header -->
-    <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+    <div class="p-4 border-b border-gray-200 dark:border-slate-600">
         <div class="flex items-center justify-between">
             @if(!$collapsed)
                 <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Projects</h2>
@@ -12,15 +24,9 @@
                 class="flex-shrink-0"
             >
                 @if($collapsed)
-                    <!-- Expand icon -->
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
+                    <x-app-icon name="expand" size="sm" />
                 @else
-                    <!-- Collapse icon -->
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
+                    <x-app-icon name="collapse" size="sm" />
                 @endif
             </flux:button>
         </div>
@@ -38,14 +44,12 @@
             class="w-full {{ $collapsed ? 'px-3' : '' }}"
         >
             @if($collapsed)
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
+                <x-app-icon name="add" size="sm" />
             @else
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
-                New Project
+                <div class="flex items-center gap-2">
+                    <x-app-icon name="add" size="sm" />
+                    New Project
+                </div>
             @endif
         </flux:button>
     </div>
@@ -71,13 +75,32 @@
                 @foreach($this->projects as $project)
                     <div
                         wire:click="selectProject('{{ $project->uuid }}')"
-                        class="cursor-pointer rounded-lg p-3 transition-all duration-200 
+                        class="cursor-pointer rounded-lg transition-all duration-200 
+                               {{ $collapsed ? 'p-2' : 'p-3' }}
                                {{ $this->isActiveProject($project) 
                                    ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 shadow-sm' 
                                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm transform hover:scale-[1.02]' }}"
                         wire:key="project-{{ $project->uuid }}"
+                        @if($collapsed)
+                            title="{{ $project->name }}"
+                        @endif
                     >
-                        @if(!$collapsed)
+                        @if($collapsed)
+                            <!-- Collapsed view - Show icon only -->
+                            <div class="flex items-center justify-center">
+                                @if($project->selectedName)
+                                    <!-- Project with selected name - show checkmark icon -->
+                                    <svg class="w-5 h-5 {{ $this->isActiveProject($project) ? 'text-blue-600 dark:text-blue-400' : 'text-green-600 dark:text-green-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                @else
+                                    <!-- Regular project icon -->
+                                    <svg class="w-5 h-5 {{ $this->isActiveProject($project) ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+                                    </svg>
+                                @endif
+                            </div>
+                        @else
                             <!-- Expanded view -->
                             <div class="flex items-start justify-between">
                                 <div class="flex-1 min-w-0">
@@ -120,7 +143,7 @@
 
     <!-- Sidebar Footer (if expanded) -->
     @if(!$collapsed)
-        <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+        <div class="p-4 border-t border-gray-200 dark:border-slate-600">
             <div class="text-xs text-gray-400 dark:text-gray-500 text-center">
                 Project Workflow UI
             </div>

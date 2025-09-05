@@ -6,6 +6,7 @@ namespace App\Jobs;
 
 use App\Models\GeneratedLogo;
 use App\Models\LogoGeneration;
+use App\Models\NameSuggestion;
 use App\Services\OpenAILogoService;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -116,6 +117,9 @@ final class GenerateLogosJob implements ShouldQueue
 
             if ($successful === 0) {
                 $this->cleanupFiles();
+            } else {
+                // Update NameSuggestion with logo data
+                $this->updateNameSuggestionLogos($successful);
             }
 
             Log::info('Logo generation job completed', [
@@ -347,5 +351,61 @@ final class GenerateLogosJob implements ShouldQueue
             'file' => $exception->getFile(),
             'line' => $exception->getLine(),
         ]);
+    }
+
+    /**
+     * Update the NameSuggestion.logos field with generated logo data.
+     */
+    private function updateNameSuggestionLogos(int $successfulCount): void
+    {
+        try {
+            // Find NameSuggestion by business name
+            $nameSuggestion = NameSuggestion::where('name', $this->logoGeneration->business_name)->first();
+
+            if (! $nameSuggestion) {
+                Log::warning('Could not find NameSuggestion to update logos', [
+                    'business_name' => $this->logoGeneration->business_name,
+                    'generation_id' => $this->logoGeneration->id,
+                ]);
+
+                return;
+            }
+
+            // Get all successful generated logos for this generation
+            $generatedLogos = $this->logoGeneration->generatedLogos()
+                ->whereNotNull('original_file_path')
+                ->where('file_size', '>', 0)
+                ->get();
+
+            $logosData = [];
+            foreach ($generatedLogos as $logo) {
+                $logosData[] = [
+                    'id' => $logo->id,
+                    'style' => $logo->style,
+                    'variation' => $logo->variation_number,
+                    'url' => Storage::url($logo->original_file_path),
+                    'file_path' => $logo->original_file_path,
+                    'file_size' => $logo->file_size,
+                    'prompt_used' => $logo->prompt_used,
+                ];
+            }
+
+            // Update the NameSuggestion with logo data
+            $nameSuggestion->update(['logos' => $logosData]);
+
+            Log::info('Updated NameSuggestion with logo data', [
+                'suggestion_id' => $nameSuggestion->id,
+                'suggestion_name' => $nameSuggestion->name,
+                'logos_count' => count($logosData),
+                'generation_id' => $this->logoGeneration->id,
+            ]);
+
+        } catch (Exception $e) {
+            Log::error('Failed to update NameSuggestion with logo data', [
+                'generation_id' => $this->logoGeneration->id,
+                'business_name' => $this->logoGeneration->business_name,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }
