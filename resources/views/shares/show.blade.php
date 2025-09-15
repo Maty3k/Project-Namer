@@ -2,7 +2,7 @@
     title="Shared Content" 
     :metadata="$metadata">
 
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <div class="container mx-auto px-4 py-6
                 sm:px-6 sm:py-8
                 lg:px-8 lg:py-12">
@@ -94,7 +94,7 @@
                                         <flux:card class="h-full hover:shadow-lg transition-shadow duration-200">
                                             <!-- Logo Preview -->
                                             @if($logo['preview_url'])
-                                                <div class="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-lg overflow-hidden mb-4">
+                                                <div class="aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden mb-4">
                                                     <img 
                                                         src="{{ $logo['preview_url'] }}" 
                                                         alt="{{ $logo['style'] }} logo design"
@@ -121,7 +121,7 @@
                                                                     <a 
                                                                         href="{{ $variant['download_url'] }}"
                                                                         download
-                                                                        class="w-8 h-8 rounded-full border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 transition-colors relative overflow-hidden"
+                                                                        class="w-8 h-8 rounded-full border-2 border-gray-300 dark:border-gray-600 hover:border-primary-500 transition-colors relative overflow-hidden"
                                                                     >
                                                                         <img 
                                                                             src="{{ $variant['preview_url'] }}"

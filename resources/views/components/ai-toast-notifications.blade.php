@@ -330,23 +330,23 @@
 
                 <!-- Info Toast -->
                 <div x-show="notification.type === 'info'" 
-                     class="bg-white dark:bg-gray-800 border-l-4 border-blue-400 rounded-lg shadow-lg p-4">
+                     class="bg-white dark:bg-gray-800 border-l-4 border-gray-400 rounded-lg shadow-lg p-4">
                     <div class="flex items-start">
                         <div class="flex-shrink-0">
                             <template x-if="notification.icon === 'information-circle'">
-                                <flux:icon.information-circle class="size-6 text-blue-400" />
+                                <flux:icon.information-circle class="size-6 text-gray-600 dark:text-gray-400" />
                             </template>
                             <template x-if="notification.icon === 'cpu-chip'">
-                                <flux:icon.cpu-chip class="size-6 text-blue-400" />
+                                <flux:icon.cpu-chip class="size-6 text-gray-600 dark:text-gray-400" />
                             </template>
                             <template x-if="notification.icon === 'arrow-path'">
-                                <flux:icon.arrow-path class="size-6 text-blue-400 animate-spin" />
+                                <flux:icon.arrow-path class="size-6 text-gray-600 dark:text-gray-400 animate-spin" />
                             </template>
                             <template x-if="notification.icon === 'sparkles'">
-                                <flux:icon.sparkles class="size-6 text-blue-400 animate-pulse" />
+                                <flux:icon.sparkles class="size-6 text-gray-600 dark:text-gray-400 animate-pulse" />
                             </template>
                             <template x-if="!notification.icon || !['information-circle', 'cpu-chip', 'arrow-path', 'sparkles'].includes(notification.icon)">
-                                <flux:icon.information-circle class="size-6 text-blue-400" />
+                                <flux:icon.information-circle class="size-6 text-gray-600 dark:text-gray-400" />
                             </template>
                         </div>
                         <div class="ml-3 flex-1">

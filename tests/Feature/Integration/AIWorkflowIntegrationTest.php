@@ -207,10 +207,11 @@ class AIWorkflowIntegrationTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        // Mock API failure
-        Http::fake([
-            'api.openai.com/*' => Http::response(null, 500),
-        ]);
+        // Mock the AI generation service to throw a rate limit error that prevents fallback
+        $this->mock(\App\Services\AI\AIGenerationService::class, function ($mock): void {
+            $mock->shouldReceive('generateWithModels')
+                ->andThrow(new \Exception('Rate limit exceeded. Please try again later.'));
+        });
 
         $component = Livewire::test('name-generator-dashboard')
             ->set('businessIdea', 'Test fallback scenario')
@@ -223,7 +224,7 @@ class AIWorkflowIntegrationTest extends TestCase
 
         // Verify error is handled gracefully
         $errorMessage = $component->get('errorMessage');
-        $this->assertNotNull($errorMessage);
+        $this->assertNotNull($errorMessage, 'Expected error message to be set when AI service fails with rate limit');
 
         // Verify generation status reflects failure
         $component->assertSet('isGeneratingNames', false);

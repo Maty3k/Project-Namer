@@ -1,9 +1,16 @@
+@php
+    $userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
+@endphp
+
 <flux:dropdown {{ $attributes->class(['hidden lg:block']) }} position="bottom" align="start">
-    <flux:profile
-            :name="auth()->user()->name"
-            :initials="auth()->user()->initials()"
-            icon:trailing="chevrons-up-down"
-    />
+    <div class="{{ $userTheme ? 'user-menu-wrapper' : '' }}" 
+         @if($userTheme) style="color: #374151 !important;" @endif>
+        <flux:profile
+                :name="auth()->user()->name"
+                :initials="auth()->user()->initials()"
+                icon:trailing="chevrons-up-down"
+        />
+    </div>
 
     <flux:menu class="w-[220px]">
         <flux:menu.radio.group>

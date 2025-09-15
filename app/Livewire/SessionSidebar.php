@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
+use App\Helpers\ThemeHelper;
 use App\Models\NamingSession;
 use App\Services\SessionService;
 use Illuminate\Support\Collection;
@@ -301,6 +302,30 @@ class SessionSidebar extends Component
     {
         $this->offset = 0;
         $this->hasMoreSessions = true;
+    }
+
+    /**
+     * Handle theme updates by clearing cache and refreshing component.
+     */
+    public function onThemeUpdated(): void
+    {
+        // Clear theme cache to ensure fresh theme data
+        ThemeHelper::clearUserThemeCache();
+        
+        // Refresh the component to apply new theme
+        $this->dispatch('$refresh');
+    }
+
+    /**
+     * Define event listeners for this component.
+     */
+    protected function getListeners(): array
+    {
+        return [
+            'theme-updated' => 'onThemeUpdated',
+            'theme-applied' => 'onThemeUpdated', 
+            'theme-saved' => 'onThemeUpdated',
+        ];
     }
 
     public function render(): \Illuminate\Contracts\View\View

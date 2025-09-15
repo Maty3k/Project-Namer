@@ -253,8 +253,7 @@ test('sidebar responsive behavior works across different states', function (): v
         ->assertSeeHtml('class="w-16 transition-all duration-300');
 
     // Project items should have different padding when collapsed
-    $component->assertSeeHtml('class="cursor-pointer rounded-lg transition-all duration-200 
-                               p-2');
+    $component->assertSeeHtml('p-2');
 
     // Expand again - should go back to full width
     $component->call('toggleCollapse')

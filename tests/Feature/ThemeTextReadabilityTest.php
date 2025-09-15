@@ -1,0 +1,120 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Livewire\ThemeCustomizer;
+use App\Models\User;
+use App\Services\ThemeService;
+use Livewire\Livewire;
+
+test('light themes have dark text for readability', function (): void {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $themeService = app(ThemeService::class);
+    $lightThemes = collect($themeService->getPredefinedThemes())
+        ->filter(fn ($theme) => ! ($theme['is_dark_mode'] ?? false));
+
+    foreach ($lightThemes as $theme) {
+        $themeCustomizer = Livewire::test(ThemeCustomizer::class);
+        $themeCustomizer->call('applyPreset', $theme['name']);
+
+        $textColor = $themeCustomizer->get('textColor');
+        $backgroundColor = $themeCustomizer->get('backgroundColor');
+
+        // Calculate luminance to ensure text is dark enough for light backgrounds
+        $textHex = ltrim($textColor, '#');
+        $textR = hexdec(substr($textHex, 0, 2));
+        $textG = hexdec(substr($textHex, 2, 2));
+        $textB = hexdec(substr($textHex, 4, 2));
+        $textLuminance = (0.299 * $textR + 0.587 * $textG + 0.114 * $textB) / 255;
+
+        // For light themes, text should be dark (low luminance)
+        expect($textLuminance)->toBeLessThan(0.6,
+            "Theme '{$theme['name']}' should have dark text on light background. Text color: {$textColor}, Background: {$backgroundColor}");
+    }
+});
+
+test('dark themes have light text for readability', function (): void {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $themeService = app(ThemeService::class);
+    $darkThemes = collect($themeService->getPredefinedThemes())
+        ->filter(fn ($theme) => $theme['is_dark_mode'] ?? false);
+
+    foreach ($darkThemes as $theme) {
+        $themeCustomizer = Livewire::test(ThemeCustomizer::class);
+        $themeCustomizer->call('applyPreset', $theme['name']);
+
+        $textColor = $themeCustomizer->get('textColor');
+        $backgroundColor = $themeCustomizer->get('backgroundColor');
+
+        // Calculate luminance to ensure text is light enough for dark backgrounds
+        $textHex = ltrim($textColor, '#');
+        $textR = hexdec(substr($textHex, 0, 2));
+        $textG = hexdec(substr($textHex, 2, 2));
+        $textB = hexdec(substr($textHex, 4, 2));
+        $textLuminance = (0.299 * $textR + 0.587 * $textG + 0.114 * $textB) / 255;
+
+        // For dark themes, text should be light (high luminance)
+        expect($textLuminance)->toBeGreaterThan(0.5,
+            "Theme '{$theme['name']}' should have light text on dark background. Text color: {$textColor}, Background: {$backgroundColor}");
+    }
+});
+
+test('text contrast meets accessibility standards', function (): void {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $themeService = app(ThemeService::class);
+    $allThemes = $themeService->getPredefinedThemes();
+
+    foreach ($allThemes as $theme) {
+        $themeCustomizer = Livewire::test(ThemeCustomizer::class);
+        $themeCustomizer->call('applyPreset', $theme['name']);
+
+        $textColor = $themeCustomizer->get('textColor');
+        $backgroundColor = $themeCustomizer->get('backgroundColor');
+
+        // Calculate contrast ratio
+        $contrastRatio = $themeService->calculateContrastRatio($textColor, $backgroundColor);
+
+        // Should meet at least WCAG AA standard (4.5:1)
+        expect($contrastRatio)->toBeGreaterThanOrEqual(4.5,
+            "Theme '{$theme['name']}' should meet WCAG AA contrast standards. Text: {$textColor}, Background: {$backgroundColor}, Ratio: {$contrastRatio}");
+    }
+});
+
+test('theme mode matches background luminance', function (): void {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $themeService = app(ThemeService::class);
+    $allThemes = $themeService->getPredefinedThemes();
+
+    foreach ($allThemes as $theme) {
+        $themeCustomizer = Livewire::test(ThemeCustomizer::class);
+        $themeCustomizer->call('applyPreset', $theme['name']);
+
+        $backgroundColor = $themeCustomizer->get('backgroundColor');
+        $isDarkMode = $themeCustomizer->get('isDarkMode');
+
+        // Calculate background luminance
+        $bgHex = ltrim($backgroundColor, '#');
+        $bgR = hexdec(substr($bgHex, 0, 2));
+        $bgG = hexdec(substr($bgHex, 2, 2));
+        $bgB = hexdec(substr($bgHex, 4, 2));
+        $bgLuminance = (0.299 * $bgR + 0.587 * $bgG + 0.114 * $bgB) / 255;
+
+        if ($bgLuminance < 0.5) {
+            // Dark background should have dark mode enabled
+            expect($isDarkMode)->toBeTrue(
+                "Theme '{$theme['name']}' has dark background ({$backgroundColor}) but dark mode is disabled");
+        } else {
+            // Light background should have dark mode disabled
+            expect($isDarkMode)->toBeFalse(
+                "Theme '{$theme['name']}' has light background ({$backgroundColor}) but dark mode is enabled");
+        }
+    }
+});

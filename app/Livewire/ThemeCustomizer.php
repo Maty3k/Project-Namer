@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
+use App\Helpers\ThemeHelper;
 use App\Models\UserThemePreference;
 use App\Services\ThemeService;
 use Livewire\Attributes\Computed;
@@ -81,21 +82,22 @@ final class ThemeCustomizer extends Component
 
         $theme = collect($themes)->firstWhere('name', $themeName);
 
-        if ($theme) {
-            $this->primaryColor = $theme['primary_color'];
-            $this->accentColor = $theme['accent_color'];
-            $this->backgroundColor = $theme['background_color'];
-            $this->textColor = $theme['text_color'];
-            $this->themeName = $theme['theme_name'];
-            $this->isDarkMode = $theme['is_dark_mode'];
+        if ($theme && is_array($theme)) {
+            $this->primaryColor = is_string($theme['primary_color'] ?? null) ? $theme['primary_color'] : '#3b82f6';
+            $this->accentColor = is_string($theme['accent_color'] ?? null) ? $theme['accent_color'] : null;
+            $this->backgroundColor = is_string($theme['background_color'] ?? null) ? $theme['background_color'] : '#ffffff';
+            $this->textColor = is_string($theme['text_color'] ?? null) ? $theme['text_color'] : '#111827';
+            $this->themeName = is_string($theme['theme_name'] ?? null) ? $theme['theme_name'] : 'default';
+            $this->isDarkMode = is_bool($theme['is_dark_mode'] ?? null) ? $theme['is_dark_mode'] : false;
 
-            // Ensure proper text colors for dark mode
-            if ($this->isDarkMode) {
-                // Force white text for dark mode themes
-                $this->textColor = '#f9fafb';
-            }
+            // Ensure proper text contrast based on mode
+            $this->ensureTextReadability();
 
             $this->validateAccessibility();
+
+            // Automatically save the preset theme to persist it
+            $this->applyTheme();
+
             $this->dispatch('theme-updated');
             $this->dispatch('theme-applied', [
                 'primaryColor' => $this->primaryColor,
@@ -138,6 +140,9 @@ final class ThemeCustomizer extends Component
             // Validate accessibility and provide feedback
             $this->validateAccessibility();
 
+            // Clear theme cache to ensure consistency
+            ThemeHelper::clearUserThemeCache();
+
             // Dispatch events for UI updates
             $this->dispatch('theme-saved');
             $this->dispatch('theme-updated');
@@ -178,7 +183,19 @@ final class ThemeCustomizer extends Component
                 return;
             }
 
+            if (! $this->themeFile instanceof \Livewire\Features\SupportFileUploads\TemporaryUploadedFile) {
+                $this->dispatch('theme-error', 'Invalid file upload');
+
+                return;
+            }
+
             $content = file_get_contents($this->themeFile->path());
+            if ($content === false) {
+                $this->dispatch('theme-error', 'Could not read theme file');
+
+                return;
+            }
+
             $themeData = json_decode($content, true);
 
             if (! $themeData || ! is_array($themeData)) {
@@ -190,19 +207,20 @@ final class ThemeCustomizer extends Component
             // Validate required theme properties
             $requiredFields = ['primary_color', 'background_color', 'text_color'];
             foreach ($requiredFields as $field) {
-                if (! isset($themeData[$field]) || ! preg_match('/^#[0-9a-fA-F]{6}$/', (string) $themeData[$field])) {
+                $value = $themeData[$field] ?? null;
+                if (! is_string($value) || ! preg_match('/^#[0-9a-fA-F]{6}$/', $value)) {
                     $this->dispatch('theme-error', "Invalid or missing {$field} in theme file");
 
                     return;
                 }
             }
 
-            $this->primaryColor = $themeData['primary_color'];
-            $this->accentColor = $themeData['accent_color'] ?? $themeData['primary_color'];
-            $this->backgroundColor = $themeData['background_color'];
-            $this->textColor = $themeData['text_color'];
-            $this->themeName = $themeData['theme_name'] ?? 'imported';
-            $this->isDarkMode = $themeData['is_dark_mode'] ?? false;
+            $this->primaryColor = is_string($themeData['primary_color'] ?? null) ? $themeData['primary_color'] : '#3b82f6';
+            $this->accentColor = is_string($themeData['accent_color'] ?? null) ? $themeData['accent_color'] : $this->primaryColor;
+            $this->backgroundColor = is_string($themeData['background_color'] ?? null) ? $themeData['background_color'] : '#ffffff';
+            $this->textColor = is_string($themeData['text_color'] ?? null) ? $themeData['text_color'] : '#111827';
+            $this->themeName = is_string($themeData['theme_name'] ?? null) ? $themeData['theme_name'] : 'imported';
+            $this->isDarkMode = is_bool($themeData['is_dark_mode'] ?? null) ? $themeData['is_dark_mode'] : false;
 
             $this->themeFile = null;
             $this->validateAccessibility();
@@ -325,8 +343,11 @@ final class ThemeCustomizer extends Component
      */
     public function applySeasonalRecommendation(): void
     {
-        if ($this->recommendedSeasonalTheme) {
-            $this->applyPreset($this->recommendedSeasonalTheme['name']);
+        if ($this->recommendedSeasonalTheme && is_array($this->recommendedSeasonalTheme)) {
+            $themeName = $this->recommendedSeasonalTheme['name'] ?? null;
+            if (is_string($themeName)) {
+                $this->applyPreset($themeName);
+            }
         }
     }
 
@@ -390,6 +411,52 @@ final class ThemeCustomizer extends Component
 
         // Return white or black based on luminance
         return $luminance > 0.5 ? '#000000' : '#ffffff';
+    }
+
+    /**
+     * Get a good hover background color with proper contrast.
+     */
+    public function getHoverBackgroundColor(string $baseColor, float $opacity = 0.1): string
+    {
+        // For hover states, we want a subtle tint of the primary color
+        return $baseColor.sprintf('%02x', (int) ($opacity * 255));
+    }
+
+    /**
+     * Ensure text readability by setting appropriate text colors based on background and theme mode.
+     */
+    protected function ensureTextReadability(): void
+    {
+        // Calculate luminance of background to determine if it's light or dark
+        $backgroundHex = ltrim($this->backgroundColor, '#');
+        $r = hexdec(substr($backgroundHex, 0, 2));
+        $g = hexdec(substr($backgroundHex, 2, 2));
+        $b = hexdec(substr($backgroundHex, 4, 2));
+
+        // Calculate relative luminance using the WCAG formula
+        $luminance = (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
+
+        // If background is dark (luminance < 0.5), use light text
+        // If background is light (luminance >= 0.5), use dark text
+        if ($luminance < 0.5) {
+            // Dark background - ensure light text
+            if (! $this->isDarkMode) {
+                $this->isDarkMode = true;
+            }
+            // Use light text colors for dark backgrounds
+            if ($this->textColor === '#111827' || $this->textColor === '#1f2937' || $luminance < 0.3) {
+                $this->textColor = '#f9fafb';
+            }
+        } else {
+            // Light background - ensure dark text
+            if ($this->isDarkMode) {
+                $this->isDarkMode = false;
+            }
+            // Use dark text colors for light backgrounds
+            if ($this->textColor === '#f9fafb' || $this->textColor === '#ffffff' || $luminance > 0.7) {
+                $this->textColor = '#111827';
+            }
+        }
     }
 
     public function render(): \Illuminate\View\View

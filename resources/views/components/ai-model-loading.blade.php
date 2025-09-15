@@ -11,9 +11,9 @@
             {{-- Main Loading Animation --}}
             <div class="flex justify-center">
                 <div class="relative">
-                    <flux:icon.cog-8-tooth class="size-12 text-blue-500 animate-spin" />
+                    <flux:icon.cog-8-tooth class="size-12 text-primary-500 animate-spin" />
                     <div class="absolute inset-0 flex items-center justify-center">
-                        <div class="size-4 bg-blue-500 rounded-full animate-ping"></div>
+                        <div class="size-4 bg-primary-500 rounded-full animate-ping"></div>
                     </div>
                 </div>
             </div>
@@ -40,7 +40,7 @@
                         <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                             <div class="flex items-center space-x-3">
                                 @if($model === $currentModel)
-                                    <flux:icon.arrow-path class="size-4 text-blue-500 animate-spin" />
+                                    <flux:icon.arrow-path class="size-4 text-primary-500 animate-spin" />
                                 @else
                                     <flux:icon.clock class="size-4 text-gray-400" />
                                 @endif
@@ -50,9 +50,9 @@
                             </div>
                             <div class="flex items-center space-x-2">
                                 @if($model === $currentModel)
-                                    <span class="text-xs text-blue-600 dark:text-blue-400 font-medium">Processing</span>
+                                    <span class="text-xs text-primary-600 dark:text-primary-400 font-medium">Processing</span>
                                     <div class="w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                                        <div class="bg-blue-500 h-2 rounded-full animate-pulse" style="width: 60%"></div>
+                                        <div class="bg-primary-500 h-2 rounded-full animate-pulse" style="width: 60%"></div>
                                     </div>
                                 @else
                                     <span class="text-xs text-gray-500 dark:text-gray-400">Queued</span>

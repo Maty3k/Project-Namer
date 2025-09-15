@@ -1,10 +1,7 @@
 <div class="max-w-2xl mx-auto p-6">
     <div class="rounded-lg shadow-lg p-8 transition-all duration-300 themed-create-box"
          @php
-             $userTheme = null;
-             if (auth()->check()) {
-                 $userTheme = \App\Models\UserThemePreference::where('user_id', auth()->id())->first();
-             }
+             $userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
          @endphp
          @if($userTheme)
              style="background-color: {{ $userTheme->background_color }};

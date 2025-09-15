@@ -369,7 +369,7 @@ new class extends Component {
                         wire:click="toggleViewMode"
                         class="px-3 py-2 text-sm font-medium rounded-l-lg transition-colors
                                {{ $viewMode === 'grid' 
-                                   ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400' 
+                                   ? 'bg-primary-50 text-primary-700 border-primary-200 dark:bg-primary-900/20 dark:text-primary-400' 
                                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200' }}"
                     >
                         <flux:icon.squares-2x2 class="w-4 h-4" />
@@ -378,7 +378,7 @@ new class extends Component {
                         wire:click="toggleViewMode"
                         class="px-3 py-2 text-sm font-medium rounded-r-lg transition-colors
                                {{ $viewMode === 'list' 
-                                   ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400' 
+                                   ? 'bg-primary-50 text-primary-700 border-primary-200 dark:bg-primary-900/20 dark:text-primary-400' 
                                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200' }}"
                     >
                         <flux:icon.list-bullet class="w-4 h-4" />
@@ -521,7 +521,7 @@ new class extends Component {
                                 wire:click="$set('selectedColorScheme', '{{ $scheme['id'] }}')"
                                 class="group relative p-3 rounded-lg border-2 transition-all
                                        {{ $selectedColorScheme === $scheme['id'] 
-                                           ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                                           ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' 
                                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600' }}"
                             >
                                 {{-- Color Preview --}}
@@ -638,7 +638,7 @@ new class extends Component {
                                     type="checkbox"
                                     wire:click="toggleLogoSelection({{ $logo['id'] }})"
                                     @checked(in_array($logo['id'], $selectedLogos))
-                                    class="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
+                                    class="w-4 h-4 text-primary-600 bg-white border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
                                 />
                             </div>
 
@@ -677,7 +677,7 @@ new class extends Component {
                                         </p>
                                         <div class="flex flex-wrap gap-2">
                                             @foreach($logo['color_variants'] as $variant)
-                                                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
+                                                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900/20 dark:text-primary-400">
                                                     {{ $variant['display_name'] }}
                                                 </span>
                                             @endforeach

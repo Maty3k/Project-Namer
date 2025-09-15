@@ -33,7 +33,7 @@
     <!-- Loading State -->
     <div wire:loading.delay wire:target="loadConfiguration" class="flex justify-center py-8">
         <div class="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-            <div class="animate-spin w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full"></div>
+            <div class="animate-spin w-5 h-5 border-2 border-primary-600 border-t-transparent rounded-full"></div>
             <span>Loading configuration...</span>
         </div>
     </div>
@@ -47,7 +47,7 @@
                     wire:click="setActiveTab('models')"
                     class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors
                            {{ $activeTab === 'models' 
-                              ? 'border-blue-500 text-blue-600 dark:text-blue-400' 
+                              ? 'border-primary-500 text-primary-600 dark:text-primary-400' 
                               : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300' }}">
                     AI Models
                 </button>
@@ -55,7 +55,7 @@
                     wire:click="setActiveTab('system')"
                     class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors
                            {{ $activeTab === 'system' 
-                              ? 'border-blue-500 text-blue-600 dark:text-blue-400' 
+                              ? 'border-primary-500 text-primary-600 dark:text-primary-400' 
                               : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300' }}">
                     System Settings
                 </button>
@@ -63,7 +63,7 @@
                     wire:click="setActiveTab('performance')"
                     class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors
                            {{ $activeTab === 'performance' 
-                              ? 'border-blue-500 text-blue-600 dark:text-blue-400' 
+                              ? 'border-primary-500 text-primary-600 dark:text-primary-400' 
                               : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300' }}">
                     Performance
                 </button>

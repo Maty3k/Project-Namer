@@ -158,12 +158,12 @@ new class extends Component {
                         <flux:label>Export Format</flux:label>
                         <div class="grid grid-cols-1 gap-3 mt-2">
                             @foreach(['pdf' => 'PDF Document', 'csv' => 'CSV Spreadsheet', 'json' => 'JSON Data'] as $format => $label)
-                                <label class="flex items-start p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 {{ $exportType === $format ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700' }}">
+                                <label class="flex items-start p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 {{ $exportType === $format ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' : 'border-gray-200 dark:border-gray-700' }}">
                                     <input 
                                         type="radio" 
                                         wire:model.live="exportType" 
                                         value="{{ $format }}"
-                                        class="mt-1 text-blue-600"
+                                        class="mt-1 text-primary-600"
                                     >
                                     <div class="ml-3 flex-1">
                                         <div class="font-medium text-gray-900 dark:text-white">

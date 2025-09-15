@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
+use App\Helpers\ThemeHelper;
 use App\Models\Project;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -24,6 +25,10 @@ class Sidebar extends Component
 
     public ?Project $selectedProject = null;
 
+    public ?string $projectToDelete = null;
+
+    public bool $showDeleteConfirmation = false;
+
     /** @var array<string, string> */
     protected $listeners = [
         'project-created' => 'refreshProjects',
@@ -31,6 +36,9 @@ class Sidebar extends Component
         'project-deleted' => 'refreshProjects',
         'name-selected' => 'refreshProjects',
         'name-deselected' => 'refreshProjects',
+        'theme-updated' => 'onThemeUpdated',
+        'theme-applied' => 'onThemeUpdated',
+        'theme-saved' => 'onThemeUpdated',
     ];
 
     /**
@@ -156,6 +164,92 @@ class Sidebar extends Component
         }
 
         return $value;
+    }
+
+    /**
+     * Show delete confirmation modal for a project.
+     */
+    public function confirmDeleteProject(string $uuid): void
+    {
+        $project = Project::where('uuid', $uuid)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (! $project) {
+            $this->dispatch('toast', message: 'Project not found', type: 'error');
+
+            return;
+        }
+
+        $this->projectToDelete = $uuid;
+        $this->showDeleteConfirmation = true;
+    }
+
+    /**
+     * Cancel the delete operation.
+     */
+    public function cancelDeleteProject(): void
+    {
+        $this->projectToDelete = null;
+        $this->showDeleteConfirmation = false;
+    }
+
+    /**
+     * Delete the confirmed project.
+     */
+    public function deleteProject(): void
+    {
+        if (! $this->projectToDelete) {
+            return;
+        }
+
+        $project = Project::where('uuid', $this->projectToDelete)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (! $project) {
+            $this->dispatch('toast', message: 'Project not found', type: 'error');
+            $this->cancelDeleteProject();
+
+            return;
+        }
+
+        $projectName = $project->name;
+        $wasActiveProject = $this->isActiveProject($project);
+
+        try {
+            $project->delete();
+
+            // If we deleted the active project, redirect to dashboard
+            if ($wasActiveProject) {
+                $this->activeProjectUuid = null;
+                $this->selectedProject = null;
+                $this->dispatch('project-deleted', $this->projectToDelete);
+                $this->redirect(route('dashboard'));
+
+                return;
+            }
+
+            $this->dispatch('toast', message: "Project '{$projectName}' deleted successfully", type: 'success');
+            $this->dispatch('project-deleted', $this->projectToDelete);
+
+        } catch (\Exception $e) {
+            $this->dispatch('toast', message: 'Failed to delete project: '.$e->getMessage(), type: 'error');
+        } finally {
+            $this->cancelDeleteProject();
+        }
+    }
+
+    /**
+     * Handle theme updates by clearing cache and refreshing component.
+     */
+    public function onThemeUpdated(): void
+    {
+        // Clear theme cache to ensure fresh theme data
+        ThemeHelper::clearUserThemeCache();
+        
+        // Refresh the component to apply new theme
+        $this->dispatch('$refresh');
     }
 
     public function render(): View

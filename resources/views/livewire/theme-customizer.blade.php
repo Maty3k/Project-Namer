@@ -1,73 +1,5 @@
 <div class="space-y-8 relative overflow-hidden">
-    <!-- Seasonal Background Decorations -->
-    <div class="fixed inset-0 pointer-events-none z-0 opacity-20">
-        @php
-            $currentMonth = date('n');
-            $currentDay = date('j');
-            
-            // Determine current season with more specific date ranges
-            $season = 'default';
-            if (($currentMonth == 12 && $currentDay >= 21) || $currentMonth == 1 || $currentMonth == 2 || ($currentMonth == 3 && $currentDay < 20)) {
-                $season = 'winter';
-            } elseif (($currentMonth == 3 && $currentDay >= 20) || $currentMonth == 4 || $currentMonth == 5 || ($currentMonth == 6 && $currentDay < 21)) {
-                $season = 'spring';
-            } elseif (($currentMonth == 6 && $currentDay >= 21) || $currentMonth == 7 || $currentMonth == 8 || ($currentMonth == 9 && $currentDay < 22)) {
-                $season = 'summer';
-            } elseif (($currentMonth == 9 && $currentDay >= 22) || ($currentMonth == 10 && $currentDay < 31)) {
-                $season = 'autumn';
-            } elseif ($currentMonth == 10 && $currentDay == 31) {
-                $season = 'halloween';
-            } elseif ($currentMonth == 11) {
-                $season = 'autumn';
-            }
-        @endphp
-        
-        @if($season === 'winter')
-            <!-- Winter Decorations -->
-            <div class="absolute top-4 left-8 text-6xl animate-bounce" style="animation-delay: 0s; animation-duration: 3s;">❄️</div>
-            <div class="absolute top-20 right-12 text-4xl animate-pulse" style="animation-delay: 1s;">⛄</div>
-            <div class="absolute top-40 left-20 text-5xl animate-bounce" style="animation-delay: 2s; animation-duration: 4s;">🌨️</div>
-            <div class="absolute bottom-32 right-8 text-4xl animate-pulse" style="animation-delay: 3s;">❄️</div>
-            <div class="absolute bottom-8 left-12 text-5xl animate-bounce" style="animation-delay: 1.5s; animation-duration: 3.5s;">⛷️</div>
-        @elseif($season === 'spring')
-            <!-- Spring Decorations -->
-            <div class="absolute top-4 left-8 text-6xl animate-bounce" style="animation-delay: 0s; animation-duration: 2.5s;">🌸</div>
-            <div class="absolute top-20 right-12 text-5xl animate-pulse" style="animation-delay: 1s;">🌱</div>
-            <div class="absolute top-40 left-20 text-4xl animate-bounce" style="animation-delay: 2s; animation-duration: 3s;">🦋</div>
-            <div class="absolute bottom-32 right-8 text-5xl animate-pulse" style="animation-delay: 3s;">🌷</div>
-            <div class="absolute bottom-8 left-12 text-4xl animate-bounce" style="animation-delay: 1.5s; animation-duration: 2.8s;">🐝</div>
-        @elseif($season === 'summer')
-            <!-- Summer Decorations -->
-            <div class="absolute top-4 left-8 text-6xl animate-bounce" style="animation-delay: 0s; animation-duration: 3s;">☀️</div>
-            <div class="absolute top-20 right-12 text-5xl animate-pulse" style="animation-delay: 1s;">🏖️</div>
-            <div class="absolute top-40 left-20 text-4xl animate-bounce" style="animation-delay: 2s; animation-duration: 2.5s;">🌊</div>
-            <div class="absolute bottom-32 right-8 text-4xl animate-pulse" style="animation-delay: 3s;">🍉</div>
-            <div class="absolute bottom-8 left-12 text-5xl animate-bounce" style="animation-delay: 1.5s; animation-duration: 3.5s;">🐚</div>
-        @elseif($season === 'halloween')
-            <!-- Halloween Decorations -->
-            <div class="absolute top-4 left-8 text-6xl animate-bounce" style="animation-delay: 0s; animation-duration: 2s;">🎃</div>
-            <div class="absolute top-20 right-12 text-5xl animate-pulse" style="animation-delay: 1s;">💀</div>
-            <div class="absolute top-40 left-20 text-4xl animate-bounce" style="animation-delay: 2s; animation-duration: 3s;">👻</div>
-            <div class="absolute bottom-32 right-8 text-4xl animate-pulse" style="animation-delay: 3s;">🕷️</div>
-            <div class="absolute bottom-8 left-12 text-5xl animate-bounce" style="animation-delay: 1.5s; animation-duration: 2.5s;">🦇</div>
-            <div class="absolute top-60 right-20 text-3xl animate-pulse" style="animation-delay: 2.5s;">🕸️</div>
-            <div class="absolute bottom-60 left-32 text-4xl animate-bounce" style="animation-delay: 0.5s; animation-duration: 3.2s;">🍬</div>
-        @elseif($season === 'autumn')
-            <!-- Autumn Decorations -->
-            <div class="absolute top-4 left-8 text-6xl animate-bounce" style="animation-delay: 0s; animation-duration: 3s;">🍂</div>
-            <div class="absolute top-20 right-12 text-5xl animate-pulse" style="animation-delay: 1s;">🍁</div>
-            <div class="absolute top-40 left-20 text-4xl animate-bounce" style="animation-delay: 2s; animation-duration: 2.8s;">🌰</div>
-            <div class="absolute bottom-32 right-8 text-5xl animate-pulse" style="animation-delay: 3s;">🦃</div>
-            <div class="absolute bottom-8 left-12 text-4xl animate-bounce" style="animation-delay: 1.5s; animation-duration: 3.5s;">🥧</div>
-        @else
-            <!-- Default/Year-round Decorations -->
-            <div class="absolute top-4 left-8 text-6xl animate-bounce" style="animation-delay: 0s; animation-duration: 3s;">🎨</div>
-            <div class="absolute top-20 right-12 text-5xl animate-pulse" style="animation-delay: 1s;">✨</div>
-            <div class="absolute top-40 left-20 text-4xl animate-bounce" style="animation-delay: 2s; animation-duration: 2.5s;">🌈</div>
-            <div class="absolute bottom-32 right-8 text-4xl animate-pulse" style="animation-delay: 3s;">💫</div>
-            <div class="absolute bottom-8 left-12 text-5xl animate-bounce" style="animation-delay: 1.5s; animation-duration: 3.5s;">🎭</div>
-        @endif
-    </div>
+    <!-- Clean theme customizer interface -->
 
     <!-- Theme Customizer Header -->
     <div class="flex items-center justify-between relative z-10">
@@ -84,7 +16,8 @@
 
     <!-- Seasonal Recommendation -->
     @if($recommendedSeasonalTheme)
-        <flux:card class="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 cursor-pointer hover:shadow-lg transition-all duration-200 relative z-10" 
+        <flux:card class="cursor-pointer hover:shadow-lg transition-all duration-200 relative z-10" 
+                   style="background-color: {{ $primaryColor }}10; border-color: {{ $primaryColor }}40;"
                    wire:click="applySeasonalRecommendation">
             <div class="p-6">
                 <div class="flex items-center justify-between">
@@ -98,7 +31,7 @@
                         </div>
                         <div>
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                🎨 Recommended: {{ $recommendedSeasonalTheme['display_name'] }}
+                                Recommended: {{ $recommendedSeasonalTheme['display_name'] }}
                             </h3>
                             <p class="text-sm text-gray-600 dark:text-gray-400">
                                 Perfect for {{ ucfirst($recommendedSeasonalTheme['season'] ?? 'this time of year') }}
@@ -145,41 +78,14 @@
                     xl:grid-cols-5">
             @foreach($this->predefinedThemes as $theme)
                 <div wire:click="applyPreset('{{ $theme['name'] }}')"
-                     class="group cursor-pointer rounded-lg border-2 p-4 transition-all duration-300 transform
-                            hover:border-gray-400 hover:scale-105 hover:shadow-lg dark:hover:border-gray-600
-                            {{ $themeName === $theme['name'] ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800 scale-105 shadow-lg' : 'border-gray-200 dark:border-gray-700' }}">
+                     class="group cursor-pointer rounded-lg border-2 p-4 transition-all duration-300 transform hover:scale-105 hover:shadow-lg
+                            {{ $themeName === $theme['name'] ? 'scale-105 shadow-lg' : '' }}"
+                     style="border-color: {{ $themeName === $theme['name'] ? $primaryColor : '#d1d5db' }}; 
+                            {{ $themeName === $theme['name'] ? 'box-shadow: 0 0 0 3px ' . $primaryColor . '20;' : '' }}
+                            hover:border-color: {{ $primaryColor }}80;">
                     <div class="space-y-3">
-                        <!-- Theme Preview with Emoji/Sticker -->
-                        <div class="relative flex h-12 overflow-hidden rounded">
-                            <!-- Theme Emoji/Sticker -->
-                            <div class="absolute top-1 left-1 text-2xl animate-bounce z-10">
-                                @php
-                                    $themeEmojis = [
-                                        'ocean_blue' => '🌊',
-                                        'forest_green' => '🌲',
-                                        'sunset_orange' => '🌅', 
-                                        'royal_purple' => '👑',
-                                        'midnight_dark' => '🌙',
-                                        'coral_reef' => '🪸',
-                                        'autumn_warm' => '🍂',
-                                        'arctic_cool' => '❄️',
-                                        'cherry_blossom' => '🌸',
-                                        'golden_hour' => '✨',
-                                        'monochrome' => '🎩',
-                                        'neon_lights' => '💫',
-                                        'earth_tones' => '🌍',
-                                        'pastel_dream' => '🦄',
-                                        'cyberpunk' => '🤖',
-                                        'vintage' => '📻',
-                                        'minimalist' => '⚪',
-                                        'bold' => '🔥',
-                                        'professional' => '💼',
-                                        'playful' => '🎈',
-                                        'default' => '🎨'
-                                    ];
-                                @endphp
-                                {{ $themeEmojis[$theme['name']] ?? '🎨' }}
-                            </div>
+                        <!-- Clean Theme Preview -->
+                        <div class="flex h-12 overflow-hidden rounded border border-gray-200 dark:border-gray-600">
                             <div class="w-1/2" style="background-color: {{ $theme['primary_color'] }}"></div>
                             <div class="w-1/4" style="background-color: {{ $theme['accent_color'] }}"></div>
                             <div class="w-1/4" style="background-color: {{ $theme['background_color'] }}"></div>
@@ -194,7 +100,7 @@
                                             <span class="text-yellow-500 animate-pulse">☀️</span>
                                             @break
                                         @case('winter') 
-                                            <span class="text-blue-500 animate-pulse">❄️</span>
+                                            <span class="animate-pulse" style="color: {{ $primaryColor }};">❄️</span>
                                             @break
                                         @case('halloween')
                                             <span class="text-orange-500 animate-bounce">🎃</span>
@@ -348,10 +254,10 @@
 
             @if(count($accessibilityFeedback['suggestions']) > 0)
                 <div class="space-y-2 mt-3">
-                    <h4 class="text-sm font-medium text-blue-800 dark:text-blue-200">
+                    <h4 class="text-sm font-medium" style="color: {{ $primaryColor }}AA;">
                         Suggestions:
                     </h4>
-                    <ul class="text-sm text-blue-700 dark:text-blue-300 list-disc list-inside space-y-1">
+                    <ul class="text-sm list-disc list-inside space-y-1" style="color: {{ $primaryColor }}CC;">
                         @foreach($accessibilityFeedback['suggestions'] as $suggestion)
                             <li>{{ $suggestion }}</li>
                         @endforeach
@@ -444,7 +350,7 @@
          class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
         <div class="bg-white dark:bg-gray-800 rounded-lg p-8 text-center shadow-2xl border border-gray-200 dark:border-gray-600">
             <div class="text-6xl mb-4 animate-bounce">🎨</div>
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 mx-auto mb-4" style="border-color: {{ $primaryColor }};"></div>
             <p class="text-gray-600 dark:text-gray-300 font-medium">Applying your magical theme...</p>
             <div class="flex justify-center gap-2 mt-4">
                 <span class="animate-bounce text-2xl" style="animation-delay: 0s;">✨</span>
@@ -709,10 +615,8 @@
             // Theme saved successfully
             Livewire.on('theme-saved', () => {
                 showToast('Theme saved successfully! Your preferences have been updated.', 'success');
-                // Force page reload to apply all theme changes
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
+                // Don't force reload - let the theme apply naturally through the theme-applied event
+                // The theme persistence will handle maintaining the theme across page navigation
             });
 
             // Theme imported successfully

@@ -14,7 +14,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 sm:p-6 ai-progress-container">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                    <flux:icon.cpu-chip class="size-5 text-blue-500" />
+                    <flux:icon.cpu-chip class="size-5 text-gray-600 dark:text-gray-400" />
                     AI Generation in Progress
                 </h3>
                 @if($estimatedTimeRemaining)
@@ -36,7 +36,7 @@
                 </div>
                 <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                     <div 
-                        class="bg-blue-600 h-3 rounded-full transition-all duration-500 ease-out"
+                        class="bg-gray-600 h-3 rounded-full transition-all duration-500 ease-out"
                         style="width: {{ $progressPercentage }}%"
                     >
                         <div class="h-full bg-white/20 rounded-full animate-pulse"></div>
@@ -74,7 +74,7 @@
                                 <div class="flex items-center gap-3 flex-1">
                                     <div class="flex-shrink-0">
                                     @if($status === 'processing')
-                                        <flux:icon.arrow-path class="size-4 text-blue-500 animate-spin" />
+                                        <flux:icon.arrow-path class="size-4 text-gray-600 dark:text-gray-400 animate-spin" />
                                     @elseif($status === 'completed')
                                         <flux:icon.check-circle class="size-4 text-green-500" />
                                     @elseif($status === 'failed')
@@ -94,7 +94,7 @@
                                 <div class="flex items-center gap-2 flex-shrink-0 min-w-0">
                                     <div class="w-16 sm:w-20 bg-gray-200 dark:bg-gray-600 rounded-full h-2 ai-progress-bar">
                                         <div 
-                                            class="h-2 rounded-full transition-all duration-300 {{ $status === 'completed' ? 'bg-green-500' : ($status === 'failed' ? 'bg-red-500' : 'bg-blue-500') }}"
+                                            class="h-2 rounded-full transition-all duration-300 {{ $status === 'completed' ? 'bg-green-500' : ($status === 'failed' ? 'bg-red-500' : 'bg-gray-500') }}"
                                             style="width: {{ $modelProgressPercentage }}%"
                                         ></div>
                                     </div>
@@ -126,12 +126,12 @@
                             ];
                         @endphp
                         @foreach($steps as $step)
-                            <div class="text-center p-3 rounded-lg {{ $progressPercentage >= $step['threshold'] ? 'bg-green-50 dark:bg-green-900/20' : ($progressPercentage >= ($step['threshold'] - 10) ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-gray-50 dark:bg-gray-800') }}">
+                            <div class="text-center p-3 rounded-lg {{ $progressPercentage >= $step['threshold'] ? 'bg-green-50 dark:bg-green-900/20' : ($progressPercentage >= ($step['threshold'] - 10) ? 'bg-gray-50 dark:bg-gray-900/20' : 'bg-gray-50 dark:bg-gray-800') }}">
                                 <div class="flex justify-center mb-2">
                                     @if($progressPercentage >= $step['threshold'])
                                         <flux:icon.check class="size-5 text-green-500" />
                                     @elseif($progressPercentage >= ($step['threshold'] - 10))
-                                        <flux:icon.arrow-path class="size-5 text-blue-500 animate-spin" />
+                                        <flux:icon.arrow-path class="size-5 text-gray-600 dark:text-gray-400 animate-spin" />
                                     @else
                                         @switch($step['icon'])
                                             @case('play')
@@ -148,10 +148,10 @@
                                         @endswitch
                                     @endif
                                 </div>
-                                <p class="text-xs font-medium {{ $progressPercentage >= $step['threshold'] ? 'text-green-700 dark:text-green-300' : ($progressPercentage >= ($step['threshold'] - 10) ? 'text-blue-700 dark:text-blue-300' : 'text-gray-600 dark:text-gray-400') }}">
+                                <p class="text-xs font-medium {{ $progressPercentage >= $step['threshold'] ? 'text-green-700 dark:text-green-300' : ($progressPercentage >= ($step['threshold'] - 10) ? 'text-gray-700 dark:text-gray-300' : 'text-gray-600 dark:text-gray-400') }}">
                                     {{ $step['name'] }}
                                 </p>
-                                <p class="text-xs {{ $progressPercentage >= $step['threshold'] ? 'text-green-600 dark:text-green-400' : ($progressPercentage >= ($step['threshold'] - 10) ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-500') }}">
+                                <p class="text-xs {{ $progressPercentage >= $step['threshold'] ? 'text-green-600 dark:text-green-400' : ($progressPercentage >= ($step['threshold'] - 10) ? 'text-gray-600 dark:text-gray-400' : 'text-gray-500 dark:text-gray-500') }}">
                                     {{ $step['desc'] }}
                                 </p>
                             </div>

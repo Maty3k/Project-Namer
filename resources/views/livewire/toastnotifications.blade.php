@@ -83,7 +83,7 @@ new class extends Component {
                     @if($toast['type'] === 'success') border-l-4 border-green-500 @endif
                     @if($toast['type'] === 'error') border-l-4 border-red-500 @endif
                     @if($toast['type'] === 'warning') border-l-4 border-yellow-500 @endif
-                    @if($toast['type'] === 'info') border-l-4 border-blue-500 @endif">
+                    @if($toast['type'] === 'info') border-l-4 border-primary-500 @endif">
                 
                 <div class="p-4">
                     <div class="flex items-start">
@@ -128,11 +128,11 @@ new class extends Component {
                 <!-- Progress bar for auto-dismiss -->
                 <div class="h-1 bg-gray-200">
                     <div 
-                        class="h-full bg-gradient-to-r
-                            @if($toast['type'] === 'success') from-green-500 to-green-600 @endif
-                            @if($toast['type'] === 'error') from-red-500 to-red-600 @endif
-                            @if($toast['type'] === 'warning') from-yellow-500 to-yellow-600 @endif
-                            @if($toast['type'] === 'info') from-blue-500 to-blue-600 @endif"
+                        class="h-full
+                            @if($toast['type'] === 'success') bg-green-500 @endif
+                            @if($toast['type'] === 'error') bg-red-500 @endif
+                            @if($toast['type'] === 'warning') bg-yellow-500 @endif
+                            @if($toast['type'] === 'info') bg-primary-500 @endif"
                         x-data="{ width: 100 }"
                         x-init="
                             const interval = setInterval(() => {
@@ -168,7 +168,7 @@ new class extends Component {
             <button onclick="Livewire.dispatch('show-toast', { message: 'Warning! High system load detected.', type: 'warning', duration: 6000 })"
                     class="px-3 py-1 bg-yellow-500 text-white text-xs rounded">Test Warning</button>
             <button onclick="Livewire.dispatch('show-toast', { message: 'Info: Checking logo status...', type: 'info', duration: 5000 })"
-                    class="px-3 py-1 bg-blue-500 text-white text-xs rounded">Test Info</button>
+                    class="px-3 py-1 bg-primary-500 text-white text-xs rounded">Test Info</button>
         </div>
     @endif
 </div>

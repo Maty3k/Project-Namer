@@ -40,6 +40,12 @@ it('can filter themes by category', function (): void {
         ->assertSet('selectedCategory', 'standard')
         ->assertSee('Default Blue')
         ->assertSee('Ocean Breeze');
+
+    // Test filtering by bold category
+    $component->call('changeCategory', 'bold')
+        ->assertSet('selectedCategory', 'bold')
+        ->assertSee('Neon Cyber')
+        ->assertSee('Electric Blue');
 });
 
 it('can apply seasonal themes', function (): void {
@@ -48,12 +54,26 @@ it('can apply seasonal themes', function (): void {
     Livewire::actingAs($user)
         ->test(ThemeCustomizer::class)
         ->call('applyPreset', 'summer')
-        ->assertSet('primaryColor', '#ff6b6b')
-        ->assertSet('accentColor', '#4ecdc4')
+        ->assertSet('primaryColor', '#dc2626')
+        ->assertSet('accentColor', '#0891b2')
         ->assertSet('backgroundColor', '#fff5f5')
         ->assertSet('textColor', '#2d3748')
         ->assertSet('themeName', 'summer')
         ->assertSet('isDarkMode', false);
+});
+
+it('can apply bold themes', function (): void {
+    $user = User::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test(ThemeCustomizer::class)
+        ->call('applyPreset', 'neon-cyber')
+        ->assertSet('primaryColor', '#00ff88')
+        ->assertSet('accentColor', '#ff0080')
+        ->assertSet('backgroundColor', '#0a0a0a')
+        ->assertSet('textColor', '#00ff88')
+        ->assertSet('themeName', 'neon-cyber')
+        ->assertSet('isDarkMode', true);
 });
 
 it('shows seasonal recommendation when available', function (): void {

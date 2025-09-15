@@ -1,6 +1,6 @@
 <x-layouts.guest title="Password Required" :metadata="$metadata ?? []">
 
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center px-4 py-8">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4 py-8">
     <div class="w-full max-w-md">
         <flux:card class="relative overflow-hidden">
             <!-- Background Pattern -->
@@ -12,7 +12,7 @@
             <div class="relative z-10">
                 <!-- Icon and Header -->
                 <div class="text-center mb-6">
-                    <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full mb-4">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-500 rounded-full mb-4">
                         <flux:icon name="lock-closed" class="w-8 h-8 text-white" />
                     </div>
                     

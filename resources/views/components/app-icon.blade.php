@@ -1,3 +1,12 @@
+@props([
+    'name' => 'question-mark-circle',
+    'size' => 'md',
+    'style' => 'outline',
+    'variant' => null,
+    'loading' => false,
+    'class' => null,
+])
+
 @php
     // Map contextual names to actual icon names
     $iconMap = [
@@ -71,7 +80,7 @@
         'success' => 'text-green-600 dark:text-green-400',
         'error' => 'text-red-600 dark:text-red-400', 
         'warning' => 'text-yellow-600 dark:text-yellow-400',
-        'info' => 'text-blue-600 dark:text-blue-400',
+        'info' => 'text-gray-600 dark:text-gray-400',
         'muted' => 'text-gray-400 dark:text-gray-500',
     ];
     
@@ -99,7 +108,10 @@
         default => '20'
     };
     
-    $iconPath = "node_modules/heroicons/{$iconSizePath}/{$style}/{$resolvedIcon}.svg";
+    // For smaller sizes, only solid style is available
+    $iconStyle = ($iconSizePath === '24') ? $style : 'solid';
+    
+    $iconPath = "node_modules/heroicons/{$iconSizePath}/{$iconStyle}/{$resolvedIcon}.svg";
     
     // Check if file exists, fallback to question-mark-circle if not
     if (!file_exists(base_path($iconPath))) {
@@ -120,7 +132,7 @@
 
 <svg 
     {{ $attributes->merge(['class' => $classes]) }}
-    @if($style === 'outline')
+    @if($iconStyle === 'outline')
         fill="none" 
         stroke="currentColor" 
         stroke-width="{{ $strokeWidth }}"

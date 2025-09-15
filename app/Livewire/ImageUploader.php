@@ -59,10 +59,9 @@ class ImageUploader extends Component
 
         foreach ($this->images as $index => $image) {
             try {
-                $this->validate(
-                    ["images.{$index}" => $image],
-                    ["images.{$index}" => $this->rules()['images.*']]
-                );
+                $this->validate([
+                    "images.{$index}" => $this->rules()['images.*'],
+                ]);
             } catch (\Illuminate\Validation\ValidationException $e) {
                 $this->addError("images.{$index}", $e->getMessage());
                 unset($this->images[$index]);

@@ -34,18 +34,18 @@
     {{-- Overview Stats Cards --}}
     @if(isset($analytics['overview']))
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-6 border border-blue-200 dark:border-blue-700">
+            <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-6 border border-primary-200 dark:border-primary-700">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-blue-600 dark:text-blue-400">Total Generations</p>
-                        <p class="text-3xl font-bold text-blue-900 dark:text-blue-100 mt-1">
+                        <p class="text-sm font-medium text-primary-600 dark:text-primary-400">Total Generations</p>
+                        <p class="text-3xl font-bold text-primary-900 dark:text-primary-100 mt-1">
                             {{ number_format($analytics['overview']['total_generations'] ?? 0) }}
                         </p>
                     </div>
-                    <flux:icon.cpu-chip class="size-8 text-blue-500" />
+                    <flux:icon.cpu-chip class="size-8 text-primary-500" />
                 </div>
                 @if(isset($analytics['overview']['average_names_per_generation']))
-                    <p class="text-xs text-blue-700 dark:text-blue-300 mt-2">
+                    <p class="text-xs text-primary-700 dark:text-primary-300 mt-2">
                         {{ round($analytics['overview']['average_names_per_generation'], 1) }} names per generation
                     </p>
                 @endif
@@ -117,7 +117,7 @@
     @if(isset($analytics['model_usage']))
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                <flux:icon.cpu-chip class="size-5 text-blue-500" />
+                <flux:icon.cpu-chip class="size-5 text-primary-500" />
                 AI Model Usage Analysis
             </h3>
 
@@ -216,7 +216,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                    <flux:icon.chart-bar class="size-5 text-blue-500" />
+                    <flux:icon.chart-bar class="size-5 text-primary-500" />
                     Generation Trends
                 </h3>
                 @if(isset($analytics['generation_trends']['growth_rate']))
@@ -242,7 +242,7 @@
                         $height = $maxGenerations > 0 ? ($day['generations'] / $maxGenerations) * 100 : 0;
                     @endphp
                     <div class="flex flex-col items-center group relative flex-1">
-                        <div class="bg-blue-500 hover:bg-blue-600 transition-colors rounded-t w-full transition-all duration-300"
+                        <div class="bg-primary-500 hover:bg-primary-600 transition-colors rounded-t w-full transition-all duration-300"
                              style="height: {{ $height }}%"
                              title="{{ $day['generations'] }} generations on {{ $day['date'] }}">
                         </div>
@@ -322,14 +322,14 @@
     @if($isAdmin && isset($analytics['realtime_metrics']))
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                <flux:icon.signal class="size-5 text-blue-500" />
+                <flux:icon.signal class="size-5 text-primary-500" />
                 Real-time System Metrics
             </h3>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-                    <div class="text-sm font-medium text-blue-600 dark:text-blue-400">Active Generations</div>
-                    <div class="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                <div class="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-4">
+                    <div class="text-sm font-medium text-primary-600 dark:text-primary-400">Active Generations</div>
+                    <div class="text-2xl font-bold text-primary-900 dark:text-primary-100">
                         {{ $analytics['realtime_metrics']['active_generations'] ?? 0 }}
                     </div>
                 </div>

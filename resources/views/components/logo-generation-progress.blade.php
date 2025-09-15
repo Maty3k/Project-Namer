@@ -45,7 +45,7 @@ $currentMessage = $statusMessages[$logoGeneration->status] ?? 'Processing...';
         <div class="flex items-center">
             @if($logoGeneration->status === 'processing')
                 <div class="flex-shrink-0 mr-3">
-                    <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 text-primary-600 dark:text-primary-400 animate-spin" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
@@ -98,7 +98,7 @@ $currentMessage = $statusMessages[$logoGeneration->status] ?? 'Processing...';
                                    ? 'text-red-600 bg-red-200 dark:bg-red-900 dark:text-red-400'
                                    : ($logoGeneration->status === 'partial'
                                        ? 'text-amber-600 bg-amber-200 dark:bg-amber-900 dark:text-amber-400'
-                                       : 'text-blue-600 bg-blue-200 dark:bg-blue-900 dark:text-blue-400')) }}">
+                                       : 'text-primary-600 bg-blue-200 dark:bg-primary-900 dark:text-primary-400')) }}">
                     {{ $progressPercentage }}%
                 </span>
             </div>
@@ -118,7 +118,7 @@ $currentMessage = $statusMessages[$logoGeneration->status] ?? 'Processing...';
                             ? 'bg-red-200 dark:bg-red-900'
                             : ($logoGeneration->status === 'partial'
                                 ? 'bg-amber-200 dark:bg-amber-900'
-                                : 'bg-blue-200 dark:bg-blue-900')) }}">
+                                : 'bg-blue-200 dark:bg-primary-900')) }}">
             <div style="width: {{ $progressPercentage }}%"
                  class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center transition-all duration-500 ease-out
                         {{ $logoGeneration->status === 'completed' 
@@ -127,7 +127,7 @@ $currentMessage = $statusMessages[$logoGeneration->status] ?? 'Processing...';
                                 ? 'bg-red-500 dark:bg-red-400'
                                 : ($logoGeneration->status === 'partial'
                                     ? 'bg-amber-500 dark:bg-amber-400'
-                                    : 'bg-blue-500 dark:bg-blue-400')) }}">
+                                    : 'bg-primary-500 dark:bg-blue-400')) }}">
             </div>
         </div>
     </div>

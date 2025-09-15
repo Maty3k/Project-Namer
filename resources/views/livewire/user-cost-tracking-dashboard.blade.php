@@ -126,7 +126,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-center">
                 <div class="flex-shrink-0">
-                    <flux:icon.chart-bar class="h-8 w-8 text-blue-500" />
+                    <flux:icon.chart-bar class="h-8 w-8 text-primary-500" />
                 </div>
                 <div class="ml-4">
                     <div class="text-sm text-gray-500 dark:text-gray-400">Total Requests</div>
@@ -228,14 +228,14 @@
                 <!-- Most Used Model -->
                 @php $mostUsedModel = $this->getMostUsedModel(); @endphp
                 @if($mostUsedModel)
-                    <div class="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                    <div class="p-4 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-lg">
                         <div class="flex items-center">
-                            <flux:icon.star class="h-5 w-5 text-blue-500 mr-3" />
+                            <flux:icon.star class="h-5 w-5 text-primary-500 mr-3" />
                             <div>
-                                <div class="font-medium text-blue-900 dark:text-blue-100">
+                                <div class="font-medium text-primary-900 dark:text-primary-100">
                                     Most Used Model
                                 </div>
-                                <div class="text-sm text-blue-700 dark:text-blue-300">
+                                <div class="text-sm text-primary-700 dark:text-primary-300">
                                     {{ ucfirst(str_replace(['-', '_'], ' ', $mostUsedModel['id'])) }} with {{ $mostUsedModel['requests'] }} requests
                                 </div>
                             </div>
@@ -310,7 +310,7 @@
     @if($loading)
         <div class="fixed inset-0 bg-black bg-opacity-25 flex items-center justify-center z-50">
             <div class="bg-white dark:bg-gray-800 rounded-lg p-6 flex items-center space-x-3">
-                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-500"></div>
                 <span class="text-gray-900 dark:text-white">Loading usage data...</span>
             </div>
         </div>

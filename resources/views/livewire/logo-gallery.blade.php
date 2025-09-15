@@ -38,7 +38,7 @@
             {{-- Status and Actions --}}
             <div class="flex flex-wrap items-center gap-3">
                 @if($this->logoGeneration->status === 'processing')
-                    <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400">
+                    <div class="flex items-center gap-2 text-primary-600 dark:text-primary-400">
                         <flux:icon.arrow-path class="size-4 animate-spin" />
                         <span class="text-sm font-medium">Processing...</span>
                     </div>
@@ -125,7 +125,7 @@
                     
                     <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                         <div 
-                            class="bg-blue-600 h-3 rounded-full transition-all duration-500 ease-out"
+                            class="bg-primary-600 h-3 rounded-full transition-all duration-500 ease-out"
                             style="width: {{ $this->progress['percentage'] }}%"
                         ></div>
                     </div>
@@ -188,7 +188,7 @@
                     "
                     class="relative border-2 border-dashed rounded-lg p-8 text-center transition-all duration-300 ease-in-out transform"
                     :class="{
-                        'border-blue-500 bg-blue-50 dark:bg-blue-900/20 scale-105 shadow-lg': draggedOver,
+                        'border-primary-500 bg-primary-50 dark:bg-primary-900/20 scale-105 shadow-lg': draggedOver,
                         'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800/50': !draggedOver && !isUploading,
                         'border-green-500 bg-green-50 dark:bg-green-900/20': isUploading && uploadProgress === 100,
                         'border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20': isUploading && uploadProgress < 100
@@ -198,7 +198,7 @@
                         <div 
                             class="mx-auto size-12 transition-all duration-200"
                             :class="{
-                                'text-blue-500 animate-bounce': draggedOver,
+                                'text-primary-500 animate-bounce': draggedOver,
                                 'text-gray-400 dark:text-gray-500': !draggedOver
                             }"
                         >
@@ -213,7 +213,7 @@
                             </p>
                             <p class="text-sm text-gray-600 dark:text-gray-400">
                                 <span x-show="!draggedOver">or click to browse your computer</span>
-                                <span x-show="draggedOver" class="text-blue-600 dark:text-blue-400 font-medium">Release to start upload</span>
+                                <span x-show="draggedOver" class="text-primary-600 dark:text-primary-400 font-medium">Release to start upload</span>
                             </p>
                         </div>
 
@@ -239,7 +239,7 @@
 
                     {{-- Upload Progress --}}
                     <div x-show="isUploading" class="space-y-4">
-                        <flux:icon.arrow-path class="mx-auto size-12 animate-spin text-blue-500" />
+                        <flux:icon.arrow-path class="mx-auto size-12 animate-spin text-primary-500" />
                         
                         <div class="space-y-2">
                             <p class="text-lg font-medium text-gray-900 dark:text-white">
@@ -250,7 +250,7 @@
                             {{-- Progress Bar --}}
                             <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
                                 <div 
-                                    class="bg-blue-600 h-3 rounded-full transition-all duration-300 ease-out"
+                                    class="bg-primary-600 h-3 rounded-full transition-all duration-300 ease-out"
                                     :style="{ width: uploadProgress + '%' }"
                                 ></div>
                             </div>
@@ -300,11 +300,11 @@
                             @foreach($filePreviews as $index => $preview)
                                 <div class="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                                     <div class="flex-shrink-0">
-                                        <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                                        <div class="w-10 h-10 bg-primary-100 dark:bg-primary-900 rounded-lg flex items-center justify-center">
                                             @if(str_starts_with($preview['type'], 'image/'))
-                                                <flux:icon.photo class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                                <flux:icon.photo class="w-5 h-5 text-primary-600 dark:text-primary-400" />
                                             @else
-                                                <flux:icon.document class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                                <flux:icon.document class="w-5 h-5 text-primary-600 dark:text-primary-400" />
                                             @endif
                                         </div>
                                     </div>
@@ -406,7 +406,7 @@
                                         />
                                         <label 
                                             for="scheme-{{ $schemeId }}" 
-                                            class="flex flex-col items-center p-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:border-gray-300 dark:hover:border-gray-600 peer-checked:border-blue-500 dark:peer-checked:border-blue-400 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/20 transition-all"
+                                            class="flex flex-col items-center p-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:border-gray-300 dark:hover:border-gray-600 peer-checked:border-primary-500 dark:peer-checked:border-blue-400 peer-checked:bg-primary-50 dark:peer-checked:bg-primary-900/20 transition-all"
                                         >
                                             {{-- Color Palette Preview --}}
                                             <div class="flex gap-1 mb-2">
@@ -589,7 +589,7 @@
                                                    wire:model.live="selectedUploadedLogos" 
                                                    value="{{ $uploadedLogo->id }}" 
                                                    wire:click.stop="toggleUploadedLogoSelection({{ $uploadedLogo->id }})"
-                                                   class="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                                   class="w-4 h-4 text-primary-600 bg-white border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                         </div>
                                         
                                         {{-- Logo Card --}}
@@ -679,7 +679,7 @@
                                                         type="checkbox" 
                                                         wire:click.stop="toggleLogoSelection({{ $logo->id }})"
                                                         @if(in_array($logo->id, $selectedLogos)) checked @endif
-                                                        class="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                        class="w-4 h-4 text-primary-600 bg-white border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                                     >
                                                 </div>
                                             @endif
@@ -792,7 +792,7 @@
                                                     wire:model.live="selectedUploadedLogos" 
                                                     value="{{ $uploadedLogo->id }}" 
                                                     wire:click.stop="toggleUploadedLogoSelection({{ $uploadedLogo->id }})"
-                                                    class="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                                    class="w-4 h-4 text-primary-600 bg-white border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                             </td>
                                         @endif
                                         
@@ -857,7 +857,7 @@
                                 {{-- Generated Logos --}}
                                 @if($filterType === 'all' || $filterType === 'generated')
                                     @foreach($this->filteredGeneratedLogos as $logo)
-                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer @if(in_array($logo->id, $selectedLogos)) bg-blue-50 dark:bg-blue-900/20 @endif" 
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer @if(in_array($logo->id, $selectedLogos)) bg-primary-50 dark:bg-primary-900/20 @endif" 
                                         wire:click="showLogoDetail({{ $logo->id }}, 'generated')">
                                         @if($this->logoGeneration->status === 'completed')
                                             <td class="px-6 py-4">

@@ -15,16 +15,16 @@
     </div>
 
     {{-- Status Skeleton --}}
-    <div class="mb-8 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+    <div class="mb-8 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
         <div class="flex items-center">
-            <div class="w-5 h-5 bg-blue-300 dark:bg-blue-600 rounded-full mr-3"></div>
+            <div class="w-5 h-5 bg-gray-300 dark:bg-gray-600 rounded-full mr-3"></div>
             <div class="flex-1">
-                <div class="h-4 bg-blue-200 dark:bg-blue-800 rounded w-40 mb-2"></div>
-                <div class="h-3 bg-blue-100 dark:bg-blue-900 rounded w-64"></div>
+                <div class="h-4 bg-gray-200 dark:bg-gray-800 rounded w-40 mb-2"></div>
+                <div class="h-3 bg-gray-100 dark:bg-gray-900 rounded w-64"></div>
             </div>
         </div>
-        <div class="mt-3 w-full bg-blue-100 dark:bg-blue-800 rounded-full h-2">
-            <div class="bg-blue-600 dark:bg-blue-400 h-2 rounded-full w-1/3 animate-pulse"></div>
+        <div class="mt-3 w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2">
+            <div class="bg-gray-600 dark:bg-gray-400 h-2 rounded-full w-1/3 animate-pulse"></div>
         </div>
     </div>
 
