@@ -1,6 +1,7 @@
-<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-200 hover:shadow-md
-             {{ $this->isSelected ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/10' : 'hover:border-gray-300 dark:hover:border-gray-600' }}
-             {{ $suggestion->is_hidden ? 'opacity-60 scale-95' : 'scale-100' }}"
+<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-300 ease-out hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-800/50 transform hover:-translate-y-1 
+             {{ $this->isSelected ? 'ring-2 ring-blue-500 bg-primary-50 dark:bg-primary-900/10 shadow-lg shadow-blue-200/30 dark:shadow-blue-800/30' : 'hover:border-gray-300 dark:hover:border-gray-600' }}
+             {{ $suggestion->is_hidden ? 'opacity-60 scale-95' : 'scale-100 hover:scale-[1.02]' }}
+             focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:outline-none"
      wire:key="suggestion-{{ $suggestion->id }}">
     
     <!-- Card Header -->
@@ -9,7 +10,7 @@
             <div class="flex items-center space-x-3">
                 <!-- Selection Indicator -->
                 @if($this->isSelected)
-                    <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                    <div class="w-6 h-6 bg-primary-500 rounded-full flex items-center justify-center">
                         <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                         </svg>
@@ -17,7 +18,7 @@
                 @endif
 
                 <!-- Name -->
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white {{ $this->isSelected ? 'text-blue-900 dark:text-blue-100' : '' }}">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white {{ $this->isSelected ? 'text-primary-900 dark:text-primary-100' : '' }}">
                     {{ $suggestion->name }}
                 </h3>
 
@@ -59,7 +60,7 @@
                             wire:click="deselectName"
                             variant="ghost"
                             size="sm"
-                            class="text-blue-600 hover:text-blue-700"
+                            class="text-primary-600 hover:text-primary-700"
                             wire:loading.attr="disabled"
                         >
                             <span wire:loading.remove wire:target="deselectName">Deselect</span>
@@ -134,7 +135,7 @@
                         <flux:button
                             variant="ghost"
                             size="sm"
-                            class="text-blue-600 hover:text-blue-700"
+                            class="text-primary-600 hover:text-primary-700"
                         >
                             Check Domains
                         </flux:button>
@@ -179,7 +180,7 @@
                             wire:click="generateLogos"
                             variant="ghost"
                             size="sm"
-                            class="text-blue-600 hover:text-blue-700"
+                            class="text-primary-600 hover:text-primary-700"
                             wire:loading.attr="disabled"
                         >
                             <span wire:loading.remove wire:target="generateLogos">Generate Logos</span>

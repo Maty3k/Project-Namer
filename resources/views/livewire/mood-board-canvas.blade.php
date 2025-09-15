@@ -128,7 +128,7 @@
                                  }"
                                  @dragstart="dragStart($event)"
                                  class="group relative aspect-square bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden cursor-move border-2 border-transparent transition-all duration-200
-                                        hover:border-blue-300 dark:hover:border-blue-600
+                                        hover:border-primary-300 dark:hover:border-primary-600
                                         hover:shadow-lg">
                                 
                                 @if($image->thumbnail_path)
@@ -155,9 +155,9 @@
 
                                 <!-- Add to Canvas Button -->
                                 <button wire:click="addImageToCanvas('{{ $image->uuid }}')"
-                                        class="absolute top-2 right-2 p-1 bg-blue-600 text-white rounded-full opacity-0 transition-all duration-200
+                                        class="absolute top-2 right-2 p-1 bg-primary-600 text-white rounded-full opacity-0 transition-all duration-200
                                                group-hover:opacity-100
-                                               hover:bg-blue-700">
+                                               hover:bg-primary-700">
                                     <flux:icon name="plus" class="w-4 h-4" />
                                 </button>
                             </div>
@@ -292,19 +292,19 @@
                                 </div>
 
                                 <!-- Resize Handles -->
-                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-blue-600 rounded-tl cursor-se-resize opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-primary-600 rounded-tl cursor-se-resize opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             @endif
                         </div>
                     @endforeach
 
                     <!-- Drop Zone Indicator -->
-                    <div class="absolute inset-0 border-2 border-dashed border-blue-400 dark:border-blue-500 bg-blue-50 dark:bg-blue-900/20 rounded-lg opacity-0 transition-opacity duration-200 pointer-events-none"
+                    <div class="absolute inset-0 border-2 border-dashed border-blue-400 dark:border-primary-500 bg-primary-50 dark:bg-primary-900/20 rounded-lg opacity-0 transition-opacity duration-200 pointer-events-none"
                          x-show="false"
                          x-transition>
                         <div class="flex items-center justify-center h-full">
                             <div class="text-center">
-                                <flux:icon name="cloud-arrow-down" class="mx-auto w-12 h-12 text-blue-400 dark:text-blue-500 mb-2" />
-                                <p class="text-blue-600 dark:text-blue-400 font-medium">
+                                <flux:icon name="cloud-arrow-down" class="mx-auto w-12 h-12 text-primary-400 dark:text-primary-500 mb-2" />
+                                <p class="text-primary-600 dark:text-primary-400 font-medium">
                                     Drop image here to add to mood board
                                 </p>
                             </div>
@@ -449,7 +449,7 @@
 
             <div class="space-y-2 max-h-64 overflow-y-auto">
                 @foreach($moodBoards as $board)
-                    <div class="flex items-center justify-between p-2 rounded border border-gray-200 dark:border-gray-600 {{ $activeMoodBoard && $activeMoodBoard->id === $board->id ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-600' : 'bg-white dark:bg-gray-700' }}">
+                    <div class="flex items-center justify-between p-2 rounded border border-gray-200 dark:border-gray-600 {{ $activeMoodBoard && $activeMoodBoard->id === $board->id ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-300 dark:border-primary-600' : 'bg-white dark:bg-gray-700' }}">
                         <div class="flex-1 min-w-0">
                             <button wire:click="loadMoodBoard('{{ $board->uuid }}')"
                                     class="text-left w-full">

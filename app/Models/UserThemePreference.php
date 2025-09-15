@@ -36,6 +36,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $text_color
  * @property bool $is_dark_mode
  * @property-read \App\Models\User $user
+ *
  * @method static Builder<static>|UserThemePreference customThemes()
  * @method static \Database\Factories\UserThemePreferenceFactory factory($count = null, $state = [])
  * @method static Builder<static>|UserThemePreference forTheme(string $themeName)
@@ -65,6 +66,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|UserThemePreference whereThemeName($value)
  * @method static Builder<static>|UserThemePreference whereUpdatedAt($value)
  * @method static Builder<static>|UserThemePreference whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class UserThemePreference extends Model
@@ -106,17 +108,16 @@ class UserThemePreference extends Model
     }
 
     /**
-     * Get text_color attribute (alias for text_primary_color).
+     * Get text_color attribute.
      *
      * @return \Illuminate\Database\Eloquent\Casts\Attribute<string, string>
      */
     protected function textColor(): \Illuminate\Database\Eloquent\Casts\Attribute
     {
-        return \Illuminate\Database\Eloquent\Casts\Attribute::make(get: fn () => $this->text_primary_color, set: function (?string $value) {
-            $this->text_primary_color = $value;
-
-            return [];
-        });
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+            get: fn () => $this->attributes['text_color'] ?? '#1F2937',
+            set: fn (?string $value) => ['text_color' => $value]
+        );
     }
 
     /**

@@ -310,7 +310,7 @@ describe('Dashboard Component', function (): void {
         Livewire::actingAs($this->user)
             ->test(NameGeneratorDashboard::class)
             ->assertSet('showLogoGeneration', true)
-            ->assertSee('Logo Generation');
+            ->assertSee('Logos');
     });
 
     it('can refresh logo generation status', function (): void {

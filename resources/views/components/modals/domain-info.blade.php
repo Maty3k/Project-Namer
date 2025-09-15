@@ -78,9 +78,9 @@ $domain = $dataArray['domain'] ?? 'Unknown';
     @endif
 
     {{-- Features & Benefits --}}
-    <div class="bg-blue-50 dark:bg-blue-900 rounded-lg p-4">
-        <h5 class="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">What's Included</h5>
-        <ul class="text-xs text-blue-700 dark:text-blue-300 space-y-1">
+    <div class="bg-primary-50 dark:bg-primary-900 rounded-lg p-4">
+        <h5 class="text-sm font-medium text-primary-800 dark:text-blue-200 mb-2">What's Included</h5>
+        <ul class="text-xs text-primary-700 dark:text-primary-300 space-y-1">
             <li class="flex items-center">
                 <svg class="w-3 h-3 mr-2" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>

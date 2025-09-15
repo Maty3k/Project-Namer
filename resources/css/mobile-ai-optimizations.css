@@ -308,7 +308,7 @@
     width: 64px;
     height: 64px;
     border-radius: 32px;
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    background: #3b82f6;
     color: white;
     border: none;
     box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
@@ -455,7 +455,7 @@
   .ai-controls-trigger {
     width: 100%;
     padding: 16px 20px;
-    background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    background: #f3f4f6;
     border: none;
     display: flex;
     justify-content: space-between;
@@ -467,7 +467,7 @@
   }
   
   .ai-controls-trigger:active {
-    background: linear-gradient(135deg, #e5e7eb, #d1d5db);
+    background: #e5e7eb;
   }
   
   .ai-controls-trigger-icon {

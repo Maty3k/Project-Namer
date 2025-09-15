@@ -588,4 +588,18 @@ class MoodBoardCanvas extends Component
             $this->dispatch('copy-to-clipboard', text: $sharingUrl);
         }
     }
+
+    /**
+     * Render the component.
+     */
+    public function render(): \Illuminate\View\View
+    {
+        return view('livewire.mood-board-canvas', [
+            'moodBoards' => $this->getMoodBoardsProperty(),
+            'availableImages' => $this->getAvailableImagesProperty(),
+            'layoutImages' => $this->getLayoutImagesProperty(),
+            'canvasImages' => $this->getLayoutImagesProperty(), // Same as layoutImages
+            'layoutOptions' => $this->getLayoutOptionsProperty(),
+        ]);
+    }
 }

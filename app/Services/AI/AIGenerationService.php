@@ -69,17 +69,10 @@ class AIGenerationService
     ): array {
         $aiGeneration->markAsStarted();
 
-        // In testing environment, use synchronous execution to avoid timeout issues
-        if (app()->environment('testing')) {
-            return $this->generateSequentially($aiGeneration, $models, $prompt, $parameters);
-        }
-
-        // Use parallel execution if multiple models, otherwise single model
-        if (count($models) > 1) {
-            return $this->generateInParallel($aiGeneration, $models, $prompt, $parameters);
-        } else {
-            return $this->generateSequentially($aiGeneration, $models, $prompt, $parameters);
-        }
+        // Use synchronous execution to avoid timeout issues until queue workers are properly configured
+        // In web requests, parallel execution with polling can exceed PHP execution time limits
+        // TODO: Re-enable parallel execution once queue workers are running in production
+        return $this->generateSequentially($aiGeneration, $models, $prompt, $parameters);
     }
 
     /**
@@ -253,21 +246,37 @@ class AIGenerationService
         try {
             foreach ($models as $modelId) {
                 if ($this->prismAI->isModelAvailable($modelId)) {
-                    $optimizedPrompt = $this->prismAI->optimizePrompt(
-                        $modelId,
-                        $prompt,
-                        $parameters['mode'] ?? 'creative',
-                        $parameters['deep_thinking'] ?? false
-                    );
+                    try {
+                        $optimizedPrompt = $this->prismAI->optimizePrompt(
+                            $modelId,
+                            $prompt,
+                            $parameters['mode'] ?? 'creative',
+                            $parameters['deep_thinking'] ?? false
+                        );
 
-                    $modelResults = $this->prismAI->generateNames($modelId, $optimizedPrompt, $parameters);
-                    $results[$modelId] = $modelResults;
+                        $modelResults = $this->prismAI->generateNames($modelId, $optimizedPrompt, $parameters);
+                        $results[$modelId] = $modelResults;
+                    } catch (Exception $e) {
+                        Log::error('Model generation failed during sequential execution', [
+                            'model' => $modelId,
+                            'error' => $e->getMessage(),
+                            'session' => $aiGeneration->generation_session_id,
+                        ]);
+
+                        // Rethrow the exception to trigger proper error handling
+                        throw $e;
+                    }
                 } else {
                     Log::warning('AI model not available during generation', [
                         'model' => $modelId,
                         'session' => $aiGeneration->generation_session_id,
                     ]);
                 }
+            }
+
+            // Check if any models were successfully used
+            if (empty($results)) {
+                throw new Exception('No AI models were available for generation');
             }
 
             $endTime = microtime(true);
@@ -384,7 +393,8 @@ class AIGenerationService
     protected function generateMockMetrics(array $models, float $totalTime): array
     {
         $metrics = [];
-        $timePerModel = $totalTime / count($models);
+        $modelCount = count($models);
+        $timePerModel = $modelCount > 0 ? $totalTime / $modelCount : 0;
 
         foreach ($models as $model) {
             $metrics[$model] = [

@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Logo generation request model.
- * 
+ *
  * Represents a user request to generate logos for a business name,
  * tracking the generation status and progress.
  *
@@ -35,6 +35,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property \Illuminate\Support\Carbon|null $estimated_completion
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GeneratedLogo> $generatedLogos
  * @property-read int|null $generated_logos_count
+ *
  * @method static Builder<static>|LogoGeneration completed()
  * @method static \Database\Factories\LogoGenerationFactory factory($count = null, $state = [])
  * @method static Builder<static>|LogoGeneration failed()
@@ -62,6 +63,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static Builder<static>|LogoGeneration whereTotalLogosRequested($value)
  * @method static Builder<static>|LogoGeneration whereUpdatedAt($value)
  * @method static Builder<static>|LogoGeneration whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 final class LogoGeneration extends Model

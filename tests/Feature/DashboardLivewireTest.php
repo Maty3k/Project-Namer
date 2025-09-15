@@ -84,7 +84,7 @@ test('successful redirect to project page after creation', function (): void {
 
     $project = Project::where('user_id', $user->id)->first();
 
-    $component->assertRedirect("/project/{$project->uuid}");
+    $component->assertRedirect("/project/{$project->uuid}?auto_generate=1");
 });
 
 test('default project name generation', function (): void {
@@ -145,4 +145,19 @@ test('character counter updates in real-time', function (): void {
         ->assertSeeText('4 / 2000')
         ->set('description', 'This is a longer test description!')
         ->assertSeeText('34 / 2000');
+});
+
+test('save and generate names button adds auto_generate parameter to redirect', function (): void {
+    $user = User::factory()->create();
+
+    $this->actingAs($user);
+
+    $component = Livewire::test(Dashboard::class)
+        ->set('description', 'This project needs auto-generation upon redirect')
+        ->call('createProject');
+
+    $project = Project::where('user_id', $user->id)->first();
+
+    // Verify the redirect includes the auto_generate parameter
+    $component->assertRedirect("/project/{$project->uuid}?auto_generate=1");
 });

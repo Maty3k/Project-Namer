@@ -29,7 +29,7 @@ describe('LogoGallery Component', function (): void {
             ->assertOk()
             ->assertSet('logoGenerationId', $logoGeneration->id)
             ->assertSee('Test Company')
-            ->assertSee('Logo Generation');
+            ->assertSee('Logo Gallery');
     });
 
     it('handles non-existent logo generation', function (): void {
@@ -261,8 +261,8 @@ describe('LogoGallery Component', function (): void {
 
         Livewire::actingAs($this->user)
             ->test(LogoGallery::class, ['logoGenerationId' => $logoGeneration->id])
-            ->assertSee('No logos generated')
-            ->assertSee('The logo generation completed but no logos were created');
+            ->assertSee('No logos available')
+            ->assertSee('No logos have been generated or uploaded yet');
     });
 
     it('prevents download of non-existent logo', function (): void {

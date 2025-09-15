@@ -4,8 +4,8 @@
         
         <!-- Drag and Drop Upload Area -->
         <div class="upload-zone relative border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8
-                    hover:border-blue-400 dark:hover:border-blue-500 transition-colors duration-200
-                    {{ count($images) > 0 ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-600' : 'bg-gray-50 dark:bg-gray-800' }}"
+                    hover:border-blue-400 dark:hover:border-primary-500 transition-colors duration-200
+                    {{ count($images) > 0 ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-300 dark:border-primary-600' : 'bg-gray-50 dark:bg-gray-800' }}"
              x-data="imageDropzone()"
              @drop.prevent="handleDrop($event)"
              @dragover.prevent
@@ -23,8 +23,8 @@
             <div class="text-center">
                 @if(count($images) > 0)
                     <flux:icon.photo
-                        class="mx-auto h-12 w-12 text-blue-500 dark:text-blue-400" />
-                    <p class="mt-2 text-sm font-medium text-blue-600 dark:text-blue-400">
+                        class="mx-auto h-12 w-12 text-primary-500 dark:text-primary-400" />
+                    <p class="mt-2 text-sm font-medium text-primary-600 dark:text-primary-400">
                         {{ count($images) }} {{ Str::plural('image', count($images)) }} selected
                     </p>
                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">

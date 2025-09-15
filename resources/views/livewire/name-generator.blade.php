@@ -267,7 +267,7 @@ new class extends Component {
     public function getDomainStatusClass(string $status, ?bool $available): string
     {
         return match ($status) {
-            'checking' => 'text-blue-600 dark:text-blue-400',
+            'checking' => 'text-primary-600 dark:text-primary-400',
             'checked' => $available ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400',
             'error' => 'text-yellow-600 dark:text-yellow-400',
             default => 'text-gray-600 dark:text-gray-400',
@@ -1743,7 +1743,7 @@ new class extends Component {
                 xl:p-14" 
           aria-expanded="true">
         <div class="mb-8 slide-up">
-            <h1 class="font-bold text-gray-900 dark:text-gray-100 mb-2 bg-gradient-to-r from-accent to-green-400 bg-clip-text text-transparent tracking-tight leading-tight
+            <h1 class="font-bold text-gray-900 dark:text-gray-100 mb-2 tracking-tight leading-tight
                        xs:text-2xl
                        sm:text-3xl
                        md:text-4xl
@@ -1836,7 +1836,7 @@ new class extends Component {
                     </div>
                     @if(isset($this->validationHelp['businessDescription']))
                         <div id="validationHelp" 
-                             class="text-sm text-blue-600 dark:text-blue-400 mt-1 flex items-start validationHelp" 
+                             class="text-sm text-primary-600 dark:text-primary-400 mt-1 flex items-start validationHelp" 
                              role="status" 
                              aria-live="polite">
                             <span class="sr-only">validationHelp:</span>
@@ -1858,7 +1858,7 @@ new class extends Component {
                             @foreach($this->validationSuggestions['businessDescription'] as $suggestion)
                                 <button type="button" 
                                         wire:click="$set('businessDescription', '{{ addslashes($suggestion) }}')"
-                                        class="inline-block text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 active:text-blue-900 dark:active:text-blue-100 mr-4 mb-1 underline touch-target focus-indicator gesture-hint"
+                                        class="inline-block text-sm text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 active:text-primary-900 dark:active:text-blue-100 mr-4 mb-1 underline touch-target focus-indicator gesture-hint"
                                         aria-label="Apply suggestion: {{ $suggestion }}"
                                         tabindex="0">
                                     "{{ $suggestion }}"
@@ -1965,7 +1965,7 @@ new class extends Component {
                     :disabled="$isLoading"
                     aria-label="Generate business names using AI"
                     aria-describedby="generate-help"
-                    class="btn-modern focus-modern touch-ripple gesture-transition gesture-debounce throttle touch-response low-latency mobile-optimized-animation battery-efficient touch-target min-h-44 focus-indicator contrast-enhanced bg-gradient-to-r from-accent to-green-500 hover:from-accent/90 hover:to-green-400 shadow-soft-lg
+                    class="btn-modern focus-modern touch-ripple gesture-transition gesture-debounce throttle touch-response low-latency mobile-optimized-animation battery-efficient touch-target min-h-44 focus-indicator contrast-enhanced bg-accent hover:bg-accent/90 shadow-soft-lg
                            xs:w-full xs:py-4 xs:text-lg xs:font-bold
                            sm:w-auto sm:px-8 sm:py-3
                            md:text-xl">
@@ -2074,7 +2074,7 @@ new class extends Component {
                                             <span class="text-sm text-gray-500 dark:text-gray-400">
                                                 {{ date('M j, Y \a\t g:i A', strtotime($entry['timestamp'])) }}
                                             </span>
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-blue-200">
                                                 {{ ucfirst($entry['mode']) }}
                                             </span>
                                             @if($entry['deepThinking'])
@@ -2123,7 +2123,7 @@ new class extends Component {
                     {{-- Domain Checking Progress --}}
                     @if($isCheckingDomains)
                         <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
@@ -2190,11 +2190,11 @@ new class extends Component {
                         @foreach($activeFilters as $filterType => $filterValue)
                             <flux:badge 
                                 variant="outline" 
-                                class="active-filter bg-blue-50 text-blue-700 border-blue-200">
+                                class="active-filter bg-primary-50 text-primary-700 border-primary-200">
                                 {{ $this->getFilterDisplayName($filterType, $filterValue) }}
                                 <button 
                                     wire:click="removeFilter('{{ $filterType }}')"
-                                    class="ml-1 text-blue-500 hover:text-blue-700"
+                                    class="ml-1 text-primary-500 hover:text-primary-700"
                                     aria-label="Remove filter">
                                     ×
                                 </button>
@@ -2322,7 +2322,7 @@ new class extends Component {
                             <span>Taken</span>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <span class="text-blue-600 dark:text-blue-400">🔄</span>
+                            <span class="text-primary-600 dark:text-primary-400">🔄</span>
                             <span>Checking...</span>
                         </div>
                         <div class="flex items-center space-x-2">
@@ -2346,23 +2346,23 @@ new class extends Component {
 
                 {{-- Bulk Logo Generation Section --}}
                 @if(!empty($generatedNames) && !$isCheckingDomains)
-                    <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <div class="mt-6 p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-200 dark:border-primary-800">
                         <div class="flex items-center justify-between mb-3">
                             <div>
-                                <h3 class="text-lg font-medium text-blue-900 dark:text-blue-100">
+                                <h3 class="text-lg font-medium text-primary-900 dark:text-primary-100">
                                     🎨 Generate Logos
                                 </h3>
-                                <p class="text-sm text-blue-700 dark:text-blue-300">
+                                <p class="text-sm text-primary-700 dark:text-primary-300">
                                     Create AI-powered logo designs for your selected business name
                                 </p>
                             </div>
-                            <div class="text-right text-xs text-blue-600 dark:text-blue-400">
+                            <div class="text-right text-xs text-primary-600 dark:text-primary-400">
                                 12 unique designs<br>
                                 4 styles × 3 variations each
                             </div>
                         </div>
                         
-                        <div class="text-sm text-blue-600 dark:text-blue-400 mb-3">
+                        <div class="text-sm text-primary-600 dark:text-primary-400 mb-3">
                             Click "Generate Logos" next to any business name above, or use the bulk generation below:
                         </div>
                         
@@ -2373,7 +2373,7 @@ new class extends Component {
                                     variant="filled"
                                     size="sm"
                                     :disabled="$isGeneratingLogos"
-                                    class="bg-blue-600 hover:bg-blue-700 text-white">
+                                    class="bg-primary-600 hover:bg-primary-700 text-white">
                                     
                                     <span wire:loading.remove wire:target="generateLogos('{{ $name }}')">
                                         Generate for {{ $name }}

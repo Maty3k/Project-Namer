@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Jobs\GenerateLogosJob;
+use App\Helpers\ThemeHelper;
 use App\Models\AIGeneration;
 use App\Models\AIModelPerformance;
 use App\Models\GenerationCache;
 use App\Models\LogoGeneration;
+use App\Models\NameSuggestion;
 use App\Models\NamingSession;
 use App\Models\Share;
 use App\Models\UserAIPreferences;
+use App\Models\UserThemePreference;
 use App\Services\AI\AIGenerationService;
 use App\Services\AI\PrismAIService;
 use App\Services\DomainCheckService;
@@ -20,6 +23,7 @@ use App\Services\OpenAINameService;
 use App\Services\SessionService;
 use App\Services\ShareService;
 use Exception;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
@@ -34,6 +38,8 @@ use Livewire\Component;
  */
 class NameGeneratorDashboard extends Component
 {
+    use AuthorizesRequests;
+
     // Business idea input
     public string $businessIdea = '';
 
@@ -113,6 +119,9 @@ class NameGeneratorDashboard extends Component
 
     protected ?NamingSession $currentSession = null;
 
+    // Theme management
+    public ?UserThemePreference $userTheme = null;
+
     /** @var array<string, string> */
     protected array $rules = [
         'businessIdea' => 'required|string|max:2000',
@@ -141,6 +150,12 @@ class NameGeneratorDashboard extends Component
         $this->checkForActiveLogoGeneration();
         $this->loadUserAIPreferences();
         $this->checkModelAvailability();
+        $this->loadUserTheme();
+
+        // Force a re-render to apply theme immediately
+        if ($this->userTheme) {
+            $this->dispatch('theme-loaded');
+        }
     }
 
     /**
@@ -148,6 +163,7 @@ class NameGeneratorDashboard extends Component
      */
     public function generateNames(): void
     {
+
         $this->validate([
             'businessIdea' => 'required|string|max:2000',
             'generationMode' => 'required|in:creative,professional,brandable,tech-focused',
@@ -410,6 +426,60 @@ class NameGeneratorDashboard extends Component
     }
 
     /**
+     * Handle logo generation request from name result cards.
+     */
+    #[On('logos-requested')]
+    public function handleLogoRequest(int $suggestionId): void
+    {
+        try {
+            // Find the name suggestion
+            $suggestion = NameSuggestion::findOrFail($suggestionId);
+
+            // Ensure user has permission to generate logos for this suggestion
+            $this->authorize('update', $suggestion->project);
+
+            // Create logo generation record for this specific name
+            $logoGeneration = LogoGeneration::create([
+                'user_id' => auth()->id(),
+                'session_id' => session()->getId(),
+                'business_name' => $suggestion->name,
+                'business_description' => $suggestion->project->description ?? $this->businessIdea,
+                'generation_mode' => $this->generationMode,
+                'status' => 'processing',
+                'total_logos_requested' => 4, // 4 different styles
+                'logos_completed' => 0,
+            ]);
+
+            // Store the current logo generation
+            $this->currentLogoGeneration = $logoGeneration;
+
+            // Dispatch logo generation job
+            GenerateLogosJob::dispatch($logoGeneration);
+
+            // Show success message
+            $this->dispatch('show-toast', [
+                'message' => "Started generating logos for '{$suggestion->name}'! This may take a few minutes.",
+                'type' => 'success',
+            ]);
+
+            // Trigger UI updates
+            $this->dispatch('logo-generation-started', $logoGeneration->id);
+
+        } catch (\Exception $e) {
+            Log::error('Logo generation request failed', [
+                'suggestion_id' => $suggestionId,
+                'error' => $e->getMessage(),
+                'user_id' => auth()->id(),
+            ]);
+
+            $this->dispatch('show-toast', [
+                'message' => 'Failed to start logo generation. Please try again.',
+                'type' => 'error',
+            ]);
+        }
+    }
+
+    /**
      * Reset component state.
      */
     private function resetState(): void
@@ -655,8 +725,15 @@ class NameGeneratorDashboard extends Component
     /**
      * Load a session by ID.
      */
-    private function loadSession(string $sessionId): void
+    public function loadSession(string $sessionId): void
     {
+        // Check if there are unsaved changes and this is not the same session
+        if ($this->hasUnsavedChanges && $this->currentSessionId !== $sessionId) {
+            $this->dispatch('confirm-session-switch', newSessionId: $sessionId);
+
+            return;
+        }
+
         $user = Auth::user();
         if (! $user) {
             return;
@@ -668,9 +745,9 @@ class NameGeneratorDashboard extends Component
         if ($session) {
             $this->currentSession = $session;
             $this->currentSessionId = $session->id;
-            $this->businessIdea = $session->data['business_description'] ?? '';
-            $this->generationMode = $session->data['generation_mode'] ?? 'creative';
-            $this->deepThinking = $session->data['deep_thinking'] ?? false;
+            $this->businessIdea = $session->business_description ?? '';
+            $this->generationMode = $session->generation_mode ?? 'creative';
+            $this->deepThinking = $session->deep_thinking ?? false;
 
             // Load results if available
             $latestResult = $session->results()->latest()->first();
@@ -684,6 +761,11 @@ class NameGeneratorDashboard extends Component
             }
 
             $this->hasUnsavedChanges = false;
+        } else {
+            $this->dispatch('toast',
+                message: 'Session not found',
+                type: 'error'
+            );
         }
     }
 
@@ -799,6 +881,7 @@ class NameGeneratorDashboard extends Component
      */
     public function generateNamesWithAI(): void
     {
+
         $this->validate([
             'businessIdea' => 'required|string|max:2000',
             'selectedAIModels' => 'required|array|min:1',
@@ -921,31 +1004,39 @@ class NameGeneratorDashboard extends Component
         } catch (Exception $e) {
             Log::error('AI generation failed', ['error' => $e->getMessage()]);
 
-            // Check for specific error types
-            if (str_contains($e->getMessage(), 'rate limit') || str_contains($e->getMessage(), 'Rate limit')) {
-                $this->errorMessage = 'OpenAI API rate limit reached. Falling back to creative generation...';
-                $this->dispatch('show-toast', [
-                    'message' => 'API rate limit reached. Using creative generation instead.',
-                    'type' => 'warning',
-                ]);
-            } elseif (str_contains($e->getMessage(), 'insufficient_quota') || str_contains($e->getMessage(), 'quota')) {
-                $this->errorMessage = 'OpenAI API quota exceeded. Falling back to creative generation...';
-                $this->dispatch('show-toast', [
-                    'message' => 'API quota exceeded. Using creative generation instead.',
-                    'type' => 'warning',
-                ]);
-            } else {
-                $this->errorMessage = 'AI generation failed. Falling back to creative generation...';
-                $this->dispatch('show-toast', [
-                    'message' => 'AI generation failed. Using creative generation instead.',
-                    'type' => 'info',
-                ]);
-            }
-
             // Only try to mark as failed if aiGeneration was created
             if ($aiGeneration !== null) {
                 $aiGeneration->markAsFailed($e->getMessage());
             }
+
+            // Check for specific error types that should fail gracefully without fallback
+            if (str_contains($e->getMessage(), 'rate limit') || str_contains($e->getMessage(), 'Rate limit') ||
+                str_contains($e->getMessage(), 'Connection reset') || str_contains($e->getMessage(), 'invalid json') ||
+                str_contains($e->getMessage(), 'ConnectionException') || str_contains($e->getMessage(), 'malformed') ||
+                str_contains($e->getMessage(), 'HTTP 429')) {
+
+                // Set error message for graceful failure scenarios
+                $this->errorMessage = match (true) {
+                    str_contains($e->getMessage(), 'rate limit') || str_contains($e->getMessage(), 'Rate limit') || str_contains($e->getMessage(), 'HTTP 429') => 'AI API rate limit reached. Please try again later.',
+                    str_contains($e->getMessage(), 'Connection reset') || str_contains($e->getMessage(), 'ConnectionException') => 'Network connection failed. Please try again.',
+                    str_contains($e->getMessage(), 'invalid json') || str_contains($e->getMessage(), 'malformed') => 'Invalid API response received. Please try again.',
+                    default => 'AI generation failed. Please try again later.',
+                };
+
+                // Dispatch error event
+                $this->dispatch('ai-generation-error', [
+                    'message' => $this->errorMessage,
+                    'originalError' => $e->getMessage(),
+                    'generationId' => $aiGeneration?->id,
+                ]);
+
+                $this->dispatch('toast', message: $this->errorMessage, type: 'error');
+
+                return;
+            }
+
+            // For other errors, try fallback generation
+            $this->errorMessage = 'AI generation failed. Falling back to creative generation...';
 
             // Dispatch error event
             $this->dispatch('ai-generation-error', [
@@ -976,6 +1067,7 @@ class NameGeneratorDashboard extends Component
             } catch (Exception $fallbackException) {
                 $this->errorMessage = 'All generation methods failed. Please try again later.';
                 Log::error('Fallback generation also failed', ['error' => $fallbackException->getMessage()]);
+                $this->dispatch('toast', message: $this->errorMessage, type: 'error');
             }
         } finally {
             $this->isGeneratingNames = false;
@@ -1134,8 +1226,43 @@ class NameGeneratorDashboard extends Component
         $this->currentSession->update(['image_context_ids' => array_values($updatedIds)]);
     }
 
+    /**
+     * Load user theme preferences.
+     */
+    protected function loadUserTheme(): void
+    {
+        // Use centralized theme helper for consistency
+        $this->userTheme = ThemeHelper::getCurrentUserTheme();
+
+        // Force component refresh if theme exists to ensure styling is applied
+        if ($this->userTheme) {
+            $this->skipRender = false;
+        }
+    }
+
+    /**
+     * Listen for theme updates.
+     */
+    #[On('theme-updated')]
+    public function onThemeUpdated(): void
+    {
+        // Clear theme cache first to ensure fresh data
+        ThemeHelper::clearUserThemeCache();
+        $this->loadUserTheme();
+    }
+
+    #[On('theme-applied')]
+    public function onThemeApplied(): void
+    {
+        // Clear theme cache first to ensure fresh data
+        ThemeHelper::clearUserThemeCache();
+        $this->loadUserTheme();
+    }
+
     public function render(): View
     {
-        return view('livewire.name-generator-dashboard');
+        return view('livewire.name-generator-dashboard', [
+            'userTheme' => $this->userTheme,
+        ]);
     }
 }

@@ -8,6 +8,7 @@ use App\Exceptions\LogoGenerationException;
 use App\Http\Controllers\Controller;
 use App\Models\GeneratedLogo;
 use App\Models\LogoGeneration;
+use App\Models\UploadedLogo;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -148,6 +149,33 @@ class LogoDownloadController extends Controller
                 'Content-Type' => 'application/zip',
             ]
         );
+    }
+
+    /**
+     * Download an uploaded logo file.
+     */
+    public function downloadUploaded(UploadedLogo $uploadedLogo): Response|JsonResponse
+    {
+        // Verify the uploaded logo belongs to the current session (for security)
+        if ($uploadedLogo->session_id !== session()->getId()) {
+            return response()->json([
+                'message' => 'Unauthorized access to logo file',
+            ], 403);
+        }
+
+        if (! $uploadedLogo->file_path || ! Storage::disk('public')->exists($uploadedLogo->file_path)) {
+            return response()->json([
+                'message' => 'Logo file not found',
+            ], 404);
+        }
+
+        $content = Storage::disk('public')->get($uploadedLogo->file_path);
+        $filename = $uploadedLogo->generateDownloadFilename();
+        $mimeType = $this->getMimeType($uploadedLogo->file_path);
+
+        return response($content)
+            ->header('Content-Type', $mimeType)
+            ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
     }
 
     /**

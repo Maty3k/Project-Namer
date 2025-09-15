@@ -48,7 +48,7 @@
     <!-- Loading State -->
     <div wire:loading.delay wire:target="loadCostData" class="flex justify-center py-8">
         <div class="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-            <div class="animate-spin w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full"></div>
+            <div class="animate-spin w-5 h-5 border-2 border-primary-600 border-t-transparent rounded-full"></div>
             <span>Loading cost data...</span>
         </div>
     </div>
@@ -237,10 +237,10 @@
                     
                     <div class="space-y-3">
                         @foreach($topUsers as $index => $user)
-                            <div class="flex items-center justify-between p-3 {{ $index < 3 ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-gray-50 dark:bg-gray-800' }} rounded-lg">
+                            <div class="flex items-center justify-between p-3 {{ $index < 3 ? 'bg-primary-50 dark:bg-primary-900/20' : 'bg-gray-50 dark:bg-gray-800' }} rounded-lg">
                                 <div class="flex items-center space-x-3">
-                                    <div class="flex items-center justify-center w-8 h-8 {{ $index < 3 ? 'bg-blue-100 dark:bg-blue-800' : 'bg-gray-200 dark:bg-gray-700' }} rounded-full">
-                                        <span class="text-sm font-medium {{ $index < 3 ? 'text-blue-600 dark:text-blue-300' : 'text-gray-600 dark:text-gray-300' }}">
+                                    <div class="flex items-center justify-center w-8 h-8 {{ $index < 3 ? 'bg-primary-100 dark:bg-primary-800' : 'bg-gray-200 dark:bg-gray-700' }} rounded-full">
+                                        <span class="text-sm font-medium {{ $index < 3 ? 'text-primary-600 dark:text-primary-300' : 'text-gray-600 dark:text-gray-300' }}">
                                             {{ $index + 1 }}
                                         </span>
                                     </div>

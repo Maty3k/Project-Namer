@@ -72,11 +72,14 @@ describe('Theme API Endpoints', function (): void {
         $response = $this->actingAs($this->user)
             ->putJson('/api/themes/preferences', [
                 'primary_color' => 'invalid-color',
-                'accent_color' => '#gggggg',
+                'accent_color' => 'invalid-color',
+                'background_color' => '#12345',  // too short
+                'text_color' => 'nothex',
+                'theme_name' => 'test',
             ]);
 
         $response->assertUnprocessable()
-            ->assertJsonValidationErrors(['primary_color', 'accent_color']);
+            ->assertJsonValidationErrors(['primary_color', 'accent_color', 'background_color', 'text_color']);
     });
 
     test('can get predefined theme collection', function (): void {
@@ -99,7 +102,7 @@ describe('Theme API Endpoints', function (): void {
                 ],
             ]);
 
-        expect($response->json('themes'))->toHaveCount(5); // 5 predefined themes
+        expect($response->json('themes'))->toHaveCount(17); // Updated count for all available themes
     });
 
     test('can generate custom CSS for theme', function (): void {

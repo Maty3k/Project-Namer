@@ -1,3 +1,6 @@
+// Import performance monitoring
+import './performance-monitor.js';
+
 // Suppress non-critical ResizeObserver warnings in development
 // These warnings occur during CSS animations and layout changes
 const originalConsoleError = console.error;

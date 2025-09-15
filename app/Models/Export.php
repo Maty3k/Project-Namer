@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 
 /**
  * Export model for managing file exports.
- * 
+ *
  * Handles creation and management of exported files in various formats
  * (PDF, CSV, JSON) with download tracking and expiration support.
  *
@@ -32,6 +32,7 @@ use Illuminate\Support\Str;
  * @property \Illuminate\Support\Carbon|null $last_downloaded_at
  * @property-read \Illuminate\Database\Eloquent\Model $exportable
  * @property-read \App\Models\User|null $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export active()
  * @method static \Database\Factories\ExportFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export newModelQuery()
@@ -52,6 +53,7 @@ use Illuminate\Support\Str;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export whereUuid($value)
+ *
  * @mixin \Eloquent
  */
 final class Export extends Model

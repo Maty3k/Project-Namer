@@ -1,5 +1,14 @@
 <div class="max-w-4xl mx-auto p-4 sm:p-6">
-    <div class="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-4 sm:p-6 lg:p-8">
+    <div class="rounded-lg shadow-lg p-4 sm:p-6 lg:p-8 themed-project-box"
+         @php
+             $userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
+         @endphp
+         @if($userTheme)
+             style="background-color: {{ $userTheme->background_color }};
+                    color: {{ $userTheme->text_color }};"
+         @else
+             class="bg-white dark:bg-gray-900"
+         @endif>
         <!-- Project Header with Editable Name -->
         <div class="mb-8">
             @if($editingName)
@@ -9,7 +18,7 @@
                             wire:model="editableName"
                             wire:keydown.enter="saveName"
                             wire:keydown.escape="cancelNameEdit"
-                            class="text-2xl sm:text-3xl font-bold bg-transparent border-0 border-b-2 border-blue-500 focus:ring-0 focus:border-blue-600"
+                            class="text-2xl sm:text-3xl font-bold bg-transparent border-0 border-b-2 border-primary-500 focus:ring-0 focus:border-primary-600"
                             placeholder="Project name"
                             autofocus
                         />
@@ -24,8 +33,14 @@
                             wire:loading.attr="disabled"
                             class="flex-1 sm:flex-none"
                         >
-                            <span wire:loading.remove wire:target="saveName">Save</span>
-                            <span wire:loading wire:target="saveName">Saving...</span>
+                            <span wire:loading.remove wire:target="saveName" class="flex items-center gap-1.5">
+                                <x-app-icon name="save" size="sm" />
+                                Save
+                            </span>
+                            <span wire:loading wire:target="saveName" class="flex items-center gap-1.5">
+                                <x-app-icon name="loading" size="sm" :loading="true" />
+                                Saving...
+                            </span>
                         </flux:button>
                         
                         <flux:button 
@@ -34,13 +49,16 @@
                             size="sm"
                             class="flex-1 sm:flex-none"
                         >
-                            Cancel
+                            <div class="flex items-center gap-1.5">
+                                <x-app-icon name="cancel" size="sm" />
+                                Cancel
+                            </div>
                         </flux:button>
                     </div>
                 </div>
             @else
                 <div class="group flex items-center gap-3">
-                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white flex-1">
+                    <h1 class="text-3xl font-bold {{ $userTheme ? '' : 'text-gray-900 dark:text-white' }} flex-1">
                         {{ $project->name }}
                     </h1>
                     
@@ -108,7 +126,7 @@
             <!-- Section Header -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <div>
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Name Suggestions</h3>
+                    <h3 class="text-lg font-medium {{ $userTheme ? '' : 'text-gray-900 dark:text-white' }}">Name Suggestions</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                         @if($this->suggestionCounts['total'] > 0)
                             {{ $this->suggestionCounts['visible'] }} visible, {{ $this->suggestionCounts['hidden'] }} hidden
@@ -161,14 +179,42 @@
 
             <!-- Name Suggestions List -->
             <div class="relative">
-                <!-- Loading Overlay -->
-                <div wire:loading wire:target="setResultsFilter" class="absolute inset-0 bg-white/80 dark:bg-gray-900/80 flex items-center justify-center z-10 rounded-lg">
-                    <div class="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-                        <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span>Filtering suggestions...</span>
+                <!-- Enhanced Loading Overlay with Smooth Animations -->
+                <div 
+                    wire:loading 
+                    wire:target="setResultsFilter" 
+                    class="absolute inset-0 bg-white/80 dark:bg-gray-900/80 flex items-center justify-center z-10 rounded-lg backdrop-blur-sm transition-all duration-300 ease-out"
+                    x-data="{ show: false }"
+                    x-init="$nextTick(() => show = true)"
+                    x-show="show"
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 scale-95"
+                    x-transition:enter-end="opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="opacity-100 scale-100"
+                    x-transition:leave-end="opacity-0 scale-95"
+                >
+                    <div class="flex flex-col items-center space-y-3 text-gray-600 dark:text-gray-400">
+                        <!-- Enhanced Loading Spinner -->
+                        <div class="relative">
+                            <svg class="animate-spin w-8 h-8 text-primary-500" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <div class="absolute inset-0 animate-ping">
+                                <div class="w-8 h-8 border-2 border-primary-500/30 rounded-full"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Animated Text -->
+                        <span class="text-sm font-medium animate-pulse">Filtering suggestions...</span>
+                        
+                        <!-- Animated Dots -->
+                        <div class="flex space-x-1">
+                            <div class="w-2 h-2 bg-primary-500 rounded-full animate-bounce" style="animation-delay: 0s"></div>
+                            <div class="w-2 h-2 bg-primary-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                            <div class="w-2 h-2 bg-primary-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -179,10 +225,13 @@
                         <svg class="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
                         </svg>
-                        <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Ready to generate names</h4>
+                        <h4 class="text-lg font-medium {{ $userTheme ? '' : 'text-gray-900 dark:text-white' }} mb-2">Ready to generate names</h4>
                         <p class="text-gray-500 dark:text-gray-400 mb-4">Start by describing your project above, then generate AI-powered name suggestions.</p>
                         <flux:button wire:click="$set('showAIControls', true)" variant="primary">
-                            Generate More Names
+                            <div class="flex items-center gap-2">
+                                <x-app-icon name="refresh" size="sm" />
+                                Generate More Names
+                            </div>
                         </flux:button>
                     @else
                         <!-- No suggestions for current filter -->
@@ -212,7 +261,10 @@
                         variant="primary"
                         class="fixed bottom-6 right-6 z-40 shadow-lg text-lg px-6 py-3"
                     >
-                        Generate More Names
+                        <div class="flex items-center gap-2">
+                            <x-app-icon name="refresh" size="md" />
+                            Generate More Names
+                        </div>
                     </flux:button>
                 </div>
             @endif
@@ -221,9 +273,9 @@
         <!-- AI Generation Controls Modal/Section -->
         @if($showAIControls)
             <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-lg p-6">
+                <div class="bg-primary-50 dark:bg-gray-800 rounded-lg p-6">
                     <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">AI Name Generation</h3>
+                        <h3 class="text-lg font-semibold {{ $userTheme ? '' : 'text-gray-900 dark:text-white' }}">AI Name Generation</h3>
                         <flux:button
                             wire:click="$set('showAIControls', false)"
                             variant="ghost"
@@ -302,18 +354,18 @@
                                 $recommendations = $this->getModelRecommendations();
                             @endphp
                             @if($recommendations['based_on_generations'] > 0)
-                                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
+                                <div class="bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-700 rounded-lg p-4">
                                     <div class="flex items-center justify-between mb-3">
                                         <div class="flex items-center gap-2">
-                                            <flux:icon name="sparkles" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                                            <h4 class="font-medium text-blue-900 dark:text-blue-100">Smart Recommendations</h4>
+                                            <flux:icon name="sparkles" class="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                                            <h4 class="font-medium text-primary-900 dark:text-primary-100">Smart Recommendations</h4>
                                         </div>
-                                        <span class="text-xs text-blue-600 dark:text-blue-400">
+                                        <span class="text-xs text-primary-600 dark:text-primary-400">
                                             Based on {{ $recommendations['based_on_generations'] }} generations
                                         </span>
                                     </div>
                                     
-                                    <p class="text-sm text-blue-800 dark:text-blue-200 mb-3">
+                                    <p class="text-sm text-primary-800 dark:text-blue-200 mb-3">
                                         We recommend these models based on your usage patterns and satisfaction:
                                     </p>
                                     
@@ -328,11 +380,11 @@
                                                 ];
                                                 $score = $recommendations['model_scores'][$modelId] ?? 0;
                                             @endphp
-                                            <div class="flex items-center gap-2 bg-white dark:bg-blue-800 px-3 py-1 rounded-full border border-blue-300 dark:border-blue-600">
-                                                <span class="text-sm font-medium text-blue-900 dark:text-blue-100">
+                                            <div class="flex items-center gap-2 bg-white dark:bg-primary-800 px-3 py-1 rounded-full border border-primary-300 dark:border-primary-600">
+                                                <span class="text-sm font-medium text-primary-900 dark:text-primary-100">
                                                     {{ $modelNames[$modelId] ?? ucfirst($modelId) }}
                                                 </span>
-                                                <span class="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full">
+                                                <span class="text-xs bg-primary-600 text-white px-2 py-0.5 rounded-full">
                                                     {{ round($score) }}%
                                                 </span>
                                             </div>
@@ -343,7 +395,7 @@
                                         wire:click="applySmartModelSelection"
                                         variant="filled"
                                         size="sm"
-                                        class="bg-blue-600 hover:bg-blue-700 text-white"
+                                        class="bg-primary-600 hover:bg-primary-700 text-white"
                                     >
                                         Apply Smart Selection
                                     </flux:button>
@@ -354,47 +406,38 @@
                             <flux:field>
                                 <flux:label>Generation Style</flux:label>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
-                                    <flux:field>
-                                        <div class="flex items-center gap-2">
-                                            <flux:radio
-                                                wire:model.live="generationMode"
-                                                value="creative"
-                                                id="creative"
-                                            />
-                                            <flux:label for="creative">🎨 Creative</flux:label>
-                                        </div>
-                                    </flux:field>
-                                    <flux:field>
-                                        <div class="flex items-center gap-2">
-                                            <flux:radio
-                                                wire:model.live="generationMode"
-                                                value="professional"
-                                                id="professional"
-                                            />
-                                            <flux:label for="professional">💼 Professional</flux:label>
-                                        </div>
-                                    </flux:field>
-                                    <flux:field>
-                                        <div class="flex items-center gap-2">
-                                            <flux:radio
-                                                wire:model.live="generationMode"
-                                                value="brandable"
-                                                id="brandable"
-                                            />
-                                            <flux:label for="brandable">🚀 Brandable</flux:label>
-                                        </div>
-                                    </flux:field>
-                                    <flux:field>
-                                        <div class="flex items-center gap-2">
-                                            <flux:radio
-                                                wire:model.live="generationMode"
-                                                value="tech-focused"
-                                                id="tech-focused"
-                                            />
-                                            <flux:label for="tech-focused">⚡ Tech-Focused</flux:label>
-                                        </div>
-                                    </flux:field>
+                                    @php
+                                        $modes = [
+                                            'creative' => ['emoji' => '🎨', 'label' => 'Creative'],
+                                            'professional' => ['emoji' => '💼', 'label' => 'Professional'],
+                                            'brandable' => ['emoji' => '🚀', 'label' => 'Brandable'],
+                                            'tech-focused' => ['emoji' => '⚡', 'label' => 'Tech-Focused'],
+                                        ];
+                                    @endphp
+                                    
+                                    @foreach($modes as $mode => $config)
+                                        <button
+                                            type="button"
+                                            wire:click="toggleGenerationMode('{{ $mode }}')"
+                                            class="flex items-center justify-center gap-3 p-4 rounded-lg border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 hover:scale-105 touch-manipulation {{ $generationMode === $mode 
+                                                ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 shadow-md' 
+                                                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700' }}"
+                                            role="button"
+                                            aria-pressed="{{ $generationMode === $mode ? 'true' : 'false' }}"
+                                            tabindex="0"
+                                            onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }"
+                                        >
+                                            <span class="text-xl">{{ $config['emoji'] }}</span>
+                                            <span class="font-medium">{{ $config['label'] }}</span>
+                                            @if($generationMode === $mode)
+                                                <svg class="w-4 h-4 ml-auto text-primary-600 dark:text-primary-400" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                                </svg>
+                                            @endif
+                                        </button>
+                                    @endforeach
                                 </div>
+                                <flux:error name="generationMode" />
                             </flux:field>
 
                             <!-- Deep Thinking Mode -->
@@ -432,9 +475,46 @@
                                 wire:loading.attr="disabled"
                                 wire:target="generateMoreNames"
                                 :disabled="$isGeneratingNames"
+                                class="relative overflow-hidden transition-all duration-200 ease-out transform hover:scale-105 active:scale-95"
+                                x-data="{ isLoading: false }"
+                                @generateMoreNames.window="isLoading = true"
+                                @name-generation-complete.window="isLoading = false"
                             >
-                                <span wire:loading.remove wire:target="generateMoreNames">Generate Names</span>
-                                <span wire:loading wire:target="generateMoreNames">Generating...</span>
+                                <!-- Loading Background Animation -->
+                                <div 
+                                    wire:loading 
+                                    wire:target="generateMoreNames" 
+                                    class="absolute inset-0 bg-blue-400 opacity-20 animate-pulse"
+                                ></div>
+                                
+                                <!-- Button Content -->
+                                <div class="relative flex items-center gap-2">
+                                    <svg 
+                                        wire:loading.remove 
+                                        wire:target="generateMoreNames" 
+                                        class="w-4 h-4 transition-transform duration-200 ease-out"
+                                        :class="{ 'rotate-12': isLoading }"
+                                        fill="none" 
+                                        viewBox="0 0 24 24" 
+                                        stroke="currentColor"
+                                    >
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                    
+                                    <svg 
+                                        wire:loading 
+                                        wire:target="generateMoreNames" 
+                                        class="w-4 h-4 animate-spin"
+                                        fill="none" 
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    
+                                    <span wire:loading.remove wire:target="generateMoreNames" class="transition-all duration-200">Generate Names</span>
+                                    <span wire:loading wire:target="generateMoreNames" class="animate-pulse">Generating...</span>
+                                </div>
                             </flux:button>
 
                             @if($isGeneratingNames && $currentAIGenerationId)
@@ -501,11 +581,11 @@
                             $avgNamesPerModel = $modelCount > 0 ? round($totalNames / $modelCount, 1) : 0;
                         @endphp
                         
-                        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
+                        <div class="bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-lg p-4 mb-4">
                             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
                                 <div>
-                                    <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $modelCount }}</div>
-                                    <div class="text-xs text-blue-700 dark:text-blue-300">AI Models</div>
+                                    <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">{{ $modelCount }}</div>
+                                    <div class="text-xs text-primary-700 dark:text-primary-300">AI Models</div>
                                 </div>
                                 <div>
                                     <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ $totalNames }}</div>
@@ -595,12 +675,12 @@
                                         
                                         // Color schemes for different metrics
                                         $speedColor = $speedRating === 'Excellent' ? 'text-green-600 dark:text-green-400' : 
-                                                     ($speedRating === 'Good' ? 'text-blue-600 dark:text-blue-400' : 'text-orange-600 dark:text-orange-400');
+                                                     ($speedRating === 'Good' ? 'text-primary-600 dark:text-primary-400' : 'text-orange-600 dark:text-orange-400');
                                         $costColor = $costRating === 'Excellent' ? 'text-green-600 dark:text-green-400' : 
-                                                    ($costRating === 'Good' ? 'text-blue-600 dark:text-blue-400' : 'text-orange-600 dark:text-orange-400');
+                                                    ($costRating === 'Good' ? 'text-primary-600 dark:text-primary-400' : 'text-orange-600 dark:text-orange-400');
                                     @endphp
                                     
-                                    <div class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg p-6 mb-4 border border-gray-200 dark:border-gray-600">
+                                    <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 mb-4 border border-gray-200 dark:border-gray-600">
                                         <!-- Performance Header -->
                                         <div class="flex items-center justify-between mb-4">
                                             <h4 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
@@ -631,7 +711,7 @@
                                                     @php 
                                                         $speedPercent = min(100, max(0, 100 - ($modelMetrics['response_time_ms'] / 30))); // 3000ms = 0%, 0ms = 100%
                                                     @endphp
-                                                    <div class="bg-gradient-to-r from-green-500 to-blue-500 h-1.5 rounded-full transition-all duration-300" 
+                                                    <div class="bg-green-500 h-1.5 rounded-full transition-all duration-300" 
                                                          style="width: {{ $speedPercent }}%"></div>
                                                 </div>
                                             </div>
@@ -676,10 +756,10 @@
                                             <div>
                                                 <div class="flex justify-between items-center mb-2">
                                                     <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Creativity Score</span>
-                                                    <span class="text-sm font-bold text-blue-600 dark:text-blue-400">{{ $modelMetrics['creativity_score'] }}/10</span>
+                                                    <span class="text-sm font-bold text-primary-600 dark:text-primary-400">{{ $modelMetrics['creativity_score'] }}/10</span>
                                                 </div>
                                                 <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                                                    <div class="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500" 
+                                                    <div class="bg-primary-500 h-2 rounded-full transition-all duration-500" 
                                                          style="width: {{ ($modelMetrics['creativity_score'] * 10) }}%"></div>
                                                 </div>
                                                 <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -700,7 +780,7 @@
                                                     <span class="text-sm font-bold text-green-600 dark:text-green-400">{{ $modelMetrics['relevance_score'] }}/10</span>
                                                 </div>
                                                 <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                                                    <div class="bg-gradient-to-r from-green-500 to-teal-500 h-2 rounded-full transition-all duration-500" 
+                                                    <div class="bg-green-500 h-2 rounded-full transition-all duration-500" 
                                                          style="width: {{ ($modelMetrics['relevance_score'] * 10) }}%"></div>
                                                 </div>
                                                 <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -723,7 +803,7 @@
                                                 <span class="font-medium">{{ $modelMetrics['processing_efficiency'] ?? rand(85, 98) }}%</span>
                                             </div>
                                             <div class="flex items-center gap-2 text-sm">
-                                                <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                                                <div class="w-2 h-2 rounded-full bg-primary-500"></div>
                                                 <span class="text-gray-600 dark:text-gray-400">Load:</span>
                                                 <span class="font-medium">{{ $modelMetrics['model_load'] ?? rand(15, 45) }}%</span>
                                             </div>
@@ -749,13 +829,13 @@
                                                     $nameCategory = $nameLength <= 6 ? 'Short & Punchy' : ($nameLength <= 12 ? 'Balanced' : 'Descriptive');
                                                 @endphp
                                                 
-                                                <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md transition-all duration-200 bg-white dark:bg-gray-800">
+                                                <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary-300 dark:hover:border-primary-600 hover:shadow-md transition-all duration-200 bg-white dark:bg-gray-800">
                                                     <!-- Name Header -->
                                                     <div class="flex items-start justify-between mb-3">
                                                         <div class="flex-1">
                                                             <h5 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $name }}</h5>
                                                             <div class="flex items-center gap-2 mt-1">
-                                                                <span class="text-xs px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-medium">
+                                                                <span class="text-xs px-2 py-1 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 font-medium">
                                                                     {{ $nameCategory }}
                                                                 </span>
                                                                 <span class="text-xs text-gray-500 dark:text-gray-400">
@@ -770,7 +850,10 @@
                                                                 class="text-xs"
                                                                 wire:click="handleNameSelected('{{ $name }}')"
                                                             >
-                                                                Add to Project
+                                                                <div class="flex items-center gap-1">
+                                                                    <x-app-icon name="add" size="xs" />
+                                                                    Add to Project
+                                                                </div>
                                                             </flux:button>
                                                             <div class="text-xs text-gray-500 dark:text-gray-400 text-center">
                                                                 ~${{ number_format($estimatedCost / 100, 3) }}
@@ -809,7 +892,7 @@
                                                                 <span class="text-xs font-bold">{{ $nameRelevance }}%</span>
                                                             </div>
                                                             <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
-                                                                <div class="bg-blue-500 h-1 rounded-full" style="width: {{ $nameRelevance }}%"></div>
+                                                                <div class="bg-primary-500 h-1 rounded-full" style="width: {{ $nameRelevance }}%"></div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -852,6 +935,125 @@
                         @endforeach
                     </flux:tabs>
                 </div>
+            </div>
+        @endif
+
+        <!-- AI Generation History Section -->
+        @if(!empty($aiGenerationHistory))
+            <div class="mt-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        Generation History
+                    </h3>
+                    <div class="flex gap-2">
+                        <flux:button 
+                            wire:click="deleteAllCompletedGenerations"
+                            variant="ghost" 
+                            size="sm"
+                            wire:confirm="Are you sure you want to delete all completed AI generations? This action cannot be undone."
+                            class="text-red-600 hover:text-red-700 dark:text-red-400"
+                        >
+                            🗑️ Clear All Completed
+                        </flux:button>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    @foreach($aiGenerationHistory as $generation)
+                        <div class="bg-white dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex items-center gap-2">
+                                        @if($generation->status === 'completed')
+                                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                            <span class="text-sm font-medium text-green-700 dark:text-green-400">Completed</span>
+                                        @elseif($generation->status === 'failed')
+                                            <span class="w-2 h-2 bg-red-500 rounded-full"></span>
+                                            <span class="text-sm font-medium text-red-700 dark:text-red-400">Failed</span>
+                                        @elseif($generation->status === 'running')
+                                            <span class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span>
+                                            <span class="text-sm font-medium text-yellow-700 dark:text-yellow-400">Running</span>
+                                        @else
+                                            <span class="w-2 h-2 bg-primary-500 rounded-full"></span>
+                                            <span class="text-sm font-medium text-primary-700 dark:text-primary-400">{{ ucfirst($generation->status) }}</span>
+                                        @endif
+                                    </div>
+                                    
+                                    <div class="text-sm text-gray-600 dark:text-gray-400">
+                                        {{ $generation->created_at->diffForHumans() }}
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-2">
+                                    @if($generation->canBeDeletedBy(auth()->user()))
+                                        <flux:button 
+                                            wire:click="deleteAIGeneration({{ $generation->id }})"
+                                            variant="ghost" 
+                                            size="sm"
+                                            wire:confirm="Are you sure you want to delete this AI generation? This will also remove all associated name suggestions."
+                                            class="text-red-600 hover:text-red-700 dark:text-red-400"
+                                        >
+                                            🗑️ Delete
+                                        </flux:button>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                                @if($generation->generation_mode)
+                                    <div>
+                                        <span class="text-gray-500 dark:text-gray-400">Mode:</span>
+                                        <span class="ml-1 font-medium">{{ ucfirst($generation->generation_mode) }}</span>
+                                    </div>
+                                @endif
+                                
+                                @if($generation->models_requested)
+                                    <div>
+                                        <span class="text-gray-500 dark:text-gray-400">Models:</span>
+                                        <span class="ml-1 font-medium">{{ count($generation->models_requested) }} model(s)</span>
+                                    </div>
+                                @endif
+                                
+                                @if($generation->total_names_generated)
+                                    <div>
+                                        <span class="text-gray-500 dark:text-gray-400">Names:</span>
+                                        <span class="ml-1 font-medium">{{ $generation->total_names_generated }}</span>
+                                    </div>
+                                @endif
+                                
+                                @if($generation->getDurationInSeconds())
+                                    <div>
+                                        <span class="text-gray-500 dark:text-gray-400">Duration:</span>
+                                        <span class="ml-1 font-medium">{{ $generation->getDurationInSeconds() }}s</span>
+                                    </div>
+                                @endif
+                            </div>
+
+                            @if($generation->deep_thinking)
+                                <div class="mt-2">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300">
+                                        🧠 Deep Thinking Mode
+                                    </span>
+                                </div>
+                            @endif
+
+                            @if($generation->error_message)
+                                <div class="mt-3 p-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded text-sm">
+                                    <span class="text-red-700 dark:text-red-400">Error:</span>
+                                    <span class="ml-1 text-red-600 dark:text-red-300">{{ $generation->error_message }}</span>
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+
+                @if(count($aiGenerationHistory) > 5)
+                    <div class="mt-4 text-center">
+                        <flux:button variant="ghost" size="sm" class="text-gray-600 dark:text-gray-400">
+                            View All History
+                        </flux:button>
+                    </div>
+                @endif
             </div>
         @endif
 

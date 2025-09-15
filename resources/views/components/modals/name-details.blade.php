@@ -54,7 +54,7 @@ $name = $dataArray['name'] ?? 'Unknown';
             <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Alternative Suggestions</h5>
             <div class="flex flex-wrap gap-2">
                 @foreach($dataArray['alternatives'] as $alternative)
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100">
                         {{ $alternative }}
                     </span>
                 @endforeach

@@ -194,7 +194,7 @@ describe('SessionSidebar Focus Mode Functionality', function (): void {
         it('includes transition classes for smooth animation', function (): void {
             $component = Livewire::test(SessionSidebar::class);
 
-            $component->assertSeeHtml('transition-all duration-300 ease-out');
+            $component->assertSeeHtml('transition-all duration-300 ease-in-out');
         });
 
         it('includes hover effects for toggle buttons', function (): void {

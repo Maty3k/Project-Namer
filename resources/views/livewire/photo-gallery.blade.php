@@ -22,7 +22,7 @@
                 <!-- Upload Button -->
                 <button 
                     @click="showUploader = !showUploader"
-                    class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
+                    class="px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center space-x-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                     </svg>
@@ -33,7 +33,7 @@
                 <div class="flex items-center space-x-1 border-l pl-2 border-gray-300 dark:border-gray-600">
                     <button 
                         @click="toggleViewMode('grid')"
-                        :class="viewMode === 'grid' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300' : 'text-gray-500 dark:text-gray-400'"
+                        :class="viewMode === 'grid' ? 'bg-gray-100 text-gray-600 dark:bg-gray-900 dark:text-gray-300' : 'text-gray-500 dark:text-gray-400'"
                         class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
@@ -41,7 +41,7 @@
                     </button>
                     <button 
                         @click="toggleViewMode('list')"
-                        :class="viewMode === 'list' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300' : 'text-gray-500 dark:text-gray-400'"
+                        :class="viewMode === 'list' ? 'bg-gray-100 text-gray-600 dark:bg-gray-900 dark:text-gray-300' : 'text-gray-500 dark:text-gray-400'"
                         class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -252,7 +252,7 @@
         </div>
 
         <!-- Image Info Bar -->
-        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
+        <div class="absolute bottom-0 left-0 right-0 bg-black/80 p-6">
             <template x-if="currentImage">
                 <div class="text-white">
                     <h3 class="text-lg font-medium" x-text="currentImage.title || currentImage.filename"></h3>

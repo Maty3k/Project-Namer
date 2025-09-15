@@ -1,6 +1,14 @@
+@php
+    $userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
+@endphp
 <aside 
-    class="h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col transition-all duration-300 ease-out
-           {{ $isCollapsed ? 'w-0 opacity-0 overflow-hidden invisible' : 'w-80' }}"
+    class="h-full {{ $userTheme ? '' : 'bg-white dark:bg-slate-900' }} border-r {{ $userTheme ? '' : 'border-gray-200 dark:border-slate-700' }} flex flex-col transition-all duration-300 ease-in-out transform
+           {{ $isCollapsed ? 'w-0 opacity-0 overflow-hidden invisible -translate-x-full' : 'w-80 opacity-100 translate-x-0' }}"
+    @if($userTheme)
+        style="background-color: {{ $userTheme->is_dark_mode ? $userTheme->background_color : ($userTheme->surface_color ?? '#f8fafc') }};
+               border-color: {{ $userTheme->primary_color }}50;
+               color: {{ $userTheme->text_color }};"
+    @endif
     x-data="{
         showActionMenu: null,
         focusMode: $wire.isCollapsed,
@@ -15,9 +23,10 @@
     x-on:focus-mode-toggled="focusMode = $event.detail.enabled"
 >
     <!-- Header -->
-    <header class="p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+    <header class="p-4 border-b {{ $userTheme ? 'border-current border-opacity-20' : 'border-gray-200 dark:border-slate-600' }} flex-shrink-0">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Sessions</h2>
+            <h2 class="text-lg font-semibold {{ $userTheme ? 'theme-text-primary' : 'text-gray-900 dark:text-white' }}"
+                @if($userTheme) style="color: {{ $userTheme->text_color }} !important;" @endif>Sessions</h2>
             <div class="flex items-center gap-2">
                 <!-- Starred Filter Toggle -->
                 <button
@@ -44,11 +53,15 @@
         <button
             wire:click="createNewSession"
             @if($isCreatingSession) disabled @endif
-            class="w-full bg-black dark:bg-white text-white dark:text-black rounded-lg px-4 py-3 
-                   hover:bg-gray-800 dark:hover:bg-gray-100 transition-all duration-200 
+            class="w-full {{ $userTheme ? '' : 'bg-black dark:bg-white text-white dark:text-black' }} rounded-lg px-4 py-3 
+                   {{ $userTheme ? '' : 'hover:bg-gray-800 dark:hover:bg-gray-100' }} transition-all duration-200 
                    flex items-center justify-center gap-2 font-medium shadow-sm hover:shadow-md
                    hover:scale-[1.02] active:scale-[0.98]
                    @if($isCreatingSession) opacity-75 cursor-not-allowed @endif"
+            @if($userTheme)
+                style="background-color: {{ $userTheme->primary_color }} !important;
+                       color: {{ $userTheme->is_dark_mode ? '#ffffff' : '#000000' }} !important;"
+            @endif
         >
             @if($isCreatingSession)
                 <div class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
@@ -309,7 +322,8 @@
     <button
         wire:click="toggleFocusMode"
         class="fixed top-4 left-4 z-50 bg-black dark:bg-white p-3 rounded-lg shadow-lg 
-               hover:bg-gray-800 dark:hover:bg-gray-100 transition-all duration-200 hover:scale-105"
+               hover:bg-gray-800 dark:hover:bg-gray-100 transition-all duration-300 ease-in-out 
+               hover:scale-105 transform animate-slide-in-left"
         title="Show sidebar (Cmd+/)"
     >
         <flux:icon name="bars-3" size="sm" />

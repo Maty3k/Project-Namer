@@ -1,11 +1,11 @@
 <x-layouts.guest title="Share Not Found" :metadata="$metadata ?? []">
 
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center px-4 py-8">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4 py-8">
     <div class="w-full max-w-lg">
         <flux:card class="text-center">
             <!-- 404 Icon -->
             <div class="mb-6">
-                <div class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-red-100 to-red-200 dark:from-red-900 dark:to-red-800 rounded-full mb-4">
+                <div class="inline-flex items-center justify-center w-24 h-24 bg-red-100 dark:bg-red-900 rounded-full mb-4">
                     <flux:icon name="exclamation-triangle" class="w-12 h-12 text-red-600 dark:text-red-400" />
                 </div>
                 
