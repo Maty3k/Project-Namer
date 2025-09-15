@@ -84,7 +84,7 @@
 
     <!-- Seasonal Recommendation -->
     @if($recommendedSeasonalTheme)
-        <flux:card class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800 cursor-pointer hover:shadow-lg transition-all duration-200 relative z-10" 
+        <flux:card class="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 cursor-pointer hover:shadow-lg transition-all duration-200 relative z-10" 
                    wire:click="applySeasonalRecommendation">
             <div class="p-6">
                 <div class="flex items-center justify-between">
@@ -629,24 +629,27 @@
                     // Update sidebar
                     const sidebar = document.querySelector('.themed-sidebar');
                     if (sidebar) {
-                        sidebar.style.background = `linear-gradient(180deg, ${data.backgroundColor}f8 0%, ${data.primaryColor}10 100%)`;
+                        sidebar.style.backgroundColor = data.backgroundColor;
                         sidebar.style.borderColor = `${data.primaryColor}50`;
+                        sidebar.style.color = data.textColor;
                         sidebar.style.transition = 'all 1s ease-in-out';
                     }
                     
                     // Update create project box
                     const createBox = document.querySelector('.themed-create-box');
                     if (createBox) {
-                        createBox.style.background = `linear-gradient(135deg, ${data.backgroundColor}f0 0%, ${data.accentColor}20 100%)`;
+                        createBox.style.backgroundColor = data.backgroundColor;
                         createBox.style.boxShadow = `0 10px 25px ${data.primaryColor}20`;
+                        createBox.style.color = data.textColor;
                         createBox.style.transition = 'all 1s ease-in-out';
                     }
                     
                     // Update header
                     const header = document.querySelector('header');
                     if (header) {
-                        header.style.background = `linear-gradient(135deg, ${data.backgroundColor}f5 0%, ${data.primaryColor}15 100%)`;
+                        header.style.backgroundColor = data.backgroundColor;
                         header.style.borderColor = `${data.primaryColor}40`;
+                        header.style.color = data.textColor;
                         header.style.transition = 'all 1s ease-in-out';
                     }
                 };
@@ -738,7 +741,7 @@
             function showThemedNotification(data) {
                 const notification = document.createElement('div');
                 notification.className = 'fixed top-4 right-4 z-50 p-4 rounded-lg shadow-xl transform transition-all duration-1000';
-                notification.style.background = `linear-gradient(135deg, ${data.primaryColor} 0%, ${data.accentColor} 100%)`;
+                notification.style.backgroundColor = data.primaryColor;
                 notification.style.color = 'white';
                 notification.style.fontWeight = 'bold';
                 notification.style.transform = 'translateX(100%) scale(0.8)';

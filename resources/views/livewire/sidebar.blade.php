@@ -6,16 +6,17 @@
          }
      @endphp
      @if($userTheme)
-         style="background: linear-gradient(180deg, {{ $userTheme->background_color }}f8 0%, {{ $userTheme->primary_color }}10 100%);
-                border-color: {{ $userTheme->primary_color }}50;"
+         style="background-color: {{ $userTheme->background_color }};
+                border-color: {{ $userTheme->primary_color }}50;
+                color: {{ $userTheme->text_color }};"
      @else
          class="bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-700"
      @endif>
     <!-- Sidebar Header -->
-    <div class="p-4 border-b border-gray-200 dark:border-slate-600">
+    <div class="p-4 border-b {{ $userTheme ? 'border-current border-opacity-20' : 'border-gray-200 dark:border-slate-600' }}">
         <div class="flex items-center justify-between">
             @if(!$collapsed)
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Projects</h2>
+                <h2 class="text-lg font-semibold {{ $userTheme ? '' : 'text-gray-900 dark:text-white' }}">Projects</h2>
             @endif
             <flux:button 
                 wire:click="toggleCollapse"
@@ -32,7 +33,7 @@
         </div>
         
         @if(!$collapsed && $this->projectCount > 0)
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ $this->projectCount }} projects</p>
+            <p class="text-sm {{ $userTheme ? 'opacity-70' : 'text-gray-500 dark:text-gray-400' }} mt-1">{{ $this->projectCount }} projects</p>
         @endif
     </div>
 
@@ -90,12 +91,12 @@
                             <div class="flex items-center justify-center">
                                 @if($project->selectedName)
                                     <!-- Project with selected name - show checkmark icon -->
-                                    <svg class="w-5 h-5 {{ $this->isActiveProject($project) ? 'text-blue-600 dark:text-blue-400' : 'text-green-600 dark:text-green-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-5 h-5 {{ $userTheme ? ($this->isActiveProject($project) ? 'opacity-80' : 'text-green-600') : ($this->isActiveProject($project) ? 'text-blue-600 dark:text-blue-400' : 'text-green-600 dark:text-green-400') }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
                                 @else
                                     <!-- Regular project icon -->
-                                    <svg class="w-5 h-5 {{ $this->isActiveProject($project) ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-5 h-5 {{ $userTheme ? ($this->isActiveProject($project) ? 'opacity-80' : 'opacity-60') : ($this->isActiveProject($project) ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400') }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
                                     </svg>
                                 @endif
@@ -104,7 +105,7 @@
                             <!-- Expanded view -->
                             <div class="flex items-start justify-between">
                                 <div class="flex-1 min-w-0">
-                                    <h3 class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                    <h3 class="text-sm font-medium {{ $userTheme ? '' : 'text-gray-900 dark:text-white' }} truncate">
                                         {{ $this->truncateName($project->name, 22) }}
                                     </h3>
                                     
@@ -114,23 +115,23 @@
                                                 ✓ {{ $this->truncateName($project->selectedName->name, 18) }}
                                             </span>
                                         </div>
-                                        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1 truncate">
+                                        <p class="text-xs {{ $userTheme ? 'opacity-60' : 'text-gray-400 dark:text-gray-500' }} mt-1 truncate">
                                             {{ $this->truncateName($project->description, 25) }}
                                         </p>
                                     @else
-                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">
+                                        <p class="text-xs {{ $userTheme ? 'opacity-70' : 'text-gray-500 dark:text-gray-400' }} mt-1 truncate">
                                             {{ $this->truncateName($project->description, 35) }}
                                         </p>
                                     @endif
                                     
-                                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                    <p class="text-xs {{ $userTheme ? 'opacity-60' : 'text-gray-400 dark:text-gray-500' }} mt-1">
                                         {{ $project->updated_at->format('M j') }}
                                     </p>
                                 </div>
                                 
                                 @if($this->isActiveProject($project))
                                     <div class="flex-shrink-0 ml-2">
-                                        <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                        <div class="w-2 h-2 {{ $userTheme ? 'bg-current opacity-70' : 'bg-blue-500' }} rounded-full"></div>
                                     </div>
                                 @endif
                             </div>
@@ -143,8 +144,8 @@
 
     <!-- Sidebar Footer (if expanded) -->
     @if(!$collapsed)
-        <div class="p-4 border-t border-gray-200 dark:border-slate-600">
-            <div class="text-xs text-gray-400 dark:text-gray-500 text-center">
+        <div class="p-4 border-t {{ $userTheme ? 'border-current border-opacity-20' : 'border-gray-200 dark:border-slate-600' }}">
+            <div class="text-xs {{ $userTheme ? 'opacity-60' : 'text-gray-400 dark:text-gray-500' }} text-center">
                 Project Workflow UI
             </div>
         </div>

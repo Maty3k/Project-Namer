@@ -36,7 +36,7 @@
                 </div>
                 <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                     <div 
-                        class="bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full transition-all duration-500 ease-out"
+                        class="bg-blue-600 h-3 rounded-full transition-all duration-500 ease-out"
                         style="width: {{ $progressPercentage }}%"
                     >
                         <div class="h-full bg-white/20 rounded-full animate-pulse"></div>

@@ -1,0 +1,12 @@
+Instruct Claude to ensure that all tests are passing and mention that the test suite might be hanging.
+
+Once that's done...
+
+Instruct Claude to create accessibility tests for each theme using Pest's accessibility checker: https://pestphp.com/docs/browser-testing#content-assertnoaccessibilityissues
+The goal here is to ensure that all text has proper contrast and this test will fail if any text is not readable in accordance with the specifications.
+
+Make sure the Generation Style buttons work and all the generated names are getting displayed.
+
+Make sure there are different names getting displayed not the same 20 over and over again. When i type in the text box for example new coffee shop in town then i should get 20 names for a coffee shop not a random tech name.
+
+Make sure i dont always have to refresh the page when i apply a new theme or click on a button.

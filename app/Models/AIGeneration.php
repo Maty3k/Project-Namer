@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * status management, and performance analytics.
  *
  * @property int $id
- * @property int $project_id
+ * @property int|null $project_id
  * @property int $user_id
  * @property string $generation_session_id
  * @property array<array-key, mixed> $models_requested
@@ -36,7 +36,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $error_message
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Project $project
+ * @property-read \App\Models\Project|null $project
  * @property-read \App\Models\User $user
  *
  * @method static Builder<static>|AIGeneration active()

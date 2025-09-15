@@ -449,7 +449,7 @@
                                     $avgResponseTime = rand(1200, 2800);
                                 @endphp
                                 
-                                <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
+                                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
                                     <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
                                         <div>
                                             <div class="text-xl font-bold text-blue-600 dark:text-blue-400">{{ $modelCount }}</div>
@@ -762,7 +762,7 @@
 
                     {{-- Logo Generation CTA --}}
                     @if(count($selectedNamesForLogos) > 0)
-                        <flux:card class="p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border-blue-200 dark:border-blue-800">
+                        <flux:card class="p-6 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                                 <div>
                                     <h3 class="font-semibold text-gray-900 dark:text-white mb-1">
