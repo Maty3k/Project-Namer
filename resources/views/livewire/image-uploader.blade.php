@@ -3,15 +3,18 @@
           class="space-y-6">
         
         <!-- Drag and Drop Upload Area -->
-        <div class="upload-zone relative border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8
-                    hover:border-blue-400 dark:hover:border-primary-500 transition-colors duration-200
+        <div class="upload-zone relative border-2 border-dashed rounded-lg p-8 transition-all duration-200
                     {{ count($images) > 0 ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-300 dark:border-primary-600' : 'bg-gray-50 dark:bg-gray-800' }}"
              x-data="imageDropzone()"
              @drop.prevent="handleDrop($event)"
              @dragover.prevent
              @dragenter.prevent="isDragging = true"
              @dragleave.prevent="isDragging = false"
-             @click="$refs.fileInput.click()">
+             @click="$refs.fileInput.click()"
+             :class="{
+                 'border-primary-400 dark:border-primary-500 bg-primary-100 dark:bg-primary-900/40 scale-[1.02]': isDragging,
+                 'border-gray-300 dark:border-gray-600 hover:border-primary-400 dark:hover:border-primary-500': !isDragging
+             }">
             
             <input type="file"
                    wire:model="newFiles"
@@ -27,17 +30,40 @@
                     <p class="mt-2 text-sm font-medium text-primary-600 dark:text-primary-400">
                         {{ count($images) }} {{ Str::plural('image', count($images)) }} selected
                     </p>
-                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400"
+                       x-show="!isDragging">
                         Click to add more or drag additional files here
+                    </p>
+                    <p class="mt-1 text-xs text-primary-600 dark:text-primary-400 font-medium"
+                       x-show="isDragging"
+                       style="display: none;">
+                        Drop files to add them to your selection
                     </p>
                 @else
                     <flux:icon.cloud-arrow-up
-                        class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
-                    <p class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">
+                        class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500"
+                        x-show="!isDragging" />
+                    <flux:icon.photo
+                        class="mx-auto h-12 w-12 text-primary-500 dark:text-primary-400 animate-bounce"
+                        x-show="isDragging"
+                        style="display: none;" />
+                    <p class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100"
+                       x-show="!isDragging">
                         Drag and drop images here, or click to browse
                     </p>
-                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <p class="mt-2 text-sm font-medium text-primary-600 dark:text-primary-400"
+                       x-show="isDragging"
+                       style="display: none;">
+                        Drop your images here!
+                    </p>
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400"
+                       x-show="!isDragging">
                         JPEG, PNG, WebP, GIF up to 50MB each
+                    </p>
+                    <p class="mt-1 text-xs text-primary-500 dark:text-primary-400"
+                       x-show="isDragging"
+                       style="display: none;">
+                        Multiple files supported
                     </p>
                 @endif
             </div>

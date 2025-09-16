@@ -56,3 +56,26 @@ it('validates file types and sizes', function (): void {
     // Should only have the valid file in the array
     expect($component->get('images'))->toHaveCount(1);
 });
+
+it('can select multiple files at once', function (): void {
+    $user = User::factory()->create();
+    $project = Project::factory()->create(['user_id' => $user->id]);
+
+    $file1 = UploadedFile::fake()->image('image1.jpg', 100, 100);
+    $file2 = UploadedFile::fake()->image('image2.png', 200, 200);
+    $file3 = UploadedFile::fake()->image('image3.gif', 150, 150);
+
+    $component = Livewire::test(ImageUploader::class, ['project' => $project]);
+
+    // Simulate selecting multiple files at once (like Ctrl+Click in file browser)
+    $component->set('newFiles', [$file1, $file2, $file3]);
+
+    // All files should be moved to images array
+    expect($component->get('images'))->toHaveCount(3);
+
+    // Check that the files have the right names
+    $images = $component->get('images');
+    expect($images[0]->getClientOriginalName())->toBe('image1.jpg');
+    expect($images[1]->getClientOriginalName())->toBe('image2.png');
+    expect($images[2]->getClientOriginalName())->toBe('image3.gif');
+});
