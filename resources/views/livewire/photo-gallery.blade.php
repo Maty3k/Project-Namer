@@ -31,18 +31,18 @@
 
                 <!-- View Mode Toggle -->
                 <div class="flex items-center space-x-1 border-l pl-2 border-gray-300 dark:border-gray-600">
-                    <button 
-                        @click="toggleViewMode('grid')"
-                        :class="viewMode === 'grid' ? 'bg-gray-100 text-gray-600 dark:bg-gray-900 dark:text-gray-300' : 'text-gray-500 dark:text-gray-400'"
-                        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <button
+                        wire:click="$set('viewMode', 'grid')"
+                        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors
+                               {{ $viewMode === 'grid' ? 'bg-gray-100 text-gray-600 dark:bg-gray-900 dark:text-gray-300' : 'text-gray-500 dark:text-gray-400' }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
                         </svg>
                     </button>
-                    <button 
-                        @click="toggleViewMode('list')"
-                        :class="viewMode === 'list' ? 'bg-gray-100 text-gray-600 dark:bg-gray-900 dark:text-gray-300' : 'text-gray-500 dark:text-gray-400'"
-                        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <button
+                        wire:click="$set('viewMode', 'list')"
+                        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors
+                               {{ $viewMode === 'list' ? 'bg-gray-100 text-gray-600 dark:bg-gray-900 dark:text-gray-300' : 'text-gray-500 dark:text-gray-400' }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
@@ -68,8 +68,8 @@
     <div class="bg-white dark:bg-gray-900 rounded-lg overflow-hidden">
         @if($images->count() > 0)
             <!-- Grid View -->
-            <div x-show="viewMode === 'grid'" 
-                 class="grid grid-cols-3 gap-0.5
+            @if($viewMode === 'grid')
+            <div class="grid grid-cols-3 gap-0.5
                         sm:grid-cols-4 sm:gap-1
                         md:grid-cols-5
                         lg:grid-cols-6
@@ -129,9 +129,11 @@
                     </div>
                 @endforeach
             </div>
+            @endif
 
             <!-- List View -->
-            <div x-show="viewMode === 'list'" class="divide-y divide-gray-200 dark:divide-gray-700">
+            @if($viewMode === 'list')
+            <div class="divide-y divide-gray-200 dark:divide-gray-700">
                 @foreach($images as $index => $image)
                     <div class="flex items-center p-4 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
                          @click="openViewer({{ $index }})"
@@ -171,6 +173,7 @@
                     </div>
                 @endforeach
             </div>
+            @endif
         @else
             <!-- Empty State -->
             <div class="flex flex-col items-center justify-center py-12">
@@ -294,7 +297,6 @@
 <script>
 function photoGalleryComponent() {
     return {
-        viewMode: @entangle('viewMode'),
         showViewer: false,
         showUploader: false,
         currentIndex: 0,
@@ -349,10 +351,6 @@ function photoGalleryComponent() {
             return images;
         },
 
-        toggleViewMode(mode) {
-            this.viewMode = mode;
-            @this.set('viewMode', mode);
-        },
 
         openViewer(index) {
             this.currentIndex = index;
