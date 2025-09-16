@@ -13,7 +13,7 @@ test('light themes have dark text for readability', function (): void {
 
     $themeService = app(ThemeService::class);
     $lightThemes = collect($themeService->getPredefinedThemes())
-        ->filter(fn ($theme) => ! ($theme['is_dark_mode'] ?? false));
+        ->reject(fn ($theme): bool => (bool) ($theme['is_dark_mode'] ?? false));
 
     foreach ($lightThemes as $theme) {
         $themeCustomizer = Livewire::test(ThemeCustomizer::class);
@@ -23,7 +23,7 @@ test('light themes have dark text for readability', function (): void {
         $backgroundColor = $themeCustomizer->get('backgroundColor');
 
         // Calculate luminance to ensure text is dark enough for light backgrounds
-        $textHex = ltrim($textColor, '#');
+        $textHex = ltrim((string) $textColor, '#');
         $textR = hexdec(substr($textHex, 0, 2));
         $textG = hexdec(substr($textHex, 2, 2));
         $textB = hexdec(substr($textHex, 4, 2));
@@ -51,7 +51,7 @@ test('dark themes have light text for readability', function (): void {
         $backgroundColor = $themeCustomizer->get('backgroundColor');
 
         // Calculate luminance to ensure text is light enough for dark backgrounds
-        $textHex = ltrim($textColor, '#');
+        $textHex = ltrim((string) $textColor, '#');
         $textR = hexdec(substr($textHex, 0, 2));
         $textG = hexdec(substr($textHex, 2, 2));
         $textB = hexdec(substr($textHex, 4, 2));
@@ -101,7 +101,7 @@ test('theme mode matches background luminance', function (): void {
         $isDarkMode = $themeCustomizer->get('isDarkMode');
 
         // Calculate background luminance
-        $bgHex = ltrim($backgroundColor, '#');
+        $bgHex = ltrim((string) $backgroundColor, '#');
         $bgR = hexdec(substr($bgHex, 0, 2));
         $bgG = hexdec(substr($bgHex, 2, 2));
         $bgB = hexdec(substr($bgHex, 4, 2));

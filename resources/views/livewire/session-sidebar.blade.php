@@ -35,7 +35,7 @@
                            {{ $showStarredOnly ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-400' : 'text-gray-500 dark:text-gray-400' }}"
                     title="Show starred only"
                 >
-                    <flux:icon name="star" variant="solid" size="sm" />
+                    <x-app-icon name="star" style="solid" size="sm" />
                 </button>
                 
                 <!-- Focus Mode Toggle -->
@@ -44,7 +44,7 @@
                     class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150 text-gray-500 dark:text-gray-400"
                     title="Toggle focus mode (Cmd+/)"
                 >
-                    <flux:icon name="eye-slash" size="sm" />
+                    <x-app-icon name="eye-slash" size="sm" />
                 </button>
             </div>
         </div>
@@ -67,7 +67,7 @@
                 <div class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
                 Creating...
             @else
-                <flux:icon name="plus" size="sm" class="transform group-hover:rotate-90 transition-transform duration-200" />
+                <x-app-icon name="plus" size="sm" class="transform group-hover:rotate-90 transition-transform duration-200" />
                 New session
             @endif
         </button>
@@ -85,9 +85,9 @@
                 type="search"
                 class="w-full pl-10 pr-4 py-2 text-sm"
             />
-            <flux:icon 
-                name="magnifying-glass" 
-                size="sm" 
+            <x-app-icon
+                name="magnifying-glass"
+                size="sm"
                 class="absolute left-3 top-2.5 text-gray-400 search-icon"
             />
             
@@ -97,7 +97,7 @@
                     class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 clear-search"
                     title="Clear search"
                 >
-                    <flux:icon name="x-mark" size="sm" />
+                    <x-app-icon name="x-mark" size="sm" />
                 </button>
             @endif
         </div>
@@ -153,7 +153,7 @@
             <!-- Empty State -->
             <div class="flex flex-col items-center justify-center h-64 text-center px-4">
                 <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-                    <flux:icon name="chat-bubble-left" size="lg" class="text-gray-400" />
+                    <x-app-icon name="chat-bubble-left" size="lg" class="text-gray-400" />
                 </div>
                 <p class="text-gray-500 dark:text-gray-400 mb-2">No sessions yet</p>
                 <p class="text-sm text-gray-400 dark:text-gray-500">Create your first naming session to get started</p>
@@ -232,7 +232,7 @@
                                             x-on:click.stop="showMenu = !showMenu"
                                             class="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150"
                                         >
-                                            <flux:icon name="ellipsis-vertical" size="xs" class="text-gray-400" />
+                                            <x-app-icon name="ellipsis-vertical" size="xs" class="text-gray-400" />
                                         </button>
 
                                         <!-- Dropdown Menu -->
@@ -252,7 +252,7 @@
                                                 x-on:click="showMenu = false"
                                                 class="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
                                             >
-                                                <flux:icon name="pencil" size="xs" />
+                                                <x-app-icon name="pencil" size="xs" />
                                                 Rename
                                             </button>
 
@@ -262,7 +262,7 @@
                                                 x-on:click="showMenu = false"
                                                 class="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
                                             >
-                                                <flux:icon name="document-duplicate" size="xs" />
+                                                <x-app-icon name="document-duplicate" size="xs" />
                                                 Duplicate
                                             </button>
 
@@ -272,7 +272,7 @@
                                                 x-on:click="showMenu = false"
                                                 class="w-full text-left px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
                                             >
-                                                <flux:icon name="trash" size="xs" />
+                                                <x-app-icon name="trash" size="xs" />
                                                 Delete
                                             </button>
                                         </div>
@@ -290,7 +290,7 @@
                                 <span>{{ $session->created_at->diffForHumans() }}</span>
                                 <div class="flex items-center gap-1">
                                     @if($session->deep_thinking)
-                                        <flux:icon name="light-bulb" size="xs" title="Deep thinking mode" />
+                                        <x-app-icon name="light-bulb" size="xs" title="Deep thinking mode" />
                                     @endif
                                     <span class="capitalize">{{ $session->generation_mode }}</span>
                                 </div>
@@ -326,6 +326,6 @@
                hover:scale-105 transform animate-slide-in-left"
         title="Show sidebar (Cmd+/)"
     >
-        <flux:icon name="bars-3" size="sm" />
+        <x-app-icon name="bars-3" size="sm" />
     </button>
 @endif

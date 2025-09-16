@@ -103,19 +103,44 @@
     // Determine icon path based on size and style
     $iconSizePath = match($size) {
         'xs', 'sm' => '16',
-        'md' => '20', 
+        'md' => '20',
         'lg', 'xl', '2xl' => '24',
         default => '20'
     };
-    
-    // For smaller sizes, only solid style is available
-    $iconStyle = ($iconSizePath === '24') ? $style : 'solid';
-    
+
+    // Heroicons structure: 16px and 20px only have solid, 24px has both outline and solid
+    $iconStyle = $style;
+    if (in_array($iconSizePath, ['16', '20']) && $iconStyle === 'outline') {
+        // For 16px and 20px, only solid exists, so fallback to 24px outline
+        $iconSizePath = '24';
+    }
+
     $iconPath = "node_modules/heroicons/{$iconSizePath}/{$iconStyle}/{$resolvedIcon}.svg";
-    
-    // Check if file exists, fallback to question-mark-circle if not
+
+    // Check if file exists, try fallback strategies
     if (!file_exists(base_path($iconPath))) {
-        $iconPath = "node_modules/heroicons/24/outline/question-mark-circle.svg";
+        // Fallback 1: Try 24px outline if we were looking for a smaller outline
+        if ($iconSizePath !== '24' && $iconStyle === 'outline') {
+            $fallbackPath = "node_modules/heroicons/24/outline/{$resolvedIcon}.svg";
+            if (file_exists(base_path($fallbackPath))) {
+                $iconPath = $fallbackPath;
+            }
+        }
+
+        // Fallback 2: Try 24px solid if outline doesn't exist
+        if (!file_exists(base_path($iconPath))) {
+            $fallbackPath = "node_modules/heroicons/24/solid/{$resolvedIcon}.svg";
+            if (file_exists(base_path($fallbackPath))) {
+                $iconPath = $fallbackPath;
+                $iconStyle = 'solid'; // Update style for correct rendering
+            }
+        }
+
+        // Final fallback: question-mark-circle
+        if (!file_exists(base_path($iconPath))) {
+            $iconPath = "node_modules/heroicons/24/outline/question-mark-circle.svg";
+            $iconStyle = 'outline';
+        }
     }
     
     // Load and process the SVG

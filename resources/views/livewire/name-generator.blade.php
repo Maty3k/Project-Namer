@@ -26,6 +26,7 @@ new class extends Component {
     public int $rateLimitCooldown = 30; // seconds
     public string $sessionId = '';
     public bool $isGeneratingLogos = false;
+    public mixed $userTheme = null;
 
     public array $modes = [
         'creative' => 'Creative',
@@ -114,6 +115,9 @@ new class extends Component {
             return;
         }
 
+        // Preserve theme state before generation
+        $this->preserveThemeState();
+
         // Check rate limiting (allow tests to test rate limiting when lastApiCallTime is explicitly set)
         if ($this->isRateLimited()) {
             $remainingTime = $this->getRemainingCooldownTime();
@@ -123,7 +127,7 @@ new class extends Component {
 
         $this->isLoading = true;
         $this->errorMessage = '';
-        
+
         // Show progress notification
         $this->showInfoNotification('Generating creative business names...', false, 0);
         $this->generatedNames = [];
@@ -137,9 +141,9 @@ new class extends Component {
                 $this->mode,
                 $this->deepThinking
             );
-            
+
             $this->generatedNames = $names;
-            
+
             // Initialize domain results with checking status
             $this->domainResults = array_map(fn($name) => [
                 'name' => $name,
@@ -158,11 +162,117 @@ new class extends Component {
 
             // Automatically start domain checking
             $this->checkDomains();
+
+            // Ensure theme consistency after generation
+            $this->ensureThemeConsistency();
         } catch (\Exception $e) {
             $this->errorMessage = $this->getErrorMessage($e);
             $this->showErrorNotification($this->getErrorMessage($e), 'generateNames');
         } finally {
             $this->isLoading = false;
+        }
+    }
+
+    /**
+     * Preserve theme state before operations that might cause refreshes.
+     */
+    protected function preserveThemeState(): void
+    {
+        // Ensure we have the latest theme data
+        $this->loadUserTheme();
+
+        // If we have a theme, dispatch JavaScript to lock it
+        if ($this->userTheme) {
+            $isDark = $this->userTheme->is_dark_mode ? 'true' : 'false';
+            $this->js("
+                console.log('🔒 NAME GENERATOR: Theme preservation activated for', {$isDark} ? 'DARK' : 'LIGHT');
+
+                // Authorize theme change with the protection system
+                if (window.authorizeThemeChange) {
+                    window.authorizeThemeChange({$isDark}, 30000); // 30 second authorization
+                    console.log('✅ Theme authorization granted from name generator');
+                }
+
+                // Set preservation variables
+                window.__themePreservationMode = true;
+                window.__preservedTheme = {$isDark};
+                window.__themeIsLocked = true;
+                window.__lockedTheme = {$isDark};
+                window.currentThemePreference = {$isDark};
+
+                // Lock theme class immediately
+                const applyTheme = () => {
+                    if ({$isDark}) {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('darkMode', 'true');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('darkMode', 'false');
+                    }
+                };
+
+                applyTheme();
+                setTimeout(applyTheme, 100);
+                setTimeout(applyTheme, 500);
+                setTimeout(applyTheme, 1000);
+            ");
+        }
+    }
+
+    /**
+     * Ensure theme consistency after operations.
+     */
+    protected function ensureThemeConsistency(): void
+    {
+        // Reload theme in case it was lost during component refresh
+        $this->loadUserTheme();
+
+        // Dispatch JavaScript to ensure theme is properly applied
+        if ($this->userTheme) {
+            $isDark = $this->userTheme->is_dark_mode ? 'true' : 'false';
+            $this->js("
+                console.log('🎯 NAME GENERATOR: Theme consistency enforced for', {$isDark} ? 'DARK' : 'LIGHT');
+                const isDark = {$isDark};
+
+                // Re-authorize theme change
+                if (window.authorizeThemeChange) {
+                    window.authorizeThemeChange(isDark, 20000); // 20 second authorization
+                }
+
+                // Apply theme class aggressively
+                const enforceTheme = () => {
+                    if (isDark) {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('darkMode', 'true');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('darkMode', 'false');
+                    }
+                    window.currentThemePreference = isDark;
+                    window.__lockedTheme = isDark;
+                };
+
+                enforceTheme();
+                setTimeout(enforceTheme, 50);
+                setTimeout(enforceTheme, 200);
+                setTimeout(enforceTheme, 500);
+                setTimeout(enforceTheme, 1000);
+
+                // Dispatch theme consistency event
+                window.dispatchEvent(new CustomEvent('theme-consistency-enforced', {
+                    detail: { isDark }
+                }));
+
+                // Update theme lock variables
+                window.__themeIsLocked = true;
+                window.__lockedTheme = isDark;
+
+                // Keep preservation mode active for 5 seconds
+                setTimeout(() => {
+                    window.__themePreservationMode = false;
+                    console.log('🔓 Name generator theme preservation deactivated');
+                }, 5000);
+            ");
         }
     }
 
@@ -278,6 +388,15 @@ new class extends Component {
     {
         $this->loadSearchHistory();
         $this->sessionId = session()->getId();
+        $this->loadUserTheme();
+    }
+
+    /**
+     * Load user theme preferences.
+     */
+    protected function loadUserTheme(): void
+    {
+        $this->userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
     }
 
     public function loadSearchHistory(): void
@@ -1959,12 +2078,48 @@ new class extends Component {
 
             {{-- Generate Button --}}
             <div class="scale-in" style="animation-delay: 0.6s;">
-                <flux:button 
-                    type="submit" 
-                    variant="primary" 
+                <flux:button
+                    type="submit"
+                    variant="primary"
                     :disabled="$isLoading"
                     aria-label="Generate business names using AI"
                     aria-describedby="generate-help"
+                    @click="
+                        // THEME PRESERVATION: Lock theme before name generation
+                        const userTheme = {{ $userTheme ? 'true' : 'false' }};
+                        const isDarkMode = {{ $userTheme && $userTheme->is_dark_mode ? 'true' : 'false' }};
+
+                        if (userTheme) {
+                            console.log('🔒 BUTTON CLICK: Theme preservation activated for', isDarkMode ? 'DARK' : 'LIGHT');
+
+                            // Authorize theme change with the protection system
+                            if (window.authorizeThemeChange) {
+                                window.authorizeThemeChange(isDarkMode, 25000); // 25 second authorization
+                                console.log('✅ Theme authorization granted from generate button');
+                            }
+
+                            // Set all theme lock variables
+                            window.__themeIsLocked = true;
+                            window.__lockedTheme = isDarkMode;
+                            window.currentThemePreference = isDarkMode;
+                            window.__themePreservationMode = true;
+
+                            // Apply theme immediately
+                            const applyTheme = () => {
+                                if (isDarkMode) {
+                                    document.documentElement.classList.add('dark');
+                                    localStorage.setItem('darkMode', 'true');
+                                } else {
+                                    document.documentElement.classList.remove('dark');
+                                    localStorage.setItem('darkMode', 'false');
+                                }
+                            };
+
+                            applyTheme();
+                            setTimeout(applyTheme, 50);
+                            setTimeout(applyTheme, 100);
+                        }
+                    "
                     class="btn-modern focus-modern touch-ripple gesture-transition gesture-debounce throttle touch-response low-latency mobile-optimized-animation battery-efficient touch-target min-h-44 focus-indicator contrast-enhanced bg-accent hover:bg-accent/90 shadow-soft-lg
                            xs:w-full xs:py-4 xs:text-lg xs:font-bold
                            sm:w-auto sm:px-8 sm:py-3

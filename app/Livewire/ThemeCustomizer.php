@@ -65,6 +65,19 @@ final class ThemeCustomizer extends Component
                 $this->textColor = $preference->text_color;
                 $this->themeName = $preference->theme_name;
                 $this->isDarkMode = $preference->is_dark_mode;
+            } else {
+                // Fall back to User model theme settings if no detailed preferences exist
+                $this->isDarkMode = $user->prefers_dark_mode ?? false;
+                $this->themeName = $user->current_theme ?? 'default';
+
+                // Set appropriate colors based on dark mode setting
+                if ($this->isDarkMode) {
+                    $this->backgroundColor = '#1f2937';
+                    $this->textColor = '#f9fafb';
+                } else {
+                    $this->backgroundColor = '#ffffff';
+                    $this->textColor = '#111827';
+                }
             }
         }
 
@@ -90,22 +103,10 @@ final class ThemeCustomizer extends Component
             $this->themeName = is_string($theme['theme_name'] ?? null) ? $theme['theme_name'] : 'default';
             $this->isDarkMode = is_bool($theme['is_dark_mode'] ?? null) ? $theme['is_dark_mode'] : false;
 
-            // Ensure proper text contrast based on mode
-            $this->ensureTextReadability();
-
             $this->validateAccessibility();
 
             // Automatically save the preset theme to persist it
             $this->applyTheme();
-
-            $this->dispatch('theme-updated');
-            $this->dispatch('theme-applied', [
-                'primaryColor' => $this->primaryColor,
-                'accentColor' => $this->accentColor,
-                'backgroundColor' => $this->backgroundColor,
-                'textColor' => $this->textColor,
-                'isDarkMode' => $this->isDarkMode,
-            ]);
         }
     }
 
@@ -125,6 +126,7 @@ final class ThemeCustomizer extends Component
                 return;
             }
 
+            // Update UserThemePreference model
             UserThemePreference::updateOrCreate(
                 ['user_id' => $user->id],
                 [
@@ -136,6 +138,13 @@ final class ThemeCustomizer extends Component
                     'is_dark_mode' => $this->isDarkMode,
                 ]
             );
+
+            // Synchronize with User model theme fields and disable auto-switching
+            $user->update([
+                'current_theme' => $this->themeName,
+                'prefers_dark_mode' => $this->isDarkMode,
+                'theme_auto_switch' => false, // Disable auto-switching when manually setting theme
+            ]);
 
             // Validate accessibility and provide feedback
             $this->validateAccessibility();
@@ -153,6 +162,59 @@ final class ThemeCustomizer extends Component
                 'textColor' => $this->textColor,
                 'isDarkMode' => $this->isDarkMode,
             ]);
+
+            // Instantly apply theme changes with comprehensive sync
+            $isDarkModeJs = $this->isDarkMode ? 'true' : 'false';
+            $this->js("
+                const html = document.documentElement;
+                const isDark = {$isDarkModeJs};
+
+                console.log('THEME CUSTOMIZER: Applying theme', isDark ? 'DARK' : 'LIGHT');
+
+                // Authorize this theme change with the protection system
+                if (window.authorizeThemeChange) {
+                    window.authorizeThemeChange(isDark, 15000); // 15 second authorization for theme customizer
+                }
+
+                // Apply CSS custom properties
+                html.style.setProperty('--primary-color', '{$this->primaryColor}');
+                html.style.setProperty('--accent-color', '{$this->accentColor}');
+                html.style.setProperty('--background-color', '{$this->backgroundColor}');
+                html.style.setProperty('--text-color', '{$this->textColor}');
+
+                // Apply dark mode class and localStorage sync
+                if (isDark) {
+                    html.classList.add('dark');
+                    localStorage.setItem('darkMode', 'true');
+                } else {
+                    html.classList.remove('dark');
+                    localStorage.setItem('darkMode', 'false');
+                }
+
+                // Update the global current theme preference
+                window.currentThemePreference = isDark;
+
+                // Force a repaint to ensure styles update
+                html.style.display = 'none';
+                html.offsetHeight; // Trigger reflow
+                html.style.display = '';
+
+                // Dispatch global theme change event
+                window.dispatchEvent(new CustomEvent('theme-changed', {
+                    detail: {
+                        isDark: isDark,
+                        primaryColor: '{$this->primaryColor}',
+                        accentColor: '{$this->accentColor}',
+                        backgroundColor: '{$this->backgroundColor}',
+                        textColor: '{$this->textColor}'
+                    }
+                }));
+
+                // Update any theme toggle buttons in the UI
+                window.dispatchEvent(new CustomEvent('theme-customizer-updated', {
+                    detail: { isDarkMode: isDark }
+                }));
+            ");
 
         } catch (\Exception $e) {
             logger()->error('Theme application failed: '.$e->getMessage());
@@ -282,14 +344,9 @@ final class ThemeCustomizer extends Component
         }
 
         $this->validateAccessibility();
-        $this->dispatch('theme-updated');
-        $this->dispatch('theme-applied', [
-            'primaryColor' => $this->primaryColor,
-            'accentColor' => $this->accentColor,
-            'backgroundColor' => $this->backgroundColor,
-            'textColor' => $this->textColor,
-            'isDarkMode' => $this->isDarkMode,
-        ]);
+
+        // Auto-save the theme with the new dark mode setting using comprehensive sync
+        $this->applyTheme();
     }
 
     /**
@@ -319,6 +376,29 @@ final class ThemeCustomizer extends Component
     public function onColorUpdated(): void
     {
         $this->validateAccessibility();
+    }
+
+    /**
+     * Listen for theme changes from ThemeQuickToggle.
+     *
+     * @param  array{isDarkMode: bool, backgroundColor: string, textColor: string}  $data
+     */
+    #[On('theme-quick-toggle-changed')]
+    public function onThemeQuickToggleChanged(array $data): void
+    {
+        // Update the theme customizer properties to match the quick toggle
+        if (isset($data['isDarkMode'])) {
+            $this->isDarkMode = (bool) $data['isDarkMode'];
+        }
+        if (isset($data['backgroundColor'])) {
+            $this->backgroundColor = (string) $data['backgroundColor'];
+        }
+        if (isset($data['textColor'])) {
+            $this->textColor = (string) $data['textColor'];
+        }
+
+        $this->validateAccessibility();
+        $this->dispatch('theme-updated');
     }
 
     /**

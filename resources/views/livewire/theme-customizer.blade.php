@@ -103,13 +103,13 @@
                                             <span class="animate-pulse" style="color: {{ $primaryColor }};">❄️</span>
                                             @break
                                         @case('halloween')
-                                            <span class="text-orange-500 animate-bounce">🎃</span>
+                                            <span class="text-orange-500">🎃</span>
                                             @break
                                         @case('spring')
                                             <span class="text-green-500 animate-pulse">🌸</span>
                                             @break
                                         @case('autumn')
-                                            <span class="text-orange-600 animate-bounce">🍂</span>
+                                            <span class="text-orange-600">🍂</span>
                                             @break
                                     @endswitch
                                 @endif

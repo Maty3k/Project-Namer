@@ -10,24 +10,79 @@ if ($userTheme) {
      style="{{ $themeStyles }}"
      x-data="{ themeLoaded: false }"
      x-init="
-        // Apply theme immediately if exists
-        if ({{ $userTheme ? 'true' : 'false' }}) {
+        // Apply theme immediately and robustly
+        const userHasTheme = {{ $userTheme ? 'true' : 'false' }};
+        const isDarkMode = {{ $userTheme && $userTheme->is_dark_mode ? 'true' : 'false' }};
+
+        if (userHasTheme) {
             themeLoaded = true;
+
+            // Force theme application immediately
+            if (isDarkMode) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('darkMode', 'false');
+            }
+
+            // Lock the theme to prevent automatic switching
+            window.__themeIsLocked = true;
+            window.__lockedTheme = isDarkMode;
         }
         
-        // Listen for theme events and refresh component
+        // SMART theme event listeners - refresh only when safe
         $wire.on('theme-loaded', () => {
             themeLoaded = true;
-            $wire.$refresh();
+            // Apply theme directly without refresh to prevent loss
         });
-        
+
         $wire.on('theme-updated', () => {
-            $wire.$refresh();
+            // Authorize theme change before refreshing
+            if (window.authorizeThemeChange && userHasTheme) {
+                window.authorizeThemeChange(isDarkMode, 8000); // 8 second authorization
+                setTimeout(() => {
+                    $wire.$refresh();
+                }, 100); // Small delay to ensure authorization is active
+            }
         });
-        
+
         $wire.on('theme-applied', () => {
-            $wire.$refresh();
+            // Authorize theme change before refreshing
+            if (window.authorizeThemeChange && userHasTheme) {
+                window.authorizeThemeChange(isDarkMode, 8000); // 8 second authorization
+                setTimeout(() => {
+                    $wire.$refresh();
+                }, 100); // Small delay to ensure authorization is active
+            }
         });
+
+        $wire.on('theme-consistency-enforced', (event) => {
+            // Ensure theme is applied after operations
+            const isDark = event.isDarkMode;
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        // Add aggressive theme monitoring specifically for this dashboard
+        if (userHasTheme) {
+            setInterval(() => {
+                const currentIsDark = document.documentElement.classList.contains('dark');
+                if (currentIsDark !== isDarkMode) {
+                    console.log('Dashboard theme correction applied');
+                    if (isDarkMode) {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('darkMode', 'true');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('darkMode', 'false');
+                    }
+                }
+            }, 500); // Check every 500ms
+        }
      ">
     <flux:tabs wire:model="activeTab" class="h-full flex flex-col">
         <flux:tab name="generate" 
