@@ -26,10 +26,16 @@ it('can handle multiple file uploads', function (): void {
 
     $component = Livewire::test(ImageUploader::class, ['project' => $project]);
 
-    // Upload multiple files at once
-    $component->set('images', [$file1, $file2, $file3]);
+    // Upload first batch of files via newFiles (simulates first file selection)
+    $component->set('newFiles', [$file1, $file2]);
 
-    // Check that all files are in the images array
+    // Check that files were moved to images array
+    expect($component->get('images'))->toHaveCount(2);
+
+    // Upload second batch via newFiles (simulates adding more files)
+    $component->set('newFiles', [$file3]);
+
+    // Check that new file was appended (total should be 3)
     expect($component->get('images'))->toHaveCount(3);
 });
 

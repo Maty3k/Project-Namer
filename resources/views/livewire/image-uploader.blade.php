@@ -14,7 +14,7 @@
              @click="$refs.fileInput.click()">
             
             <input type="file"
-                   wire:model="images"
+                   wire:model="newFiles"
                    multiple
                    accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -196,7 +196,7 @@
 
                 if (imageFiles.length > 0) {
                     // Use Livewire upload method for drag and drop
-                    @this.upload('images', imageFiles);
+                    @this.upload('newFiles', imageFiles);
                 }
             }
         }));
