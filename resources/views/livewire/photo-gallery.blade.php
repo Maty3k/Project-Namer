@@ -308,12 +308,20 @@ function photoGalleryComponent() {
         init() {
             // Initialize images array from DOM data
             this.images = this.buildImagesArray();
-            
+
             // Preload next/previous images when viewer opens
             this.$watch('showViewer', value => {
                 if (value) {
                     this.preloadAdjacentImages();
                 }
+            });
+
+            // Listen for Livewire updates and rebuild images array
+            Livewire.hook('morph.updated', () => {
+                this.$nextTick(() => {
+                    this.images = this.buildImagesArray();
+                    this.totalImages = this.images.length;
+                });
             });
         },
 

@@ -409,7 +409,7 @@ class PhotoGallery extends Component
     /**
      * Listen for new image uploads to refresh gallery.
      */
-    #[On('image-uploaded')]
+    #[On('images-uploaded')]
     public function refreshGallery(): void
     {
         $this->resetPage();
