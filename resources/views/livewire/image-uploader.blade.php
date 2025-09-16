@@ -14,11 +14,11 @@
              @click="$refs.fileInput.click()">
             
             <input type="file"
+                   wire:model="images"
                    multiple
                    accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                   x-ref="fileInput"
-                   @change="handleFileSelect($event)">
+                   x-ref="fileInput">
             
             <div class="text-center">
                 @if(count($images) > 0)
@@ -187,17 +187,7 @@
             handleDrop(e) {
                 this.isDragging = false;
                 const files = Array.from(e.dataTransfer.files);
-                this.processFiles(files);
-            },
 
-            handleFileSelect(e) {
-                const files = Array.from(e.target.files);
-                this.processFiles(files);
-                // Clear the input so the same files can be selected again
-                e.target.value = '';
-            },
-
-            processFiles(files) {
                 // Filter for image files
                 const imageFiles = files.filter(file =>
                     file.type.startsWith('image/') &&
@@ -205,8 +195,8 @@
                 );
 
                 if (imageFiles.length > 0) {
-                    // Upload files to newFiles property which will trigger updatedNewFiles()
-                    @this.upload('newFiles', imageFiles);
+                    // Use Livewire upload method for drag and drop
+                    @this.upload('images', imageFiles);
                 }
             }
         }));
