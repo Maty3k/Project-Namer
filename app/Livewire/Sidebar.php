@@ -29,6 +29,8 @@ class Sidebar extends Component
 
     public bool $showDeleteConfirmation = false;
 
+    public mixed $userTheme = null;
+
     /** @var array<string, string> */
     protected $listeners = [
         'project-created' => 'refreshProjects',
@@ -47,6 +49,7 @@ class Sidebar extends Component
     public function mount(?string $activeProjectUuid = null): void
     {
         $this->activeProjectUuid = $activeProjectUuid;
+        $this->userTheme = ThemeHelper::getCurrentUserTheme();
 
         if ($this->activeProjectUuid) {
             $this->selectedProject = Project::where('uuid', $this->activeProjectUuid)
@@ -266,6 +269,9 @@ class Sidebar extends Component
     {
         // Clear theme cache to ensure fresh theme data
         ThemeHelper::clearUserThemeCache();
+
+        // Update the userTheme property with fresh data
+        $this->userTheme = ThemeHelper::getCurrentUserTheme();
 
         // Refresh the component to apply new theme
         $this->dispatch('$refresh');

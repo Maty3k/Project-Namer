@@ -13,9 +13,14 @@ final class ThemeQuickToggle extends Component
 {
     /**
      * Toggle between dark and light mode.
+     * DISABLED: Only theme customizer should control themes
      */
     public function toggleTheme(): void
     {
+        // Disabled - only theme customizer should be able to change themes
+        return;
+
+        /* COMMENTED OUT - Theme changes restricted to theme customizer only
         $user = auth()->user();
 
         if (! $user) {
@@ -71,6 +76,8 @@ final class ThemeQuickToggle extends Component
 
         // Instantly apply dark mode to HTML element
         $isDarkModeJs = $newIsDarkMode ? 'true' : 'false';
+        $backgroundColorJs = $newIsDarkMode ? '#1f2937' : '#ffffff';
+        $textColorJs = $newIsDarkMode ? '#f9fafb' : '#111827';
         $this->js("
             const html = document.documentElement;
             const isDark = {$isDarkModeJs};
@@ -80,6 +87,16 @@ final class ThemeQuickToggle extends Component
             // Authorize this theme change with the protection system
             if (window.authorizeThemeChange) {
                 window.authorizeThemeChange(isDark, 10000); // 10 second authorization for quick toggle
+            }
+
+            // Update CSS variables for instant theme changes
+            if (window.updateThemeCssVariables) {
+                window.updateThemeCssVariables({
+                    backgroundColor: '{$backgroundColorJs}',
+                    textColor: '{$textColorJs}',
+                    surfaceColor: isDark ? '#374151' : '#f8fafc',
+                    isDarkMode: isDark
+                });
             }
 
             if (isDark) {
@@ -116,6 +133,7 @@ final class ThemeQuickToggle extends Component
             'backgroundColor' => $newIsDarkMode ? '#1f2937' : '#ffffff',
             'textColor' => $newIsDarkMode ? '#f9fafb' : '#111827',
         ]);
+        */
     }
 
     /**

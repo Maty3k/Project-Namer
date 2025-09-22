@@ -1,3 +1,4 @@
-<flux:menu.item wire:click="toggleTheme" icon="{{ $isDarkMode ? 'sun' : 'moon' }}">
-    {{ $isDarkMode ? 'Light Mode' : 'Dark Mode' }}
+{{-- DISABLED: Only theme customizer should control themes --}}
+<flux:menu.item disabled icon="{{ $isDarkMode ? 'sun' : 'moon' }}">
+    {{ $isDarkMode ? 'Light Mode' : 'Dark Mode' }} (Use Theme Customizer)
 </flux:menu.item>

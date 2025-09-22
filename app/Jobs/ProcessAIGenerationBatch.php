@@ -7,7 +7,7 @@ namespace App\Jobs;
 use App\Models\GenerationSession;
 use App\Models\NameSuggestion;
 use App\Services\AI\CachingService;
-use App\Services\PrismAIService;
+use App\Services\AIGenerationService;
 use Exception;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -70,7 +70,7 @@ final class ProcessAIGenerationBatch implements ShouldQueue
      * Execute the job.
      */
     public function handle(
-        PrismAIService $prismService,
+        AIGenerationService $aiService,
         CachingService $cachingService
     ): void {
         if ($this->batch()?->cancelled()) {
@@ -92,7 +92,7 @@ final class ProcessAIGenerationBatch implements ShouldQueue
             }
 
             try {
-                $this->processSession($sessionId, $prismService, $cachingService);
+                $this->processSession($sessionId, $aiService, $cachingService);
                 $processed++;
             } catch (Exception $e) {
                 $errors++;
@@ -135,7 +135,7 @@ final class ProcessAIGenerationBatch implements ShouldQueue
      */
     private function processSession(
         string $sessionId,
-        PrismAIService $prismService,
+        AIGenerationService $aiService,
         CachingService $cachingService
     ): void {
         $session = GenerationSession::where('session_id', $sessionId)->first();
@@ -180,7 +180,7 @@ final class ProcessAIGenerationBatch implements ShouldQueue
         }
 
         // Process with AI
-        $this->processWithAI($session, $prismService, $cachingService);
+        $this->processWithAI($session, $aiService, $cachingService);
     }
 
     /**
@@ -208,7 +208,7 @@ final class ProcessAIGenerationBatch implements ShouldQueue
      */
     private function processWithAI(
         GenerationSession $session,
-        PrismAIService $prismService,
+        AIGenerationService $aiService,
         CachingService $cachingService
     ): void {
         $results = [];
@@ -231,16 +231,19 @@ final class ProcessAIGenerationBatch implements ShouldQueue
                 );
 
                 if (! $modelResults) {
-                    // Generate with AI
-                    $modelResults = $prismService->generateNames(
+                    // Generate with AI using the new service
+                    $aiResults = $aiService->generateNamesParallel(
                         $session->business_description,
                         [$model],
                         $session->generation_mode,
                         $session->deep_thinking
                     );
 
-                    // Cache the results
-                    if (isset($modelResults[$model])) {
+                    // Extract the names from the results
+                    if (isset($aiResults['results'][$model]) && $aiResults['results'][$model]['status'] === 'completed') {
+                        $modelResults = [$model => $aiResults['results'][$model]['names']];
+
+                        // Cache the results
                         $cachingService->cacheAPIResponse(
                             $model,
                             $session->business_description,
@@ -248,6 +251,8 @@ final class ProcessAIGenerationBatch implements ShouldQueue
                             $session->deep_thinking,
                             $modelResults[$model]
                         );
+                    } else {
+                        $modelResults = [];
                     }
                 }
 

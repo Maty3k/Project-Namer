@@ -55,7 +55,7 @@ describe('Simplified Integration Workflow Tests', function (): void {
         expect($generatedNames)->toHaveCount(10)
             ->and($generatedNames)->toBeArray()
             ->and($generatedNames[0])->toBeString()
-            ->and(strlen($generatedNames[0]))->toBeGreaterThan(2);
+            ->and(strlen((string) $generatedNames[0]))->toBeGreaterThan(2);
 
         $component->assertSet('isLoading', false);
 
@@ -63,9 +63,9 @@ describe('Simplified Integration Workflow Tests', function (): void {
         $domainResults = $component->get('domainResults');
         expect($domainResults)->toHaveCount(10);
         expect($domainResults[0]['name'])->toBe($generatedNames[0]);
-        expect($domainResults[0]['domains'])->toHaveKey($generatedNames[0] . '.com');
+        expect($domainResults[0]['domains'])->toHaveKey($generatedNames[0].'.com');
         // Domain status will be 'checked' or 'error' after automatic domain checking
-        expect($domainResults[0]['domains'][$generatedNames[0] . '.com']['status'])->toBeIn(['checking', 'checked', 'error']);
+        expect($domainResults[0]['domains'][$generatedNames[0].'.com']['status'])->toBeIn(['checking', 'checked', 'error']);
     });
 
     test('different generation modes produce different cache keys', function (): void {

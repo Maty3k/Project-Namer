@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\UserThemePreference;
 use Livewire\Livewire;
 
-it('can toggle dark mode and sync both models', function (): void {
+it('toggle theme is disabled to enforce theme customizer only', function (): void {
     $user = User::factory()->create([
         'current_theme' => 'default',
         'prefers_dark_mode' => false,
@@ -18,25 +18,22 @@ it('can toggle dark mode and sync both models', function (): void {
     Livewire::test(ThemeQuickToggle::class)
         ->call('toggleTheme');
 
-    // Check User model was updated
+    // Check User model was NOT updated (theme toggle is disabled)
     $user->refresh();
-    expect($user->prefers_dark_mode)->toBeTrue();
+    expect($user->prefers_dark_mode)->toBeFalse();
 
-    // Check UserThemePreference was created
+    // Check no UserThemePreference was created by quick toggle
     $preference = UserThemePreference::where('user_id', $user->id)->first();
-    expect($preference)->not->toBeNull();
-    expect($preference->is_dark_mode)->toBeTrue();
-    expect($preference->background_color)->toBe('#1f2937');
-    expect($preference->text_color)->toBe('#f9fafb');
+    expect($preference)->toBeNull();
 });
 
-it('can toggle from dark to light mode', function (): void {
+it('theme toggle is disabled regardless of existing preferences', function (): void {
     $user = User::factory()->create([
         'current_theme' => 'dark',
         'prefers_dark_mode' => true,
     ]);
 
-    UserThemePreference::create([
+    $originalPreference = UserThemePreference::create([
         'user_id' => $user->id,
         'theme_name' => 'dark',
         'primary_color' => '#3b82f6',
@@ -51,18 +48,18 @@ it('can toggle from dark to light mode', function (): void {
     Livewire::test(ThemeQuickToggle::class)
         ->call('toggleTheme');
 
-    // Check User model was updated
+    // Check User model was NOT changed (theme toggle is disabled)
     $user->refresh();
-    expect($user->prefers_dark_mode)->toBeFalse();
+    expect($user->prefers_dark_mode)->toBeTrue();
 
-    // Check UserThemePreference was updated
+    // Check UserThemePreference was NOT changed
     $preference = UserThemePreference::where('user_id', $user->id)->first();
-    expect($preference->is_dark_mode)->toBeFalse();
-    expect($preference->background_color)->toBe('#ffffff');
-    expect($preference->text_color)->toBe('#111827');
+    expect($preference->is_dark_mode)->toBeTrue();
+    expect($preference->background_color)->toBe('#1f2937');
+    expect($preference->text_color)->toBe('#f9fafb');
 });
 
-it('displays correct icon and text for current theme', function (): void {
+it('displays disabled theme toggle with instructional text', function (): void {
     $user = User::factory()->create([
         'prefers_dark_mode' => false,
     ]);
@@ -71,15 +68,15 @@ it('displays correct icon and text for current theme', function (): void {
 
     $component = Livewire::test(ThemeQuickToggle::class);
 
-    // Should show "Dark Mode" option when in light mode
-    $component->assertSee('Dark Mode');
+    // Should show disabled text with instruction to use theme customizer
+    $component->assertSee('Dark Mode (Use Theme Customizer)');
 
-    // Toggle to dark mode
+    // Toggle attempt should do nothing since it's disabled
     $component->call('toggleTheme');
 
-    // Verify the user preference was updated
+    // Verify the user preference was NOT changed
     $user->refresh();
-    expect($user->prefers_dark_mode)->toBeTrue();
+    expect($user->prefers_dark_mode)->toBeFalse();
 });
 
 it('does nothing when user is not authenticated', function (): void {

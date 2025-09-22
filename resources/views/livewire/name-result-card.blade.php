@@ -1,8 +1,12 @@
 @if($suggestion)
-<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-300 ease-out hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-800/50 transform hover:-translate-y-1
-             {{ $this->isSelected ? 'ring-2 ring-blue-500 bg-primary-50 dark:bg-primary-900/10 shadow-lg shadow-blue-200/30 dark:shadow-blue-800/30' : 'hover:border-gray-300 dark:hover:border-gray-600' }}
+<div class="rounded-lg border shadow-sm transition-all duration-300 ease-out hover:shadow-lg transform hover:-translate-y-1
              {{ $suggestion->is_hidden ? 'opacity-60 scale-95' : 'scale-100 hover:scale-[1.02]' }}
-             focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:outline-none"
+             focus-within:ring-2 focus-within:outline-none"
+     style="background-color: var(--surface-color);
+            border-color: var(--text-secondary-color, #6b7280);
+            color: var(--text-color);
+            {{ $this->isSelected ? 'border-color: var(--primary-color); background-color: var(--primary-color)10; box-shadow: 0 4px 6px var(--primary-color)20;' : '' }}
+            focus-within-ring-color: var(--primary-color)50;"
      wire:key="suggestion-{{ $suggestion->id }}"
      x-data="{
          isExpanded: false,
@@ -12,12 +16,12 @@
      }"
     
     <!-- Card Header -->
-    <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+    <div class="p-4 border-b" style="border-color: var(--text-secondary-color, #6b7280)">
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <!-- Selection Indicator -->
                 @if($this->isSelected)
-                    <div class="w-6 h-6 bg-primary-500 rounded-full flex items-center justify-center">
+                    <div class="w-6 h-6 rounded-full flex items-center justify-center" style="background-color: var(--primary-color)">
                         <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                         </svg>
@@ -25,13 +29,13 @@
                 @endif
 
                 <!-- Name -->
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white {{ $this->isSelected ? 'text-primary-900 dark:text-primary-100' : '' }}">
+                <h3 class="text-lg font-semibold" style="color: {{ $this->isSelected ? 'var(--primary-color)' : 'var(--text-color)' }}">
                     {{ $suggestion->name }}
                 </h3>
 
                 <!-- AI Model Badge -->
                 @if($this->aiModel)
-                    <span class="px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full">
+                    <span class="px-2 py-1 text-xs font-medium rounded-full" style="background-color: var(--background-color); color: var(--text-secondary-color); border: 1px solid var(--text-secondary-color, #6b7280)">
                         {{ $this->aiModel }}
                     </span>
                 @endif
@@ -39,7 +43,7 @@
 
             <div class="flex items-center space-x-2">
                 <!-- Domain & Logo Status -->
-                <div class="flex items-center space-x-3 text-sm text-gray-500 dark:text-gray-400">
+                <div class="flex items-center space-x-3 text-sm" style="color: var(--text-secondary-color, #6b7280)">
                     @if($this->hasDomains)
                         <span class="flex items-center">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -129,7 +133,7 @@
     </div>
 
     <!-- Expandable Content -->
-    <div class="overflow-hidden transition-all duration-500 ease-in-out border-t border-gray-200 dark:border-gray-700"
+    <div class="overflow-hidden transition-all duration-500 ease-in-out border-t" style="border-color: var(--text-secondary-color, #6b7280)"
          x-show="isExpanded"
          x-collapse
          x-transition:enter="transition-all duration-500 ease-out"
@@ -145,7 +149,7 @@
             <!-- Domains Section -->
             <div>
                 <div class="flex items-center justify-between mb-3">
-                    <h4 class="font-medium text-gray-900 dark:text-white">Domains</h4>
+                    <h4 class="font-medium" style="color: var(--text-color)">Domains</h4>
                     @if(!$this->hasDomains)
                         <flux:button
                             variant="ghost"
@@ -173,7 +177,7 @@
                                 }
                             @endphp
                             <div class="flex items-center justify-between p-2 rounded-lg border transition-all duration-300 ease-out hover:scale-105 hover:shadow-md transform
-                                        {{ $available === true ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20 hover:border-green-300 hover:bg-green-100' : ($available === false ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20 hover:border-red-300 hover:bg-red-100' : 'border-gray-200 bg-gray-50 dark:border-gray-600 dark:bg-gray-800 hover:border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700') }}"
+                                        {{ $available === true ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20 hover:border-green-300 hover:bg-green-100 dark:hover:bg-green-900/30' : ($available === false ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20 hover:border-red-300 hover:bg-red-100 dark:hover:bg-red-900/30' : 'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800 hover:border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-750') }}"
                                  x-transition:enter="transition-all duration-{{ 200 + ($loop->index * 50) }} ease-out"
                                  x-transition:enter-start="opacity-0 scale-95 translate-y-2"
                                  x-transition:enter-end="opacity-100 scale-100 translate-y-0">
@@ -197,8 +201,8 @@
                         @endforeach
                     </div>
                 @else
-                    <div class="text-center py-4 text-gray-500 dark:text-gray-400">
-                        <svg class="w-8 h-8 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="text-center py-4" style="color: var(--text-secondary-color, #6b7280)">
+                        <svg class="w-8 h-8 mx-auto mb-2" style="color: var(--text-secondary-color, #6b7280)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9"></path>
                         </svg>
                         <p class="text-sm">No domains checked yet</p>
@@ -209,7 +213,7 @@
             <!-- Logos Section -->
             <div>
                 <div class="flex items-center justify-between mb-3">
-                    <h4 class="font-medium text-gray-900 dark:text-white">Logos</h4>
+                    <h4 class="font-medium" style="color: var(--text-color)">Logos</h4>
                     @if(!$this->hasLogos)
                         <flux:button
                             wire:click="generateLogos"
@@ -227,7 +231,7 @@
                 @if($this->hasLogos)
                     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                         @foreach($suggestion->logos as $logo)
-                            <div class="aspect-square rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow">
+                            <div class="aspect-square rounded-lg border overflow-hidden hover:shadow-md transition-shadow" style="border-color: var(--text-secondary-color, #6b7280)">
                                 @if(isset($logo['url']))
                                     <img
                                         src="{{ $logo['url'] }}"
@@ -245,8 +249,8 @@
                         @endforeach
                     </div>
                 @else
-                    <div class="text-center py-4 text-gray-500 dark:text-gray-400">
-                        <svg class="w-8 h-8 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="text-center py-4" style="color: var(--text-secondary-color, #6b7280)">
+                        <svg class="w-8 h-8 mx-auto mb-2" style="color: var(--text-secondary-color, #6b7280)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
                         <p class="text-sm">No logos generated yet</p>
@@ -256,15 +260,15 @@
 
             <!-- Generation Metadata (if available) -->
             @if($suggestion && $suggestion->generation_metadata && is_array($suggestion->generation_metadata))
-                <div class="pt-2 border-t border-gray-200 dark:border-gray-700">
+                <div class="pt-2 border-t" style="border-color: var(--text-secondary-color, #6b7280)">
                     <details class="group">
-                        <summary class="flex items-center cursor-pointer text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+                        <summary class="flex items-center cursor-pointer text-sm" style="color: var(--text-secondary-color, #6b7280)">
                             <svg class="w-4 h-4 mr-1 transform group-open:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                             </svg>
                             Generation Details
                         </summary>
-                        <div class="mt-2 pl-5 text-xs text-gray-500 dark:text-gray-400">
+                        <div class="mt-2 pl-5 text-xs" style="color: var(--text-secondary-color, #6b7280)">
                             @foreach($suggestion->generation_metadata as $key => $value)
                                 <div class="flex justify-between">
                                     <span class="capitalize">{{ str_replace('_', ' ', $key) }}:</span>

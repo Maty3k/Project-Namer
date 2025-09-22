@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Services\AIGenerationService;
-use App\Services\PrismAIService;
 use Prism\Prism\Prism;
 use Prism\Prism\Testing\TextResponseFake;
 
@@ -211,7 +210,7 @@ describe('AI Generation Service', function (): void {
             ->toThrow(InvalidArgumentException::class, 'Invalid generation result format');
     });
 
-    it('integrates properly with PrismAIService fallback system', function (): void {
+    it('integrates properly with Prism provider fallback system', function (): void {
         $fallbackResponse = "1. FallbackFlow\n2. BackupCraft\n3. SecondaryHub\n4. AlternateCore\n5. FallbackLab\n6. BackupForge\n7. SecondaryStream\n8. AlternateFlow\n9. FallbackCraft\n10. BackupHub";
 
         Prism::fake([
@@ -224,11 +223,11 @@ describe('AI Generation Service', function (): void {
             'tech-focused'
         );
 
-        // Should include fallback metadata from PrismAIService
+        // Should include execution metadata from direct Prism integration
         $modelResult = $result['results']['grok-beta'];
-        expect($modelResult)->toHaveKey('fallback_used');
-        expect($modelResult)->toHaveKey('retry_count');
-        expect($modelResult['fallback_used'])->toBe(false);
-        expect($modelResult['retry_count'])->toBe(0);
+        expect($modelResult)->toHaveKey('names');
+        expect($modelResult)->toHaveKey('status');
+        expect($modelResult['status'])->toBe('completed');
+        expect($modelResult['names'])->toHaveCount(10);
     });
 });

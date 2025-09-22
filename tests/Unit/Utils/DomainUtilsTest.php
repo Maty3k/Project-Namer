@@ -110,11 +110,17 @@ describe('DomainUtils', function (): void {
         it('builds domains with default TLDs', function (): void {
             $domains = DomainUtils::buildDomainsFromName('testbusiness');
 
-            expect($domains)->toHaveCount(4)
+            expect($domains)->toHaveCount(10)
                 ->and($domains)->toContain('testbusiness.com')
                 ->and($domains)->toContain('testbusiness.io')
                 ->and($domains)->toContain('testbusiness.co')
-                ->and($domains)->toContain('testbusiness.net');
+                ->and($domains)->toContain('testbusiness.net')
+                ->and($domains)->toContain('testbusiness.org')
+                ->and($domains)->toContain('testbusiness.app')
+                ->and($domains)->toContain('testbusiness.dev')
+                ->and($domains)->toContain('testbusiness.ai')
+                ->and($domains)->toContain('testbusiness.tech')
+                ->and($domains)->toContain('testbusiness.studio');
         });
 
         it('builds domains with custom TLDs', function (): void {

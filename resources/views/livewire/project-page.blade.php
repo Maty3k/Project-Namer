@@ -1,14 +1,5 @@
 <div class="max-w-4xl mx-auto p-4 sm:p-6">
-    <div class="rounded-lg shadow-lg p-4 sm:p-6 lg:p-8 themed-project-box"
-         @php
-             $userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
-         @endphp
-         @if($userTheme)
-             style="background-color: {{ $userTheme->background_color }};
-                    color: {{ $userTheme->text_color }};"
-         @else
-             class="bg-white dark:bg-gray-900"
-         @endif>
+    <div class="rounded-lg shadow-lg p-4 sm:p-6 lg:p-8" style="background-color: var(--surface-color); color: var(--text-color)">
         <!-- Project Header with Editable Name -->
         <div class="mb-8">
             <livewire:project-name-editor :project="$project" />
@@ -38,8 +29,8 @@
         </div>
 
         <!-- Project Stats and Metadata -->
-        <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 dark:text-gray-400">
+        <div class="border-t pt-6" style="border-color: var(--text-secondary-color, #6b7280)">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm" style="color: var(--text-secondary-color, #6b7280)">
                 <div>
                     <span class="font-medium">Created:</span>
                     {{ $project->created_at->format('M j, Y') }}
@@ -50,24 +41,24 @@
                 </div>
                 <div>
                     <span class="font-medium">Project ID:</span>
-                    <code class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs">{{ $project->uuid }}</code>
+                    <code class="px-2 py-1 rounded text-xs" style="background-color: var(--background-color); color: var(--text-color); border: 1px solid var(--text-secondary-color, #6b7280)">{{ $project->uuid }}</code>
                 </div>
             </div>
         </div>
         
         <!-- Photo Gallery Section -->
-        <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+        <div class="mt-8 pt-6 border-t" style="border-color: var(--text-secondary-color, #6b7280)">
             <!-- Embedded Photo Gallery -->
             @livewire('photo-gallery', ['project' => $project], key('gallery-'.$project->id))
         </div>
 
         <!-- Name Suggestions Section -->
-        <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+        <div class="mt-8 pt-6 border-t" style="border-color: var(--text-secondary-color, #6b7280)">
             <!-- Section Header -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <div>
-                    <h3 class="text-lg font-medium {{ $userTheme ? '' : 'text-gray-900 dark:text-white' }}">Name Suggestions</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white" style="color: var(--text-color);">Name Suggestions</h3>
+                    <p class="text-sm text-gray-700 dark:text-gray-300 mt-1">
                         @if($this->suggestionCounts['total'] > 0)
                             {{ $this->suggestionCounts['visible'] }} visible, {{ $this->suggestionCounts['hidden'] }} hidden
                         @else
@@ -161,7 +152,7 @@
             @if($this->suggestionCounts['total'] === 0)
                 <!-- Ready to generate names -->
                 <div class="text-center py-12">
-                    <div class="text-gray-500 dark:text-gray-400">
+                    <div class="text-gray-700 dark:text-gray-300">
                         <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
@@ -172,7 +163,7 @@
             @elseif($this->filteredSuggestions->isEmpty() && $this->suggestionCounts['total'] > 0)
                 <!-- No suggestions for current filter -->
                 <div class="text-center py-12">
-                    <div class="text-gray-500 dark:text-gray-400">
+                    <div class="text-gray-700 dark:text-gray-300">
                         <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
@@ -208,10 +199,10 @@
 
         <!-- AI Generation Controls Modal/Section -->
         @if($showAIControls)
-            <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <div class="bg-primary-50 dark:bg-gray-800 rounded-lg p-6">
+            <div class="mt-8 pt-6 border-t" style="border-color: var(--text-secondary-color, #6b7280)">
+                <div class="rounded-lg p-6" style="background-color: var(--surface-color, #f8fafc);">
                     <div class="mb-6">
-                        <h3 class="text-lg font-semibold {{ $userTheme ? '' : 'text-gray-900 dark:text-white' }}">AI Name Generation</h3>
+                        <h3 class="text-lg font-semibold" style="color: var(--text-color);">AI Name Generation</h3>
                     </div>
 
                     <!-- AI Controls -->
@@ -483,7 +474,7 @@
 
         <!-- AI Model Comparison Results -->
         @if($enableModelComparison && !empty($aiGenerationResults))
-            <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div class="mt-8 pt-6 border-t" style="border-color: var(--text-secondary-color, #6b7280)">
                 <div class="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6">
                     <!-- Comparison Header with Summary -->
                     <div class="mb-6">
@@ -626,7 +617,7 @@
                                                 <div class="text-2xl font-bold {{ $speedColor }}">
                                                     {{ number_format($modelMetrics['response_time_ms']) }}ms
                                                 </div>
-                                                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Response Time</div>
+                                                <div class="text-xs text-gray-700 dark:text-gray-300 mt-1">Response Time</div>
                                                 <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mt-2">
                                                     @php 
                                                         $speedPercent = min(100, max(0, 100 - ($modelMetrics['response_time_ms'] / 30))); // 3000ms = 0%, 0ms = 100%
@@ -641,7 +632,7 @@
                                                 <div class="text-2xl font-bold {{ $costColor }}">
                                                     ${{ number_format($modelMetrics['cost_cents'] / 100, 3) }}
                                                 </div>
-                                                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Total Cost</div>
+                                                <div class="text-xs text-gray-700 dark:text-gray-300 mt-1">Total Cost</div>
                                                 <div class="text-xs text-gray-600 dark:text-gray-300 mt-1">
                                                     ${{ number_format($costEfficiency / 100, 3) }} per name
                                                 </div>
@@ -652,7 +643,7 @@
                                                 <div class="text-2xl font-bold text-purple-600 dark:text-purple-400">
                                                     {{ $modelMetrics['names_generated'] }}
                                                 </div>
-                                                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Names Generated</div>
+                                                <div class="text-xs text-gray-700 dark:text-gray-300 mt-1">Names Generated</div>
                                                 <div class="text-xs text-gray-600 dark:text-gray-300 mt-1">
                                                     {{ $modelMetrics['unique_suggestions'] ?? rand(3, 5) }} unique
                                                 </div>
@@ -663,7 +654,7 @@
                                                 <div class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
                                                     {{ number_format($modelMetrics['tokens_used']) }}
                                                 </div>
-                                                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Tokens Used</div>
+                                                <div class="text-xs text-gray-700 dark:text-gray-300 mt-1">Tokens Used</div>
                                                 <div class="text-xs text-gray-600 dark:text-gray-300 mt-1">
                                                     {{ number_format($modelMetrics['tokens_used'] / max($modelMetrics['names_generated'], 1)) }} per name
                                                 </div>
@@ -682,7 +673,7 @@
                                                     <div class="bg-primary-500 h-2 rounded-full transition-all duration-500" 
                                                          style="width: {{ ($modelMetrics['creativity_score'] * 10) }}%"></div>
                                                 </div>
-                                                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                <div class="text-xs text-gray-700 dark:text-gray-300 mt-1">
                                                     @if($modelMetrics['creativity_score'] >= 8.5)
                                                         Highly creative and original
                                                     @elseif($modelMetrics['creativity_score'] >= 7.0)
@@ -703,7 +694,7 @@
                                                     <div class="bg-green-500 h-2 rounded-full transition-all duration-500" 
                                                          style="width: {{ ($modelMetrics['relevance_score'] * 10) }}%"></div>
                                                 </div>
-                                                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                <div class="text-xs text-gray-700 dark:text-gray-300 mt-1">
                                                     @if($modelMetrics['relevance_score'] >= 9.0)
                                                         Excellent context understanding
                                                     @elseif($modelMetrics['relevance_score'] >= 8.0)
@@ -758,7 +749,7 @@
                                                                 <span class="text-xs px-2 py-1 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 font-medium">
                                                                     {{ $nameCategory }}
                                                                 </span>
-                                                                <span class="text-xs text-gray-500 dark:text-gray-400">
+                                                                <span class="text-xs text-gray-700 dark:text-gray-300">
                                                                     {{ $nameLength }} characters
                                                                 </span>
                                                             </div>
@@ -775,7 +766,7 @@
                                                                     Add to Project
                                                                 </div>
                                                             </flux:button>
-                                                            <div class="text-xs text-gray-500 dark:text-gray-400 text-center">
+                                                            <div class="text-xs text-gray-700 dark:text-gray-300 text-center">
                                                                 ~${{ number_format($estimatedCost / 100, 3) }}
                                                             </div>
                                                         </div>
@@ -843,7 +834,7 @@
                                             @endforeach
                                         </div>
                                     @else
-                                        <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+                                        <div class="text-center py-8 text-gray-700 dark:text-gray-300">
                                             <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m14 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m14 0H6m14 0l-3-3m-3-3l-3-3m0 0l-3 3"/>
                                             </svg>
@@ -860,7 +851,7 @@
 
         <!-- AI Generation History Section -->
         @if(!empty($aiGenerationHistory))
-            <div class="mt-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="mt-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                         Generation History
@@ -922,28 +913,28 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
                                 @if($generation->generation_mode)
                                     <div>
-                                        <span class="text-gray-500 dark:text-gray-400">Mode:</span>
+                                        <span class="text-gray-700 dark:text-gray-300">Mode:</span>
                                         <span class="ml-1 font-medium">{{ ucfirst($generation->generation_mode) }}</span>
                                     </div>
                                 @endif
                                 
                                 @if($generation->models_requested)
                                     <div>
-                                        <span class="text-gray-500 dark:text-gray-400">Models:</span>
+                                        <span class="text-gray-700 dark:text-gray-300">Models:</span>
                                         <span class="ml-1 font-medium">{{ count($generation->models_requested) }} model(s)</span>
                                     </div>
                                 @endif
                                 
                                 @if($generation->total_names_generated)
                                     <div>
-                                        <span class="text-gray-500 dark:text-gray-400">Names:</span>
+                                        <span class="text-gray-700 dark:text-gray-300">Names:</span>
                                         <span class="ml-1 font-medium">{{ $generation->total_names_generated }}</span>
                                     </div>
                                 @endif
                                 
                                 @if($generation->getDurationInSeconds())
                                     <div>
-                                        <span class="text-gray-500 dark:text-gray-400">Duration:</span>
+                                        <span class="text-gray-700 dark:text-gray-300">Duration:</span>
                                         <span class="ml-1 font-medium">{{ $generation->getDurationInSeconds() }}s</span>
                                     </div>
                                 @endif
@@ -979,5 +970,66 @@
 
         {{-- AI Toast Notifications --}}
         <x-ai-toast-notifications position="top-right" />
+
+        {{-- Generation Confirmation Modal --}}
+        <flux:modal name="generation-confirmation" variant="flyout">
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="flex-shrink-0 w-10 h-10 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center">
+                        <x-app-icon name="sparkles" size="md" class="text-primary-600 dark:text-primary-400" />
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                            Confirm AI Generation
+                        </h3>
+                        <p class="text-sm text-gray-700 dark:text-gray-300">
+                            Start generating business names?
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <p class="text-gray-700 dark:text-gray-300" id="confirmation-message">
+                        Generate names using the selected style?
+                    </p>
+                </div>
+
+                <div class="flex justify-end gap-3">
+                    <flux:button
+                        variant="ghost"
+                        x-on:click="$dispatch('modal-close', 'generation-confirmation')"
+                        wire:click="cancelGeneration">
+                        Cancel
+                    </flux:button>
+                    <flux:button
+                        variant="primary"
+                        x-on:click="$dispatch('modal-close', 'generation-confirmation')"
+                        wire:click="confirmGeneration">
+                        <div class="flex items-center gap-2">
+                            <x-app-icon name="sparkles" size="sm" />
+                            Generate Names
+                        </div>
+                    </flux:button>
+                </div>
+            </div>
+        </flux:modal>
     </div>
+
+    {{-- JavaScript for Generation Confirmation --}}
+    <script>
+        document.addEventListener('livewire:init', function () {
+            Livewire.on('show-generation-confirmation', function (data) {
+                // Update the confirmation message
+                const messageElement = document.getElementById('confirmation-message');
+                if (messageElement) {
+                    messageElement.textContent = data.message || 'Generate names using the selected style?';
+                }
+
+                // Show the modal
+                window.dispatchEvent(new CustomEvent('modal-open', {
+                    detail: { name: 'generation-confirmation' }
+                }));
+            });
+        });
+    </script>
 </div>

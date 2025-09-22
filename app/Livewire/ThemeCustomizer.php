@@ -127,7 +127,7 @@ final class ThemeCustomizer extends Component
                 return;
             }
 
-            // Update UserThemePreference model
+            // Update UserThemePreference model with comprehensive color settings
             UserThemePreference::updateOrCreate(
                 ['user_id' => $user->id],
                 [
@@ -137,6 +137,15 @@ final class ThemeCustomizer extends Component
                     'text_color' => $this->textColor,
                     'theme_name' => $this->themeName,
                     'is_dark_mode' => $this->isDarkMode,
+                    // Set proper dark mode colors
+                    'dark_background_color' => $this->isDarkMode ? $this->backgroundColor : '#111827',
+                    'dark_surface_color' => $this->isDarkMode ? '#374151' : '#1f2937',
+                    'dark_text_primary_color' => $this->isDarkMode ? $this->textColor : '#f9fafb',
+                    'dark_text_secondary_color' => '#d1d5db',
+                    // Set proper light mode colors
+                    'surface_color' => $this->isDarkMode ? '#f8fafc' : '#f8fafc',
+                    'text_primary_color' => $this->isDarkMode ? '#111827' : $this->textColor,
+                    'text_secondary_color' => '#6b7280',
                 ]
             );
 
@@ -194,11 +203,45 @@ final class ThemeCustomizer extends Component
                     window.authorizeThemeChange(isDark, 15000); // 15 second authorization for theme customizer
                 }
 
-                // Apply CSS custom properties
+                // Update CSS variables using the new unified function
+                if (window.updateThemeCssVariables) {
+                    window.updateThemeCssVariables({
+                        primaryColor: '{$this->primaryColor}',
+                        accentColor: '{$this->accentColor}',
+                        backgroundColor: '{$this->backgroundColor}',
+                        textColor: '{$this->textColor}',
+                        surfaceColor: isDark ? '#374151' : '#f8fafc',
+                        isDarkMode: isDark
+                    });
+                }
+
+                // Apply CSS custom properties as fallback - set all variable naming conventions
+                const surfaceColor = isDark ? '#374151' : '#f8fafc';
+                const secondaryTextColor = isDark ? '#d1d5db' : '#6b7280';
+                const mutedTextColor = isDark ? '#9ca3af' : '#6b7280';
+                const successColor = isDark ? '#22c55e' : '#059669';
+                const dangerColor = isDark ? '#ef4444' : '#dc2626';
+                const dangerBgHover = isDark ? '#7f1d1d' : '#fef2f2';
+
+                // Standard CSS variables
                 html.style.setProperty('--primary-color', '{$this->primaryColor}');
                 html.style.setProperty('--accent-color', '{$this->accentColor}');
                 html.style.setProperty('--background-color', '{$this->backgroundColor}');
                 html.style.setProperty('--text-color', '{$this->textColor}');
+                html.style.setProperty('--surface-color', surfaceColor);
+                html.style.setProperty('--text-secondary-color', secondaryTextColor);
+                html.style.setProperty('--text-muted-color', mutedTextColor);
+                html.style.setProperty('--success-color', successColor);
+                html.style.setProperty('--danger-color', dangerColor);
+                html.style.setProperty('--danger-bg-hover', dangerBgHover);
+
+                // Alternative naming for compatibility
+                html.style.setProperty('--color-primary', '{$this->primaryColor}');
+                html.style.setProperty('--color-accent', '{$this->accentColor}');
+                html.style.setProperty('--color-background', '{$this->backgroundColor}');
+                html.style.setProperty('--color-surface', surfaceColor);
+                html.style.setProperty('--color-text-primary', '{$this->textColor}');
+                html.style.setProperty('--color-text-secondary', secondaryTextColor);
 
                 // Apply dark mode class and localStorage sync
                 if (isDark) {

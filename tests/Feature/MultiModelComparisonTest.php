@@ -8,7 +8,7 @@ use App\Models\AIGeneration;
 use App\Models\NameSuggestion;
 use App\Models\Project;
 use App\Models\User;
-use App\Services\AI\AIGenerationService;
+use App\Services\AIGenerationService;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Livewire;
 

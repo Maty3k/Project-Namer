@@ -8,7 +8,7 @@ use App\Models\AIGeneration;
 use App\Models\NameSuggestion;
 use App\Models\Project;
 use App\Models\UserAIPreferences;
-use App\Services\AI\AIGenerationService;
+use App\Services\AIGenerationService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Cache;
@@ -169,7 +169,7 @@ class ProjectPage extends Component
 
     /**
      * Handle auto-generation trigger after mount.
-     * Only runs if no names exist and session allows it.
+     * Shows confirmation instead of auto-generating.
      */
     public function handleAutoGeneration(): void
     {
@@ -183,7 +183,16 @@ class ProjectPage extends Component
             // Remove the session flag to prevent future auto-generation
             session()->forget('auto_generated_'.$this->project->id);
 
-            $this->generateMoreNames();
+            // Show confirmation instead of auto-generating
+            if (! empty($this->generationMode)) {
+                $this->showGenerationConfirmation($this->generationMode);
+            } else {
+                // If no mode selected, still show a generic confirmation
+                $this->dispatch('show-generation-confirmation', [
+                    'mode' => 'default',
+                    'message' => 'Generate business names now?',
+                ]);
+            }
         }
     }
 
@@ -457,7 +466,7 @@ class ProjectPage extends Component
     /**
      * Load AI generation history for this project.
      */
-    protected function loadAIGenerationHistory(): void
+    public function loadAIGenerationHistory(): void
     {
         $this->aiGenerationHistory = AIGeneration::where('project_id', $this->project->id)
             ->where('user_id', auth()->id())
@@ -584,10 +593,46 @@ class ProjectPage extends Component
         // If the same mode is already selected, deselect it
         if ($this->generationMode === $mode) {
             $this->generationMode = '';
-        } else {
-            // Otherwise, select the new mode
-            $this->generationMode = $mode;
+
+            return;
         }
+
+        // Otherwise, select the new mode
+        $this->generationMode = $mode;
+
+        // Show confirmation dialog before auto-generating
+        $this->showGenerationConfirmation($mode);
+    }
+
+    /**
+     * Show confirmation dialog for generation.
+     */
+    public function showGenerationConfirmation(string $mode): void
+    {
+        // Dispatch event to show confirmation modal in the frontend
+        $this->dispatch('show-generation-confirmation', [
+            'mode' => $mode,
+            'message' => "Generate names using {$mode} style?",
+        ]);
+    }
+
+    /**
+     * Confirm and start generation with the selected mode.
+     */
+    public function confirmGeneration(): void
+    {
+        // Only generate if AI generation is enabled and mode is selected
+        if ($this->useAIGeneration && ! empty($this->generationMode)) {
+            $this->generateMoreNames();
+        }
+    }
+
+    /**
+     * Cancel generation and reset mode.
+     */
+    public function cancelGeneration(): void
+    {
+        $this->generationMode = '';
     }
 
     /**
@@ -661,26 +706,24 @@ class ProjectPage extends Component
             ]);
 
             // Generate names using multiple models
-            $results = $aiService->generateWithModels(
-                $aiGeneration,
-                $this->selectedAIModels,
+            $response = $aiService->generateNamesParallel(
                 $contextualPrompt,
-                [
-                    'mode' => $this->generationMode,
-                    'deep_thinking' => $this->deepThinking,
-                ]
+                $this->selectedAIModels,
+                $this->generationMode,
+                $this->deepThinking
             );
 
-            $this->aiGenerationResults = $results;
+            // Extract just the results (model => names mapping)
+            $this->aiGenerationResults = $response['results'] ?? [];
 
             // Create NameSuggestion records from AI results
-            $this->createNameSuggestionsFromAI($results, $aiGeneration);
+            $this->createNameSuggestionsFromAI($this->aiGenerationResults, $aiGeneration);
 
             // Update generation status
             $aiGeneration->update([
                 'status' => 'completed',
-                'results_data' => $results,
-                'total_names_generated' => count(collect($results)->flatten()),
+                'results_data' => $this->aiGenerationResults,
+                'total_names_generated' => count(collect($this->aiGenerationResults)->flatten()),
                 'completed_at' => now(),
             ]);
 
@@ -688,19 +731,19 @@ class ProjectPage extends Component
             $this->initializeActiveModelTab();
 
             // Dispatch generation completed event
-            $totalNamesGenerated = count(collect($results)->flatten());
+            $totalNamesGenerated = count(collect($this->aiGenerationResults)->flatten());
             $this->dispatch('ai-generation-completed', [
                 'generation_id' => $aiGeneration->id,
                 'session_id' => $aiGeneration->generation_session_id,
                 'project_uuid' => $this->project->uuid,
-                'results' => $results,
+                'results' => $this->aiGenerationResults,
                 'totalNames' => $totalNamesGenerated,
                 'modelsUsed' => count($this->selectedAIModels),
                 'elapsed_time_seconds' => $aiGeneration->getDurationInSeconds(),
             ]);
 
             $this->dispatch('show-toast', [
-                'message' => 'Generated '.count(collect($results)->flatten()).' new names!',
+                'message' => 'Generated '.count(collect($this->aiGenerationResults)->flatten()).' new names!',
                 'type' => 'success',
             ]);
 
@@ -789,28 +832,78 @@ class ProjectPage extends Component
     /**
      * Create NameSuggestion records from AI results.
      *
-     * @param  array<string, array<int, string>>  $results
+     * @param  array<string, array<string, mixed>>  $results
      */
     protected function createNameSuggestionsFromAI(array $results, AIGeneration $aiGeneration): void
     {
-        foreach ($results as $modelName => $names) {
-            foreach ($names as $name) {
-                // Generate domain list for this name
-                $domains = $this->generateDomainsForName($name);
+        // First pass: collect all valid names from all models with their metadata
+        $allNamesWithMetadata = [];
 
-                NameSuggestion::create([
-                    'project_id' => $this->project->id,
-                    'name' => $name,
-                    'domains' => $domains,
-                    'generation_metadata' => [
-                        'ai_model' => $modelName,
-                        'generation_mode' => $this->generationMode,
-                        'deep_thinking' => $this->deepThinking,
-                        'ai_generation_id' => $aiGeneration->id,
-                        'generated_at' => now()->toISOString(),
-                    ],
-                ]);
+        foreach ($results as $modelName => $modelResult) {
+            // Extract names from the model result structure
+            $names = $modelResult['names'] ?? [];
+
+            // Filter out any non-string entries (like explanatory text)
+            $validNames = array_filter($names, function ($name) {
+                return is_string($name) &&
+                       strlen(trim($name)) > 0 &&
+                       strlen(trim($name)) <= 100 && // Reasonable name length limit
+                       ! str_contains(strtolower($name), 'here are') && // Filter out explanatory text
+                       ! str_contains(strtolower($name), 'business names') &&
+                       ! str_contains(strtolower($name), 'information about') &&
+                       ! str_contains(strtolower($name), 'need more') &&
+                       preg_match('/^[a-zA-Z0-9\s\-\.&]+$/', $name); // Only allow reasonable characters
+            });
+
+            foreach ($validNames as $name) {
+                $trimmedName = trim((string) $name);
+
+                // Skip if empty after trimming
+                if (empty($trimmedName)) {
+                    continue;
+                }
+
+                // Store with normalized key for deduplication
+                $normalizedKey = strtolower(str_replace([' ', '-', '.', '&'], '', $trimmedName));
+
+                // Only keep the first occurrence of each name (first model gets priority)
+                if (! isset($allNamesWithMetadata[$normalizedKey])) {
+                    $allNamesWithMetadata[$normalizedKey] = [
+                        'name' => $trimmedName,
+                        'model' => $modelName,
+                        'metadata' => $modelResult,
+                    ];
+                }
             }
+        }
+
+        // Second pass: create NameSuggestion records for unique names only
+        foreach ($allNamesWithMetadata as $nameData) {
+            // Generate domain list for this name
+            $domains = $this->generateDomainsForName($nameData['name']);
+
+            NameSuggestion::create([
+                'project_id' => $this->project->id,
+                'name' => $nameData['name'],
+                'domains' => $domains,
+                'generation_metadata' => [
+                    'ai_model' => $nameData['model'],
+                    'generation_mode' => $this->generationMode,
+                    'deep_thinking' => $this->deepThinking,
+                    'ai_generation_id' => $aiGeneration->id,
+                    'generated_at' => now()->toISOString(),
+                    'model_metadata' => [
+                        'status' => $nameData['metadata']['status'] ?? 'unknown',
+                        'response_time_ms' => $nameData['metadata']['response_time_ms'] ?? 0,
+                        'cached' => $nameData['metadata']['cached'] ?? false,
+                        'fallback_used' => $nameData['metadata']['fallback_used'] ?? false,
+                    ],
+                    'deduplication_info' => [
+                        'unique_across_models' => true,
+                        'first_generated_by' => $nameData['model'],
+                    ],
+                ],
+            ]);
         }
     }
 

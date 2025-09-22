@@ -3,6 +3,62 @@
 <head>
     @include('partials.head')
 
+    @php
+        $userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
+        $themeVars = $userTheme ? $userTheme->generateCssVariables($userTheme->is_dark_mode) : [];
+    @endphp
+
+    <!-- Dynamic Theme CSS Variables -->
+    <style id="theme-css-variables">
+        :root {
+            @if($userTheme)
+                /* Standard CSS variables */
+                --primary-color: {{ $userTheme->primary_color }};
+                --accent-color: {{ $userTheme->accent_color ?? $userTheme->primary_color }};
+                --background-color: {{ $userTheme->is_dark_mode ? ($userTheme->dark_background_color ?? $userTheme->background_color) : $userTheme->background_color }};
+                --text-color: {{ $userTheme->is_dark_mode ? ($userTheme->dark_text_primary_color ?? $userTheme->text_color) : $userTheme->text_color }};
+                --surface-color: {{ $userTheme->is_dark_mode ? ($userTheme->dark_surface_color ?? '#374151') : ($userTheme->surface_color ?? '#f8fafc') }};
+                --text-secondary-color: {{ $userTheme->is_dark_mode ? ($userTheme->dark_text_secondary_color ?? '#d1d5db') : ($userTheme->text_secondary_color ?? '#6b7280') }};
+                --text-muted-color: {{ $userTheme->is_dark_mode ? '#9ca3af' : '#6b7280' }};
+                --success-color: {{ $userTheme->is_dark_mode ? '#22c55e' : '#059669' }};
+                --danger-color: {{ $userTheme->is_dark_mode ? '#ef4444' : '#dc2626' }};
+                --danger-bg-hover: {{ $userTheme->is_dark_mode ? '#7f1d1d' : '#fef2f2' }};
+
+                /* Alternative naming for compatibility */
+                --color-primary: {{ $userTheme->primary_color }};
+                --color-accent: {{ $userTheme->accent_color ?? $userTheme->primary_color }};
+                --color-background: {{ $userTheme->is_dark_mode ? ($userTheme->dark_background_color ?? $userTheme->background_color) : $userTheme->background_color }};
+                --color-surface: {{ $userTheme->is_dark_mode ? ($userTheme->dark_surface_color ?? '#374151') : ($userTheme->surface_color ?? '#f8fafc') }};
+                --color-text-primary: {{ $userTheme->is_dark_mode ? ($userTheme->dark_text_primary_color ?? $userTheme->text_color) : $userTheme->text_color }};
+                --color-text-secondary: {{ $userTheme->is_dark_mode ? ($userTheme->dark_text_secondary_color ?? '#d1d5db') : ($userTheme->text_secondary_color ?? '#6b7280') }};
+
+                @foreach($themeVars as $property => $value)
+                {{ $property }}: {{ $value }};
+                @endforeach
+            @else
+                /* Default theme variables */
+                --primary-color: #3b82f6;
+                --accent-color: #10b981;
+                --background-color: #ffffff;
+                --text-color: #111827;
+                --surface-color: #f8fafc;
+                --text-secondary-color: #6b7280;
+                --text-muted-color: #6b7280;
+                --success-color: #059669;
+                --danger-color: #dc2626;
+                --danger-bg-hover: #fef2f2;
+
+                /* Alternative naming for compatibility */
+                --color-primary: #3b82f6;
+                --color-accent: #10b981;
+                --color-background: #ffffff;
+                --color-surface: #f8fafc;
+                --color-text-primary: #111827;
+                --color-text-secondary: #6b7280;
+            @endif
+        }
+    </style>
+
     <script>
         // SMART THEME PROTECTION - Block automatic switching, allow intentional changes
         (function() {
@@ -47,6 +103,22 @@
                     }, duration);
                 };
 
+                // Function to update CSS variables dynamically
+                window.updateThemeCssVariables = function(colors) {
+                    console.log('UPDATING CSS VARIABLES:', colors);
+                    const styleElement = document.getElementById('theme-css-variables');
+                    if (styleElement) {
+                        const css = `:root {
+                            --primary-color: ${colors.primaryColor || '#3b82f6'};
+                            --accent-color: ${colors.accentColor || colors.primaryColor || '#10b981'};
+                            --background-color: ${colors.backgroundColor || '#ffffff'};
+                            --text-color: ${colors.textColor || '#111827'};
+                            --surface-color: ${colors.surfaceColor || (colors.isDarkMode ? '#374151' : '#f8fafc')};
+                        }`;
+                        styleElement.innerHTML = css;
+                    }
+                };
+
                 // Override system preference detection (but allow manual overrides)
                 if (window.matchMedia && !window.__matchMediaOverridden) {
                     const originalMatchMedia = window.matchMedia;
@@ -84,21 +156,37 @@
                 }
             });
 
-            // SMART mutation observer - block unauthorized changes, allow legitimate ones
+            // SMART mutation observer - only block truly unauthorized changes
             const observer = new MutationObserver(function(mutations) {
                 if (!window.__themeProtectionEnabled) return;
 
                 mutations.forEach(function(mutation) {
                     if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                         const currentIsDark = document.documentElement.classList.contains('dark');
-                        const expectedTheme = window.currentThemePreference || {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
 
-                        // Check if this is an authorized change
+                        // Get expected theme - prioritize currentThemePreference which is updated by theme customizer
+                        let expectedTheme;
+                        if (window.currentThemePreference !== undefined) {
+                            expectedTheme = window.currentThemePreference;
+                        } else {
+                            const localStorageTheme = localStorage.getItem('darkMode');
+                            if (localStorageTheme !== null) {
+                                expectedTheme = localStorageTheme === 'true';
+                            } else {
+                                expectedTheme = {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
+                            }
+                        }
+
+                        // Check if this is an authorized change (longer window for theme customizer)
                         const isAuthorized = window.__authorizedThemeChange ||
-                                           (Date.now() - window.__lastAuthorizedChange < 2000);
+                                           (Date.now() - window.__lastAuthorizedChange < 5000);
 
+                        // Only block if there's a real mismatch and it's not authorized
                         if (currentIsDark !== expectedTheme && !isAuthorized) {
                             console.log('UNAUTHORIZED theme change blocked! Restoring:', expectedTheme ? 'DARK' : 'LIGHT');
+
+                            // Temporarily disable protection to avoid loop
+                            window.__themeProtectionEnabled = false;
 
                             if (expectedTheme) {
                                 document.documentElement.classList.add('dark');
@@ -107,6 +195,15 @@
                                 document.documentElement.classList.remove('dark');
                                 localStorage.setItem('darkMode', 'false');
                             }
+
+                            // Re-enable protection after a short delay
+                            setTimeout(() => {
+                                window.__themeProtectionEnabled = true;
+                            }, 100);
+                        } else if (currentIsDark !== expectedTheme && isAuthorized) {
+                            // This is an authorized change, update our expectation
+                            window.currentThemePreference = currentIsDark;
+                            localStorage.setItem('darkMode', currentIsDark ? 'true' : 'false');
                         }
                     }
                 });
@@ -117,7 +214,7 @@
                 attributeFilter: ['class']
             });
 
-            // SMART monitoring: Only correct unauthorized changes
+            // SMART monitoring: Only correct unauthorized changes (less frequent)
             setInterval(function() {
                 if (window.__themeProtectionEnabled) {
                     const currentIsDark = document.documentElement.classList.contains('dark');
@@ -136,12 +233,15 @@
                         }
                     }
 
-                    // Only correct if unauthorized and different
+                    // Only correct if unauthorized and different (longer authorization window)
                     const isAuthorized = window.__authorizedThemeChange ||
-                                       (Date.now() - window.__lastAuthorizedChange < 2000);
+                                       (Date.now() - window.__lastAuthorizedChange < 5000);
 
                     if (currentIsDark !== expectedTheme && !isAuthorized) {
                         console.log('SMART correction applied:', expectedTheme ? 'DARK' : 'LIGHT');
+
+                        // Temporarily disable protection to avoid triggering mutation observer
+                        window.__themeProtectionEnabled = false;
 
                         if (expectedTheme) {
                             document.documentElement.classList.add('dark');
@@ -150,9 +250,14 @@
                             document.documentElement.classList.remove('dark');
                             localStorage.setItem('darkMode', 'false');
                         }
+
+                        // Re-enable protection after a short delay
+                        setTimeout(() => {
+                            window.__themeProtectionEnabled = true;
+                        }, 100);
                     }
                 }
-            }, 500); // Check every 500ms
+            }, 2000); // Check every 2 seconds (less frequent)
 
             // SMART theme event listeners - allow legitimate changes
             window.addEventListener('theme-changed', function(event) {
@@ -240,8 +345,8 @@
         });
     </script>
 </head>
-<body class="min-h-screen bg-white dark:bg-zinc-800">
-<flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900">
+<body class="min-h-screen" style="background-color: var(--background-color)">
+<flux:sidebar sticky stashable class="border-e" style="border-color: var(--text-secondary-color, #d1d5db); background-color: var(--surface-color)">
     <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
     <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>

@@ -4,10 +4,10 @@
     <!-- Theme Customizer Header -->
     <div class="flex items-center justify-between relative z-10">
         <div>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <h2 class="text-2xl font-bold" style="color: var(--text-color);">
                 Theme Customizer
             </h2>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
+            <p class="text-sm" style="color: var(--text-secondary-color);"
                 Customize your application theme and colors
             </p>
         </div>
@@ -33,7 +33,7 @@
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                                 Recommended: {{ $recommendedSeasonalTheme['display_name'] }}
                             </h3>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                            <p class="text-sm" style="color: var(--text-secondary-color);"
                                 Perfect for {{ ucfirst($recommendedSeasonalTheme['season'] ?? 'this time of year') }}
                             </p>
                         </div>

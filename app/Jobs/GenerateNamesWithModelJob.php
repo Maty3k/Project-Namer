@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Jobs;
 
 use App\Models\AIGeneration;
-use App\Services\AI\PrismAIService;
+use App\Services\AIGenerationService;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -44,7 +44,7 @@ class GenerateNamesWithModelJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(PrismAIService $prismAI): void
+    public function handle(AIGenerationService $aiService): void
     {
         $startTime = microtime(true);
         $cacheKey = "ai_generation_result_{$this->aiGeneration->id}_{$this->modelId}";
@@ -70,21 +70,23 @@ class GenerateNamesWithModelJob implements ShouldQueue
             // Update model status to running
             $this->updateModelStatus('running');
 
-            // Check if model is available
-            if (! $prismAI->isModelAvailable($this->modelId)) {
-                throw new Exception("AI model {$this->modelId} is not available");
-            }
-
-            // Optimize prompt for this specific model
-            $optimizedPrompt = $prismAI->optimizePrompt(
-                $this->modelId,
+            // Generate names using the updated service
+            $aiResults = $aiService->generateNamesParallel(
                 $this->prompt,
+                [$this->modelId],
                 $this->parameters['mode'] ?? 'creative',
-                $this->parameters['deep_thinking'] ?? false
+                $this->parameters['deep_thinking'] ?? false,
+                $this->parameters
             );
 
-            // Generate names
-            $results = $prismAI->generateNames($this->modelId, $optimizedPrompt, $this->parameters);
+            // Extract results for this specific model
+            $modelResult = $aiResults['results'][$this->modelId] ?? null;
+
+            if (! $modelResult || $modelResult['status'] !== 'completed') {
+                throw new Exception("AI model {$this->modelId} failed to generate names");
+            }
+
+            $results = $modelResult['names'];
 
             $endTime = microtime(true);
             $executionTime = ($endTime - $startTime) * 1000; // milliseconds

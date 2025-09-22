@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Services\PrismAIService;
+use App\Services\AIGenerationService;
 use App\Services\DomainCheckService;
 use App\Models\LogoGeneration;
 use App\Jobs\GenerateLogosJob;
@@ -182,33 +182,27 @@ new class extends Component {
         $this->lastApiCallTime = time();
 
         try {
-            // Use PrismAIService for each selected model to get unique, contextual names
-            $prismService = new \App\Services\PrismAIService();
+            // Use AIGenerationService for parallel name generation across selected models
+            $generationService = app(AIGenerationService::class);
+            $result = $generationService->generateNamesParallel(
+                $this->businessDescription,
+                $this->selectedAIModels,
+                $this->mode,
+                $this->deepThinking
+            );
+
             $allNames = [];
+            $this->aiModelResults = [];
 
-            // Generate names for each selected AI model
-            foreach ($this->selectedAIModels as $modelId) {
-                try {
-                    $modelNames = $prismService->generateNamesForSingleModel($this->businessDescription, $modelId, $this->mode, $this->deepThinking);
-
-                    if (empty($modelNames)) {
-                        // If PrismAI returns empty array, use contextual fallback
-                        $fallbackNames = $this->generateContextualFallbackNames($modelId);
-                        \Log::info("Using fallback names for $modelId: " . json_encode($fallbackNames));
-                        $this->aiModelResults[$modelId] = $fallbackNames;
-                        $allNames = array_merge($allNames, $fallbackNames);
-                    } else {
-                        $this->aiModelResults[$modelId] = $modelNames;
-                        $allNames = array_merge($allNames, $modelNames);
-                    }
-                } catch (\Exception $e) {
-                    // DEBUG: Log what's happening in the exception path
-                    \Log::info("PrismAI failed for $modelId: " . $e->getMessage());
-
-                    // If API fails, use fallback generation based on business description
+            // Process results from each model
+            foreach ($result['results'] as $modelId => $modelResult) {
+                if ($modelResult['status'] === 'completed' && !empty($modelResult['names'])) {
+                    $this->aiModelResults[$modelId] = $modelResult['names'];
+                    $allNames = array_merge($allNames, $modelResult['names']);
+                } else {
+                    // If model failed, use contextual fallback
                     $fallbackNames = $this->generateContextualFallbackNames($modelId);
-                    \Log::info("Generated fallback names for $modelId: " . json_encode($fallbackNames));
-
+                    \Log::info("Using fallback names for $modelId: " . json_encode($fallbackNames));
                     $this->aiModelResults[$modelId] = $fallbackNames;
                     $allNames = array_merge($allNames, $fallbackNames);
                 }

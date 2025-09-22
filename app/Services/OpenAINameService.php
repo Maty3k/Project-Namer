@@ -17,11 +17,15 @@ use Prism\Prism\ValueObjects\Messages\UserMessage;
  * Handles communication with OpenAI API via Prism to generate creative business names
  * based on user input and selected generation modes.
  */
-final class OpenAINameService
+final readonly class OpenAINameService
 {
     private const VALID_MODES = ['creative', 'professional', 'brandable', 'tech-focused'];
 
     private const MAX_INPUT_LENGTH = 2000;
+
+    public function __construct(
+        private PromptBuilder $promptBuilder
+    ) {}
 
     /**
      * Generate business names using OpenAI API via Prism.
@@ -46,8 +50,8 @@ final class OpenAINameService
             return $cachedResult->generated_names;
         }
 
-        $systemPrompt = 'You are an expert business naming consultant. Follow the detailed instructions provided to create exceptional business names.';
-        $userPrompt = $this->buildPrompt($businessIdea, $mode, $deepThinking);
+        $systemPrompt = $this->promptBuilder->buildSystemPrompt('gpt-5-mini', 10, $mode, $deepThinking);
+        $userPrompt = $this->promptBuilder->buildUserPrompt($businessIdea, 'gpt-5-mini', $mode, $deepThinking);
 
         try {
             $response = Prism::text()
@@ -104,27 +108,6 @@ final class OpenAINameService
         if (! in_array($mode, self::VALID_MODES)) {
             throw new InvalidArgumentException('Invalid generation mode');
         }
-    }
-
-    /**
-     * Build the appropriate prompt based on mode and thinking level.
-     */
-    private function buildPrompt(string $businessIdea, string $mode, bool $deepThinking): string
-    {
-        $modePrompts = [
-            'creative' => 'Generate creative, unique, and memorable business names that stand out and spark curiosity.',
-            'professional' => 'Generate professional, trustworthy business names suitable for corporate environments.',
-            'brandable' => 'Generate brandable, catchy names that are easy to remember and could work as domain names.',
-            'tech-focused' => 'Generate tech-focused names that appeal to developers and technical audiences.',
-        ];
-
-        $basePrompt = $modePrompts[$mode]."\n\nBusiness concept: ".$businessIdea;
-
-        if ($deepThinking) {
-            $basePrompt .= "\n\nTake time to consider the target audience, market positioning, and brand personality. Think about names that would resonate with customers and be easy to market.";
-        }
-
-        return $basePrompt;
     }
 
     /**
