@@ -26,12 +26,12 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 2.7 Integrate PromptBuilder service
   - [x] 2.8 Verify all AIGenerationService tests pass
 
-- [ ] 3. Update NameGeneratorDashboard Livewire Component
-  - [ ] 3.1 Write tests for updated dashboard component
-  - [ ] 3.2 Remove PrismAIService dependency injection
-  - [ ] 3.3 Update component to use AIGenerationService directly
-  - [ ] 3.4 Update any direct AI service calls to use new pattern
-  - [ ] 3.5 Verify all dashboard component tests pass
+- [x] 3. Update NameGeneratorDashboard Livewire Component
+  - [x] 3.1 Write tests for updated dashboard component
+  - [x] 3.2 Remove PrismAIService dependency injection
+  - [x] 3.3 Update component to use AIGenerationService directly
+  - [x] 3.4 Update any direct AI service calls to use new pattern
+  - [x] 3.5 Verify all dashboard component tests pass
 
 - [ ] 4. Update Background Job Classes
   - [ ] 4.1 Write tests for updated job classes

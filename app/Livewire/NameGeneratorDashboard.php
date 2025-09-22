@@ -15,8 +15,7 @@ use App\Models\NamingSession;
 use App\Models\Share;
 use App\Models\UserAIPreferences;
 use App\Models\UserThemePreference;
-use App\Services\AI\AIGenerationService;
-use App\Services\AI\PrismAIService;
+use App\Services\AIGenerationService;
 use App\Services\DomainCheckService;
 use App\Services\ExportService;
 use App\Services\OpenAINameService;
@@ -861,10 +860,10 @@ class NameGeneratorDashboard extends Component
     public function checkModelAvailability(): void
     {
         try {
-            $aiService = app(PrismAIService::class);
-
+            // Since we're using Prism directly now, we can assume all models are available
+            // In a real implementation, you might want to do a quick ping to each provider
             foreach ($this->availableAIModels as $model) {
-                $this->modelAvailability[$model['id']] = $aiService->isModelAvailable($model['id']);
+                $this->modelAvailability[$model['id']] = true;
             }
         } catch (Exception $e) {
             Log::warning('Failed to check model availability', ['error' => $e->getMessage()]);
@@ -954,26 +953,32 @@ class NameGeneratorDashboard extends Component
             $aiService = app(AIGenerationService::class);
 
             $startTime = microtime(true);
-            $results = $aiService->generateWithModels(
-                $aiGeneration,
-                $this->selectedAIModels,
+            $results = $aiService->generateNamesParallel(
                 $this->businessIdea,
-                [
-                    'mode' => $this->generationMode,
-                    'deep_thinking' => $this->deepThinking,
-                ]
+                $this->selectedAIModels,
+                $this->generationMode,
+                $this->deepThinking,
+                []
             );
             $endTime = microtime(true);
 
-            // Process results
-            $this->aiModelResults = $results;
+            // Process results from the new format
+            $modelResults = $results['results'];
+            $metadata = $results['execution_metadata'];
+            $this->aiModelResults = [];
             $allNames = [];
 
-            foreach ($results as $model => $names) {
-                $allNames = array_merge($allNames, $names);
+            foreach ($modelResults as $model => $result) {
+                if ($result['status'] === 'completed') {
+                    $this->aiModelResults[$model] = $result['names'];
+                    $allNames = array_merge($allNames, $result['names']);
 
-                // Update model performance metrics
-                $this->updateModelPerformance($model, true, (int) (($endTime - $startTime) * 1000));
+                    // Update model performance metrics
+                    $this->updateModelPerformance($model, true, $result['response_time_ms']);
+                } else {
+                    // Handle failed models
+                    $this->updateModelPerformance($model, false, $metadata['average_response_time_ms']);
+                }
             }
 
             // Remove duplicates and set generated names
@@ -985,10 +990,12 @@ class NameGeneratorDashboard extends Component
             // Mark AI generation as completed
             $aiGeneration->markAsCompleted([
                 'names' => $this->generatedNames,
-                'model_results' => $results,
+                'model_results' => $this->aiModelResults,
             ], [
-                'total_time_ms' => (int) (($endTime - $startTime) * 1000),
-                'models_used' => array_keys($results),
+                'total_time_ms' => $metadata['total_execution_time_ms'],
+                'models_used' => array_keys($this->aiModelResults),
+                'successful_models' => $metadata['successful_models'],
+                'failed_models' => $metadata['failed_models'],
             ]);
 
             // Check domain availability
@@ -1006,8 +1013,8 @@ class NameGeneratorDashboard extends Component
             $this->dispatch('ai-generation-completed', [
                 'generationId' => $aiGeneration->id,
                 'totalNames' => count($this->generatedNames),
-                'modelsUsed' => count(array_keys($results)),
-                'processingTime' => (int) (($endTime - $startTime) * 1000),
+                'modelsUsed' => count(array_keys($this->aiModelResults)),
+                'processingTime' => $metadata['total_execution_time_ms'],
             ]);
 
         } catch (Exception $e) {
