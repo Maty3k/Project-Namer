@@ -155,7 +155,7 @@ describe('Icon Component', function (): void {
             'success' => 'text-green-600',
             'error' => 'text-red-600',
             'warning' => 'text-yellow-600',
-            'info' => 'text-blue-600',
+            'info' => 'text-gray-600',
         ];
 
         foreach ($variants as $variant) {

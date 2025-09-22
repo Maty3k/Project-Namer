@@ -26,8 +26,8 @@ use Illuminate\Support\Str;
  * @property string|null $two_factor_recovery_codes
  * @property \Illuminate\Support\Carbon|null $two_factor_confirmed_at
  * @property string $current_theme
- * @property int $prefers_dark_mode
- * @property int $theme_auto_switch
+ * @property bool $prefers_dark_mode
+ * @property bool $theme_auto_switch
  * @property-read bool $two_factor_enabled
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MoodBoard> $moodBoards
  * @property-read int|null $mood_boards_count
@@ -76,6 +76,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'current_theme',
+        'prefers_dark_mode',
+        'theme_auto_switch',
     ];
 
     /**
@@ -99,6 +102,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
+            'prefers_dark_mode' => 'boolean',
+            'theme_auto_switch' => 'boolean',
         ];
     }
 

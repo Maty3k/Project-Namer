@@ -102,7 +102,7 @@ describe('Theme API Endpoints', function (): void {
                 ],
             ]);
 
-        expect($response->json('themes'))->toHaveCount(17); // Updated count for all available themes
+        expect($response->json('themes'))->toHaveCount(20); // Updated count for all available themes
     });
 
     test('can generate custom CSS for theme', function (): void {

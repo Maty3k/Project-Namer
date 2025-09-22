@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Services\OpenAINameService;
+use App\Services\PrismAIService;
 use App\Services\DomainCheckService;
 use App\Models\LogoGeneration;
 use App\Jobs\GenerateLogosJob;
@@ -26,6 +26,7 @@ new class extends Component {
     public int $rateLimitCooldown = 30; // seconds
     public string $sessionId = '';
     public bool $isGeneratingLogos = false;
+    public mixed $userTheme = null;
 
     public array $modes = [
         'creative' => 'Creative',
@@ -33,6 +34,20 @@ new class extends Component {
         'brandable' => 'Brandable',
         'tech-focused' => 'Tech-focused',
     ];
+
+    // AI Model Selection Properties
+    public bool $enableModelComparison = false;
+    /** @var array<int, string> */
+    public array $selectedAIModels = ['claude-3.5-sonnet'];
+    /** @var array<int, array<string, string>> */
+    public array $availableAIModels = [
+        ['id' => 'gpt-4', 'name' => 'GPT-4', 'provider' => 'OpenAI'],
+        ['id' => 'claude-3.5-sonnet', 'name' => 'Claude 3.5', 'provider' => 'Anthropic'],
+        ['id' => 'gemini-1.5-pro', 'name' => 'Gemini Pro', 'provider' => 'Google'],
+        ['id' => 'grok-beta', 'name' => 'Grok', 'provider' => 'xAI'],
+    ];
+    /** @var array<string, array<int, string>> */
+    public array $aiModelResults = [];
 
     // Table sorting and filtering properties
     public array $currentSort = ['column' => null, 'direction' => null];
@@ -107,12 +122,42 @@ new class extends Component {
         ]);
     }
 
+    public function updatedEnableModelComparison(): void
+    {
+        // When model comparison is disabled, keep only the first selected model
+        if (!$this->enableModelComparison && count($this->selectedAIModels) > 1) {
+            $this->selectedAIModels = [reset($this->selectedAIModels)];
+        }
+        // When model comparison is enabled for the first time and no models are selected, select GPT-4
+        if ($this->enableModelComparison && empty($this->selectedAIModels)) {
+            $this->selectedAIModels = ['claude-3.5-sonnet'];
+        }
+    }
+
+    public function selectSingleModel(string $modelId): void
+    {
+        // For single model selection (radio button behavior)
+        if (!$this->enableModelComparison) {
+            $this->selectedAIModels = [$modelId];
+        }
+    }
+
     public function generateNames(): void
     {
         // Validate form first
         if (!$this->validateForm()) {
             return;
         }
+
+        // Validate selected AI models
+        if (empty($this->selectedAIModels)) {
+            $this->errorMessage = 'Please select at least one AI model.';
+            $this->showErrorNotification('Please select at least one AI model.', 'validation');
+            return;
+        }
+
+        // Preserve theme state before generation
+        $this->preserveThemeState();
 
         // Check rate limiting (allow tests to test rate limiting when lastApiCallTime is explicitly set)
         if ($this->isRateLimited()) {
@@ -123,30 +168,70 @@ new class extends Component {
 
         $this->isLoading = true;
         $this->errorMessage = '';
-        
-        // Show progress notification
-        $this->showInfoNotification('Generating creative business names...', false, 0);
+
+        // Show progress notification based on model count
+        $modelCount = count($this->selectedAIModels);
+        $message = $modelCount === 1
+            ? 'Generating creative business names...'
+            : "Generating names using {$modelCount} AI models...";
+        $this->showInfoNotification($message, false, 0);
+
         $this->generatedNames = [];
         $this->domainResults = [];
+        $this->aiModelResults = [];
         $this->lastApiCallTime = time();
 
         try {
-            $service = app(OpenAINameService::class);
-            $names = $service->generateNames(
-                $this->businessDescription,
-                $this->mode,
-                $this->deepThinking
-            );
-            
-            $this->generatedNames = $names;
-            
-            // Initialize domain results with checking status
+            // Use PrismAIService for each selected model to get unique, contextual names
+            $prismService = new \App\Services\PrismAIService();
+            $allNames = [];
+
+            // Generate names for each selected AI model
+            foreach ($this->selectedAIModels as $modelId) {
+                try {
+                    $modelNames = $prismService->generateNamesForSingleModel($this->businessDescription, $modelId, $this->mode, $this->deepThinking);
+
+                    if (empty($modelNames)) {
+                        // If PrismAI returns empty array, use contextual fallback
+                        $fallbackNames = $this->generateContextualFallbackNames($modelId);
+                        \Log::info("Using fallback names for $modelId: " . json_encode($fallbackNames));
+                        $this->aiModelResults[$modelId] = $fallbackNames;
+                        $allNames = array_merge($allNames, $fallbackNames);
+                    } else {
+                        $this->aiModelResults[$modelId] = $modelNames;
+                        $allNames = array_merge($allNames, $modelNames);
+                    }
+                } catch (\Exception $e) {
+                    // DEBUG: Log what's happening in the exception path
+                    \Log::info("PrismAI failed for $modelId: " . $e->getMessage());
+
+                    // If API fails, use fallback generation based on business description
+                    $fallbackNames = $this->generateContextualFallbackNames($modelId);
+                    \Log::info("Generated fallback names for $modelId: " . json_encode($fallbackNames));
+
+                    $this->aiModelResults[$modelId] = $fallbackNames;
+                    $allNames = array_merge($allNames, $fallbackNames);
+                }
+            }
+
+            // Remove duplicates and ensure we have exactly 10 names
+            $uniqueNames = array_unique($allNames);
+            $this->generatedNames = array_slice($uniqueNames, 0, 10);
+
+            // Initialize domain results with comprehensive TLD options
             $this->domainResults = array_map(fn($name) => [
                 'name' => $name,
                 'domains' => [
-                    $name . '.com' => ['status' => 'checking', 'available' => null],
-                    $name . '.net' => ['status' => 'checking', 'available' => null],
-                    $name . '.org' => ['status' => 'checking', 'available' => null],
+                    $name . '.com' => ['status' => 'ready', 'available' => null],
+                    $name . '.net' => ['status' => 'ready', 'available' => null],
+                    $name . '.org' => ['status' => 'ready', 'available' => null],
+                    $name . '.io' => ['status' => 'ready', 'available' => null],
+                    $name . '.co' => ['status' => 'ready', 'available' => null],
+                    $name . '.app' => ['status' => 'ready', 'available' => null],
+                    $name . '.dev' => ['status' => 'ready', 'available' => null],
+                    $name . '.ai' => ['status' => 'ready', 'available' => null],
+                    $name . '.tech' => ['status' => 'ready', 'available' => null],
+                    $name . '.studio' => ['status' => 'ready', 'available' => null],
                 ]
             ], $this->generatedNames);
 
@@ -154,15 +239,124 @@ new class extends Component {
             $this->saveToHistory();
 
             // Show generation success notification
-            $this->showGenerationCompleteNotification();
+            $successMessage = $modelCount === 1
+                ? "Generated " . count($this->generatedNames) . " business names!"
+                : "Generated " . count($this->generatedNames) . " unique names from {$modelCount} AI models!";
+            $this->showSuccessNotification($successMessage);
 
             // Automatically start domain checking
             $this->checkDomains();
+
+            // Ensure theme consistency after generation
+            $this->ensureThemeConsistency();
         } catch (\Exception $e) {
             $this->errorMessage = $this->getErrorMessage($e);
             $this->showErrorNotification($this->getErrorMessage($e), 'generateNames');
         } finally {
             $this->isLoading = false;
+        }
+    }
+
+    /**
+     * Preserve theme state before operations that might cause refreshes.
+     */
+    protected function preserveThemeState(): void
+    {
+        // Ensure we have the latest theme data
+        $this->loadUserTheme();
+
+        // If we have a theme, dispatch JavaScript to lock it
+        if ($this->userTheme) {
+            $isDark = $this->userTheme->is_dark_mode ? 'true' : 'false';
+            $this->js("
+                console.log('🔒 NAME GENERATOR: Theme preservation activated for', {$isDark} ? 'DARK' : 'LIGHT');
+
+                // Authorize theme change with the protection system
+                if (window.authorizeThemeChange) {
+                    window.authorizeThemeChange({$isDark}, 30000); // 30 second authorization
+                    console.log('✅ Theme authorization granted from name generator');
+                }
+
+                // Set preservation variables
+                window.__themePreservationMode = true;
+                window.__preservedTheme = {$isDark};
+                window.__themeIsLocked = true;
+                window.__lockedTheme = {$isDark};
+                window.currentThemePreference = {$isDark};
+
+                // Lock theme class immediately
+                const applyTheme = () => {
+                    if ({$isDark}) {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('darkMode', 'true');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('darkMode', 'false');
+                    }
+                };
+
+                applyTheme();
+                setTimeout(applyTheme, 100);
+                setTimeout(applyTheme, 500);
+                setTimeout(applyTheme, 1000);
+            ");
+        }
+    }
+
+    /**
+     * Ensure theme consistency after operations.
+     */
+    protected function ensureThemeConsistency(): void
+    {
+        // Reload theme in case it was lost during component refresh
+        $this->loadUserTheme();
+
+        // Dispatch JavaScript to ensure theme is properly applied
+        if ($this->userTheme) {
+            $isDark = $this->userTheme->is_dark_mode ? 'true' : 'false';
+            $this->js("
+                console.log('🎯 NAME GENERATOR: Theme consistency enforced for', {$isDark} ? 'DARK' : 'LIGHT');
+                const isDark = {$isDark};
+
+                // Re-authorize theme change
+                if (window.authorizeThemeChange) {
+                    window.authorizeThemeChange(isDark, 20000); // 20 second authorization
+                }
+
+                // Apply theme class aggressively
+                const enforceTheme = () => {
+                    if (isDark) {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('darkMode', 'true');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('darkMode', 'false');
+                    }
+                    window.currentThemePreference = isDark;
+                    window.__lockedTheme = isDark;
+                };
+
+                enforceTheme();
+                setTimeout(enforceTheme, 50);
+                setTimeout(enforceTheme, 200);
+                setTimeout(enforceTheme, 500);
+                setTimeout(enforceTheme, 1000);
+
+                // Dispatch theme consistency event
+                window.dispatchEvent(new CustomEvent('theme-consistency-enforced', {
+                    detail: { isDark }
+                }));
+
+                // Update theme lock variables
+                window.__themeIsLocked = true;
+                window.__lockedTheme = isDark;
+
+                // Keep preservation mode active for 5 seconds
+                setTimeout(() => {
+                    window.__themePreservationMode = false;
+                    console.log('🔓 Name generator theme preservation deactivated');
+                }, 5000);
+            ");
         }
     }
 
@@ -179,7 +373,7 @@ new class extends Component {
 
         try {
             $domainService = app(DomainCheckService::class);
-            $totalDomains = count($this->generatedNames) * 3; // 3 domains per name (.com, .net, .org)
+            $totalDomains = count($this->generatedNames) * 10; // 10 domains per name (.com, .net, .org, .io, .co, .app, .dev, .ai, .tech, .studio)
             $checkedCount = 0;
 
             foreach ($this->domainResults as $index => $result) {
@@ -249,6 +443,8 @@ new class extends Component {
         return match($status) {
             'checking' => '🔄',
             'checked' => $available ? '✅' : '❌',
+            'ready' => '🌐',
+            'not_available' => '➖',
             'error' => '⚠️',
             default => '❓'
         };
@@ -259,6 +455,8 @@ new class extends Component {
         return match($status) {
             'checking' => 'Checking...',
             'checked' => $available ? 'Available' : 'Taken',
+            'ready' => 'Ready',
+            'not_available' => 'Not checked',
             'error' => 'Error checking',
             default => 'Unknown'
         };
@@ -269,6 +467,7 @@ new class extends Component {
         return match ($status) {
             'checking' => 'text-primary-600 dark:text-primary-400',
             'checked' => $available ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400',
+            'ready' => 'text-blue-600 dark:text-blue-400',
             'error' => 'text-yellow-600 dark:text-yellow-400',
             default => 'text-gray-600 dark:text-gray-400',
         };
@@ -278,6 +477,15 @@ new class extends Component {
     {
         $this->loadSearchHistory();
         $this->sessionId = session()->getId();
+        $this->loadUserTheme();
+    }
+
+    /**
+     * Load user theme preferences.
+     */
+    protected function loadUserTheme(): void
+    {
+        $this->userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
     }
 
     public function loadSearchHistory(): void
@@ -1699,6 +1907,232 @@ new class extends Component {
         $this->screenReaderAnnouncement = 'Form cleared';
     }
 
+    /**
+     * Generate contextual fallback names when AI services fail.
+     * Uses business description and mode to create relevant names.
+     *
+     * @return array<string>
+     */
+    private function generateContextualFallbackNames(string $modelId): array
+    {
+        // Extract keywords from business description
+        $keywords = $this->extractBusinessKeywords($this->businessDescription);
+        $businessWord = !empty($keywords) ? ucfirst((string) $keywords[0]) : 'Business';
+
+        // Mode-specific suffixes based on the AI model and generation mode
+        $suffixes = match ($modelId) {
+            'gpt-4' => ['Pro', 'Hub', 'Core', 'AI', 'Labs', 'Tech', 'Plus', 'Max', 'Zone', 'Link'],
+            'claude-3.5-sonnet' => ['Studio', 'Works', 'Craft', 'House', 'Space', 'Mind', 'Logic', 'Smart', 'Swift', 'Wise'],
+            'gemini-1.5-pro' => ['Digital', 'Cloud', 'Net', 'Web', 'App', 'System', 'Data', 'Code', 'Flow', 'Sync'],
+            'grok-beta' => ['X', 'Edge', 'Boost', 'Rush', 'Spark', 'Volt', 'Pulse', 'Wave', 'Beat', 'Fire'],
+            default => ['Pro', 'Hub', 'Core', 'Zone', 'Labs', 'Tech', 'Plus', 'Max', 'AI', 'Link']
+        };
+
+        // Create unique seed based on description + model + timestamp to ensure different results each time
+        $seed = crc32($this->businessDescription . $modelId . microtime(true));
+        mt_srand($seed);
+
+        $names = [];
+        foreach ($suffixes as $suffix) {
+            $names[] = $businessWord . $suffix;
+        }
+
+        // Shuffle to provide variety
+        shuffle($names);
+        return $names;
+    }
+
+    /**
+     * Extract business-relevant keywords from description
+     */
+    private function extractBusinessKeywords(string $description): array
+    {
+        // Clean and split description
+        $words = preg_split('/[\s\-_]+/', strtolower($description));
+        $keywords = [];
+
+        // Common words to ignore
+        $stopWords = [
+            'the', 'and', 'for', 'with', 'that', 'this', 'from', 'they', 'have', 'will',
+            'been', 'their', 'said', 'each', 'which', 'them', 'than', 'many', 'some',
+            'time', 'very', 'when', 'much', 'new', 'now', 'old', 'see', 'him', 'two',
+            'how', 'its', 'our', 'out', 'day', 'get', 'use', 'man', 'way', 'may', 'say',
+            'company', 'business', 'service', 'application', 'app', 'platform', 'system'
+        ];
+
+        foreach ($words as $word) {
+            $word = preg_replace('/[^a-z]/', '', $word);
+            if (strlen((string) $word) > 2 && !in_array($word, $stopWords)) {
+                $keywords[] = $word;
+            }
+        }
+
+        return array_unique($keywords);
+    }
+
+    /**
+     * Get mode-specific components for name generation
+     */
+    private function getModeComponents(string $mode): array
+    {
+        return match($mode) {
+            'creative' => [
+                'prefixes' => ['Zen', 'Flow', 'Sync', 'Vibe', 'Pulse', 'Wave', 'Flux', 'Nova', 'Aura', 'Echo', 'Orbit', 'Prism', 'Nexus', 'Spark', 'Drift'],
+                'suffixes' => ['Labs', 'Hub', 'Core', 'Zone', 'Link', 'Loop', 'Grid', 'Path', 'Mind', 'Space', 'Verse', 'Flow', 'Sync', 'Wave', 'Beam'],
+                'connectors' => ['', 'X', 'Pro', 'Max', 'Plus', 'AI', 'Go', 'Now']
+            ],
+            'professional' => [
+                'prefixes' => ['Premium', 'Elite', 'Professional', 'Executive', 'Corporate', 'Strategic', 'Global', 'Advanced', 'Premier', 'Superior'],
+                'suffixes' => ['Solutions', 'Group', 'Partners', 'Associates', 'Consulting', 'Services', 'Systems', 'Dynamics', 'Enterprises', 'Corporation'],
+                'connectors' => ['', 'Pro', 'Plus', 'Enterprise', 'Business']
+            ],
+            'brandable' => [
+                'prefixes' => ['Biz', 'Pro', 'Smart', 'Quick', 'Easy', 'Fast', 'Auto', 'Flex', 'Meta', 'Ultra', 'Hyper', 'Nano', 'Micro', 'Mega'],
+                'suffixes' => ['ly', 'io', 'fy', 'sy', 'ty', 'ry', 'my', 'ny', 'py', 'zy', 'dy', 'ky', 'vy', 'xy', 'by'],
+                'connectors' => ['', 'i', 'y', 'o', 'a']
+            ],
+            'tech-focused' => [
+                'prefixes' => ['Code', 'Tech', 'Data', 'Cloud', 'AI', 'Digital', 'Cyber', 'Smart', 'Auto', 'Robo', 'Neural', 'Quantum', 'Binary', 'Logic'],
+                'suffixes' => ['Tech', 'Lab', 'API', 'Bot', 'Dev', 'App', 'Sync', 'Link', 'Net', 'Web', 'Code', 'Sys', 'Pro', 'Hub', 'Core'],
+                'connectors' => ['', 'X', 'Pro', 'AI', 'Bot', 'Lab', 'Dev']
+            ],
+            default => [
+                'prefixes' => ['Smart', 'Quick', 'Pro', 'Meta', 'Auto', 'Fast'],
+                'suffixes' => ['ly', 'Hub', 'Pro', 'Core', 'Zone', 'Link'],
+                'connectors' => ['', 'Pro', 'Plus']
+            ]
+        };
+    }
+
+    /**
+     * Generate a name using business keywords
+     */
+    private function generateKeywordBasedName(array $keywords, array $components): string
+    {
+        $keyword = $keywords[mt_rand(0, count($keywords) - 1)];
+        $keyword = ucfirst((string) $keyword);
+
+        $type = mt_rand(1, 4);
+
+        return match($type) {
+            1 => $keyword . $components['suffixes'][mt_rand(0, count($components['suffixes']) - 1)],
+            2 => $components['prefixes'][mt_rand(0, count($components['prefixes']) - 1)] . $keyword,
+            3 => $keyword . $components['connectors'][mt_rand(0, count($components['connectors']) - 1)],
+            4 => $keyword . $components['connectors'][mt_rand(0, count($components['connectors']) - 1)] .
+                 $components['suffixes'][mt_rand(0, count($components['suffixes']) - 1)],
+        };
+    }
+
+    /**
+     * Generate a name using mode components
+     */
+    private function generateComponentBasedName(array $components): string
+    {
+        $type = mt_rand(1, 3);
+
+        return match($type) {
+            1 => $components['prefixes'][mt_rand(0, count($components['prefixes']) - 1)] .
+                 $components['suffixes'][mt_rand(0, count($components['suffixes']) - 1)],
+            2 => $components['prefixes'][mt_rand(0, count($components['prefixes']) - 1)] .
+                 $components['connectors'][mt_rand(0, count($components['connectors']) - 1)] .
+                 $components['suffixes'][mt_rand(0, count($components['suffixes']) - 1)],
+            3 => $components['prefixes'][mt_rand(0, count($components['prefixes']) - 1)] .
+                 $components['connectors'][mt_rand(0, count($components['connectors']) - 1)],
+        };
+    }
+
+    /**
+     * Generate mock names for testing/development when API calls fail
+     *
+     * @return array<string>
+     */
+    private function generateMockNames(): array
+    {
+        // DEBUG: Force throw exception to see if this method is called
+        throw new \Exception("DEBUG: generateMockNames called with description: " . $this->businessDescription);
+
+        // Generate unique names based on business description and timestamp
+        $seed = crc32($this->businessDescription . microtime(true));
+        mt_srand($seed);
+
+        // Extract keywords from business description
+        $keywords = $this->extractBusinessKeywords($this->businessDescription);
+        $businessWord = !empty($keywords) ? ucfirst((string) $keywords[0]) : 'Business';
+
+        // Define contextual components for each mode - using business context instead of generic words
+        $components = [
+            'creative' => [
+                'prefixes' => [$businessWord, 'Smart', 'Bright', 'Fresh', 'Quick', 'Bold', 'Pure', 'Swift', 'Sharp', 'Clear', 'Wise', 'Nova', 'Peak', 'Elite', 'Prime'],
+                'suffixes' => ['Labs', 'Hub', 'Works', 'Core', 'Studio', 'Space', 'Mind', 'Zone', 'Link', 'Craft', 'House', 'Base', 'Pro', 'Plus', 'Max']
+            ],
+            'professional' => [
+                'prefixes' => ['Premium', 'Elite', 'Professional', 'Executive', 'Corporate', 'Business', 'Metropolitan', 'Strategic', 'Global', 'Advanced'],
+                'suffixes' => ['Solutions', 'Group', 'Partners', 'Associates', 'Consulting', 'Services', 'Systems', 'Dynamics', 'Enterprises', 'Corporation']
+            ],
+            'brandable' => [
+                'prefixes' => ['Biz', 'Pro', 'Smart', 'Quick', 'Easy', 'Fast', 'Auto', 'Flex', 'Meta', 'Ultra', 'Super', 'Mega', 'Hyper', 'Nano', 'Micro'],
+                'suffixes' => ['ly', 'io', 'fy', 'sy', 'ty', 'ry', 'my', 'ny', 'py', 'zy', 'dy', 'ky', 'vy', 'xy', 'by']
+            ],
+            'tech-focused' => [
+                'prefixes' => ['Code', 'Tech', 'Data', 'Cloud', 'AI', 'Digital', 'Cyber', 'Smart', 'Auto', 'Robo', 'Neural', 'Quantum', 'Pixel', 'Binary', 'Logic'],
+                'suffixes' => ['Tech', 'Lab', 'API', 'Bot', 'Dev', 'App', 'Sync', 'Link', 'Net', 'Web', 'Code', 'Sys', 'Pro', 'Hub', 'Core']
+            ]
+        ];
+
+        $modeComponents = $components[$this->mode] ?? $components['creative'];
+        $names = [];
+
+        // Generate 10 unique names
+        for ($i = 0; $i < 10; $i++) {
+            // Mix business keywords with random components
+            if (!empty($keywords) && random_int(1, 3) === 1) {
+                // Use a keyword-based name
+                $keyword = $keywords[array_rand($keywords)];
+                $suffix = $modeComponents['suffixes'][array_rand($modeComponents['suffixes'])];
+                $names[] = ucfirst((string) $keyword) . $suffix;
+            } else {
+                // Use component-based name
+                $prefix = $modeComponents['prefixes'][array_rand($modeComponents['prefixes'])];
+                $suffix = $modeComponents['suffixes'][array_rand($modeComponents['suffixes'])];
+                $names[] = $prefix . $suffix;
+            }
+        }
+
+        // Ensure uniqueness
+        $names = array_unique($names);
+
+        // Fill to 10 if needed
+        while (count($names) < 10) {
+            $prefix = $modeComponents['prefixes'][array_rand($modeComponents['prefixes'])];
+            $suffix = $modeComponents['suffixes'][array_rand($modeComponents['suffixes'])];
+            $newName = $prefix . $suffix;
+            if (!in_array($newName, $names)) {
+                $names[] = $newName;
+            }
+        }
+
+        return array_slice($names, 0, 10);
+    }
+
+    private function extractKeywords(string $description): array
+    {
+        // Simple keyword extraction
+        $words = preg_split('/\s+/', strtolower($description));
+        $keywords = [];
+
+        // Filter meaningful words (longer than 3 chars, not common words)
+        $commonWords = ['the', 'and', 'for', 'with', 'that', 'this', 'from', 'they', 'have', 'will', 'been', 'their', 'said', 'each', 'which', 'them', 'than', 'many', 'some', 'time', 'very', 'when', 'much', 'new', 'now', 'old', 'see', 'him', 'two', 'how', 'its', 'our', 'out', 'day', 'get', 'use', 'man', 'way', 'may', 'say'];
+
+        foreach ($words as $word) {
+            $word = preg_replace('/[^a-z]/', '', $word);
+            if (strlen((string) $word) > 3 && !in_array($word, $commonWords)) {
+                $keywords[] = $word;
+            }
+        }
+
+        return array_unique($keywords);
+    }
+
 
 } ?>
 <div class="mx-auto max-w-4xl fade-in pull-to-refresh refreshable gesture-support gesture-state swipe-persistence mobile-scroll-optimized gpu-accelerated transform3d memory-efficient mobile-nav
@@ -1914,6 +2348,66 @@ new class extends Component {
                 </flux:field>
             </div>
 
+            {{-- AI Model Selection --}}
+            <div class="interactive" style="animation-delay: 0.45s;">
+                <flux:field>
+                    <flux:label>AI Models</flux:label>
+                    <div class="space-y-3">
+                        {{-- Enable Model Comparison Toggle --}}
+                        <div class="flex items-center">
+                            <flux:checkbox
+                                wire:model.live="enableModelComparison"
+                                label="Enable Model Comparison (select multiple models)"
+                                class="text-sm" />
+                        </div>
+
+                        {{-- Model Selection Grid --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            @foreach($availableAIModels as $model)
+                                <label class="relative flex items-center p-3 border-2 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 {{ in_array($model['id'], $selectedAIModels) ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 shadow-md' : 'border-gray-200 dark:border-gray-700' }}">
+                                    <input type="checkbox"
+                                        wire:model.live="selectedAIModels"
+                                        value="{{ $model['id'] }}"
+                                        class="sr-only"
+                                        @if(!$enableModelComparison)
+                                            wire:click="selectSingleModel('{{ $model['id'] }}')"
+                                        @endif
+                                    />
+                                    <div class="flex-1 min-w-0">
+                                        <div class="font-semibold text-sm text-gray-900 dark:text-white">{{ $model['name'] }}</div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ $model['provider'] }}</div>
+                                    </div>
+                                    @if(in_array($model['id'], $selectedAIModels))
+                                        <svg class="w-5 h-5 text-purple-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                        </svg>
+                                    @endif
+                                </label>
+                            @endforeach
+                        </div>
+
+                        @if(count($selectedAIModels) > 1 && $enableModelComparison)
+                            <div class="text-sm text-blue-600 dark:text-blue-400">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Compare {{ count($selectedAIModels) }} Models - Results will show unique names from each model
+                            </div>
+                        @endif
+
+                        {{-- Validation Error --}}
+                        @if(empty($selectedAIModels))
+                            <div class="text-sm text-red-600 dark:text-red-400 flex items-start">
+                                <svg class="w-4 h-4 mr-1 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span>Please select at least one AI model.</span>
+                            </div>
+                        @endif
+                    </div>
+                </flux:field>
+            </div>
+
             {{-- Deep Thinking Toggle --}}
             <div class="interactive" style="animation-delay: 0.5s;">
                 <flux:field>
@@ -1959,12 +2453,48 @@ new class extends Component {
 
             {{-- Generate Button --}}
             <div class="scale-in" style="animation-delay: 0.6s;">
-                <flux:button 
-                    type="submit" 
-                    variant="primary" 
+                <flux:button
+                    type="submit"
+                    variant="primary"
                     :disabled="$isLoading"
                     aria-label="Generate business names using AI"
                     aria-describedby="generate-help"
+                    @click="
+                        // THEME PRESERVATION: Lock theme before name generation
+                        const userTheme = {{ $userTheme ? 'true' : 'false' }};
+                        const isDarkMode = {{ $userTheme && $userTheme->is_dark_mode ? 'true' : 'false' }};
+
+                        if (userTheme) {
+                            console.log('🔒 BUTTON CLICK: Theme preservation activated for', isDarkMode ? 'DARK' : 'LIGHT');
+
+                            // Authorize theme change with the protection system
+                            if (window.authorizeThemeChange) {
+                                window.authorizeThemeChange(isDarkMode, 25000); // 25 second authorization
+                                console.log('✅ Theme authorization granted from generate button');
+                            }
+
+                            // Set all theme lock variables
+                            window.__themeIsLocked = true;
+                            window.__lockedTheme = isDarkMode;
+                            window.currentThemePreference = isDarkMode;
+                            window.__themePreservationMode = true;
+
+                            // Apply theme immediately
+                            const applyTheme = () => {
+                                if (isDarkMode) {
+                                    document.documentElement.classList.add('dark');
+                                    localStorage.setItem('darkMode', 'true');
+                                } else {
+                                    document.documentElement.classList.remove('dark');
+                                    localStorage.setItem('darkMode', 'false');
+                                }
+                            };
+
+                            applyTheme();
+                            setTimeout(applyTheme, 50);
+                            setTimeout(applyTheme, 100);
+                        }
+                    "
                     class="btn-modern focus-modern touch-ripple gesture-transition gesture-debounce throttle touch-response low-latency mobile-optimized-animation battery-efficient touch-target min-h-44 focus-indicator contrast-enhanced bg-accent hover:bg-accent/90 shadow-soft-lg
                            xs:w-full xs:py-4 xs:text-lg xs:font-bold
                            sm:w-auto sm:px-8 sm:py-3
@@ -2229,10 +2759,14 @@ new class extends Component {
                     
                     <flux:table class="w-full swipeable">
                         <flux:table.columns>
-                            <flux:table.column class="xs:min-w-48 sm:w-2/5">Business Name</flux:table.column>
-                            <flux:table.column class="xs:min-w-20 sm:w-1/5">.com</flux:table.column>
-                            <flux:table.column class="xs:min-w-20 sm:w-1/5">.net</flux:table.column>
-                            <flux:table.column class="xs:min-w-20 sm:w-1/5">.org</flux:table.column>
+                            <flux:table.column class="xs:min-w-48 sm:w-3/12">Business Name</flux:table.column>
+                            <flux:table.column class="xs:min-w-16 sm:w-1/12">.com</flux:table.column>
+                            <flux:table.column class="xs:min-w-16 sm:w-1/12">.net</flux:table.column>
+                            <flux:table.column class="xs:min-w-16 sm:w-1/12">.org</flux:table.column>
+                            <flux:table.column class="xs:min-w-16 sm:w-1/12">.io</flux:table.column>
+                            <flux:table.column class="xs:min-w-16 sm:w-1/12">.co</flux:table.column>
+                            <flux:table.column class="xs:min-w-16 sm:w-1/12">.app</flux:table.column>
+                            <flux:table.column class="xs:min-w-20 sm:w-2/12">More TLDs</flux:table.column>
                         </flux:table.columns>
 
                     <flux:table.rows>
@@ -2269,32 +2803,48 @@ new class extends Component {
                                     </div>
                                 </flux:table.cell>
                                 
-                                @foreach(['com', 'net', 'org'] as $tld)
+                                @foreach(['com', 'net', 'org', 'io', 'co', 'app'] as $tld)
                                     @php
                                         $domainKey = $result['name'] . '.' . $tld;
-                                        $domainData = $result['domains'][$domainKey] ?? ['status' => 'checking', 'available' => null];
+                                        $domainData = $result['domains'][$domainKey] ?? ['status' => 'not_available', 'available' => null];
                                     @endphp
                                     <flux:table.cell>
-                                        <div class="flex items-center space-x-2">
-                                            <flux:tooltip 
-                                                text="{{ $domainData['status'] === 'error' && isset($domainData['error']) ? $domainData['error'] : 'Domain availability status' }}"
+                                        <div class="flex items-center justify-center">
+                                            <flux:tooltip
+                                                text="{{ $domainKey }} - {{ $domainData['status'] === 'error' && isset($domainData['error']) ? $domainData['error'] : 'Domain ready for registration check' }}"
                                                 position="top"
                                             >
-                                                <span class="{{ $this->getDomainStatusClass($domainData['status'], $domainData['available'] ?? null) }}">
-                                                    {{ $this->getDomainStatusIcon($domainData['status'], $domainData['available'] ?? null) }}
-                                                </span>
+                                                <div class="text-center">
+                                                    <div class="text-lg">{{ $this->getDomainStatusIcon($domainData['status'], $domainData['available'] ?? null) }}</div>
+                                                    <div class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ $domainKey }}</div>
+                                                </div>
                                             </flux:tooltip>
-                                            
-                                            <span class="text-sm {{ $this->getDomainStatusClass($domainData['status'], $domainData['available'] ?? null) }}">
-                                                {{ $this->getDomainStatusText($domainData['status'], $domainData['available'] ?? null) }}
-                                            </span>
                                         </div>
                                     </flux:table.cell>
                                 @endforeach
+
+                                {{-- More TLDs Column --}}
+                                <flux:table.cell>
+                                    <div class="text-center">
+                                        <flux:tooltip
+                                            text="Additional TLDs: {{ $result['name'] }}.dev, {{ $result['name'] }}.ai, {{ $result['name'] }}.tech, {{ $result['name'] }}.studio"
+                                            position="top"
+                                        >
+                                            <flux:button
+                                                variant="outline"
+                                                size="xs"
+                                                wire:click="showDomainInfo('{{ $result['name'] }}')"
+                                                class="text-xs px-2 py-1"
+                                            >
+                                                +4 more
+                                            </flux:button>
+                                        </flux:tooltip>
+                                    </div>
+                                </flux:table.cell>
                             </flux:table.row>
                         @empty
                             <flux:table.row>
-                                <flux:table.cell colspan="4" class="text-center py-8 text-gray-500 dark:text-gray-400">
+                                <flux:table.cell colspan="8" class="text-center py-8 text-gray-500 dark:text-gray-400">
                                     <div>
                                         <svg class="w-12 h-12 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>

@@ -1,6 +1,6 @@
 <div class="photo-gallery relative" 
      x-data="photoGalleryComponent()"
-     x-init="init(); showUploader = false;"
+     x-init="init()"
      @keydown.escape.window="closeViewer()"
      @keydown.arrow-left.window="previousImage()"
      @keydown.arrow-right.window="nextImage()">
@@ -17,50 +17,11 @@
                 </span>
             </h2>
 
-            <!-- Actions -->
-            <div class="flex items-center space-x-2">
-                <!-- Upload Button -->
-                <button 
-                    @click="showUploader = !showUploader"
-                    class="px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center space-x-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                    </svg>
-                    <span>Upload</span>
-                </button>
-
-                <!-- View Mode Toggle -->
-                <div class="flex items-center space-x-1 border-l pl-2 border-gray-300 dark:border-gray-600">
-                    <button 
-                        @click="toggleViewMode('grid')"
-                        :class="viewMode === 'grid' ? 'bg-gray-100 text-gray-600 dark:bg-gray-900 dark:text-gray-300' : 'text-gray-500 dark:text-gray-400'"
-                        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
-                        </svg>
-                    </button>
-                    <button 
-                        @click="toggleViewMode('list')"
-                        :class="viewMode === 'list' ? 'bg-gray-100 text-gray-600 dark:bg-gray-900 dark:text-gray-300' : 'text-gray-500 dark:text-gray-400'"
-                        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- Upload Section (toggleable) -->
-    <div x-show="showUploader" 
-         x-transition:enter="transition ease-out duration-200"
-         x-transition:enter-start="opacity-0 transform -translate-y-2"
-         x-transition:enter-end="opacity-100 transform translate-y-0"
-         x-transition:leave="transition ease-in duration-150"
-         x-transition:leave-start="opacity-100 transform translate-y-0"
-         x-transition:leave-end="opacity-0 transform -translate-y-2"
-         class="mb-4">
+    <!-- Upload Section (always visible) -->
+    <div class="mb-4">
         @livewire('image-uploader', ['project' => $project], key('uploader-'.$project->id))
     </div>
 
@@ -68,8 +29,7 @@
     <div class="bg-white dark:bg-gray-900 rounded-lg overflow-hidden">
         @if($images->count() > 0)
             <!-- Grid View -->
-            <div x-show="viewMode === 'grid'" 
-                 class="grid grid-cols-3 gap-0.5
+            <div class="grid grid-cols-3 gap-0.5
                         sm:grid-cols-4 sm:gap-1
                         md:grid-cols-5
                         lg:grid-cols-6
@@ -126,48 +86,6 @@
                                 </svg>
                             </div>
                         @endif
-                    </div>
-                @endforeach
-            </div>
-
-            <!-- List View -->
-            <div x-show="viewMode === 'list'" class="divide-y divide-gray-200 dark:divide-gray-700">
-                @foreach($images as $index => $image)
-                    <div class="flex items-center p-4 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
-                         @click="openViewer({{ $index }})"
-                         wire:key="list-image-{{ $image->uuid }}">
-                        
-                        <!-- Thumbnail -->
-                        <div class="w-16 h-16 flex-shrink-0 mr-4">
-                            @if($image->thumbnail_path)
-                                <img src="{{ Storage::url($image->thumbnail_path) }}" 
-                                     alt="{{ $image->title ?? $image->original_filename }}"
-                                     class="w-full h-full object-cover rounded-lg">
-                            @else
-                                <img src="{{ Storage::url($image->file_path) }}" 
-                                     alt="{{ $image->title ?? $image->original_filename }}"
-                                     class="w-full h-full object-cover rounded-lg">
-                            @endif
-                        </div>
-
-                        <!-- Image Info -->
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
-                                {{ $image->title ?? $image->original_filename }}
-                            </p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">
-                                {{ $image->getFileSizeFormatted() }} • {{ $image->created_at->format('M d, Y') }}
-                            </p>
-                        </div>
-
-                        <!-- Selection Checkbox -->
-                        <div class="ml-4">
-                            <input type="checkbox" 
-                                   wire:model="selectedImages"
-                                   value="{{ $image->uuid }}"
-                                   @click.stop
-                                   class="w-5 h-5 rounded">
-                        </div>
                     </div>
                 @endforeach
             </div>
@@ -294,9 +212,7 @@
 <script>
 function photoGalleryComponent() {
     return {
-        viewMode: @entangle('viewMode'),
         showViewer: false,
-        showUploader: false,
         currentIndex: 0,
         totalImages: {{ $images->count() }},
         images: [],
@@ -308,12 +224,20 @@ function photoGalleryComponent() {
         init() {
             // Initialize images array from DOM data
             this.images = this.buildImagesArray();
-            
+
             // Preload next/previous images when viewer opens
             this.$watch('showViewer', value => {
                 if (value) {
                     this.preloadAdjacentImages();
                 }
+            });
+
+            // Listen for Livewire updates and rebuild images array
+            Livewire.hook('morph.updated', () => {
+                this.$nextTick(() => {
+                    this.images = this.buildImagesArray();
+                    this.totalImages = this.images.length;
+                });
             });
         },
 
@@ -341,10 +265,6 @@ function photoGalleryComponent() {
             return images;
         },
 
-        toggleViewMode(mode) {
-            this.viewMode = mode;
-            @this.set('viewMode', mode);
-        },
 
         openViewer(index) {
             this.currentIndex = index;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
-use App\Jobs\GenerateLogosJob;
 use App\Helpers\ThemeHelper;
+use App\Jobs\GenerateLogosJob;
 use App\Models\AIGeneration;
 use App\Models\AIModelPerformance;
 use App\Models\GenerationCache;
@@ -174,6 +174,9 @@ class NameGeneratorDashboard extends Component
         $this->isGeneratingNames = true;
         $this->errorMessage = null;
 
+        // Preserve theme state during generation
+        $this->preserveThemeState();
+
         try {
             $nameService = app(OpenAINameService::class);
             $this->generatedNames = $nameService->generateNames(
@@ -197,6 +200,9 @@ class NameGeneratorDashboard extends Component
             // Dispatch success event for toast notification
             $this->dispatch('toast', message: $this->successMessage, type: 'success');
 
+            // Ensure theme consistency after generation
+            $this->ensureThemeConsistency();
+
         } catch (Exception) {
             // Try fallback generation when OpenAI fails
             try {
@@ -214,6 +220,9 @@ class NameGeneratorDashboard extends Component
 
                 $this->successMessage = 'Generated '.count($this->generatedNames).' business names using creative generation!';
                 $this->dispatch('toast', message: 'API unavailable - used creative generation instead', type: 'warning');
+
+                // Ensure theme consistency after fallback generation
+                $this->ensureThemeConsistency();
 
             } catch (Exception $fallbackException) {
                 $this->errorMessage = $this->getFriendlyErrorMessage($fallbackException->getMessage());
@@ -1236,7 +1245,7 @@ class NameGeneratorDashboard extends Component
 
         // Force component refresh if theme exists to ensure styling is applied
         if ($this->userTheme) {
-            $this->skipRender = false;
+            // Theme loaded successfully
         }
     }
 
@@ -1257,6 +1266,128 @@ class NameGeneratorDashboard extends Component
         // Clear theme cache first to ensure fresh data
         ThemeHelper::clearUserThemeCache();
         $this->loadUserTheme();
+    }
+
+    /**
+     * Preserve theme state before operations that might cause refreshes.
+     */
+    protected function preserveThemeState(): void
+    {
+        // Ensure we have the latest theme data
+        $this->loadUserTheme();
+
+        // If we have a theme, dispatch a JavaScript event to lock it
+        if ($this->userTheme) {
+            $isDark = $this->userTheme->is_dark_mode ? 'true' : 'false';
+            $this->js("
+                console.log('🔒 DASHBOARD THEME PRESERVATION: ' + ({$isDark} ? 'DARK' : 'LIGHT'));
+
+                // Authorize this theme change with the protection system
+                if (window.authorizeThemeChange) {
+                    window.authorizeThemeChange({$isDark}, 20000); // 20 second authorization for generation
+                    console.log('✅ Theme authorization granted for 20 seconds');
+                }
+
+                // Set preservation variables
+                window.__themePreservationMode = true;
+                window.__preservedTheme = {$isDark};
+                window.__themeIsLocked = true;
+                window.__lockedTheme = {$isDark};
+                window.currentThemePreference = {$isDark};
+
+                // Lock the theme class immediately and aggressively
+                const applyTheme = () => {
+                    if ({$isDark}) {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('darkMode', 'true');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('darkMode', 'false');
+                    }
+                };
+
+                applyTheme();
+
+                // Apply theme multiple times to ensure it sticks during generation
+                setTimeout(applyTheme, 50);
+                setTimeout(applyTheme, 100);
+                setTimeout(applyTheme, 200);
+                setTimeout(applyTheme, 500);
+                setTimeout(applyTheme, 1000);
+                setTimeout(applyTheme, 2000);
+            ");
+        }
+    }
+
+    /**
+     * Ensure theme consistency after operations.
+     */
+    protected function ensureThemeConsistency(): void
+    {
+        // Reload theme in case it was lost during component refresh
+        $this->loadUserTheme();
+
+        // Dispatch JavaScript to ensure theme is properly applied
+        if ($this->userTheme) {
+            $isDark = $this->userTheme->is_dark_mode ? 'true' : 'false';
+            $this->js("
+                console.log('🎯 DASHBOARD THEME CONSISTENCY ENFORCED: ' + ({$isDark} ? 'DARK' : 'LIGHT'));
+                const isDark = {$isDark};
+
+                // Re-authorize theme change with extended duration
+                if (window.authorizeThemeChange) {
+                    window.authorizeThemeChange(isDark, 15000); // 15 second authorization for post-generation
+                    console.log('✅ Extended theme authorization granted');
+                }
+
+                // Apply theme class aggressively
+                const enforceTheme = () => {
+                    if (isDark) {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('darkMode', 'true');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('darkMode', 'false');
+                    }
+
+                    // Also update the global preference variables
+                    window.currentThemePreference = isDark;
+                    window.__lockedTheme = isDark;
+                };
+
+                enforceTheme();
+
+                // Apply multiple times to ensure it sticks during any async operations
+                setTimeout(enforceTheme, 10);
+                setTimeout(enforceTheme, 50);
+                setTimeout(enforceTheme, 100);
+                setTimeout(enforceTheme, 250);
+                setTimeout(enforceTheme, 500);
+                setTimeout(enforceTheme, 1000);
+                setTimeout(enforceTheme, 2000);
+
+                // Dispatch theme consistency event
+                window.dispatchEvent(new CustomEvent('theme-consistency-enforced', {
+                    detail: { isDark }
+                }));
+
+                // Update all theme lock variables
+                window.__themeIsLocked = true;
+                window.__lockedTheme = isDark;
+                window.currentThemePreference = isDark;
+
+                // Keep preservation mode active a bit longer to prevent switching
+                setTimeout(() => {
+                    window.__themePreservationMode = false;
+                    console.log('🔓 Theme preservation mode deactivated');
+                }, 3000); // 3 seconds instead of 1
+            ");
+
+            // Dispatch Livewire event for other components
+            $this->dispatch('theme-consistency-enforced', [
+                'isDarkMode' => $this->userTheme->is_dark_mode,
+            ]);
+        }
     }
 
     public function render(): View

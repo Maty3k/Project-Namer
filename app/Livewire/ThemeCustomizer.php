@@ -65,6 +65,19 @@ final class ThemeCustomizer extends Component
                 $this->textColor = $preference->text_color;
                 $this->themeName = $preference->theme_name;
                 $this->isDarkMode = $preference->is_dark_mode;
+            } else {
+                // Fall back to User model theme settings if no detailed preferences exist
+                $this->isDarkMode = $user->prefers_dark_mode ?? false;
+                $this->themeName = $user->current_theme ?? 'default';
+
+                // Set appropriate colors based on dark mode setting
+                if ($this->isDarkMode) {
+                    $this->backgroundColor = '#1f2937';
+                    $this->textColor = '#f9fafb';
+                } else {
+                    $this->backgroundColor = '#ffffff';
+                    $this->textColor = '#111827';
+                }
             }
         }
 
@@ -90,22 +103,11 @@ final class ThemeCustomizer extends Component
             $this->themeName = is_string($theme['theme_name'] ?? null) ? $theme['theme_name'] : 'default';
             $this->isDarkMode = is_bool($theme['is_dark_mode'] ?? null) ? $theme['is_dark_mode'] : false;
 
-            // Ensure proper text contrast based on mode
-            $this->ensureTextReadability();
-
+            // For predefined themes, trust the design but still validate accessibility
             $this->validateAccessibility();
 
             // Automatically save the preset theme to persist it
             $this->applyTheme();
-
-            $this->dispatch('theme-updated');
-            $this->dispatch('theme-applied', [
-                'primaryColor' => $this->primaryColor,
-                'accentColor' => $this->accentColor,
-                'backgroundColor' => $this->backgroundColor,
-                'textColor' => $this->textColor,
-                'isDarkMode' => $this->isDarkMode,
-            ]);
         }
     }
 
@@ -125,6 +127,7 @@ final class ThemeCustomizer extends Component
                 return;
             }
 
+            // Update UserThemePreference model
             UserThemePreference::updateOrCreate(
                 ['user_id' => $user->id],
                 [
@@ -137,11 +140,32 @@ final class ThemeCustomizer extends Component
                 ]
             );
 
+            // Synchronize with User model theme fields and disable auto-switching
+            $user->update([
+                'current_theme' => $this->themeName,
+                'prefers_dark_mode' => $this->isDarkMode,
+                'theme_auto_switch' => false, // Disable auto-switching when manually setting theme
+            ]);
+
             // Validate accessibility and provide feedback
             $this->validateAccessibility();
 
-            // Clear theme cache to ensure consistency
+            // Clear theme cache to ensure consistency and force fresh data
             ThemeHelper::clearUserThemeCache();
+
+            // Clear Laravel cache to ensure all cached theme data is fresh
+            try {
+                if (function_exists('cache')) {
+                    cache()->forget("user_theme_{$user->id}");
+                    // Only use cache tags if the cache driver supports it
+                    if (method_exists(cache()->getStore(), 'tags')) {
+                        cache()->tags(['user_themes', "user_{$user->id}"])->flush();
+                    }
+                }
+            } catch (\Exception $e) {
+                // Silently continue if cache operations fail
+                logger()->debug('Cache clearing failed: '.$e->getMessage());
+            }
 
             // Dispatch events for UI updates
             $this->dispatch('theme-saved');
@@ -153,6 +177,70 @@ final class ThemeCustomizer extends Component
                 'textColor' => $this->textColor,
                 'isDarkMode' => $this->isDarkMode,
             ]);
+
+            // Force refresh of all theme-dependent Livewire components
+            $this->dispatch('refresh-theme-components');
+
+            // Instantly apply theme changes with comprehensive sync
+            $isDarkModeJs = $this->isDarkMode ? 'true' : 'false';
+            $this->js("
+                const html = document.documentElement;
+                const isDark = {$isDarkModeJs};
+
+                console.log('THEME CUSTOMIZER: Applying theme', isDark ? 'DARK' : 'LIGHT');
+
+                // Authorize this theme change with the protection system
+                if (window.authorizeThemeChange) {
+                    window.authorizeThemeChange(isDark, 15000); // 15 second authorization for theme customizer
+                }
+
+                // Apply CSS custom properties
+                html.style.setProperty('--primary-color', '{$this->primaryColor}');
+                html.style.setProperty('--accent-color', '{$this->accentColor}');
+                html.style.setProperty('--background-color', '{$this->backgroundColor}');
+                html.style.setProperty('--text-color', '{$this->textColor}');
+
+                // Apply dark mode class and localStorage sync
+                if (isDark) {
+                    html.classList.add('dark');
+                    localStorage.setItem('darkMode', 'true');
+                } else {
+                    html.classList.remove('dark');
+                    localStorage.setItem('darkMode', 'false');
+                }
+
+                // Update the global current theme preference
+                window.currentThemePreference = isDark;
+
+                // Force a repaint to ensure styles update
+                html.style.display = 'none';
+                html.offsetHeight; // Trigger reflow
+                html.style.display = '';
+
+                // Dispatch global theme change event
+                window.dispatchEvent(new CustomEvent('theme-changed', {
+                    detail: {
+                        isDark: isDark,
+                        primaryColor: '{$this->primaryColor}',
+                        accentColor: '{$this->accentColor}',
+                        backgroundColor: '{$this->backgroundColor}',
+                        textColor: '{$this->textColor}'
+                    }
+                }));
+
+                // Update any theme toggle buttons in the UI
+                window.dispatchEvent(new CustomEvent('theme-customizer-updated', {
+                    detail: { isDarkMode: isDark }
+                }));
+
+                // Force global state synchronization
+                setTimeout(() => {
+                    // Refresh the current page to ensure all server-side components reflect the new theme
+                    if (window.Livewire) {
+                        window.Livewire.dispatch('refresh-theme-components');
+                    }
+                }, 500);
+            ");
 
         } catch (\Exception $e) {
             logger()->error('Theme application failed: '.$e->getMessage());
@@ -271,25 +359,33 @@ final class ThemeCustomizer extends Component
     {
         $this->isDarkMode = ! $this->isDarkMode;
 
+        // Auto-adjust theme colors based on mode to ensure good visibility
         if ($this->isDarkMode) {
-            // Set appropriate dark mode colors
+            // Set appropriate dark mode colors with good contrast
             $this->backgroundColor = '#1f2937';
             $this->textColor = '#f9fafb';
+
+            // Adjust primary color if it's too light for dark backgrounds
+            if ($this->isColorTooLight($this->primaryColor)) {
+                $this->primaryColor = $this->darkenColor($this->primaryColor, 0.3);
+            }
         } else {
-            // Set appropriate light mode colors
+            // Set appropriate light mode colors with good contrast
             $this->backgroundColor = '#ffffff';
             $this->textColor = '#111827';
+
+            // Adjust primary color if it's too dark for light backgrounds
+            if ($this->isColorTooDark($this->primaryColor)) {
+                $this->primaryColor = $this->lightenColor($this->primaryColor, 0.2);
+            }
         }
 
+        // Ensure text readability after mode change
+        $this->ensureTextReadability();
         $this->validateAccessibility();
-        $this->dispatch('theme-updated');
-        $this->dispatch('theme-applied', [
-            'primaryColor' => $this->primaryColor,
-            'accentColor' => $this->accentColor,
-            'backgroundColor' => $this->backgroundColor,
-            'textColor' => $this->textColor,
-            'isDarkMode' => $this->isDarkMode,
-        ]);
+
+        // Auto-save the theme with the new dark mode setting using comprehensive sync
+        $this->applyTheme();
     }
 
     /**
@@ -318,7 +414,57 @@ final class ThemeCustomizer extends Component
     #[On('color-updated')]
     public function onColorUpdated(): void
     {
+        $this->ensureTextReadability();
         $this->validateAccessibility();
+    }
+
+    /**
+     * React to primary color changes.
+     */
+    public function updatedPrimaryColor(): void
+    {
+        $this->ensureTextReadability();
+        $this->validateAccessibility();
+    }
+
+    /**
+     * React to background color changes.
+     */
+    public function updatedBackgroundColor(): void
+    {
+        $this->ensureTextReadability();
+        $this->validateAccessibility();
+    }
+
+    /**
+     * React to text color changes.
+     */
+    public function updatedTextColor(): void
+    {
+        $this->validateAccessibility();
+    }
+
+    /**
+     * Listen for theme changes from ThemeQuickToggle.
+     *
+     * @param  array{isDarkMode: bool, backgroundColor: string, textColor: string}  $data
+     */
+    #[On('theme-quick-toggle-changed')]
+    public function onThemeQuickToggleChanged(array $data): void
+    {
+        // Update the theme customizer properties to match the quick toggle
+        if (isset($data['isDarkMode'])) {
+            $this->isDarkMode = (bool) $data['isDarkMode'];
+        }
+        if (isset($data['backgroundColor'])) {
+            $this->backgroundColor = (string) $data['backgroundColor'];
+        }
+        if (isset($data['textColor'])) {
+            $this->textColor = (string) $data['textColor'];
+        }
+
+        $this->validateAccessibility();
+        $this->dispatch('theme-updated');
     }
 
     /**
@@ -457,6 +603,70 @@ final class ThemeCustomizer extends Component
                 $this->textColor = '#111827';
             }
         }
+    }
+
+    /**
+     * Check if color is too light for dark backgrounds.
+     */
+    protected function isColorTooLight(string $color): bool
+    {
+        $hex = ltrim($color, '#');
+        $r = hexdec(substr($hex, 0, 2));
+        $g = hexdec(substr($hex, 2, 2));
+        $b = hexdec(substr($hex, 4, 2));
+
+        $luminance = (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
+
+        return $luminance > 0.8; // Too light if luminance > 80%
+    }
+
+    /**
+     * Check if color is too dark for light backgrounds.
+     */
+    protected function isColorTooDark(string $color): bool
+    {
+        $hex = ltrim($color, '#');
+        $r = hexdec(substr($hex, 0, 2));
+        $g = hexdec(substr($hex, 2, 2));
+        $b = hexdec(substr($hex, 4, 2));
+
+        $luminance = (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
+
+        return $luminance < 0.2; // Too dark if luminance < 20%
+    }
+
+    /**
+     * Darken a color by a given percentage.
+     */
+    protected function darkenColor(string $color, float $percentage): string
+    {
+        $hex = ltrim($color, '#');
+        $r = hexdec(substr($hex, 0, 2));
+        $g = hexdec(substr($hex, 2, 2));
+        $b = hexdec(substr($hex, 4, 2));
+
+        $r = max(0, (int) ($r * (1 - $percentage)));
+        $g = max(0, (int) ($g * (1 - $percentage)));
+        $b = max(0, (int) ($b * (1 - $percentage)));
+
+        return sprintf('#%02x%02x%02x', $r, $g, $b);
+    }
+
+    /**
+     * Lighten a color by a given percentage.
+     */
+    protected function lightenColor(string $color, float $percentage): string
+    {
+        $hex = ltrim($color, '#');
+        $r = hexdec(substr($hex, 0, 2));
+        $g = hexdec(substr($hex, 2, 2));
+        $b = hexdec(substr($hex, 4, 2));
+
+        $r = min(255, (int) ($r + (255 - $r) * $percentage));
+        $g = min(255, (int) ($g + (255 - $g) * $percentage));
+        $b = min(255, (int) ($b + (255 - $b) * $percentage));
+
+        return sprintf('#%02x%02x%02x', $r, $g, $b);
     }
 
     public function render(): \Illuminate\View\View

@@ -19,6 +19,9 @@ class ImageUploader extends Component
     /** @var array<TemporaryUploadedFile> */
     public array $images = [];
 
+    /** @var array<TemporaryUploadedFile> */
+    public array $newFiles = [];
+
     public string $title = '';
 
     public string $description = '';
@@ -40,6 +43,13 @@ class ImageUploader extends Component
         return [
             'images' => ['required', 'array', 'min:1', 'max:20'],
             'images.*' => [
+                'file',
+                'image',
+                'mimes:jpeg,jpg,png,webp,gif',
+                'max:51200', // 50MB
+            ],
+            'newFiles' => ['nullable', 'array', 'max:20'],
+            'newFiles.*' => [
                 'file',
                 'image',
                 'mimes:jpeg,jpg,png,webp,gif',
@@ -84,6 +94,22 @@ class ImageUploader extends Component
     {
         unset($this->images[$index]);
         $this->images = array_values($this->images);
+    }
+
+    public function updatedNewFiles(): void
+    {
+        if (! empty($this->newFiles)) {
+            // Append new files to existing images array
+            foreach ($this->newFiles as $file) {
+                $this->images[] = $file;
+            }
+
+            // Clear the temporary newFiles array
+            $this->newFiles = [];
+
+            // Validate the updated images array
+            $this->updatedImages();
+        }
     }
 
     public function uploadImages(): void

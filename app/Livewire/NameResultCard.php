@@ -19,9 +19,11 @@ class NameResultCard extends Component
 {
     use AuthorizesRequests;
 
-    public NameSuggestion $suggestion;
+    public ?NameSuggestion $suggestion = null;
 
     public bool $expanded = false;
+
+    public ?int $suggestionId = null;
 
     /**
      * Mount the component with a name suggestion.
@@ -29,13 +31,17 @@ class NameResultCard extends Component
     public function mount(NameSuggestion $suggestion): void
     {
         $this->suggestion = $suggestion;
+        $this->suggestionId = $suggestion->id;
     }
 
     /**
      * Toggle the expanded state of the card.
+     * Note: Now handled purely by Alpine.js for smooth animations without server roundtrips.
      */
     public function toggleExpanded(): void
     {
+        // This method is kept for backwards compatibility but not used anymore
+        // All expansion/collapse is handled client-side by Alpine.js
         $this->expanded = ! $this->expanded;
     }
 
@@ -188,11 +194,44 @@ class NameResultCard extends Component
     }
 
     /**
+     * Livewire boot method for component initialization.
+     */
+    public function boot(): void
+    {
+        // Ensure fresh suggestion data on each request
+        if ($this->suggestionId && (! $this->suggestion || $this->suggestion->id !== $this->suggestionId)) {
+            $this->suggestion = NameSuggestion::find($this->suggestionId);
+        }
+    }
+
+    /**
+     * Handle component dehydration for state persistence.
+     */
+    public function dehydrate(): void
+    {
+        // Ensure suggestion ID is preserved
+        if ($this->suggestion instanceof NameSuggestion) {
+            $this->suggestionId = $this->suggestion->id;
+        }
+    }
+
+    /**
+     * Handle component hydration for state restoration.
+     */
+    public function hydrate(): void
+    {
+        // Restore suggestion from ID if needed
+        if ($this->suggestionId && (! $this->suggestion || $this->suggestion->id !== $this->suggestionId)) {
+            $this->suggestion = NameSuggestion::find($this->suggestionId);
+        }
+    }
+
+    /**
      * Serialize properties for Livewire state management.
      */
     protected function serializeProperty(string $property): mixed
     {
-        if ($this->$property instanceof NameSuggestion) {
+        if ($property === 'suggestion' && $this->$property instanceof NameSuggestion) {
             return $this->$property->id;
         }
 

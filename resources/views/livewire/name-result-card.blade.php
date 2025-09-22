@@ -1,8 +1,15 @@
-<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-300 ease-out hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-800/50 transform hover:-translate-y-1 
+@if($suggestion)
+<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-300 ease-out hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-800/50 transform hover:-translate-y-1
              {{ $this->isSelected ? 'ring-2 ring-blue-500 bg-primary-50 dark:bg-primary-900/10 shadow-lg shadow-blue-200/30 dark:shadow-blue-800/30' : 'hover:border-gray-300 dark:hover:border-gray-600' }}
              {{ $suggestion->is_hidden ? 'opacity-60 scale-95' : 'scale-100 hover:scale-[1.02]' }}
              focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:outline-none"
-     wire:key="suggestion-{{ $suggestion->id }}">
+     wire:key="suggestion-{{ $suggestion->id }}"
+     x-data="{
+         isExpanded: false,
+         toggle() {
+             this.isExpanded = !this.isExpanded;
+         }
+     }"
     
     <!-- Card Header -->
     <div class="p-4 border-b border-gray-200 dark:border-gray-700">
@@ -105,19 +112,16 @@
 
                     <!-- Expand Toggle -->
                     <flux:button
-                        wire:click="toggleExpanded"
+                        @click.stop="toggle()"
                         variant="ghost"
                         size="sm"
+                        class="group"
                     >
-                        @if($expanded)
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
-                            </svg>
-                        @else
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        @endif
+                        <svg class="w-4 h-4 transition-all duration-300 ease-out transform group-hover:scale-110"
+                             :class="isExpanded ? 'rotate-180' : 'rotate-0'"
+                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
                     </flux:button>
                 </div>
             </div>
@@ -125,8 +129,19 @@
     </div>
 
     <!-- Expandable Content -->
-    @if($expanded)
-        <div class="p-4 space-y-4 border-t border-gray-200 dark:border-gray-700">
+    <div class="overflow-hidden transition-all duration-500 ease-in-out border-t border-gray-200 dark:border-gray-700"
+         x-show="isExpanded"
+         x-collapse
+         x-transition:enter="transition-all duration-500 ease-out"
+         x-transition:enter-start="opacity-0 max-h-0 -translate-y-4"
+         x-transition:enter-end="opacity-100 max-h-screen translate-y-0"
+         x-transition:leave="transition-all duration-400 ease-in"
+         x-transition:leave-start="opacity-100 max-h-screen translate-y-0"
+         x-transition:leave-end="opacity-0 max-h-0 -translate-y-4"
+         @click.stop
+         style="display: none;">
+        <div class="p-4 space-y-4 transform transition-all duration-500 ease-out"
+             :class="isExpanded ? 'scale-100 translate-y-0' : 'scale-95 -translate-y-2'">
             <!-- Domains Section -->
             <div>
                 <div class="flex items-center justify-between mb-3">
@@ -143,19 +158,39 @@
                 </div>
 
                 @if($this->hasDomains)
-                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-                        @foreach($suggestion->domains as $domain)
-                            <div class="flex items-center justify-between p-2 rounded-lg border {{ $domain['available'] ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20' : 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20' }}">
-                                <span class="text-sm font-medium {{ $domain['available'] ? 'text-green-800 dark:text-green-200' : 'text-red-800 dark:text-red-200' }}">
-                                    {{ $domain['extension'] }}
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                        @foreach($suggestion->domains as $key => $domainData)
+                            @php
+                                // Handle both formats: associative array (domain service) and indexed array (factory/tests)
+                                if (is_string($key) && !is_numeric($key)) {
+                                    // Domain service format: key is domain name, value is data
+                                    $domainName = $key;
+                                    $available = $domainData['available'] ?? null;
+                                } else {
+                                    // Factory/test format: numeric array with 'extension' field
+                                    $domainName = ($suggestion->name ?? 'domain') . ($domainData['extension'] ?? '');
+                                    $available = $domainData['available'] ?? null;
+                                }
+                            @endphp
+                            <div class="flex items-center justify-between p-2 rounded-lg border transition-all duration-300 ease-out hover:scale-105 hover:shadow-md transform
+                                        {{ $available === true ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20 hover:border-green-300 hover:bg-green-100' : ($available === false ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20 hover:border-red-300 hover:bg-red-100' : 'border-gray-200 bg-gray-50 dark:border-gray-600 dark:bg-gray-800 hover:border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700') }}"
+                                 x-transition:enter="transition-all duration-{{ 200 + ($loop->index * 50) }} ease-out"
+                                 x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+                                 x-transition:enter-end="opacity-100 scale-100 translate-y-0">
+                                <span class="text-sm font-medium transition-colors duration-200 {{ $available === true ? 'text-green-800 dark:text-green-200' : ($available === false ? 'text-red-800 dark:text-red-200' : 'text-gray-800 dark:text-gray-200') }}">
+                                    {{ $domainName }}
                                 </span>
-                                @if($domain['available'])
+                                @if($available === true)
                                     <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                     </svg>
-                                @else
+                                @elseif($available === false)
                                     <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                    </svg>
+                                @else
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                     </svg>
                                 @endif
                             </div>
@@ -220,7 +255,7 @@
             </div>
 
             <!-- Generation Metadata (if available) -->
-            @if($suggestion->generation_metadata)
+            @if($suggestion && $suggestion->generation_metadata && is_array($suggestion->generation_metadata))
                 <div class="pt-2 border-t border-gray-200 dark:border-gray-700">
                     <details class="group">
                         <summary class="flex items-center cursor-pointer text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
@@ -241,5 +276,6 @@
                 </div>
             @endif
         </div>
-    @endif
+    </div>
 </div>
+@endif

@@ -19,7 +19,7 @@ final class ThemeHelper
     public static function getCurrentUserTheme(): ?UserThemePreference
     {
         $user = Auth::user();
-        
+
         if (! $user) {
             return null;
         }
@@ -27,9 +27,24 @@ final class ThemeHelper
         // Cache theme for the current request to ensure consistency
         $sessionId = request()->hasSession() ? request()->session()->getId() : 'no-session';
         $cacheKey = "user_theme_{$user->id}_{$sessionId}";
-        
+
         return Cache::remember($cacheKey, 300, function () use ($user) {
-            return UserThemePreference::where('user_id', $user->id)->first();
+            $preference = UserThemePreference::where('user_id', $user->id)->first();
+
+            // If no detailed preference exists, create one from User model settings
+            if (! $preference && ($user->prefers_dark_mode !== null || $user->current_theme !== null)) {
+                $preference = new UserThemePreference([
+                    'user_id' => $user->id,
+                    'theme_name' => $user->current_theme ?? 'default',
+                    'is_dark_mode' => $user->prefers_dark_mode ?? false,
+                    'primary_color' => '#3b82f6',
+                    'accent_color' => '#10b981',
+                    'background_color' => ($user->prefers_dark_mode ?? false) ? '#1f2937' : '#ffffff',
+                    'text_color' => ($user->prefers_dark_mode ?? false) ? '#f9fafb' : '#111827',
+                ]);
+            }
+
+            return $preference;
         });
     }
 
@@ -39,23 +54,41 @@ final class ThemeHelper
     public static function clearUserThemeCache(): void
     {
         $user = Auth::user();
-        
+
         if (! $user) {
             return;
         }
 
+        // Clear all possible cache keys for this user to ensure complete cache refresh
         $sessionId = request()->hasSession() ? request()->session()->getId() : 'no-session';
         $cacheKey = "user_theme_{$user->id}_{$sessionId}";
+        $fallbackCacheKey = "user_theme_{$user->id}_no-session";
+
         Cache::forget($cacheKey);
+        Cache::forget($fallbackCacheKey);
+
+        // Clear any theme-related cache keys for this user
+        $patterns = [
+            "user_theme_{$user->id}_*",
+            "theme_*_{$user->id}",
+            "userTheme_{$user->id}",
+        ];
+
+        foreach ($patterns as $pattern) {
+            // In a production environment with Redis, you'd use pattern matching
+            // For now, we'll rely on the specific cache keys
+        }
     }
 
     /**
      * Get theme CSS variables for consistent styling.
+     *
+     * @return array<string, string>
      */
     public static function getThemeCssVariables(): array
     {
         $theme = self::getCurrentUserTheme();
-        
+
         if (! $theme) {
             return [];
         }
@@ -69,8 +102,15 @@ final class ThemeHelper
     public static function isDarkMode(): bool
     {
         $theme = self::getCurrentUserTheme();
-        
-        return $theme ? $theme->is_dark_mode : false;
+
+        if ($theme) {
+            return $theme->is_dark_mode;
+        }
+
+        // Fall back to User model if no theme preference
+        $user = Auth::user();
+
+        return $user ? ($user->prefers_dark_mode ?? false) : false;
     }
 
     /**
@@ -79,7 +119,7 @@ final class ThemeHelper
     public static function getComponentBackgroundColor(string $componentType = 'surface'): string
     {
         $theme = self::getCurrentUserTheme();
-        
+
         if (! $theme) {
             return '#ffffff';
         }
@@ -98,7 +138,7 @@ final class ThemeHelper
     public static function getTextColor(): string
     {
         $theme = self::getCurrentUserTheme();
-        
+
         return $theme ? $theme->text_color : '#111827';
     }
 
@@ -108,7 +148,7 @@ final class ThemeHelper
     public static function getPrimaryColor(): string
     {
         $theme = self::getCurrentUserTheme();
-        
+
         return $theme ? $theme->primary_color : '#3b82f6';
     }
 }

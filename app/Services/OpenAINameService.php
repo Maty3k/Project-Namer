@@ -46,12 +46,12 @@ final class OpenAINameService
             return $cachedResult->generated_names;
         }
 
-        $systemPrompt = 'You are a creative business naming expert. Generate exactly 10 business names, numbered 1-10, one per line.';
+        $systemPrompt = 'You are an expert business naming consultant. Follow the detailed instructions provided to create exceptional business names.';
         $userPrompt = $this->buildPrompt($businessIdea, $mode, $deepThinking);
 
         try {
             $response = Prism::text()
-                ->using('openai', 'gpt-4o')
+                ->using('openai', 'gpt-5-mini')
                 ->withMessages([
                     new SystemMessage($systemPrompt),
                     new UserMessage($userPrompt),

@@ -11,7 +11,67 @@
          @endif>
         <!-- Project Header with Editable Name -->
         <div class="mb-8">
-            <livewire:project-name-editor :project="$project" />
+            @if($editingName)
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <flux:field class="flex-1">
+                        <flux:input
+                            wire:model="editableName"
+                            wire:keydown.enter="saveName"
+                            wire:keydown.escape="cancelNameEdit"
+                            class="text-2xl sm:text-3xl font-bold bg-transparent border-0 border-b-2 border-primary-500 focus:ring-0 focus:border-primary-600"
+                            placeholder="Project name"
+                            autofocus
+                        />
+                        <flux:error name="editableName" />
+                    </flux:field>
+                    
+                    <div class="flex gap-2 sm:flex-shrink-0">
+                        <flux:button 
+                            wire:click="saveName"
+                            variant="primary"
+                            size="sm"
+                            wire:loading.attr="disabled"
+                            class="flex-1 sm:flex-none"
+                        >
+                            <span wire:loading.remove wire:target="saveName" class="flex items-center gap-1.5">
+                                <x-app-icon name="save" size="sm" />
+                                Save
+                            </span>
+                            <span wire:loading wire:target="saveName" class="flex items-center gap-1.5">
+                                <x-app-icon name="loading" size="sm" :loading="true" />
+                                Saving...
+                            </span>
+                        </flux:button>
+                        
+                        <flux:button 
+                            wire:click="cancelNameEdit"
+                            variant="ghost"
+                            size="sm"
+                            class="flex-1 sm:flex-none"
+                        >
+                            <div class="flex items-center gap-1.5">
+                                <x-app-icon name="cancel" size="sm" />
+                                Cancel
+                            </div>
+                        </flux:button>
+                    </div>
+                </div>
+            @else
+                <div class="group flex items-center gap-3">
+                    <h1 class="text-3xl font-bold {{ $userTheme ? '' : 'text-gray-900 dark:text-white' }} flex-1">
+                        {{ $project->name }}
+                    </h1>
+                    
+                    <flux:button 
+                        wire:click="editName"
+                        variant="ghost"
+                        size="sm"
+                        class="opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                        Edit
+                    </flux:button>
+                </div>
+            @endif
         </div>
 
         <!-- Project Description with Auto-save -->
@@ -210,8 +270,15 @@
         @if($showAIControls)
             <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
                 <div class="bg-primary-50 dark:bg-gray-800 rounded-lg p-6">
-                    <div class="mb-6">
+                    <div class="flex justify-between items-center mb-6">
                         <h3 class="text-lg font-semibold {{ $userTheme ? '' : 'text-gray-900 dark:text-white' }}">AI Name Generation</h3>
+                        <flux:button
+                            wire:click="$set('showAIControls', false)"
+                            variant="ghost"
+                            size="sm"
+                        >
+                            ✕
+                        </flux:button>
                     </div>
 
                     <!-- AI Controls -->

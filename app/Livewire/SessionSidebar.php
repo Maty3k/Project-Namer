@@ -311,19 +311,21 @@ class SessionSidebar extends Component
     {
         // Clear theme cache to ensure fresh theme data
         ThemeHelper::clearUserThemeCache();
-        
+
         // Refresh the component to apply new theme
         $this->dispatch('$refresh');
     }
 
     /**
      * Define event listeners for this component.
+     *
+     * @return array<string, string>
      */
     protected function getListeners(): array
     {
         return [
             'theme-updated' => 'onThemeUpdated',
-            'theme-applied' => 'onThemeUpdated', 
+            'theme-applied' => 'onThemeUpdated',
             'theme-saved' => 'onThemeUpdated',
         ];
     }

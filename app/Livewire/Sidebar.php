@@ -99,6 +99,25 @@ class Sidebar extends Component
     public function toggleCollapse(): void
     {
         $this->collapsed = ! $this->collapsed;
+
+        // Add JavaScript to enhance animations with GPU acceleration
+        $this->js('
+            const sidebar = document.querySelector(".themed-sidebar");
+            if (sidebar) {
+                // Enable GPU acceleration for smoother animations
+                sidebar.style.transform = "translateZ(0)";
+                sidebar.style.willChange = "transform, width, opacity";
+
+                // Add a temporary class for enhanced animation
+                sidebar.classList.add("transitioning");
+
+                // Remove the transitioning class after animation completes
+                setTimeout(() => {
+                    sidebar.classList.remove("transitioning");
+                    sidebar.style.willChange = "auto";
+                }, 600);
+            }
+        ');
     }
 
     /**
@@ -247,7 +266,7 @@ class Sidebar extends Component
     {
         // Clear theme cache to ensure fresh theme data
         ThemeHelper::clearUserThemeCache();
-        
+
         // Refresh the component to apply new theme
         $this->dispatch('$refresh');
     }

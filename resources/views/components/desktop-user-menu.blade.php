@@ -3,16 +3,17 @@
 @endphp
 
 <flux:dropdown {{ $attributes->class(['hidden lg:block']) }} position="bottom" align="start">
-    <div class="{{ $userTheme ? 'user-menu-wrapper' : '' }}" 
+    <div class="{{ $userTheme ? 'user-menu-wrapper' : '' }} transition-all duration-200 ease-out hover:scale-105 active:scale-95"
          @if($userTheme) style="color: #374151 !important;" @endif>
         <flux:profile
                 :name="auth()->user()->name"
                 :initials="auth()->user()->initials()"
                 icon:trailing="chevrons-up-down"
+                class="transition-all duration-200 ease-out"
         />
     </div>
 
-    <flux:menu class="w-[220px]">
+    <flux:menu class="w-[220px] animate-in slide-in-from-top-2 fade-in-0 duration-200 ease-out">
         <flux:menu.radio.group>
             <div class="p-0 text-sm font-normal">
                 <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
@@ -35,15 +36,27 @@
         <flux:menu.separator/>
 
         <flux:menu.radio.group>
-            <flux:menu.item :href="route('settings.profile')" icon="cog"
-                            wire:navigate>{{ __('Settings') }}</flux:menu.item>
+            <flux:menu.item
+                :href="route('settings.profile')"
+                icon="cog"
+                wire:navigate.hover
+                class="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-sm"
+            >
+                {{ __('Settings') }}
+            </flux:menu.item>
+        </flux:menu.radio.group>
+
+        <flux:menu.separator/>
+
+        <flux:menu.radio.group>
+            @livewire('theme-quick-toggle')
         </flux:menu.radio.group>
 
         <flux:menu.separator/>
 
         <form method="POST" action="{{ route('logout') }}" class="w-full">
             @csrf
-            <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
+            <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-sm hover:bg-red-50 dark:hover:bg-red-900/20">
                 {{ __('Log Out') }}
             </flux:menu.item>
         </form>
