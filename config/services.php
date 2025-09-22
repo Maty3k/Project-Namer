@@ -41,4 +41,16 @@ return [
         'api_key' => env('OPENAI_API_KEY'),
     ],
 
+    'anthropic' => [
+        'api_key' => env('ANTHROPIC_API_KEY'),
+    ],
+
+    'google' => [
+        'api_key' => env('GEMINI_API_KEY'),
+    ],
+
+    'xai' => [
+        'api_key' => env('XAI_API_KEY'),
+    ],
+
 ];

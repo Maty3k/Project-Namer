@@ -31,9 +31,6 @@ class PhotoGallery extends Component
     #[Url(as: 'st')]
     public string $statusFilter = '';
 
-    #[Url(as: 'v')]
-    public string $viewMode = 'grid';
-
     /** @var array<string> */
     public array $selectedImages = [];
 
@@ -485,7 +482,6 @@ class PhotoGallery extends Component
             'selectedTags' => $this->selectedTags,
             'sortBy' => $this->sortBy,
             'statusFilter' => $this->statusFilter,
-            'viewMode' => $this->viewMode,
             'selectedImages' => $this->selectedImages,
             'showBulkActions' => $this->showBulkActions,
             'showImageModal' => $this->showImageModal,

@@ -121,7 +121,20 @@
             setInterval(function() {
                 if (window.__themeProtectionEnabled) {
                     const currentIsDark = document.documentElement.classList.contains('dark');
-                    const expectedTheme = window.currentThemePreference || {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
+
+                    // Get expected theme with better fallback logic
+                    let expectedTheme;
+                    if (window.currentThemePreference !== undefined) {
+                        expectedTheme = window.currentThemePreference;
+                    } else {
+                        // Check localStorage first before falling back to server preference
+                        const localStorageTheme = localStorage.getItem('darkMode');
+                        if (localStorageTheme !== null) {
+                            expectedTheme = localStorageTheme === 'true';
+                        } else {
+                            expectedTheme = {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
+                        }
+                    }
 
                     // Only correct if unauthorized and different
                     const isAuthorized = window.__authorizedThemeChange ||
@@ -157,9 +170,20 @@
                     window.authorizeThemeChange(event.detail.isDark, 5000); // 5 second authorization
                 }
             });
+
+            // Add authorization for AI generation events that might affect DOM
+            ['ai-generation-started', 'ai-generation-completed', 'ai-generation-failed'].forEach(function(eventName) {
+                window.addEventListener(eventName, function() {
+                    // Authorize current theme during AI events to prevent unwanted corrections
+                    const currentIsDark = document.documentElement.classList.contains('dark');
+                    if (window.authorizeThemeChange) {
+                        window.authorizeThemeChange(currentIsDark, 5000); // 5 second authorization
+                    }
+                });
+            });
         })();
 
-        // Add Livewire error handling
+        // Add Livewire error handling and theme preservation
         document.addEventListener('DOMContentLoaded', function() {
             // Handle Livewire navigation errors
             window.addEventListener('livewire:error', function(event) {
@@ -174,6 +198,44 @@
             window.addEventListener('theme-changed', function(event) {
                 const isDark = event.detail.isDark;
                 localStorage.setItem('darkMode', isDark ? 'true' : 'false');
+                window.currentThemePreference = isDark;
+            });
+
+            // Preserve theme state during Livewire navigation
+            window.addEventListener('livewire:navigating', function() {
+                // Save current theme state before navigation
+                const currentIsDark = document.documentElement.classList.contains('dark');
+                localStorage.setItem('darkMode', currentIsDark ? 'true' : 'false');
+                window.currentThemePreference = currentIsDark;
+
+                // Authorize theme changes during navigation
+                if (window.authorizeThemeChange) {
+                    window.authorizeThemeChange(currentIsDark, 3000); // 3 second authorization
+                }
+            });
+
+            // Restore theme state after Livewire navigation
+            window.addEventListener('livewire:navigated', function() {
+                setTimeout(function() {
+                    const savedTheme = localStorage.getItem('darkMode');
+                    if (savedTheme !== null) {
+                        const isDark = savedTheme === 'true';
+                        window.currentThemePreference = isDark;
+
+                        // Apply saved theme if different from current
+                        const currentIsDark = document.documentElement.classList.contains('dark');
+                        if (currentIsDark !== isDark) {
+                            if (window.authorizeThemeChange) {
+                                window.authorizeThemeChange(isDark, 2000);
+                            }
+                            if (isDark) {
+                                document.documentElement.classList.add('dark');
+                            } else {
+                                document.documentElement.classList.remove('dark');
+                            }
+                        }
+                    }
+                }, 100); // Small delay to let DOM settle
             });
         });
     </script>

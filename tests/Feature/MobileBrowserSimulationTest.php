@@ -302,7 +302,7 @@ describe('Mobile Browser Simulation Testing', function (): void {
             $largeData = array_fill(0, 100, [
                 'name' => 'memorytest'.random_int(1000, 9999),
                 'available' => true,
-                'extensions' => ['.com', '.net', '.org'],
+                'extensions' => ['.com', '.net', '.org', '.io', '.co', '.app', '.dev', '.ai', '.tech', '.studio'],
             ]);
 
             $component = Livewire::test('name-generator')

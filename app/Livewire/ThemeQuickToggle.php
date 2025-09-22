@@ -6,6 +6,7 @@ namespace App\Livewire;
 
 use App\Helpers\ThemeHelper;
 use App\Models\UserThemePreference;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 final class ThemeQuickToggle extends Component
@@ -51,8 +52,22 @@ final class ThemeQuickToggle extends Component
             ]);
         }
 
-        // Clear theme cache
+        // Clear theme cache to ensure consistency and force fresh data
         ThemeHelper::clearUserThemeCache();
+
+        // Clear Laravel cache to ensure all cached theme data is fresh
+        try {
+            if (function_exists('cache')) {
+                cache()->forget("user_theme_{$user->id}");
+                // Only use cache tags if the cache driver supports it
+                if (method_exists(cache()->getStore(), 'tags')) {
+                    cache()->tags(['user_themes', "user_{$user->id}"])->flush();
+                }
+            }
+        } catch (\Exception $e) {
+            // Silently continue if cache operations fail
+            logger()->debug('Cache clearing failed: '.$e->getMessage());
+        }
 
         // Instantly apply dark mode to HTML element
         $isDarkModeJs = $newIsDarkMode ? 'true' : 'false';
@@ -85,6 +100,13 @@ final class ThemeQuickToggle extends Component
 
             // Also refresh any theme-dependent components
             window.dispatchEvent(new CustomEvent('theme-changed', { detail: { isDark } }));
+
+            // Force global state synchronization
+            setTimeout(() => {
+                if (window.Livewire) {
+                    window.Livewire.dispatch('refresh-theme-components');
+                }
+            }, 500);
         ");
 
         // Dispatch events for UI updates and theme customizer synchronization
@@ -94,6 +116,16 @@ final class ThemeQuickToggle extends Component
             'backgroundColor' => $newIsDarkMode ? '#1f2937' : '#ffffff',
             'textColor' => $newIsDarkMode ? '#f9fafb' : '#111827',
         ]);
+    }
+
+    /**
+     * Listen for theme component refresh requests.
+     */
+    #[On('refresh-theme-components')]
+    public function refreshThemeComponents(): void
+    {
+        // This will cause the component to re-render with updated theme state
+        $this->render();
     }
 
     public function render(): \Illuminate\View\View

@@ -14,7 +14,7 @@ test('database tracks generated names across multiple requests', function (): vo
     $mode = 'creative';
 
     // Generate first set of names
-    $firstGeneration = $service->generateNames($businessIdea, $mode, 5, []);
+    $firstGeneration = $service->generateNames($businessIdea, $mode, 5);
     expect($firstGeneration)->toHaveCount(5);
 
     // Manually cache the first generation (simulating what the dashboard does)
@@ -48,7 +48,7 @@ test('database tracks generated names across multiple requests', function (): vo
     expect($previouslyGeneratedNames)->toBe($firstGeneration);
 
     // Generate second set with exclusions
-    $secondGeneration = $service->generateNames($businessIdea, $mode, 5, $previouslyGeneratedNames);
+    $secondGeneration = $service->generateNames($businessIdea, $mode, 5);
     expect($secondGeneration)->toHaveCount(5);
 
     // Verify no overlap
@@ -73,7 +73,7 @@ test('database approach handles multiple cached generations', function (): void 
     $allGeneratedNames = [];
 
     foreach ($businessIdeas as $idea) {
-        $names = $service->generateNames($idea, 'creative', 3, []);
+        $names = $service->generateNames($idea, 'creative', 3);
 
         // Cache each generation
         $inputHash = GenerationCache::generateHash($idea, 'creative', false);
@@ -114,7 +114,7 @@ test('database approach handles multiple cached generations', function (): void 
     expect($previouslyGeneratedNames)->toHaveCount(9);
 
     // Generate new names that should exclude all previous
-    $newNames = $service->generateNames('new business idea', 'creative', 5, $previouslyGeneratedNames);
+    $newNames = $service->generateNames('new business idea', 'creative', 5);
     expect($newNames)->toHaveCount(5);
 
     // Verify no overlaps

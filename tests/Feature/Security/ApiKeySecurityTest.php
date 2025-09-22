@@ -165,6 +165,9 @@ describe('API Key Security & Environment Configuration Tests', function (): void
             expect($errorMessage)->not->toContain('api key');
             expect($errorMessage)->not->toContain('401');
             expect($errorMessage)->not->toContain('403');
+        } else {
+            // If no error message, that's also valid - just ensure component is functional
+            expect($component->get('businessDescription'))->toBe(str_repeat('test', 1000));
         }
     });
 
@@ -185,6 +188,9 @@ describe('API Key Security & Environment Configuration Tests', function (): void
         // Should not allow all origins in production
         if (app()->environment('production')) {
             $response->assertHeaderMissing('Access-Control-Allow-Origin');
+        } else {
+            // In non-production environments, ensure response is successful
+            $response->assertOk();
         }
     });
 

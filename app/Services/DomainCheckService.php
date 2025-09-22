@@ -19,7 +19,7 @@ use InvalidArgumentException;
  */
 final class DomainCheckService
 {
-    private const SUPPORTED_TLDS = ['com', 'io', 'co', 'net'];
+    private const SUPPORTED_TLDS = ['com', 'net', 'org', 'io', 'co', 'app', 'dev', 'ai', 'tech', 'studio'];
 
     private const TIMEOUT_SECONDS = 5;
 

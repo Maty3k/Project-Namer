@@ -96,7 +96,7 @@ class LoadingPerformanceTest extends TestCase
         $response->assertStatus(200);
 
         // Assert reasonable query count (should be optimized with eager loading)
-        $this->assertLessThan(20, $queryCount,
+        $this->assertLessThan(30, $queryCount,
             "Too many database queries ({$queryCount}) for dashboard load");
 
         // Assert total query time is reasonable

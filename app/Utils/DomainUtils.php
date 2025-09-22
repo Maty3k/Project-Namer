@@ -14,7 +14,7 @@ use Carbon\Carbon;
  */
 final class DomainUtils
 {
-    private const DEFAULT_TLDS = ['com', 'io', 'co', 'net'];
+    private const DEFAULT_TLDS = ['com', 'net', 'org', 'io', 'co', 'app', 'dev', 'ai', 'tech', 'studio'];
 
     private const CACHE_HOURS = 24;
 

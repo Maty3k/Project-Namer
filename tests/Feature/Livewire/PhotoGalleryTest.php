@@ -61,11 +61,14 @@ test('can change sort order', function (): void {
         ->assertSet('sortBy', 'name_asc');
 });
 
-test('can toggle view mode between grid and list', function (): void {
-    Livewire::test(PhotoGallery::class, ['project' => $this->project])
-        ->assertSet('viewMode', 'grid')
-        ->set('viewMode', 'list')
-        ->assertSet('viewMode', 'list');
+test('renders in grid view mode only', function (): void {
+    $component = Livewire::test(PhotoGallery::class, ['project' => $this->project]);
+
+    // Component should render successfully without viewMode property
+    $component->assertStatus(200);
+
+    // Should see grid layout (aspect-square class indicates grid view)
+    $component->assertSee('aspect-square', false);
 });
 
 test('can select and deselect images', function (): void {

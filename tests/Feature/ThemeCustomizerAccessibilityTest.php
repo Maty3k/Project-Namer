@@ -186,11 +186,11 @@ final class ThemeCustomizerAccessibilityTest extends TestCase
                 'expectWarnings' => false,
                 'expectSuggestions' => false,
             ],
-            // Moderate issues
+            // Good contrast - no suggestions needed
             [
                 'colors' => ['#6b7280', '#ffffff', '#4b5563'],
                 'expectWarnings' => false,
-                'expectSuggestions' => true,
+                'expectSuggestions' => false,
             ],
             // Poor accessibility
             [

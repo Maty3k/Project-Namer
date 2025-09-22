@@ -615,8 +615,11 @@
             // Theme saved successfully
             Livewire.on('theme-saved', () => {
                 showToast('Theme saved successfully! Your preferences have been updated.', 'success');
-                // Don't force reload - let the theme apply naturally through the theme-applied event
-                // The theme persistence will handle maintaining the theme across page navigation
+
+                // Force refresh of all Livewire components that might display theme state
+                setTimeout(() => {
+                    Livewire.dispatch('refresh-theme-components');
+                }, 100);
             });
 
             // Theme imported successfully

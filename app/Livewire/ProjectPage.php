@@ -75,7 +75,7 @@ class ProjectPage extends Component
     public array $selectedSuggestions = [];
 
     /** @var \Illuminate\Database\Eloquent\Collection<int, AIGeneration> */
-    public \Illuminate\Database\Eloquent\Collection $aiGenerationHistory;
+    public ?\Illuminate\Database\Eloquent\Collection $aiGenerationHistory = null;
 
     public ?int $currentAIGenerationId = null;
 
@@ -122,6 +122,17 @@ class ProjectPage extends Component
     ];
 
     /**
+     * Boot the component - called before mount.
+     */
+    public function boot(): void
+    {
+        // Initialize default values to prevent serialization issues
+        $this->realTimeProgress = [];
+        $this->modelStatuses = [];
+        $this->aiGenerationResults = [];
+    }
+
+    /**
      * Mount the component with project UUID.
      */
     public function mount(string $uuid): void
@@ -140,13 +151,16 @@ class ProjectPage extends Component
         // Load AI generation history for this project
         $this->loadAIGenerationHistory();
 
-        // Check for auto-generation parameter
-        if (request()->get('auto_generate') === '1') {
+        // Check for auto-generation parameter - only trigger once per session
+        if (request()->get('auto_generate') === '1' && ! session()->has('auto_generated_'.$this->project->id)) {
             $this->showAIControls = true;
             $this->useAIGeneration = true;
 
-            // Auto-trigger generation if models are selected
-            if (! empty($this->selectedAIModels)) {
+            // Mark as auto-generated to prevent repeated triggers
+            session()->put('auto_generated_'.$this->project->id, true);
+
+            // Auto-trigger generation if models are selected and no names exist yet
+            if (! empty($this->selectedAIModels) && $this->getFilteredSuggestionsProperty()->isEmpty()) {
                 // Use a deferred method to trigger generation after mount completes
                 $this->dispatch('trigger-auto-generation');
             }
@@ -155,12 +169,31 @@ class ProjectPage extends Component
 
     /**
      * Handle auto-generation trigger after mount.
+     * Only runs if no names exist and session allows it.
      */
     public function handleAutoGeneration(): void
     {
-        if ($this->useAIGeneration && ! empty($this->selectedAIModels) && ! $this->isGeneratingNames) {
+        // Additional safeguards to prevent unwanted generation
+        if ($this->useAIGeneration
+            && ! empty($this->selectedAIModels)
+            && ! $this->isGeneratingNames
+            && $this->getFilteredSuggestionsProperty()->isEmpty()
+            && session()->has('auto_generated_'.$this->project->id)) {
+
+            // Remove the session flag to prevent future auto-generation
+            session()->forget('auto_generated_'.$this->project->id);
+
             $this->generateMoreNames();
         }
+    }
+
+    /**
+     * Reset auto-generation flag for this project.
+     * This allows the auto_generate parameter to work again if needed.
+     */
+    public function resetAutoGeneration(): void
+    {
+        session()->forget('auto_generated_'.$this->project->id);
     }
 
     /**
@@ -182,15 +215,23 @@ class ProjectPage extends Component
 
         $this->validate(['editableName' => $this->rules['editableName']]);
 
-        $this->project->update(['name' => $this->editableName]);
-        $this->editingName = false;
+        try {
+            $this->project->update(['name' => $this->editableName]);
+            $this->editingName = false;
 
-        // Dispatch event to update sidebar
-        $this->dispatch('project-updated', $this->project->uuid);
-        $this->dispatch('show-toast', [
-            'message' => 'Project name updated successfully!',
-            'type' => 'success',
-        ]);
+            // Dispatch event to update sidebar
+            $this->dispatch('project-updated', $this->project->uuid);
+            $this->dispatch('show-toast', [
+                'message' => 'Project name updated successfully!',
+                'type' => 'success',
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error saving project name: '.$e->getMessage());
+            $this->dispatch('show-toast', [
+                'message' => 'Error saving project name. Please try again.',
+                'type' => 'error',
+            ]);
+        }
     }
 
     /**
@@ -198,9 +239,17 @@ class ProjectPage extends Component
      */
     public function cancelNameEdit(): void
     {
-        $this->editingName = false;
-        $this->editableName = $this->project->name;
-        $this->resetErrorBag('editableName');
+        try {
+            $this->editingName = false;
+            $this->editableName = $this->project->name;
+            $this->resetErrorBag('editableName');
+        } catch (\Exception $e) {
+            \Log::error('Error canceling name edit: '.$e->getMessage());
+            // Force reset to safe state
+            $this->editingName = false;
+            $this->editableName = $this->project->fresh()->name ?? '';
+            $this->resetErrorBag();
+        }
     }
 
     /**
@@ -746,9 +795,13 @@ class ProjectPage extends Component
     {
         foreach ($results as $modelName => $names) {
             foreach ($names as $name) {
+                // Generate domain list for this name
+                $domains = $this->generateDomainsForName($name);
+
                 NameSuggestion::create([
                     'project_id' => $this->project->id,
                     'name' => $name,
+                    'domains' => $domains,
                     'generation_metadata' => [
                         'ai_model' => $modelName,
                         'generation_mode' => $this->generationMode,
@@ -759,6 +812,48 @@ class ProjectPage extends Component
                 ]);
             }
         }
+    }
+
+    /**
+     * Generate domain list for a given name.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    protected function generateDomainsForName(string $name): array
+    {
+        $tlds = ['com', 'net', 'org', 'io', 'co', 'app', 'dev', 'ai', 'tech', 'studio'];
+        $domains = [];
+
+        // Sanitize the name for domain use - remove spaces and special characters
+        $sanitizedName = strtolower((string) preg_replace('/[^a-zA-Z0-9]/', '', $name));
+
+        // Create kebab-case version by adding hyphens between words
+        $kebabCaseName = strtolower((string) preg_replace('/([a-z])([A-Z])/', '$1-$2', $name));
+        $kebabCaseName = preg_replace('/[^a-zA-Z0-9\-]/', '-', $kebabCaseName);
+        $kebabCaseName = preg_replace('/\-+/', '-', (string) $kebabCaseName);
+        $kebabCaseName = trim((string) $kebabCaseName, '-');
+
+        foreach ($tlds as $tld) {
+            // Add concatenated version (original behavior)
+            $concatenatedDomain = $sanitizedName.'.'.$tld;
+            $domains[$concatenatedDomain] = [
+                'extension' => '.'.$tld,
+                'available' => null, // Will be checked later
+                'status' => 'pending',
+            ];
+
+            // Add kebab-case version if different from concatenated
+            if ($kebabCaseName !== $sanitizedName && ! empty($kebabCaseName)) {
+                $kebabDomain = $kebabCaseName.'.'.$tld;
+                $domains[$kebabDomain] = [
+                    'extension' => '.'.$tld,
+                    'available' => null, // Will be checked later
+                    'status' => 'pending',
+                ];
+            }
+        }
+
+        return $domains;
     }
 
     /**
@@ -1260,6 +1355,16 @@ class ProjectPage extends Component
             ];
         }
 
+        // Skip serializing computed properties to prevent circular serialization issues
+        if (in_array($property, [
+            'filteredSuggestions',
+            'suggestionCounts',
+            'descriptionCharacterCount',
+            'modelRecommendations',
+        ])) {
+            return null;
+        }
+
         return $this->$property;
     }
 
@@ -1272,12 +1377,59 @@ class ProjectPage extends Component
             return Project::find($value);
         }
 
+        if ($property === 'aiGenerationHistory' && is_array($value)) {
+            $this->loadAIGenerationHistory();
+
+            return $this->aiGenerationHistory;
+        }
+
         // Don't hydrate computed properties - let them be computed fresh
-        if (in_array($property, ['filteredSuggestions', 'suggestionCounts'])) {
+        if (in_array($property, [
+            'filteredSuggestions',
+            'suggestionCounts',
+            'descriptionCharacterCount',
+            'modelRecommendations',
+        ])) {
             return null;
         }
 
         return $value;
+    }
+
+    /**
+     * Livewire dehydrate hook to clean up before serialization.
+     */
+    public function dehydrate(): void
+    {
+        // Ensure collections are properly cleaned before serialization
+        if (isset($this->aiGenerationHistory)) {
+            // Force collection to be fresh for next hydration
+            $this->aiGenerationHistory = null;
+        }
+    }
+
+    /**
+     * Livewire hydrate hook to restore state after deserialization.
+     */
+    public function hydrate(): void
+    {
+        // Ensure arrays are properly initialized
+        $this->realTimeProgress ??= [];
+        $this->modelStatuses ??= [];
+        $this->aiGenerationResults ??= [];
+
+        // Reload AI generation history if not present
+        if ($this->aiGenerationHistory === null) {
+            $this->loadAIGenerationHistory();
+        }
+
+        // Ensure editing properties are properly initialized (only if truly unset, not empty)
+        if (! isset($this->editableName)) {
+            $this->editableName = $this->project->name ?? '';
+        }
+        if (! isset($this->editableDescription)) {
+            $this->editableDescription = $this->project->description ?? '';
+        }
     }
 
     public function render(): View

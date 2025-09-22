@@ -11,9 +11,9 @@ namespace App\Services;
 class FallbackNameService
 {
     private const PREFIXES = [
-        'creative' => ['Pixel', 'Nova', 'Spark', 'Flow', 'Wave', 'Echo', 'Zen', 'Flux', 'Aura', 'Vibe'],
+        'creative' => ['Smart', 'Bright', 'Fresh', 'Quick', 'Bold', 'Pure', 'Swift', 'Sharp', 'Clear', 'Wise'],
         'professional' => ['Prime', 'Elite', 'Core', 'Pro', 'Summit', 'Peak', 'Alpha', 'Omega', 'Strategic', 'Vision'],
-        'brandable' => ['Zeph', 'Axio', 'Lumi', 'Velo', 'Koda', 'Nyx', 'Orb', 'Sync', 'Loop', 'Grid'],
+        'brandable' => ['Zeph', 'Axio', 'Lumi', 'Velo', 'Koda', 'Nyx', 'Orb', 'Link', 'Loop', 'Grid'],
         'tech-focused' => ['Byte', 'Code', 'Data', 'Logic', 'Binary', 'Neural', 'Quantum', 'Digital', 'Cyber', 'Tech'],
     ];
 

@@ -291,9 +291,9 @@ final class ThemeService
                 'primary_color' => '#00ff88',
                 'accent_color' => '#ff0080',
                 'background_color' => '#0a0a0a',
-                'text_color' => '#f0f0f0',
-                'text_primary_color' => '#f0f0f0',
-                'text_secondary_color' => '#d1d5db',
+                'text_color' => '#ffffff',
+                'text_primary_color' => '#ffffff',
+                'text_secondary_color' => '#e0e0e0',
                 'theme_name' => 'neon-cyber',
                 'is_dark_mode' => true,
                 'preview_url' => '/images/theme-previews/neon-cyber.png',
@@ -307,7 +307,7 @@ final class ThemeService
                 'background_color' => '#001122',
                 'text_color' => '#ffffff',
                 'text_primary_color' => '#ffffff',
-                'text_secondary_color' => '#e5e7eb',
+                'text_secondary_color' => '#f0f9ff',
                 'theme_name' => 'electric-blue',
                 'is_dark_mode' => true,
                 'preview_url' => '/images/theme-previews/electric-blue.png',
@@ -375,9 +375,9 @@ final class ThemeService
                 'primary_color' => '#22c55e',
                 'accent_color' => '#16a34a',
                 'background_color' => '#000000',
-                'text_color' => '#e0e0e0',
-                'text_primary_color' => '#e0e0e0',
-                'text_secondary_color' => '#bbf7d0',
+                'text_color' => '#ffffff',
+                'text_primary_color' => '#ffffff',
+                'text_secondary_color' => '#dcfce7',
                 'theme_name' => 'matrix-green',
                 'is_dark_mode' => true,
                 'preview_url' => '/images/theme-previews/matrix-green.png',
@@ -387,7 +387,7 @@ final class ThemeService
     }
 
     /**
-     * Get themes filtered by category.
+     * Get themes filtered by category with improved contrast.
      *
      * @return list<array<string, mixed>>
      */
@@ -395,11 +395,49 @@ final class ThemeService
     {
         $themes = $this->getPredefinedThemes();
 
+        // Ensure all themes have good text visibility
+        $themes = array_map(fn ($theme) => $this->ensureThemeVisibility($theme), $themes);
+
         if ($category === 'all') {
             return $themes;
         }
 
         return array_filter($themes, fn ($theme) => ($theme['category'] ?? 'standard') === $category);
+    }
+
+    /**
+     * Ensure theme has proper text visibility and contrast.
+     *
+     * @param  array<string, mixed>  $theme
+     * @return array<string, mixed>
+     */
+    protected function ensureThemeVisibility(array $theme): array
+    {
+        $backgroundColor = $theme['background_color'] ?? '#ffffff';
+        $textColor = $theme['text_color'] ?? '#111827';
+
+        // Calculate contrast ratio
+        $contrastRatio = $this->calculateContrastRatio($textColor, $backgroundColor);
+
+        // If contrast is poor, auto-adjust text color
+        if ($contrastRatio < 4.5) {
+            // Determine if background is light or dark
+            $backgroundLuminance = $this->calculateLuminance($this->hexToRgb($backgroundColor));
+
+            if ($backgroundLuminance > 0.5) {
+                // Light background - use dark text
+                $theme['text_color'] = '#111827';
+                $theme['text_primary_color'] = '#111827';
+                $theme['text_secondary_color'] = '#4b5563';
+            } else {
+                // Dark background - use light text
+                $theme['text_color'] = '#ffffff';
+                $theme['text_primary_color'] = '#ffffff';
+                $theme['text_secondary_color'] = '#e5e7eb';
+            }
+        }
+
+        return $theme;
     }
 
     /**

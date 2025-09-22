@@ -71,7 +71,7 @@ it('can apply bold themes', function (): void {
         ->assertSet('primaryColor', '#00ff88')
         ->assertSet('accentColor', '#ff0080')
         ->assertSet('backgroundColor', '#0a0a0a')
-        ->assertSet('textColor', '#f0f0f0')
+        ->assertSet('textColor', '#ffffff')
         ->assertSet('themeName', 'neon-cyber')
         ->assertSet('isDarkMode', true);
 });
