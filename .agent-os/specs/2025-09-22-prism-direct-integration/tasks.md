@@ -7,24 +7,24 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
 
 ## Tasks
 
-- [ ] 1. Create PromptBuilder Service and Extract Prompt Logic
-  - [ ] 1.1 Write tests for PromptBuilder service
-  - [ ] 1.2 Create PromptBuilder service class
-  - [ ] 1.3 Extract prompt building methods from PrismAIService
-  - [ ] 1.4 Add system prompt generation for all modes
-  - [ ] 1.5 Add user prompt building with business analysis
-  - [ ] 1.6 Add prompt optimization for deep thinking mode
-  - [ ] 1.7 Verify all PromptBuilder tests pass
+- [x] 1. Create PromptBuilder Service and Extract Prompt Logic
+  - [x] 1.1 Write tests for PromptBuilder service
+  - [x] 1.2 Create PromptBuilder service class
+  - [x] 1.3 Extract prompt building methods from PrismAIService
+  - [x] 1.4 Add system prompt generation for all modes
+  - [x] 1.5 Add user prompt building with business analysis
+  - [x] 1.6 Add prompt optimization for deep thinking mode
+  - [x] 1.7 Verify all PromptBuilder tests pass
 
-- [ ] 2. Update AIGenerationService to Use Prism Directly
-  - [ ] 2.1 Write tests for updated AIGenerationService
-  - [ ] 2.2 Remove PrismAIService dependency injection
-  - [ ] 2.3 Add direct Prism::text() calls with Provider enum
-  - [ ] 2.4 Implement provider configuration mapping
-  - [ ] 2.5 Add fallback provider logic using try-catch
-  - [ ] 2.6 Update error handling to map Prism exceptions
-  - [ ] 2.7 Integrate PromptBuilder service
-  - [ ] 2.8 Verify all AIGenerationService tests pass
+- [x] 2. Update AIGenerationService to Use Prism Directly
+  - [x] 2.1 Write tests for updated AIGenerationService
+  - [x] 2.2 Remove PrismAIService dependency injection
+  - [x] 2.3 Add direct Prism::text() calls with Provider enum
+  - [x] 2.4 Implement provider configuration mapping
+  - [x] 2.5 Add fallback provider logic using try-catch
+  - [x] 2.6 Update error handling to map Prism exceptions
+  - [x] 2.7 Integrate PromptBuilder service
+  - [x] 2.8 Verify all AIGenerationService tests pass
 
 - [ ] 3. Update NameGeneratorDashboard Livewire Component
   - [ ] 3.1 Write tests for updated dashboard component

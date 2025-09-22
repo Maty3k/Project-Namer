@@ -4,19 +4,78 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\GenerationCache;
 use App\Models\GenerationSession;
+use Exception;
 use InvalidArgumentException;
+use Prism\Prism\Enums\Provider;
+use Prism\Prism\Prism;
 
 /**
- * Service for coordinating AI name generation across multiple models.
+ * Service for coordinating AI name generation across multiple models using direct Prism integration.
  *
  * Orchestrates parallel execution of multiple AI models for efficient
  * business name generation with intelligent load balancing and coordination.
  */
 final readonly class AIGenerationService
 {
+    private const VALID_MODES = ['creative', 'professional', 'brandable', 'tech-focused'];
+
+    private const VALID_MODELS = [
+        'gpt-4',
+        'claude-3.5-sonnet',
+        'gemini-1.5-pro',
+        'grok-beta',
+    ];
+
+    private const MAX_INPUT_LENGTH = 2000;
+
+    private const DEFAULT_COUNT = 10;
+
+    private const MAX_RETRIES = 3;
+
+    private const RETRY_DELAY_SECONDS = 1;
+
+    private const FALLBACK_MODEL_ORDER = [
+        'gpt-4' => ['claude-3.5-sonnet', 'gemini-1.5-pro', 'grok-beta'],
+        'claude-3.5-sonnet' => ['gpt-4', 'gemini-1.5-pro', 'grok-beta'],
+        'gemini-1.5-pro' => ['gpt-4', 'claude-3.5-sonnet', 'grok-beta'],
+        'grok-beta' => ['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro'],
+    ];
+
+    private const MODEL_CONFIGS = [
+        'gpt-4' => [
+            'provider' => Provider::OpenAI,
+            'model' => 'gpt-4o',
+            'max_tokens' => 200,
+            'temperature' => 0.7,
+            'deep_thinking_temperature' => 0.3,
+        ],
+        'claude-3.5-sonnet' => [
+            'provider' => Provider::Anthropic,
+            'model' => 'claude-3-5-sonnet-20241022',
+            'max_tokens' => 200,
+            'temperature' => 0.7,
+            'deep_thinking_temperature' => 0.3,
+        ],
+        'gemini-1.5-pro' => [
+            'provider' => Provider::Gemini,
+            'model' => 'gemini-1.5-pro',
+            'max_tokens' => 200,
+            'temperature' => 0.8,
+            'deep_thinking_temperature' => 0.4,
+        ],
+        'grok-beta' => [
+            'provider' => Provider::XAI,
+            'model' => 'grok-beta',
+            'max_tokens' => 200,
+            'temperature' => 0.9,
+            'deep_thinking_temperature' => 0.5,
+        ],
+    ];
+
     public function __construct(
-        private PrismAIService $prismService,
+        private PromptBuilder $promptBuilder,
         private VisionAnalysisService $visionService
     ) {}
 
@@ -39,14 +98,15 @@ final readonly class AIGenerationService
         bool $deepThinking = false,
         array $customParams = []
     ): array {
-        if (empty($models)) {
-            throw new InvalidArgumentException('At least one model must be specified');
-        }
+        $this->validateInput($businessIdea, $models, $mode);
 
         $startTime = microtime(true);
+        $results = [];
+        $count = $customParams['count'] ?? self::DEFAULT_COUNT;
 
-        // Execute all models through PrismAIService (which handles each model sequentially but with intelligent fallback)
-        $results = $this->prismService->generateNames($businessIdea, $models, $mode, $deepThinking, $customParams);
+        foreach ($models as $model) {
+            $results[$model] = $this->generateWithFallback($businessIdea, $model, $mode, $deepThinking, $count, $customParams);
+        }
 
         $totalTime = (microtime(true) - $startTime) * 1000;
 
@@ -266,5 +326,393 @@ final readonly class AIGenerationService
             $deepThinking,
             $customParams
         );
+    }
+
+    /**
+     * Generate names with intelligent fallback and retry logic using direct Prism integration.
+     *
+     * @param  array<string, mixed>  $customParams
+     * @return array<string, mixed>
+     */
+    private function generateWithFallback(
+        string $businessIdea,
+        string $primaryModel,
+        string $mode,
+        bool $deepThinking,
+        int $count,
+        array $customParams
+    ): array {
+        $startTime = microtime(true);
+
+        // Check cache first
+        $cacheKey = $this->generateCacheKey($businessIdea, $primaryModel, $mode, $deepThinking, $customParams);
+        $cachedResult = GenerationCache::findByHash($cacheKey);
+
+        if ($cachedResult !== null) {
+            return [
+                'names' => $cachedResult->generated_names,
+                'model' => $primaryModel,
+                'generation_mode' => $mode,
+                'deep_thinking' => $deepThinking,
+                'temperature' => $this->getTemperature($primaryModel, $deepThinking, $customParams),
+                'max_tokens' => $this->getMaxTokens($primaryModel, $customParams),
+                'response_time_ms' => 0, // Cached response
+                'status' => 'completed',
+                'cached' => true,
+                'fallback_used' => false,
+                'retry_count' => 0,
+                'created_at' => $cachedResult->created_at->toISOString(),
+            ];
+        }
+
+        // Try primary model with retries
+        $lastException = null;
+        for ($attempt = 1; $attempt <= self::MAX_RETRIES; $attempt++) {
+            try {
+                $names = $this->generateNamesForModel($businessIdea, $primaryModel, $mode, $deepThinking, $count, $customParams);
+                $responseTime = (microtime(true) - $startTime) * 1000;
+
+                $result = [
+                    'names' => $names,
+                    'model' => $primaryModel,
+                    'generation_mode' => $mode,
+                    'deep_thinking' => $deepThinking,
+                    'temperature' => $this->getTemperature($primaryModel, $deepThinking, $customParams),
+                    'max_tokens' => $this->getMaxTokens($primaryModel, $customParams),
+                    'response_time_ms' => (int) round($responseTime),
+                    'status' => 'completed',
+                    'cached' => false,
+                    'fallback_used' => false,
+                    'retry_count' => $attempt - 1,
+                    'created_at' => now()->toISOString(),
+                ];
+
+                // Cache the result
+                $this->cacheResult($cacheKey, $businessIdea, $primaryModel, $mode, $deepThinking, $names);
+
+                return $result;
+
+            } catch (Exception $e) {
+                $lastException = $e;
+                $errorType = $this->categorizeError($e->getMessage());
+
+                // Don't retry for non-transient errors
+                if (! $this->isTransientError($errorType)) {
+                    break;
+                }
+
+                // Wait before retry (except on last attempt)
+                if ($attempt < self::MAX_RETRIES) {
+                    sleep(self::RETRY_DELAY_SECONDS * $attempt); // Exponential backoff
+                }
+            }
+        }
+
+        // Try fallback models if primary model failed
+        $fallbackModels = self::FALLBACK_MODEL_ORDER[$primaryModel] ?? [];
+        foreach ($fallbackModels as $fallbackModel) {
+            try {
+                $fallbackCacheKey = $this->generateCacheKey($businessIdea, $fallbackModel, $mode, $deepThinking, $customParams);
+                $fallbackCachedResult = GenerationCache::findByHash($fallbackCacheKey);
+
+                if ($fallbackCachedResult !== null) {
+                    return [
+                        'names' => $fallbackCachedResult->generated_names,
+                        'model' => $fallbackModel,
+                        'generation_mode' => $mode,
+                        'deep_thinking' => $deepThinking,
+                        'temperature' => $this->getTemperature($fallbackModel, $deepThinking, $customParams),
+                        'max_tokens' => $this->getMaxTokens($fallbackModel, $customParams),
+                        'response_time_ms' => (int) round((microtime(true) - $startTime) * 1000),
+                        'status' => 'completed',
+                        'cached' => true,
+                        'fallback_used' => true,
+                        'fallback_from' => $primaryModel,
+                        'retry_count' => self::MAX_RETRIES,
+                        'created_at' => $fallbackCachedResult->created_at->toISOString(),
+                    ];
+                }
+
+                $names = $this->generateNamesForModel($businessIdea, $fallbackModel, $mode, $deepThinking, $count, $customParams);
+                $responseTime = (microtime(true) - $startTime) * 1000;
+
+                $result = [
+                    'names' => $names,
+                    'model' => $fallbackModel,
+                    'generation_mode' => $mode,
+                    'deep_thinking' => $deepThinking,
+                    'temperature' => $this->getTemperature($fallbackModel, $deepThinking, $customParams),
+                    'max_tokens' => $this->getMaxTokens($fallbackModel, $customParams),
+                    'response_time_ms' => (int) round($responseTime),
+                    'status' => 'completed',
+                    'cached' => false,
+                    'fallback_used' => true,
+                    'fallback_from' => $primaryModel,
+                    'retry_count' => self::MAX_RETRIES,
+                    'created_at' => now()->toISOString(),
+                ];
+
+                // Cache the result with the fallback model key
+                $this->cacheResult($fallbackCacheKey, $businessIdea, $fallbackModel, $mode, $deepThinking, $names);
+
+                return $result;
+
+            } catch (Exception) {
+                // Continue to next fallback model
+                continue;
+            }
+        }
+
+        // All models failed
+        $responseTime = (microtime(true) - $startTime) * 1000;
+
+        return [
+            'names' => [],
+            'model' => $primaryModel,
+            'generation_mode' => $mode,
+            'deep_thinking' => $deepThinking,
+            'temperature' => $this->getTemperature($primaryModel, $deepThinking, $customParams),
+            'max_tokens' => $this->getMaxTokens($primaryModel, $customParams),
+            'response_time_ms' => (int) round($responseTime),
+            'status' => 'failed',
+            'error' => $this->normalizeError($lastException->getMessage()),
+            'cached' => false,
+            'fallback_used' => true,
+            'fallback_from' => null,
+            'retry_count' => self::MAX_RETRIES,
+            'created_at' => now()->toISOString(),
+        ];
+    }
+
+    /**
+     * Generate names for a specific model using direct Prism integration.
+     *
+     * @param  array<string, mixed>  $customParams
+     * @return array<int, string>
+     */
+    private function generateNamesForModel(
+        string $businessIdea,
+        string $model,
+        string $mode,
+        bool $deepThinking,
+        int $count,
+        array $customParams
+    ): array {
+        $config = self::MODEL_CONFIGS[$model];
+        $systemPrompt = $this->promptBuilder->buildSystemPrompt($model, $count, $mode, $deepThinking);
+        $userPrompt = $this->promptBuilder->buildUserPrompt($businessIdea, $model, $mode, $deepThinking);
+
+        $temperature = $this->getTemperature($model, $deepThinking, $customParams);
+        $maxTokens = $this->getMaxTokens($model, $customParams);
+
+        $response = Prism::text()
+            ->using($config['provider'], $config['model'])
+            ->withSystemPrompt($systemPrompt)
+            ->withPrompt($userPrompt)
+            ->withClientOptions([
+                'max_tokens' => $maxTokens,
+                'temperature' => $temperature,
+            ])
+            ->asText();
+
+        return $this->parseResponse($response->text, $count);
+    }
+
+    /**
+     * Parse response text into array of names.
+     *
+     * @return array<int, string>
+     */
+    private function parseResponse(string $responseText, int $expectedCount): array
+    {
+        $lines = explode("\n", trim($responseText));
+        $names = [];
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+
+            // Remove numbering (1., 2., etc.) and clean up
+            if (preg_match('/^\d+\.\s*(.+)$/', $line, $matches)) {
+                $name = trim($matches[1]);
+                if (! empty($name)) {
+                    $names[] = $name;
+                }
+            } elseif (! empty($line) && ! preg_match('/^\d+$/', $line)) {
+                // Handle cases where names aren't numbered
+                $names[] = $line;
+            }
+        }
+
+        // Ensure we have the expected number of names
+        return array_slice($names, 0, $expectedCount);
+    }
+
+    /**
+     * Get temperature for a model with custom overrides.
+     *
+     * @param  array<string, mixed>  $customParams
+     */
+    private function getTemperature(string $model, bool $deepThinking, array $customParams): float
+    {
+        if (isset($customParams['temperature'])) {
+            return (float) $customParams['temperature'];
+        }
+
+        $config = self::MODEL_CONFIGS[$model];
+
+        return $deepThinking ? $config['deep_thinking_temperature'] : $config['temperature'];
+    }
+
+    /**
+     * Get max tokens for a model with custom overrides.
+     *
+     * @param  array<string, mixed>  $customParams
+     */
+    private function getMaxTokens(string $model, array $customParams): int
+    {
+        if (isset($customParams['max_tokens'])) {
+            return (int) $customParams['max_tokens'];
+        }
+
+        return self::MODEL_CONFIGS[$model]['max_tokens'];
+    }
+
+    /**
+     * Generate cache key for the request.
+     *
+     * @param  array<string, mixed>  $customParams
+     */
+    private function generateCacheKey(
+        string $businessIdea,
+        string $model,
+        string $mode,
+        bool $deepThinking,
+        array $customParams
+    ): string {
+        $combinedDescription = $businessIdea.'|model:'.$model.'|params:'.json_encode($customParams);
+
+        return GenerationCache::generateHash($combinedDescription, $mode, $deepThinking);
+    }
+
+    /**
+     * Cache generation result.
+     *
+     * @param  array<int, string>  $names
+     */
+    private function cacheResult(
+        string $cacheKey,
+        string $businessIdea,
+        string $model,
+        string $mode,
+        bool $deepThinking,
+        array $names
+    ): void {
+        $combinedDescription = $businessIdea.'|model:'.$model;
+
+        GenerationCache::updateOrCreate(
+            ['input_hash' => $cacheKey],
+            [
+                'business_description' => $combinedDescription,
+                'mode' => $mode,
+                'deep_thinking' => $deepThinking,
+                'generated_names' => $names,
+                'cached_at' => now(),
+            ]
+        );
+    }
+
+    /**
+     * Categorize error types for intelligent handling.
+     */
+    private function categorizeError(string $message): string
+    {
+        $lowerMessage = strtolower($message);
+
+        if (str_contains($lowerMessage, 'timeout') || str_contains($lowerMessage, 'connection timed out')) {
+            return 'timeout';
+        }
+
+        if (str_contains($lowerMessage, 'rate limit') || str_contains($lowerMessage, '429')) {
+            return 'rate_limit';
+        }
+
+        if (str_contains($lowerMessage, 'unauthorized') || str_contains($lowerMessage, '401')) {
+            return 'unauthorized';
+        }
+
+        if (str_contains($lowerMessage, 'insufficient_quota') || str_contains($lowerMessage, 'quota')) {
+            return 'quota_exceeded';
+        }
+
+        if (str_contains($lowerMessage, 'server error') || str_contains($lowerMessage, '500') || str_contains($lowerMessage, '502') || str_contains($lowerMessage, '503')) {
+            return 'server_error';
+        }
+
+        if (str_contains($lowerMessage, 'network') || str_contains($lowerMessage, 'connection')) {
+            return 'network_error';
+        }
+
+        return 'unknown';
+    }
+
+    /**
+     * Check if error type is transient and should be retried.
+     */
+    private function isTransientError(string $errorType): bool
+    {
+        return in_array($errorType, [
+            'timeout',
+            'rate_limit',
+            'server_error',
+            'network_error',
+        ]);
+    }
+
+    /**
+     * Normalize error messages for consistent handling.
+     */
+    private function normalizeError(string $message): string
+    {
+        $errorType = $this->categorizeError($message);
+
+        return match ($errorType) {
+            'timeout' => 'API timeout',
+            'rate_limit' => 'Rate limit exceeded',
+            'unauthorized' => 'Invalid API key',
+            'quota_exceeded' => 'API quota exceeded',
+            'server_error' => 'Server error',
+            'network_error' => 'Network error',
+            default => $message,
+        };
+    }
+
+    /**
+     * Validate input parameters.
+     *
+     * @param  array<string>  $models
+     */
+    private function validateInput(string $businessIdea, array $models, string $mode): void
+    {
+        if (empty(trim($businessIdea))) {
+            throw new InvalidArgumentException('Business idea cannot be empty');
+        }
+
+        if (strlen($businessIdea) > self::MAX_INPUT_LENGTH) {
+            throw new InvalidArgumentException('Business idea is too long');
+        }
+
+        if (empty($models)) {
+            throw new InvalidArgumentException('At least one model must be specified');
+        }
+
+        foreach ($models as $model) {
+            if (! in_array($model, self::VALID_MODELS)) {
+                throw new InvalidArgumentException("Invalid model: {$model}");
+            }
+        }
+
+        if (! in_array($mode, self::VALID_MODES)) {
+            throw new InvalidArgumentException("Invalid generation mode: {$mode}");
+        }
     }
 }
