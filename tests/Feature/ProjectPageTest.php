@@ -341,5 +341,9 @@ test('generation requires mode to be selected when AI is enabled', function (): 
         ->set('selectedAIModels', ['gpt-4'])
         ->set('generationMode', '') // Empty generation mode
         ->call('generateMoreNames')
-        ->assertHasErrors(['generationMode' => 'required']);
+        ->assertSet('showAIControls', true)
+        ->assertDispatched('show-toast', [
+            'message' => 'Please select a generation style first',
+            'type' => 'info',
+        ]);
 });

@@ -488,6 +488,145 @@ class NameGeneratorDashboard extends Component
     }
 
     /**
+     * Handle DNS check trigger event from name result cards.
+     */
+    #[On('dns-check-triggered')]
+    public function handleDnsCheckTriggered(array $data): void
+    {
+        $suggestionId = $data['suggestionId'] ?? null;
+
+        if (!$suggestionId) {
+            return;
+        }
+
+        try {
+            $suggestion = NameSuggestion::findOrFail($suggestionId);
+            $this->authorize('update', $suggestion->project);
+
+            // Dispatch to other name result cards to refresh their state
+            $this->dispatch('dns-check-in-progress', ['suggestionId' => $suggestionId]);
+
+            Log::info('DNS check triggered from dashboard', [
+                'suggestion_id' => $suggestionId,
+                'suggestion_name' => $suggestion->name,
+                'user_id' => auth()->id(),
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('DNS check trigger handling failed', [
+                'suggestion_id' => $suggestionId,
+                'error' => $e->getMessage(),
+                'user_id' => auth()->id(),
+            ]);
+        }
+    }
+
+    /**
+     * Handle DNS check completion event to refresh suggestion data.
+     */
+    #[On('dns-check-completed')]
+    public function handleDnsCheckCompleted(array $data): void
+    {
+        $suggestionId = $data['suggestionId'] ?? null;
+
+        if (!$suggestionId) {
+            return;
+        }
+
+        try {
+            // Find the suggestion and refresh its data
+            $suggestion = NameSuggestion::findOrFail($suggestionId);
+            $dnsStatus = $suggestion->getDnsStatus();
+
+            // Dispatch refresh event to all name result cards
+            $this->dispatch('suggestion-dns-updated', [
+                'suggestionId' => $suggestionId,
+                'dnsStatus' => $dnsStatus,
+            ]);
+
+            // Handle different DNS check outcomes
+            if ($dnsStatus['checked'] && $dnsStatus['has_records'] === null) {
+                // DNS check failed/errored
+                $this->dispatch('show-toast', [
+                    'message' => "DNS check for '{$suggestion->name}' completed with errors. Please try again.",
+                    'type' => 'warning',
+                ]);
+            } else {
+                // Successful DNS check
+                $statusText = $suggestion->appearsDnsAvailable() ? 'available' : 'taken';
+
+                $this->dispatch('show-toast', [
+                    'message' => "DNS check completed for '{$suggestion->name}' - appears {$statusText}",
+                    'type' => $suggestion->appearsDnsAvailable() ? 'success' : 'info',
+                ]);
+            }
+
+            Log::info('DNS check completed', [
+                'suggestion_id' => $suggestionId,
+                'suggestion_name' => $suggestion->name,
+                'dns_checked' => $dnsStatus['checked'],
+                'dns_has_records' => $dnsStatus['has_records'],
+                'user_id' => auth()->id(),
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('DNS check completion handling failed', [
+                'suggestion_id' => $suggestionId,
+                'error' => $e->getMessage(),
+                'user_id' => auth()->id(),
+            ]);
+
+            $this->dispatch('show-toast', [
+                'message' => 'Failed to process DNS check results. Please try again.',
+                'type' => 'error',
+            ]);
+        }
+    }
+
+    /**
+     * Handle DNS check failure event.
+     */
+    #[On('dns-check-failed')]
+    public function handleDnsCheckFailed(array $data): void
+    {
+        $suggestionId = $data['suggestionId'] ?? null;
+        $errorMessage = $data['error'] ?? 'DNS check failed';
+
+        if (!$suggestionId) {
+            return;
+        }
+
+        try {
+            $suggestion = NameSuggestion::findOrFail($suggestionId);
+
+            $this->dispatch('show-toast', [
+                'message' => "DNS check failed for '{$suggestion->name}'. {$errorMessage}",
+                'type' => 'error',
+            ]);
+
+            // Dispatch error event to name result cards
+            $this->dispatch('dns-check-error', [
+                'suggestionId' => $suggestionId,
+                'error' => $errorMessage,
+            ]);
+
+            Log::warning('DNS check failed', [
+                'suggestion_id' => $suggestionId,
+                'suggestion_name' => $suggestion->name,
+                'error' => $errorMessage,
+                'user_id' => auth()->id(),
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('DNS check failure handling failed', [
+                'suggestion_id' => $suggestionId,
+                'error' => $e->getMessage(),
+                'user_id' => auth()->id(),
+            ]);
+        }
+    }
+
+    /**
      * Reset component state.
      */
     private function resetState(): void

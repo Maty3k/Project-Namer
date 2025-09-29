@@ -18,7 +18,6 @@ final class ThemeQuickToggle extends Component
     public function toggleTheme(): void
     {
         // Disabled - only theme customizer should be able to change themes
-        return;
 
         /* COMMENTED OUT - Theme changes restricted to theme customizer only
         $user = auth()->user();

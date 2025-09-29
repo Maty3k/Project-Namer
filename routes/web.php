@@ -64,6 +64,10 @@ Route::get('themes', App\Livewire\ThemeCustomizer::class)
     ->middleware(['auth', 'verified'])
     ->name('themes.customizer');
 
+Route::get('admin/dns-metrics', App\Livewire\DnsMetricsDashboard::class)
+    ->middleware(['auth', 'verified'])
+    ->name('admin.dns-metrics');
+
 Route::middleware(['auth'])->group(function (): void {
     Route::redirect('settings', 'settings/profile');
 

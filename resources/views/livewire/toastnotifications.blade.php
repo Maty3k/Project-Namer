@@ -22,7 +22,12 @@ new class extends Component {
             $type = $params[1] ?? 'info';
             $duration = $params[2] ?? 5000;
         }
-        
+
+        // Ensure message is a string (handle case where it might be an array)
+        if (is_array($message)) {
+            $message = $message['message'] ?? $message[0] ?? 'Operation completed';
+        }
+
         $toast = [
             'id' => (string) uniqid(),
             'message' => (string) $message,

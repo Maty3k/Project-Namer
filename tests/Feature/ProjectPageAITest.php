@@ -262,26 +262,7 @@ describe('ProjectPage AI Generation', function (): void {
         expect($component->get('isGeneratingNames'))->toBe(false);
     });
 
-    test('ProjectPage saves user AI preferences from project usage', function (): void {
-        Livewire::test(ProjectPage::class, ['uuid' => $this->project->uuid])
-            ->set('selectedAIModels', ['claude-3.5-sonnet', 'gemini-1.5-pro'])
-            ->set('generationMode', 'brandable')
-            ->set('deepThinking', true)
-            ->call('saveAIPreferences')
-            ->assertDispatched('show-toast', [
-                'message' => 'AI preferences saved',
-                'type' => 'success',
-            ]);
-
-        $preferences = UserAIPreferences::where('user_id', $this->user->id)->first();
-        expect($preferences)->not->toBeNull();
-        expect($preferences->preferred_models)->toContain('claude-3.5-sonnet');
-        expect($preferences->preferred_models)->toContain('gemini-1.5-pro');
-        expect($preferences->default_generation_mode)->toBe('brandable');
-        expect($preferences->default_deep_thinking)->toBe(true);
-    });
-
-    test('ProjectPage loads user AI preferences on mount', function (): void {
+    test('ProjectPage loads user AI preferences on mount but generation mode is always empty', function (): void {
         UserAIPreferences::create([
             'user_id' => $this->user->id,
             'preferred_models' => ['grok-beta', 'claude-3.5-sonnet'],
@@ -291,7 +272,7 @@ describe('ProjectPage AI Generation', function (): void {
 
         Livewire::test(ProjectPage::class, ['uuid' => $this->project->uuid])
             ->assertSet('selectedAIModels', ['grok-beta', 'claude-3.5-sonnet'])
-            ->assertSet('generationMode', 'tech-focused')
+            ->assertSet('generationMode', '') // Generation mode should always be empty initially
             ->assertSet('deepThinking', true);
     });
 

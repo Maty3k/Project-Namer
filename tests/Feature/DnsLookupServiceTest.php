@@ -1,0 +1,202 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Contracts\DnsResolverInterface;
+use App\DTOs\DnsLookupResult;
+use App\Models\DnsLookupCache;
+use App\Services\DnsLookupService;
+use NetDNS2\Packet\Response;
+use NetDNS2\RR\A;
+use NetDNS2\RR\CNAME;
+
+beforeEach(function () {
+    // Clean up DNS cache table before each test
+    DnsLookupCache::query()->delete();
+});
+
+test('dns lookup service can check domain with records found', function () {
+    // Mock DNS resolver that returns responses with records
+    $mockResolver = Mockery::mock(DnsResolverInterface::class);
+
+    // Create a stub response object
+    $responseWithRecords = new class {
+        public $answer = ['stub_record'];
+    };
+
+    $mockResolver->shouldReceive('query')
+        ->with('example.com', 'A')
+        ->andReturn($responseWithRecords);
+
+    $mockResolver->shouldReceive('query')
+        ->with('example.com', Mockery::any())
+        ->andReturn(new class { public $answer = []; });
+
+    $service = new DnsLookupService($mockResolver);
+    $result = $service->checkDomain('example.com');
+
+    expect($result)
+        ->toBeInstanceOf(DnsLookupResult::class)
+        ->and($result->hasRecords)->toBeTrue()
+        ->and($result->recordTypes)->toContain('A')
+        ->and($result->error)->toBeNull();
+});
+
+test('dns lookup service can check domain with no records found', function () {
+    // Mock DNS resolver with empty response
+    $mockResolver = Mockery::mock(DnsResolverInterface::class);
+
+    $emptyResponse = new class {
+        public $answer = [];
+    };
+
+    $mockResolver->shouldReceive('query')
+        ->andReturn($emptyResponse);
+
+    $service = new DnsLookupService($mockResolver);
+    $result = $service->checkDomain('available.com');
+
+    expect($result)
+        ->toBeInstanceOf(DnsLookupResult::class)
+        ->and($result->hasRecords)->toBeFalse()
+        ->and($result->recordTypes)->toBeArray()
+        ->and($result->recordTypes)->toBeEmpty()
+        ->and($result->error)->toBeNull();
+});
+
+test('dns lookup service handles timeout errors gracefully', function () {
+    // Test with error from getResolver() by not providing resolver in constructor
+    $service = new DnsLookupService();
+
+    // Mock the config to trigger error in getResolver
+    config(['dns.servers' => 'invalid-server']);
+
+    $result = $service->checkDomain('timeout.com');
+
+    expect($result)
+        ->toBeInstanceOf(DnsLookupResult::class)
+        ->and($result->hasRecords)->toBeFalse()
+        ->and($result->error)->not->toBeNull();
+});
+
+test('dns lookup service handles network errors gracefully', function () {
+    // Test error handling by creating service that will fail DNS resolution
+    $service = new DnsLookupService();
+
+    // Test with a domain that should cause resolver creation to fail
+    config(['dns.servers' => '']);
+
+    $result = $service->checkDomain('networkerror.com');
+
+    expect($result)
+        ->toBeInstanceOf(DnsLookupResult::class)
+        ->and($result->hasRecords)->toBeFalse()
+        ->and($result->error)->not->toBeNull();
+});
+
+test('dns lookup service can check batch of domains', function () {
+    // Mock DNS resolver for batch checking
+    $mockResolver = Mockery::mock(DnsResolverInterface::class);
+
+    $responseWithRecords = new class { public $answer = ['record']; };
+    $responseEmpty = new class { public $answer = []; };
+
+    $mockResolver->shouldReceive('query')
+        ->with('hasrecords.com', 'A')
+        ->andReturn($responseWithRecords);
+
+    $mockResolver->shouldReceive('query')
+        ->with('hasrecords.com', Mockery::any())
+        ->andReturn($responseEmpty);
+
+    $mockResolver->shouldReceive('query')
+        ->with('norecords.com', Mockery::any())
+        ->andReturn($responseEmpty);
+
+    $service = new DnsLookupService($mockResolver);
+    $results = $service->checkBatch(['hasrecords.com', 'norecords.com']);
+
+    expect($results)
+        ->toBeArray()
+        ->toHaveCount(2)
+        ->and($results['hasrecords.com']->hasRecords)->toBeTrue()
+        ->and($results['norecords.com']->hasRecords)->toBeFalse();
+});
+
+test('dns lookup service returns cached results when available', function () {
+    // Create valid cache entry
+    DnsLookupCache::create([
+        'domain' => 'cached',
+        'tld' => 'com',
+        'has_records' => true,
+        'record_types' => ['A', 'MX'],
+        'checked_at' => now()->subHour(),
+        'expires_at' => now()->addHours(23),
+    ]);
+
+    // Mock resolver should not be called since we have cache
+    $mockResolver = Mockery::mock(DnsResolverInterface::class);
+    $mockResolver->shouldNotReceive('query');
+
+    $service = new DnsLookupService($mockResolver);
+    $result = $service->getCachedResult('cached.com');
+
+    expect($result)
+        ->not->toBeNull()
+        ->and($result->hasRecords)->toBeTrue()
+        ->and($result->recordTypes)->toBe(['A', 'MX']);
+});
+
+test('dns lookup service returns null for expired cache', function () {
+    // Create expired cache entry
+    DnsLookupCache::create([
+        'domain' => 'expired',
+        'tld' => 'com',
+        'has_records' => true,
+        'record_types' => ['A'],
+        'checked_at' => now()->subHours(25),
+        'expires_at' => now()->subHour(),
+    ]);
+
+    $mockResolver = Mockery::mock(DnsResolverInterface::class);
+    $service = new DnsLookupService($mockResolver);
+    $result = $service->getCachedResult('expired.com');
+
+    expect($result)->toBeNull();
+});
+
+test('dns lookup service handles invalid domain formats', function () {
+    $mockResolver = Mockery::mock(DnsResolverInterface::class);
+    $service = new DnsLookupService($mockResolver);
+
+    $result = $service->checkDomain('invalid..domain');
+
+    expect($result)
+        ->toBeInstanceOf(DnsLookupResult::class)
+        ->and($result->hasRecords)->toBeFalse()
+        ->and($result->error)->toContain('Invalid domain');
+});
+
+test('dns lookup service checks multiple record types', function () {
+    // Mock DNS resolver to return different record types
+    $mockResolver = Mockery::mock(DnsResolverInterface::class);
+
+    $responseWithRecord = new class { public $answer = ['record']; };
+    $responseEmpty = new class { public $answer = []; };
+
+    $mockResolver->shouldReceive('query')
+        ->with('multi.com', 'A')
+        ->andReturn($responseWithRecord);
+
+    $mockResolver->shouldReceive('query')
+        ->with('multi.com', Mockery::any())
+        ->andReturn($responseEmpty);
+
+    $service = new DnsLookupService($mockResolver);
+    $result = $service->checkDomain('multi.com');
+
+    expect($result)
+        ->toBeInstanceOf(DnsLookupResult::class)
+        ->and($result->hasRecords)->toBeTrue()
+        ->and($result->recordTypes)->toContain('A');
+});

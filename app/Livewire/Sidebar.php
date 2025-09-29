@@ -198,7 +198,10 @@ class Sidebar extends Component
             ->first();
 
         if (! $project) {
-            $this->dispatch('toast', message: 'Project not found', type: 'error');
+            $this->dispatch('show-toast', [
+                'message' => 'Project not found',
+                'type' => 'error',
+            ]);
 
             return;
         }
@@ -230,7 +233,10 @@ class Sidebar extends Component
             ->first();
 
         if (! $project) {
-            $this->dispatch('toast', message: 'Project not found', type: 'error');
+            $this->dispatch('show-toast', [
+                'message' => 'Project not found',
+                'type' => 'error',
+            ]);
             $this->cancelDeleteProject();
 
             return;
@@ -252,11 +258,17 @@ class Sidebar extends Component
                 return;
             }
 
-            $this->dispatch('toast', message: "Project '{$projectName}' deleted successfully", type: 'success');
+            $this->dispatch('show-toast', [
+                'message' => "Project '{$projectName}' deleted successfully",
+                'type' => 'success',
+            ]);
             $this->dispatch('project-deleted', $this->projectToDelete);
 
         } catch (\Exception $e) {
-            $this->dispatch('toast', message: 'Failed to delete project: '.$e->getMessage(), type: 'error');
+            $this->dispatch('show-toast', [
+                'message' => 'Failed to delete project: '.$e->getMessage(),
+                'type' => 'error',
+            ]);
         } finally {
             $this->cancelDeleteProject();
         }

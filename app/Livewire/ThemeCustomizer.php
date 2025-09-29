@@ -306,7 +306,8 @@ final class ThemeCustomizer extends Component
     public function importTheme(): void
     {
         try {
-            $this->validate(['themeFile']);
+            // Validate the uploaded file
+            $this->validate();
 
             if (! $this->themeFile) {
                 $this->dispatch('theme-error', 'No theme file provided');
@@ -353,6 +354,24 @@ final class ThemeCustomizer extends Component
             $this->themeName = is_string($themeData['theme_name'] ?? null) ? $themeData['theme_name'] : 'imported';
             $this->isDarkMode = is_bool($themeData['is_dark_mode'] ?? null) ? $themeData['is_dark_mode'] : false;
 
+            // Save imported theme to custom themes table if user is authenticated
+            if (auth()->check()) {
+                \App\Models\CustomTheme::updateOrCreate(
+                    [
+                        'user_id' => auth()->id(),
+                        'theme_name' => $this->themeName,
+                    ],
+                    [
+                        'primary_color' => $this->primaryColor,
+                        'accent_color' => $this->accentColor,
+                        'background_color' => $this->backgroundColor,
+                        'text_color' => $this->textColor,
+                        'is_dark_mode' => $this->isDarkMode,
+                        'is_imported' => true,
+                    ]
+                );
+            }
+
             $this->themeFile = null;
             $this->validateAccessibility();
             $this->dispatch('theme-imported');
@@ -360,6 +379,44 @@ final class ThemeCustomizer extends Component
             logger()->error('Theme import failed: '.$e->getMessage());
             $this->dispatch('theme-error', 'Failed to import theme file');
         }
+    }
+
+    /**
+     * Apply a custom imported theme.
+     */
+    public function applyCustomTheme(int $themeId): void
+    {
+        $theme = \App\Models\CustomTheme::where('user_id', auth()->id())
+            ->where('id', $themeId)
+            ->first();
+
+        if (! $theme) {
+            $this->dispatch('theme-error', 'Custom theme not found');
+
+            return;
+        }
+
+        $this->themeName = $theme->theme_name;
+        $this->primaryColor = $theme->primary_color;
+        $this->accentColor = $theme->accent_color ?? $theme->primary_color;
+        $this->backgroundColor = $theme->background_color;
+        $this->textColor = $theme->text_color;
+        $this->isDarkMode = $theme->is_dark_mode;
+
+        $this->validateAccessibility();
+        $this->dispatch('theme-updated');
+    }
+
+    /**
+     * Delete a custom theme.
+     */
+    public function deleteCustomTheme(int $themeId): void
+    {
+        \App\Models\CustomTheme::where('user_id', auth()->id())
+            ->where('id', $themeId)
+            ->delete();
+
+        $this->dispatch('theme-deleted', 'Custom theme deleted successfully');
     }
 
     /**
@@ -562,8 +619,32 @@ final class ThemeCustomizer extends Component
     public function availableCategories(): array
     {
         $themeService = app(ThemeService::class);
+        $categories = $themeService->getAvailableCategories();
 
-        return $themeService->getAvailableCategories();
+        // Add "Custom" category if user has custom themes
+        if (auth()->check() && $this->customThemes()->count() > 0) {
+            $categories[] = 'custom';
+        }
+
+        return $categories;
+    }
+
+    /**
+     * Get custom imported themes for the current user.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\CustomTheme>|\Illuminate\Support\Collection<int, never>
+     */
+    #[Computed]
+    public function customThemes()
+    {
+        if (! auth()->check()) {
+            return collect();
+        }
+
+        return \App\Models\CustomTheme::where('user_id', auth()->id())
+            ->where('is_imported', true)
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 
     /**

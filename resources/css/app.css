@@ -87,6 +87,10 @@
 }
 
 @layer base {
+    /* Alpine.js cloak to prevent FOUC */
+    [x-cloak] {
+        display: none !important;
+    }
 
     /* Theme-aware primary color definitions */
     :root {

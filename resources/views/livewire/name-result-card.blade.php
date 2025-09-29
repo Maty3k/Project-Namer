@@ -1,6 +1,7 @@
 @if($suggestion)
 <div class="rounded-lg border shadow-sm transition-all duration-300 ease-out hover:shadow-lg transform hover:-translate-y-1
              {{ $suggestion->is_hidden ? 'opacity-60 scale-95' : 'scale-100 hover:scale-[1.02]' }}
+             {{ $this->shouldHideForDns ? 'hidden' : '' }}
              focus-within:ring-2 focus-within:outline-none"
      style="background-color: var(--surface-color);
             border-color: var(--text-secondary-color, #6b7280);
@@ -10,6 +11,9 @@
      wire:key="suggestion-{{ $suggestion->id }}"
      x-data="{
          isExpanded: false,
+         init() {
+             this.isExpanded = false;
+         },
          toggle() {
              this.isExpanded = !this.isExpanded;
          }
@@ -50,6 +54,47 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9"></path>
                             </svg>
                             {{ $this->availableDomainsCount }}/{{ $this->totalDomainsCount }} available
+                        </span>
+                    @endif
+
+                    <!-- DNS Status Indicator -->
+                    @if($this->dnsStatus['checked'])
+                        @if($this->dnsStatus['appears_available'])
+                            <span class="flex items-center text-green-600">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                DNS Available
+                            </span>
+                        @else
+                            <span class="flex items-center text-red-600">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                </svg>
+                                DNS Taken
+                            </span>
+                        @endif
+                    @elseif($dnsCheckLoading)
+                        <span class="flex items-center text-blue-600">
+                            <svg class="w-4 h-4 mr-1 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Checking DNS...
+                        </span>
+                    @elseif($this->dnsError)
+                        <span class="flex items-center text-red-600">
+                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                            </svg>
+                            DNS Error
+                        </span>
+                    @else
+                        <span class="flex items-center text-gray-500">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            DNS Pending
                         </span>
                     @endif
 
@@ -133,17 +178,12 @@
     </div>
 
     <!-- Expandable Content -->
-    <div class="overflow-hidden transition-all duration-500 ease-in-out border-t" style="border-color: var(--text-secondary-color, #6b7280)"
+    <div class="overflow-hidden transition-all duration-500 ease-in-out border-t"
+         style="border-color: var(--text-secondary-color, #6b7280)"
          x-show="isExpanded"
          x-collapse
-         x-transition:enter="transition-all duration-500 ease-out"
-         x-transition:enter-start="opacity-0 max-h-0 -translate-y-4"
-         x-transition:enter-end="opacity-100 max-h-screen translate-y-0"
-         x-transition:leave="transition-all duration-400 ease-in"
-         x-transition:leave-start="opacity-100 max-h-screen translate-y-0"
-         x-transition:leave-end="opacity-0 max-h-0 -translate-y-4"
-         @click.stop
-         style="display: none;">
+         x-cloak
+         @click.stop>
         <div class="p-4 space-y-4 transform transition-all duration-500 ease-out"
              :class="isExpanded ? 'scale-100 translate-y-0' : 'scale-95 -translate-y-2'">
             <!-- Domains Section -->
@@ -157,6 +197,28 @@
                             class="text-primary-600 hover:text-primary-700"
                         >
                             Check Domains
+                        </flux:button>
+                    @elseif(!$this->dnsStatus['checked'] && !$dnsCheckLoading && !$this->dnsError)
+                        <flux:button
+                            wire:click="triggerDnsCheck"
+                            variant="ghost"
+                            size="sm"
+                            class="text-primary-600 hover:text-primary-700"
+                            wire:loading.attr="disabled"
+                        >
+                            <span wire:loading.remove wire:target="triggerDnsCheck">Check DNS</span>
+                            <span wire:loading wire:target="triggerDnsCheck">Checking...</span>
+                        </flux:button>
+                    @elseif($this->dnsError)
+                        <flux:button
+                            wire:click="triggerDnsCheck"
+                            variant="ghost"
+                            size="sm"
+                            class="text-red-600 hover:text-red-700"
+                            wire:loading.attr="disabled"
+                        >
+                            <span wire:loading.remove wire:target="triggerDnsCheck">Retry DNS</span>
+                            <span wire:loading wire:target="triggerDnsCheck">Retrying...</span>
                         </flux:button>
                     @endif
                 </div>
@@ -257,6 +319,52 @@
                     </div>
                 @endif
             </div>
+
+            <!-- DNS Status Section -->
+            @if($this->dnsStatus['checked'])
+                <div class="pt-2 border-t" style="border-color: var(--text-secondary-color, #6b7280)">
+                    <h4 class="font-medium mb-2" style="color: var(--text-color)">DNS Status</h4>
+                    <div class="text-sm space-y-1" style="color: var(--text-secondary-color, #6b7280)">
+                        <div class="flex justify-between items-center">
+                            <span>Status:</span>
+                            <span class="{{ $this->dnsStatus['appears_available'] ? 'text-green-600' : 'text-red-600' }}">
+                                {{ $this->dnsStatus['appears_available'] ? 'Available' : 'Taken' }}
+                            </span>
+                        </div>
+                        @if($this->dnsStatus['checked_at'])
+                            <div class="flex justify-between">
+                                <span>Checked:</span>
+                                <span>{{ \Carbon\Carbon::parse($this->dnsStatus['checked_at'])->diffForHumans() }}</span>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @elseif($this->dnsError)
+                <div class="pt-2 border-t" style="border-color: var(--text-secondary-color, #6b7280)">
+                    <h4 class="font-medium mb-2 text-red-600">DNS Check Failed</h4>
+                    <div class="text-sm space-y-2">
+                        <p class="text-red-600">{{ $this->dnsError }}</p>
+                        <div class="flex items-center space-x-2">
+                            <flux:button
+                                wire:click="triggerDnsCheck"
+                                variant="ghost"
+                                size="sm"
+                                class="text-red-600 hover:text-red-700"
+                            >
+                                Retry DNS Check
+                            </flux:button>
+                            <flux:button
+                                wire:click="clearDnsError"
+                                variant="ghost"
+                                size="sm"
+                                class="text-gray-600 hover:text-gray-700"
+                            >
+                                Dismiss
+                            </flux:button>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             <!-- Generation Metadata (if available) -->
             @if($suggestion && $suggestion->generation_metadata && is_array($suggestion->generation_metadata))

@@ -26,9 +26,9 @@
             </flux:button>
         </div>
 
-        <div class="overflow-hidden transition-all duration-500 ease-out {{ $collapsed ? 'max-h-0 opacity-0 mt-0' : ($projectCount > 0 ? 'max-h-20 opacity-100 mt-1' : 'max-h-0 opacity-0 mt-0') }}">
-            @if(!$collapsed && $projectCount > 0)
-                <p class="text-sm {{ $userTheme ? 'theme-text-muted' : 'text-gray-500 dark:text-gray-400' }} transition-opacity duration-300 ease-out delay-150">{{ $projectCount }} projects</p>
+        <div class="overflow-hidden transition-all duration-500 ease-out {{ $collapsed ? 'max-h-0 opacity-0 mt-0' : ($this->projectCount > 0 ? 'max-h-20 opacity-100 mt-1' : 'max-h-0 opacity-0 mt-0') }}">
+            @if(!$collapsed && $this->projectCount > 0)
+                <p class="text-sm {{ $userTheme ? 'theme-text-muted' : 'text-gray-500 dark:text-gray-400' }} transition-opacity duration-300 ease-out delay-150">{{ $this->projectCount }} projects</p>
             @endif
         </div>
     </div>
@@ -49,7 +49,7 @@
 
     <!-- Projects List -->
     <div class="flex-1 overflow-y-auto transition-all duration-300 ease-out">
-        @if($projects->isEmpty())
+        @if($this->projects->isEmpty())
             <!-- Empty State -->
             <div class="overflow-hidden transition-all duration-500 ease-out {{ $collapsed ? 'max-h-0 opacity-0' : 'max-h-full opacity-100' }}">
                 @if(!$collapsed)
@@ -67,11 +67,11 @@
         @else
             <!-- Projects List -->
             <div class="space-y-1 p-2 transition-all duration-300 ease-out">
-                @foreach($projects as $project)
+                @foreach($this->projects as $project)
                     <div
                         wire:click="selectProject('{{ $project->uuid }}')"
-                        class="group cursor-pointer rounded-lg transition-all duration-300 ease-out {{ $collapsed ? 'p-2' : 'p-3' }} {{ $userTheme ? (isActiveProject($project) ? 'theme-interactive' : 'theme-hover') : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm transform hover:scale-[1.02]' }}"
-                        @if(isActiveProject($project))
+                        class="group cursor-pointer rounded-lg transition-all duration-300 ease-out {{ $collapsed ? 'p-2' : 'p-3' }} {{ $userTheme ? ($this->isActiveProject($project) ? 'theme-interactive' : 'theme-hover') : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm transform hover:scale-[1.02]' }}"
+                        @if($this->isActiveProject($project))
                             @if($userTheme)
                                 style="background: {{ $userTheme->primary_color }}15; border-left: 4px solid {{ $userTheme->primary_color }}; box-shadow: 0 1px 3px rgba(0,0,0,0.1);"
                             @else
@@ -101,21 +101,21 @@
                                 <div class="flex items-start justify-between group-hover:pr-8 transition-all duration-200">
                                     <div class="flex-1 min-w-0 transition-all duration-300 ease-out delay-150">
                                         <h3 class="text-sm font-medium truncate transition-opacity duration-300 ease-out" style="color: var(--text-color);">
-                                            {{ truncateName($project->name, 22) }}
+                                            {{ $this->truncateName($project->name, 22) }}
                                         </h3>
 
                                         @if($project->selectedName)
                                             <div class="flex items-center mt-1 transition-all duration-300 ease-out delay-200">
                                                 <span class="text-xs font-medium transition-colors duration-200 ease-out" style="color: var(--success-color, #059669);">
-                                                    ✓ {{ truncateName($project->selectedName->name, 18) }}
+                                                    ✓ {{ $this->truncateName($project->selectedName->name, 18) }}
                                                 </span>
                                             </div>
                                             <p class="text-xs mt-1 truncate transition-opacity duration-300 ease-out delay-250" style="color: var(--text-muted-color, #6b7280);">
-                                                {{ truncateName($project->description, 25) }}
+                                                {{ $this->truncateName($project->description, 25) }}
                                             </p>
                                         @else
                                             <p class="text-xs mt-1 truncate transition-opacity duration-300 ease-out delay-200" style="color: var(--text-muted-color, #6b7280);">
-                                                {{ truncateName($project->description, 35) }}
+                                                {{ $this->truncateName($project->description, 35) }}
                                             </p>
                                         @endif
 
@@ -125,19 +125,17 @@
                                     </div>
 
                                     <div class="flex-shrink-0 ml-2 flex items-center transition-all duration-300 ease-out delay-100">
-                                        @if(isActiveProject($project))
+                                        @if($this->isActiveProject($project))
                                             <div class="w-2 h-2 rounded-full mr-2 transition-all duration-200 ease-out" style="background-color: var(--primary-color, #3B82F6);"></div>
                                         @endif
 
                                         <button
                                             wire:click.stop="confirmDeleteProject('{{ $project->uuid }}')"
-                                            class="opacity-0 group-hover:opacity-100 w-9 h-9 rounded-lg shadow-sm transition-all duration-200 ease-out border hover:scale-105 active:scale-95 flex items-center justify-center"
+                                            class="opacity-60 group-hover:opacity-100 w-9 h-9 rounded-lg shadow-sm border flex items-center justify-center relative z-10"
                                             style="color: var(--danger-color, #ef4444); border-color: var(--danger-color, #ef4444); background-color: transparent;"
-                                            onmouseover="this.style.backgroundColor='var(--danger-bg-hover, #fef2f2)'; this.style.color='var(--danger-color, #dc2626)';"
-                                            onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--danger-color, #ef4444)';"
                                             title="Delete project"
                                         >
-                                            <svg class="w-5 h-5 transition-transform duration-200 ease-out" fill="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                                                 <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clip-rule="evenodd"/>
                                             </svg>
                                         </button>
@@ -145,7 +143,6 @@
                                 </div>
                             </div>
                         @endif
-                        </div>
                     </div>
                 @endforeach
             </div>
@@ -165,7 +162,7 @@
 
     <!-- Delete Confirmation Modal -->
     @if($showDeleteConfirmation)
-        <flux:modal wire:model="$showDeleteConfirmation" class="min-w-96" :closable="false">
+        <flux:modal wire:model="showDeleteConfirmation" class="min-w-96" :closable="false">
             <div class="space-y-6">
                 <div>
                     <flux:heading size="lg">Delete Project</flux:heading>
@@ -175,7 +172,7 @@
                     
                     @if($projectToDelete)
                         @php
-                            $project = $projects->firstWhere('uuid', $projectToDelete);
+                            $project = $this->projects->firstWhere('uuid', $projectToDelete);
                         @endphp
                         @if($project)
                             <div class="mt-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">

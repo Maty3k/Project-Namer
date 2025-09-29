@@ -9,6 +9,7 @@ use App\Models\NameSuggestion;
 use App\Models\Project;
 use App\Models\UserAIPreferences;
 use App\Services\AIGenerationService;
+use App\Services\DomainCheckService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Cache;
@@ -94,6 +95,7 @@ class ProjectPage extends Component
         'suggestion-hidden' => 'handleSuggestionVisibilityChanged',
         'suggestion-shown' => 'handleSuggestionVisibilityChanged',
         'trigger-auto-generation' => 'handleAutoGeneration',
+        'refresh-suggestions' => 'handleSuggestionsRefresh',
     ];
 
     /** @var array<string, string> */
@@ -306,13 +308,13 @@ class ProjectPage extends Component
      */
     public function getFilteredSuggestionsProperty(): Collection
     {
-        $query = $this->project->nameSuggestions();
+        $suggestions = $this->project->nameSuggestions;
 
         return match ($this->resultsFilter) {
-            'visible' => $query->where('is_hidden', false)->get(),
-            'hidden' => $query->where('is_hidden', true)->get(),
-            'all' => $query->get(),
-            default => $query->where('is_hidden', false)->get(),
+            'visible' => $suggestions->where('is_hidden', false)->values(),
+            'hidden' => $suggestions->where('is_hidden', true)->values(),
+            'all' => $suggestions->values(),
+            default => $suggestions->where('is_hidden', false)->values(),
         };
     }
 
@@ -421,6 +423,146 @@ class ProjectPage extends Component
         $this->render();
     }
 
+    /**
+     * Handle suggestions refresh after AI generation.
+     */
+    public function handleSuggestionsRefresh(): void
+    {
+        // Force refresh the project data and re-render
+        $this->project = $this->project->fresh(['nameSuggestions']);
+
+        // Use JavaScript to trigger a Livewire component refresh
+        $this->js('setTimeout(() => { $wire.$refresh(); }, 100);');
+    }
+
+    /**
+     * Select a name suggestion.
+     */
+    public function selectName(int $suggestionId): void
+    {
+        $this->authorize('update', $this->project);
+
+        $suggestion = NameSuggestion::find($suggestionId);
+
+        if (! $suggestion || $suggestion->project_id !== $this->project->id) {
+            $this->dispatch('show-toast', [
+                'message' => 'Name suggestion not found',
+                'type' => 'error',
+            ]);
+
+            return;
+        }
+
+        $this->project->update(['selected_name_id' => $suggestionId]);
+        $this->project = $this->project->fresh(['selectedName']);
+
+        $this->dispatch('show-toast', [
+            'message' => "Selected '{$suggestion->name}' as your project name!",
+            'type' => 'success',
+        ]);
+
+        $this->dispatch('name-selected', $suggestionId);
+        $this->dispatch('project-updated', $this->project->uuid);
+    }
+
+    /**
+     * Deselect the current name suggestion.
+     */
+    public function deselectName(int $suggestionId): void
+    {
+        $this->authorize('update', $this->project);
+
+        if ($this->project->selected_name_id === $suggestionId) {
+            $this->project->update(['selected_name_id' => null]);
+            $this->project = $this->project->fresh(['selectedName']);
+
+            $this->dispatch('show-toast', [
+                'message' => 'Name deselected',
+                'type' => 'info',
+            ]);
+
+            $this->dispatch('name-deselected', $suggestionId);
+            $this->dispatch('project-updated', $this->project->uuid);
+        }
+    }
+
+    /**
+     * Hide a name suggestion.
+     */
+    public function hideSuggestion(int $suggestionId): void
+    {
+        $this->authorize('update', $this->project);
+
+        $suggestion = NameSuggestion::find($suggestionId);
+
+        if (! $suggestion || $suggestion->project_id !== $this->project->id) {
+            return;
+        }
+
+        $suggestion->update(['is_hidden' => true]);
+
+        $this->dispatch('show-toast', [
+            'message' => "Hidden '{$suggestion->name}'",
+            'type' => 'info',
+        ]);
+
+        $this->dispatch('suggestion-hidden', $suggestionId);
+    }
+
+    /**
+     * Show a hidden name suggestion.
+     */
+    public function showSuggestion(int $suggestionId): void
+    {
+        $this->authorize('update', $this->project);
+
+        $suggestion = NameSuggestion::find($suggestionId);
+
+        if (! $suggestion || $suggestion->project_id !== $this->project->id) {
+            return;
+        }
+
+        $suggestion->update(['is_hidden' => false]);
+
+        $this->dispatch('show-toast', [
+            'message' => "Restored '{$suggestion->name}'",
+            'type' => 'success',
+        ]);
+
+        $this->dispatch('suggestion-shown', $suggestionId);
+    }
+
+    /**
+     * Delete a name suggestion.
+     */
+    public function deleteSuggestion(int $suggestionId): void
+    {
+        $this->authorize('update', $this->project);
+
+        $suggestion = NameSuggestion::find($suggestionId);
+
+        if (! $suggestion || $suggestion->project_id !== $this->project->id) {
+            return;
+        }
+
+        $suggestionName = $suggestion->name;
+
+        // If this was the selected name, deselect it
+        if ($this->project->selected_name_id === $suggestionId) {
+            $this->project->update(['selected_name_id' => null]);
+        }
+
+        $suggestion->delete();
+
+        // Refresh the project to update the suggestions
+        $this->project = $this->project->fresh(['nameSuggestions', 'selectedName']);
+
+        $this->dispatch('show-toast', [
+            'message' => "Deleted '{$suggestionName}'",
+            'type' => 'success',
+        ]);
+    }
+
     // AI Generation Methods
 
     /**
@@ -432,35 +574,17 @@ class ProjectPage extends Component
 
         if ($preferences) {
             $this->selectedAIModels = $preferences->preferred_models ?? [];
-            $this->generationMode = $preferences->default_generation_mode ?? '';
             $this->deepThinking = $preferences->default_deep_thinking ?? false;
             $this->enableModelComparison = $preferences->enable_model_comparison ?? false;
         } else {
-            // Apply smart recommendations for users without saved preferences
-            $recommendations = $this->getModelRecommendations();
-
-            if ($recommendations['based_on_generations'] > 0) {
-                // User has history, use smart recommendations
-                $this->selectedAIModels = array_slice($recommendations['recommended_models'], 0, 2);
-                $this->enableModelComparison = $recommendations['based_on_generations'] > 3;
-
-                // Dispatch event for analytics
-                $this->dispatch('smart-recommendations-auto-applied', [
-                    'user_id' => auth()->id(),
-                    'project_uuid' => $this->project->uuid,
-                    'recommendations' => $recommendations,
-                    'auto_selected_models' => $this->selectedAIModels,
-                ]);
-            } else {
-                // New user, use default recommendations
-                $this->selectedAIModels = ['gpt-4'];
-                $this->enableModelComparison = false;
-            }
-
-            // Set other defaults
-            $this->generationMode = '';
+            // Default settings for users without saved preferences
+            $this->selectedAIModels = ['gpt-4'];
+            $this->enableModelComparison = false;
             $this->deepThinking = false;
         }
+
+        // Always start with no generation mode selected
+        $this->generationMode = '';
     }
 
     /**
@@ -642,6 +766,18 @@ class ProjectPage extends Component
     {
         $this->authorize('update', $this->project);
 
+        // Check if generation mode is selected
+        if ($this->useAIGeneration && empty($this->generationMode)) {
+            // Show AI controls and display helpful message
+            $this->showAIControls = true;
+            $this->dispatch('show-toast', [
+                'message' => 'Please select a generation style first',
+                'type' => 'info',
+            ]);
+
+            return;
+        }
+
         // Validate AI generation settings
         if ($this->useAIGeneration) {
             // Require generation mode when generating names
@@ -726,6 +862,15 @@ class ProjectPage extends Component
                 'total_names_generated' => count(collect($this->aiGenerationResults)->flatten()),
                 'completed_at' => now(),
             ]);
+
+            // Refresh the project relationship to get updated suggestions
+            $this->project->load('nameSuggestions');
+
+            // Force refresh of the project from database to ensure we have the latest data
+            $this->project = $this->project->fresh(['nameSuggestions']);
+
+            // Trigger a client-side refresh after a short delay to ensure proper rendering
+            $this->dispatch('refresh-suggestions');
 
             // Initialize active model tab for comparison
             $this->initializeActiveModelTab();
@@ -966,6 +1111,15 @@ class ProjectPage extends Component
                 if (! empty($partialResults)) {
                     $this->createNameSuggestionsFromAI($partialResults, $aiGeneration);
                     $this->aiGenerationResults = $partialResults;
+
+                    // Refresh the project relationship to get updated suggestions
+                    $this->project->load('nameSuggestions');
+
+                    // Force refresh of the project from database to ensure we have the latest data
+                    $this->project = $this->project->fresh(['nameSuggestions']);
+
+                    // Trigger a client-side refresh after a short delay to ensure proper rendering
+                    $this->dispatch('refresh-suggestions');
                 }
 
                 // Update generation status with preservation info
@@ -1136,37 +1290,6 @@ class ProjectPage extends Component
     }
 
     /**
-     * Save user AI preferences.
-     */
-    public function saveAIPreferences(): void
-    {
-        UserAIPreferences::updateOrCreate(
-            ['user_id' => auth()->id()],
-            [
-                'preferred_models' => $this->selectedAIModels,
-                'default_generation_mode' => $this->generationMode,
-                'default_deep_thinking' => $this->deepThinking,
-                'enable_model_comparison' => $this->enableModelComparison,
-            ]
-        );
-
-        // Dispatch preferences saved event
-        $this->dispatch('ai-preferences-saved', [
-            'user_id' => auth()->id(),
-            'project_uuid' => $this->project->uuid,
-            'preferred_models' => $this->selectedAIModels,
-            'generation_mode' => $this->generationMode,
-            'deep_thinking' => $this->deepThinking,
-            'model_comparison' => $this->enableModelComparison,
-        ]);
-
-        $this->dispatch('show-toast', [
-            'message' => 'AI preferences saved',
-            'type' => 'success',
-        ]);
-    }
-
-    /**
      * Delete a single AI generation with confirmation.
      */
     public function deleteAIGeneration(int $generationId): void
@@ -1281,153 +1404,6 @@ class ProjectPage extends Component
     }
 
     /**
-     * Get model recommendations based on user preferences and performance.
-     *
-     * @return array<string, mixed>
-     */
-    public function getModelRecommendations(): array
-    {
-        $userId = auth()->id();
-
-        // Get user's historical AI generations
-        $userGenerations = AIGeneration::where('user_id', $userId)
-            ->where('status', 'completed')
-            ->with('user')
-            ->get();
-
-        $modelScores = [];
-        $totalGenerations = $userGenerations->count();
-
-        if ($totalGenerations === 0) {
-            // Return default recommendations for new users
-            return $this->getDefaultModelRecommendations();
-        }
-
-        // Analyze each model's performance
-        foreach (['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro', 'grok-beta'] as $modelId) {
-            $modelGenerations = $userGenerations->filter(fn ($generation) => in_array($modelId, $generation->models_requested ?? []));
-
-            if ($modelGenerations->count() === 0) {
-                $modelScores[$modelId] = 0;
-
-                continue;
-            }
-
-            // Calculate multiple scoring factors
-            $usageFrequency = $modelGenerations->count() / $totalGenerations;
-            $averageResponseTime = $modelGenerations->avg('total_response_time_ms') ?? 3000;
-            $averageNamesGenerated = $modelGenerations->avg('total_names_generated') ?? 5;
-            $successRate = $modelGenerations->where('status', 'completed')->count() / $modelGenerations->count();
-
-            // Calculate user satisfaction based on name selection patterns
-            $satisfactionScore = $this->calculateModelSatisfactionScore($modelId, $modelGenerations);
-
-            // Weighted scoring algorithm
-            $score = (
-                ($usageFrequency * 0.3) +
-                ($satisfactionScore * 0.4) +
-                ($successRate * 0.2) +
-                (1 / max($averageResponseTime / 1000, 1) * 0.05) + // Faster is better
-                (min($averageNamesGenerated / 10, 1) * 0.05) // More names is better (up to 10)
-            ) * 100;
-
-            $modelScores[$modelId] = round($score, 2);
-        }
-
-        // Sort by score descending
-        arsort($modelScores);
-
-        return [
-            'recommended_models' => array_keys(array_slice($modelScores, 0, 3, true)),
-            'model_scores' => $modelScores,
-            'based_on_generations' => $totalGenerations,
-        ];
-    }
-
-    /**
-     * Calculate satisfaction score based on user's name selection patterns.
-     * Uses generation session data and project final selections as satisfaction indicators.
-     *
-     * @param  \Illuminate\Database\Eloquent\Collection<int, AIGeneration>  $modelGenerations
-     */
-    protected function calculateModelSatisfactionScore(string $modelId, $modelGenerations): float
-    {
-        $totalSessions = 0;
-        $satisfactionPoints = 0;
-
-        foreach ($modelGenerations as $generation) {
-            $totalSessions++;
-
-            // Check if this generation session resulted in project name selection
-            $sessionSuggestions = NameSuggestion::where('ai_generation_session_id', $generation->generation_session_id)
-                ->where('ai_model_used', $modelId)
-                ->count();
-
-            if ($sessionSuggestions > 0) {
-                // Award satisfaction points based on names generated count (more = better satisfaction)
-                $namesGenerated = $generation->total_names_generated ?? 0;
-                $sessionSatisfaction = min($namesGenerated / 10, 1.0); // Normalize to 0-1
-
-                // Bonus points for faster response times (under 2 seconds gets full bonus)
-                $responseTime = $generation->total_response_time_ms ?? 3000;
-                $speedBonus = max(0, (3000 - $responseTime) / 3000 * 0.2); // Up to 20% bonus
-
-                $satisfactionPoints += $sessionSatisfaction + $speedBonus;
-            }
-        }
-
-        return $totalSessions > 0 ? min($satisfactionPoints / $totalSessions, 1.0) : 0.5; // Default to neutral
-    }
-
-    /**
-     * Get default model recommendations for new users.
-     *
-     * @return array<string, mixed>
-     */
-    protected function getDefaultModelRecommendations(): array
-    {
-        return [
-            'recommended_models' => ['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro'],
-            'model_scores' => [
-                'gpt-4' => 85,
-                'claude-3.5-sonnet' => 80,
-                'gemini-1.5-pro' => 75,
-                'grok-beta' => 70,
-            ],
-            'based_on_generations' => 0,
-        ];
-    }
-
-    /**
-     * Apply smart model selection based on user preferences.
-     */
-    public function applySmartModelSelection(): void
-    {
-        $recommendations = $this->getModelRecommendations();
-
-        // Auto-select top 2 recommended models for efficiency
-        $this->selectedAIModels = array_slice($recommendations['recommended_models'], 0, 2);
-
-        // Enable comparison if user historically uses multiple models
-        if ($recommendations['based_on_generations'] > 3) {
-            $this->enableModelComparison = true;
-        }
-
-        // Dispatch event for analytics
-        $this->dispatch('smart-model-selection-applied', [
-            'user_id' => auth()->id(),
-            'project_uuid' => $this->project->uuid,
-            'recommendations' => $recommendations,
-            'selected_models' => $this->selectedAIModels,
-        ]);
-
-        $this->dispatch('show-toast', [
-            'message' => 'Applied smart model selection based on your preferences',
-            'type' => 'info',
-        ]);
-    }
-
-    /**
      * Handle Livewire serialization to prevent toJSON errors.
      */
     protected function serializeProperty(string $property): mixed
@@ -1522,6 +1498,72 @@ class ProjectPage extends Component
         }
         if (! isset($this->editableDescription)) {
             $this->editableDescription = $this->project->description ?? '';
+        }
+    }
+
+    /**
+     * Check domains for a specific suggestion when user expands the dropdown.
+     */
+    public function checkDomainsForSuggestion(int $suggestionId): void
+    {
+        $this->authorize('update', $this->project);
+
+        $suggestion = NameSuggestion::where('project_id', $this->project->id)
+            ->where('id', $suggestionId)
+            ->first();
+
+        if (! $suggestion) {
+            $this->dispatch('show-toast', [
+                'message' => 'Name suggestion not found',
+                'type' => 'error',
+            ]);
+
+            return;
+        }
+
+        // Check if domains are already populated and checked
+        if ($suggestion->domains && ! empty($suggestion->domains)) {
+            $hasUncheckedDomains = false;
+            foreach ($suggestion->domains as $domainData) {
+                if (! isset($domainData['available'])) {
+                    $hasUncheckedDomains = true;
+                    break;
+                }
+            }
+
+            // If all domains are already checked, don't check again
+            if (! $hasUncheckedDomains) {
+                return;
+            }
+        }
+
+        try {
+            $domainService = app(DomainCheckService::class);
+            $checkedDomains = $domainService->checkBusinessName($suggestion->name);
+
+            // Update the suggestion with checked domains
+            $suggestion->domains = $checkedDomains;
+            $suggestion->save();
+
+            // Refresh the project relationship to show updated data
+            $this->project->load('nameSuggestions');
+
+            $this->dispatch('show-toast', [
+                'message' => 'Domain availability updated',
+                'type' => 'success',
+            ]);
+
+        } catch (\Exception $e) {
+            Log::warning('Domain checking failed for suggestion', [
+                'suggestion_id' => $suggestionId,
+                'name' => $suggestion->name,
+                'error' => $e->getMessage(),
+            ]);
+
+            $this->dispatch('show-toast', [
+                'message' => 'Domain checking temporarily unavailable',
+                'type' => 'warning',
+            ]);
         }
     }
 

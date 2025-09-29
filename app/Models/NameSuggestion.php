@@ -82,6 +82,9 @@ final class NameSuggestion extends Model
         'ai_cost_cents',
         'ai_generation_session_id',
         'ai_prompt_metadata',
+        'dns_checked',
+        'dns_has_records',
+        'dns_checked_at',
     ];
 
     /**
@@ -139,6 +142,52 @@ final class NameSuggestion extends Model
     }
 
     /**
+     * Scope a query to only include suggestions with DNS checked.
+     *
+     * @param  Builder<$this>  $query
+     * @return Builder<$this>
+     */
+    protected function scopeDnsChecked(Builder $query): Builder
+    {
+        return $query->where('dns_checked', true);
+    }
+
+    /**
+     * Scope a query to only include suggestions without DNS records.
+     *
+     * @param  Builder<$this>  $query
+     * @return Builder<$this>
+     */
+    protected function scopeAvailableDns(Builder $query): Builder
+    {
+        return $query->where('dns_checked', true)
+                    ->where('dns_has_records', false);
+    }
+
+    /**
+     * Scope a query to only include suggestions with DNS records (taken).
+     *
+     * @param  Builder<$this>  $query
+     * @return Builder<$this>
+     */
+    protected function scopeTakenDns(Builder $query): Builder
+    {
+        return $query->where('dns_checked', true)
+                    ->where('dns_has_records', true);
+    }
+
+    /**
+     * Scope a query to only include suggestions pending DNS check.
+     *
+     * @param  Builder<$this>  $query
+     * @return Builder<$this>
+     */
+    protected function scopePendingDnsCheck(Builder $query): Builder
+    {
+        return $query->where('dns_checked', false);
+    }
+
+    /**
      * Check if this suggestion was AI-generated.
      */
     public function isAiGenerated(): bool
@@ -169,6 +218,45 @@ final class NameSuggestion extends Model
     }
 
     /**
+     * Check if DNS has been checked for this suggestion.
+     */
+    public function isDnsChecked(): bool
+    {
+        return $this->dns_checked;
+    }
+
+    /**
+     * Check if this suggestion has DNS records (is taken).
+     */
+    public function hasDnsRecords(): bool
+    {
+        return $this->dns_checked && $this->dns_has_records === true;
+    }
+
+    /**
+     * Check if this suggestion appears to be available (no DNS records).
+     */
+    public function appearsDnsAvailable(): bool
+    {
+        return $this->dns_checked && $this->dns_has_records === false;
+    }
+
+    /**
+     * Get DNS status summary for this suggestion.
+     *
+     * @return array<string, mixed>
+     */
+    public function getDnsStatus(): array
+    {
+        return [
+            'checked' => $this->dns_checked,
+            'has_records' => $this->dns_has_records,
+            'checked_at' => $this->dns_checked_at?->toISOString(),
+            'appears_available' => $this->appearsDnsAvailable(),
+        ];
+    }
+
+    /**
      * The attributes that should be cast.
      *
      * @return array<string, string>
@@ -185,6 +273,9 @@ final class NameSuggestion extends Model
             'ai_tokens_used' => 'integer',
             'ai_cost_cents' => 'integer',
             'ai_prompt_metadata' => 'array',
+            'dns_checked' => 'boolean',
+            'dns_has_records' => 'boolean',
+            'dns_checked_at' => 'datetime',
         ];
     }
 }

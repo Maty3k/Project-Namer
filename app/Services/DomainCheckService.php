@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Contracts\DnsLookupServiceInterface;
+use App\Jobs\CheckDomainDnsJob;
 use App\Models\DomainCache;
+use App\Models\NameSuggestion;
 use Exception;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Queue;
 use InvalidArgumentException;
 
 /**
@@ -24,6 +28,11 @@ final class DomainCheckService
     private const TIMEOUT_SECONDS = 5;
 
     private const CACHE_HOURS = 24;
+
+    public function __construct(
+        private readonly ?DnsLookupServiceInterface $dnsService = null,
+        private readonly ?DnsDegradationService $degradationService = null
+    ) {}
 
     /**
      * Check availability for a single domain.
@@ -116,6 +125,191 @@ final class DomainCheckService
         $cutoff = now()->subHours(self::CACHE_HOURS);
 
         return DomainCache::where('checked_at', '<', $cutoff)->delete();
+    }
+
+    /**
+     * Check domain availability with DNS pre-filtering.
+     *
+     * @param  string  $domain  The domain name to check
+     * @return array<string, mixed> Domain availability information with DNS metadata
+     */
+    public function checkDomainWithDnsFilter(string $domain): array
+    {
+        $domain = $this->formatDomain($domain);
+        $this->validateDomain($domain);
+
+        // Get regular domain check result
+        $result = $this->checkDomain($domain);
+        $result['dns_filtering_enabled'] = true;
+
+        // Find associated name suggestion
+        $suggestion = NameSuggestion::where('name', $domain)->first();
+
+        if ($suggestion) {
+            // Check if we have DNS data for this suggestion
+            if ($suggestion->dns_checked) {
+                $result['dns_checked'] = true;
+                $result['dns_has_records'] = $suggestion->dns_has_records;
+                $result['dns_metadata'] = [
+                    'checked' => true,
+                    'has_records' => $suggestion->dns_has_records,
+                    'checked_at' => $suggestion->dns_checked_at?->toISOString(),
+                    'source' => 'database',
+                ];
+
+                // If DNS shows records exist, domain is not available
+                if ($suggestion->dns_has_records) {
+                    $result['available'] = false;
+                    $result['status'] = 'taken';
+                    $result['dns_source'] = 'cache';
+                }
+            } else {
+                // No DNS data yet, queue DNS check
+                $result['dns_checked'] = false;
+                $result['dns_check_queued'] = true;
+
+                Queue::push(new CheckDomainDnsJob($suggestion->id));
+            }
+        } else {
+            // No suggestion found, just regular domain check
+            $result['dns_checked'] = false;
+        }
+
+        // Check if DNS service is in degraded mode
+        if ($this->degradationService && $this->degradationService->isDegradedMode()) {
+            try {
+                $degradedResult = $this->degradationService->checkDomainInDegradedMode($domain);
+                $result = array_merge($result, $degradedResult);
+
+                Log::info('Domain checked in DNS degraded mode', [
+                    'domain' => $domain,
+                    'strategy' => $degradedResult['fallback_strategy'] ?? 'unknown',
+                ]);
+            } catch (Exception $e) {
+                Log::error('DNS degradation service failed', [
+                    'domain' => $domain,
+                    'error' => $e->getMessage(),
+                ]);
+                $result['dns_error'] = 'DNS degradation service failed';
+                $result['fallback_to_whois'] = true;
+            }
+        } elseif ($this->dnsService) {
+            // Normal DNS service operation
+            try {
+                $dnsResult = $this->dnsService->getCachedResult($domain);
+                if ($dnsResult && $dnsResult->isSuccessful()) {
+                    $result['dns_metadata'] = [
+                        'checked' => true,
+                        'has_records' => $dnsResult->hasRecords,
+                        'record_types' => $dnsResult->recordTypes,
+                        'checked_at' => $dnsResult->checkedAt->toISOString(),
+                        'source' => 'dns_cache',
+                    ];
+
+                    if ($dnsResult->hasRecords) {
+                        $result['available'] = false;
+                        $result['status'] = 'taken';
+                        $result['dns_has_records'] = true;
+                        $result['dns_source'] = 'cache';
+                    }
+                } elseif ($dnsResult && $dnsResult->isError()) {
+                    $result['dns_error'] = $dnsResult->error;
+                    $result['fallback_to_whois'] = true;
+                }
+            } catch (Exception $e) {
+                Log::warning('DNS lookup failed during domain check', [
+                    'domain' => $domain,
+                    'error' => $e->getMessage(),
+                ]);
+                $result['dns_error'] = $e->getMessage();
+                $result['fallback_to_whois'] = true;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Check multiple domains with DNS pre-filtering.
+     *
+     * @param  array<int, string>  $domains  Array of domain names to check
+     * @return array<string, array<string, mixed>> Filtered results excluding domains with DNS records
+     */
+    public function checkDomainsWithDnsPreFilter(array $domains): array
+    {
+        $results = [];
+        $dnsCheckQueue = [];
+
+        foreach ($domains as $domain) {
+            $domain = $this->formatDomain($domain);
+
+            try {
+                $this->validateDomain($domain);
+            } catch (InvalidArgumentException $e) {
+                continue; // Skip invalid domains
+            }
+
+            // Find associated name suggestion
+            $suggestion = NameSuggestion::where('name', $domain)->first();
+
+            if ($suggestion && $suggestion->dns_checked && $suggestion->dns_has_records) {
+                // Skip domains that have DNS records (pre-filtering)
+                continue;
+            }
+
+            // Include domain in results
+            $result = $this->checkDomain($domain);
+            $result['dns_filtering_enabled'] = true;
+
+            if ($suggestion) {
+                if ($suggestion->dns_checked) {
+                    $result['dns_checked'] = true;
+                    $result['dns_has_records'] = $suggestion->dns_has_records;
+                } else {
+                    $result['dns_checked'] = false;
+                    $result['dns_check_queued'] = true;
+                    $dnsCheckQueue[] = $suggestion->id;
+                }
+            } else {
+                // Create a temporary suggestion for DNS checking
+                $newSuggestion = NameSuggestion::create([
+                    'project_id' => 1, // Default project ID - this could be made configurable
+                    'name' => $domain,
+                    'dns_checked' => false,
+                ]);
+
+                $result['dns_checked'] = false;
+                $result['dns_check_queued'] = true;
+                $dnsCheckQueue[] = $newSuggestion->id;
+            }
+
+            $results[$domain] = $result;
+        }
+
+        // Dispatch DNS check jobs for unchecked domains
+        foreach ($dnsCheckQueue as $suggestionId) {
+            Queue::push(new CheckDomainDnsJob($suggestionId));
+        }
+
+        return $results;
+    }
+
+    /**
+     * Check business name across TLDs with DNS pre-filtering.
+     *
+     * @param  string  $businessName  The business name without TLD
+     * @return array<string, array<string, mixed>> Filtered results excluding domains with DNS records
+     */
+    public function checkBusinessNameWithDnsFilter(string $businessName): array
+    {
+        $businessName = $this->sanitizeBusinessName($businessName);
+        $domains = [];
+
+        foreach (self::SUPPORTED_TLDS as $tld) {
+            $domains[] = $businessName.'.'.$tld;
+        }
+
+        return $this->checkDomainsWithDnsPreFilter($domains);
     }
 
     /**

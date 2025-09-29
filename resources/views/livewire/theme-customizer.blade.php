@@ -73,10 +73,62 @@
         </div>
         
         <div class="grid grid-cols-1 gap-4
-                    sm:grid-cols-2 
-                    lg:grid-cols-3 
+                    sm:grid-cols-2
+                    lg:grid-cols-3
                     xl:grid-cols-5">
-            @foreach($this->predefinedThemes as $theme)
+            @if($selectedCategory === 'custom')
+                {{-- Custom Imported Themes --}}
+                @foreach($this->customThemes as $customTheme)
+                    <div wire:click="applyCustomTheme({{ $customTheme->id }})"
+                         class="group cursor-pointer rounded-lg border-2 p-4 transition-all duration-300 transform hover:scale-105 hover:shadow-lg relative
+                                {{ $themeName === $customTheme->theme_name ? 'scale-105 shadow-lg' : '' }}"
+                         style="border-color: {{ $themeName === $customTheme->theme_name ? $primaryColor : '#d1d5db' }};
+                                {{ $themeName === $customTheme->theme_name ? 'box-shadow: 0 0 0 3px ' . $primaryColor . '20;' : '' }}
+                                hover:border-color: {{ $primaryColor }}80;">
+                        <div class="space-y-3">
+                            <!-- Custom Theme Preview -->
+                            <div class="flex h-12 overflow-hidden rounded border border-gray-200 dark:border-gray-600">
+                                <div class="w-1/2" style="background-color: {{ $customTheme->primary_color }}"></div>
+                                <div class="w-1/4" style="background-color: {{ $customTheme->accent_color ?? $customTheme->primary_color }}"></div>
+                                <div class="w-1/4" style="background-color: {{ $customTheme->background_color }}"></div>
+                            </div>
+
+                            <!-- Theme Info -->
+                            <div class="text-center">
+                                <div class="flex items-center justify-center space-x-1 mb-1">
+                                    <span class="text-blue-500">✨</span>
+                                    <h4 class="font-medium text-gray-900 dark:text-gray-100 group-hover:font-bold transition-all duration-300">
+                                        {{ $customTheme->theme_name }}
+                                    </h4>
+                                </div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors duration-300">
+                                    {{ $customTheme->is_dark_mode ? 'Dark Mode' : 'Light Mode' }}
+                                </p>
+                                <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                    Imported {{ $customTheme->created_at->diffForHumans() }}
+                                </p>
+                            </div>
+                        </div>
+
+                        {{-- Delete button --}}
+                        <button wire:click.stop="deleteCustomTheme({{ $customTheme->id }})"
+                                class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full bg-red-500 text-white hover:bg-red-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                @endforeach
+
+                @if($this->customThemes->isEmpty())
+                    <div class="col-span-full text-center py-8">
+                        <p class="text-gray-500 dark:text-gray-400">No custom themes imported yet.</p>
+                        <p class="text-sm text-gray-400 dark:text-gray-500 mt-2">Import a theme using the form below to get started.</p>
+                    </div>
+                @endif
+            @else
+                {{-- Predefined Themes --}}
+                @foreach($this->predefinedThemes as $theme)
                 <div wire:click="applyPreset('{{ $theme['name'] }}')"
                      class="group cursor-pointer rounded-lg border-2 p-4 transition-all duration-300 transform hover:scale-105 hover:shadow-lg
                             {{ $themeName === $theme['name'] ? 'scale-105 shadow-lg' : '' }}"
@@ -124,6 +176,7 @@
                     </div>
                 </div>
             @endforeach
+            @endif
         </div>
     </div>
 
@@ -212,9 +265,9 @@
             </flux:field>
 
             <flux:field>
-                <flux:label>Theme Mode</flux:label>
+                <flux:label>Custom Colours</flux:label>
                 <flux:switch wire:model.live="isDarkMode" wire:click="toggleDarkMode">
-                    Dark Mode
+                    {{ $isDarkMode ? 'On' : 'Off' }}
                 </flux:switch>
             </flux:field>
         </div>
@@ -630,8 +683,17 @@
             });
 
             // Error handling for theme operations
-            Livewire.on('theme-error', (message) => {
-                showToast(message || 'An error occurred while processing the theme', 'error');
+            Livewire.on('theme-error', (event) => {
+                // Extract message from event (it might come as array or string)
+                const message = typeof event === 'string' ? event : (event.message || event[0] || 'An error occurred while processing the theme');
+                showToast(message, 'error');
+            });
+
+            // Theme deleted successfully
+            Livewire.on('theme-deleted', (event) => {
+                // Extract message from event (it might come as array or string)
+                const message = typeof event === 'string' ? event : (event.message || event[0] || 'Theme deleted successfully');
+                showToast(message, 'success');
             });
 
             // Toast notification function

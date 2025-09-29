@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
+use App\Jobs\CheckDomainDnsJob;
 use App\Models\GenerationSession;
 use App\Models\NameSuggestion;
 use App\Services\AI\CachingService;
@@ -17,6 +18,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Queue;
 
 /**
  * Process AI generation requests in batches for better performance.
@@ -313,9 +315,11 @@ final class ProcessAIGenerationBatch implements ShouldQueue
      */
     private function createNameSuggestions(GenerationSession $session, array $results): void
     {
+        $dnsJobs = [];
+
         foreach ($results as $model => $names) {
             foreach ($names as $name) {
-                NameSuggestion::create([
+                $suggestion = NameSuggestion::create([
                     'project_id' => $session->project_id,
                     'name' => $name,
                     'domains' => $this->generateDomainPlaceholders($name),
@@ -325,9 +329,25 @@ final class ProcessAIGenerationBatch implements ShouldQueue
                         'deep_thinking' => $session->deep_thinking,
                         'generated_at' => now()->toISOString(),
                     ],
+                    'dns_checked' => false,
+                    'dns_has_records' => null,
+                    'dns_checked_at' => null,
                 ]);
+
+                // Queue DNS check for this suggestion
+                $dnsJobs[] = new CheckDomainDnsJob($suggestion->id);
             }
         }
+
+        // Dispatch all DNS check jobs
+        foreach ($dnsJobs as $job) {
+            Queue::push($job);
+        }
+
+        Log::info('DNS checks queued for name suggestions', [
+            'session_id' => $session->session_id,
+            'jobs_queued' => count($dnsJobs),
+        ]);
     }
 
     /**
