@@ -149,6 +149,29 @@ return [
         'enabled' => env('DNS_LOGGING_ENABLED', true),
         'level' => env('DNS_LOGGING_LEVEL', 'info'),
         'include_metrics' => env('DNS_LOGGING_METRICS', true),
+        'log_cache_operations' => env('DNS_LOGGING_CACHE_OPS', false),
+        'log_performance_metrics' => env('DNS_LOGGING_PERFORMANCE', true),
+        'log_security_events' => env('DNS_LOGGING_SECURITY', true),
+        'log_batch_operations' => env('DNS_LOGGING_BATCH', true),
+        'structured_logging' => env('DNS_LOGGING_STRUCTURED', true),
+
+        // Log rotation and retention
+        'max_file_size' => env('DNS_LOG_MAX_FILE_SIZE', '100MB'),
+        'retention_days' => (int) env('DNS_LOG_RETENTION_DAYS', 30),
+
+        // Error aggregation settings
+        'error_aggregation' => [
+            'enabled' => env('DNS_ERROR_AGGREGATION', true),
+            'window_minutes' => (int) env('DNS_ERROR_WINDOW', 5),
+            'max_duplicate_errors' => (int) env('DNS_MAX_DUPLICATE_ERRORS', 10),
+        ],
+
+        // Alert thresholds for critical logging
+        'critical_thresholds' => [
+            'error_rate_percent' => (float) env('DNS_CRITICAL_ERROR_RATE', 50.0),
+            'response_time_ms' => (float) env('DNS_CRITICAL_RESPONSE_TIME', 10000.0),
+            'circuit_breaker_failures' => (int) env('DNS_CRITICAL_CB_FAILURES', 5),
+        ],
     ],
 
     /*

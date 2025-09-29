@@ -75,9 +75,9 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 7.8 Verify performance benchmarks meet requirements
 
 - [ ] 8. Error Handling and Resilience
-  - [ ] 8.1 Write tests for DNS service failure scenarios
-  - [ ] 8.2 Implement graceful degradation when DNS unavailable
-  - [ ] 8.3 Add fallback DNS server configuration
+  - [x] 8.1 Write tests for DNS service failure scenarios
+  - [x] 8.2 Implement graceful degradation when DNS unavailable
+  - [x] 8.3 Add fallback DNS server configuration
   - [ ] 8.4 Create comprehensive error logging system
   - [ ] 8.5 Implement automatic retry strategies
   - [ ] 8.6 Add DNS service health checks

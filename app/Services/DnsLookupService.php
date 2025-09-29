@@ -9,6 +9,7 @@ use App\Contracts\DnsPerformanceMonitorInterface;
 use App\Contracts\DnsResolverInterface;
 use App\DTOs\DnsLookupResult;
 use App\Models\DnsLookupCache;
+use App\Services\DnsLoggingService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Cache;
@@ -26,7 +27,8 @@ final class DnsLookupService implements DnsLookupServiceInterface
 
     public function __construct(
         private readonly ?DnsResolverInterface $resolver = null,
-        private readonly ?DnsPerformanceMonitorInterface $performanceMonitor = null
+        private readonly ?DnsPerformanceMonitorInterface $performanceMonitor = null,
+        private readonly ?DnsLoggingService $logger = null
     ) {
         $this->recordTypes = config('dns.record_types', ['A', 'AAAA', 'CNAME', 'MX', 'NS', 'TXT']);
         $this->timeout = config('dns.timeout', 2);
@@ -44,6 +46,7 @@ final class DnsLookupService implements DnsLookupServiceInterface
 
         // Validate domain format
         if (!$this->isValidDomain($fullDomain)) {
+            $this->logger?->logLookupFailure($fullDomain, new Exception('Invalid domain format'), 'validation', 'local');
             Log::warning('Invalid domain format', ['domain' => $fullDomain]);
             $this->recordDnsLookup($fullDomain, $startTime, false, false, 'Invalid domain format');
             return DnsLookupResult::withError('Invalid domain format');
@@ -54,6 +57,9 @@ final class DnsLookupService implements DnsLookupServiceInterface
         // Check cache first
         $cachedResult = $this->getCachedResult($fullDomain);
         if ($cachedResult !== null) {
+            $responseTime = (microtime(true) - $startTime) * 1000;
+            $this->logger?->logCacheOperation('hit', $fullDomain, $cachedResult->recordTypes, $this->cacheTtl);
+            $this->logger?->logLookupSuccess($fullDomain, $cachedResult->recordTypes, $responseTime, true);
             $this->recordDnsLookup($fullDomain, $startTime, true, true);
             return $cachedResult;
         }
@@ -62,6 +68,7 @@ final class DnsLookupService implements DnsLookupServiceInterface
         $result = $this->performDnsLookup($fullDomain, false);
 
         if ($result->isError() && $this->fallbackEnabled && !empty($this->fallbackServers)) {
+            $this->logger?->logFallbackActivated($fullDomain, $result->error, $this->fallbackServers);
             Log::info('Primary DNS servers failed, trying fallback servers', [
                 'domain' => $fullDomain,
                 'primary_error' => $result->error

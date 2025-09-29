@@ -9,6 +9,7 @@ use App\Contracts\DnsPerformanceMonitorInterface;
 use App\Services\DnsCircuitBreakerService;
 use App\Services\DnsDegradationService;
 use App\Services\DnsHealthAlertService;
+use App\Services\DnsLoggingService;
 use App\Services\DnsLookupService;
 use App\Services\DnsPerformanceMonitorService;
 use Illuminate\Support\ServiceProvider;
@@ -22,6 +23,9 @@ final class DnsServiceProvider extends ServiceProvider
 
         // Register the performance monitor
         $this->app->bind(DnsPerformanceMonitorInterface::class, DnsPerformanceMonitorService::class);
+
+        // Register the logging service
+        $this->app->singleton(DnsLoggingService::class);
 
         // Register the main DNS lookup service (with optional circuit breaker)
         $this->app->bind(DnsLookupServiceInterface::class, function ($app) {
