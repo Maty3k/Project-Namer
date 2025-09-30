@@ -59,7 +59,7 @@
 
                 {{-- Business Idea Input Form --}}
                 <flux:card class="p-8">
-                    <form wire:submit="{{ $useAIGeneration ? 'generateNamesWithAI' : 'generateNames' }}" class="space-y-6">
+                    <form wire:submit="generateNames" class="space-y-6">
                         {{-- Business Idea Textarea --}}
                         <div class="space-y-3">
                             <flux:label for="business-idea" class="text-lg font-semibold">
@@ -301,11 +301,11 @@
                                     wire:loading.attr="disabled"
                                     wire:loading.class="opacity-50"
                                 >
-                                    <div wire:loading wire:target="generateNamesWithAI" class="flex items-center">
+                                    <div wire:loading wire:target="generateNames" class="flex items-center">
                                         <flux:icon.arrow-path class="size-5 animate-spin mr-2" />
                                         AI Generating Names...
                                     </div>
-                                    <div wire:loading.remove wire:target="generateNamesWithAI" class="flex items-center">
+                                    <div wire:loading.remove wire:target="generateNames" class="flex items-center">
                                         <flux:icon.cpu-chip class="size-5 mr-2" />
                                         Generate with AI
                                     </div>

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
 
 /**
  * Comprehensive DNS logging service for structured error and event logging.
@@ -14,17 +14,20 @@ use Carbon\Carbon;
  * Provides centralized logging for all DNS-related operations including
  * lookups, failures, performance metrics, security events, and recovery.
  */
-final class DnsLoggingService
+final readonly class DnsLoggingService
 {
     private bool $enabled;
+
     private string $logLevel;
+
     private bool $includeMetrics;
 
     public function __construct()
     {
-        $this->enabled = config('dns.logging.enabled', true);
-        $this->logLevel = config('dns.logging.level', 'info');
-        $this->includeMetrics = config('dns.logging.include_metrics', true);
+        $this->enabled = (bool) config('dns.logging.enabled', true);
+        $logLevel = config('dns.logging.level', 'info');
+        $this->logLevel = is_string($logLevel) ? $logLevel : 'info';
+        $this->includeMetrics = (bool) config('dns.logging.include_metrics', true);
     }
 
     /**
@@ -32,7 +35,7 @@ final class DnsLoggingService
      */
     public function logLookupAttempt(string $domain, string $serverType, string $server): void
     {
-        if (!$this->shouldLog('info')) {
+        if (! $this->shouldLog('info')) {
             return;
         }
 
@@ -41,16 +44,18 @@ final class DnsLoggingService
             'server_type' => $serverType,
             'server' => $server,
             'timestamp' => $this->getTimestamp(),
-            'context' => 'dns_lookup'
+            'context' => 'dns_lookup',
         ]);
     }
 
     /**
      * Log a successful DNS lookup with performance metrics.
+     *
+     * @param  array<string>  $recordTypes
      */
     public function logLookupSuccess(string $domain, array $recordTypes, float $responseTimeMs, bool $cacheHit): void
     {
-        if (!$this->shouldLog('info')) {
+        if (! $this->shouldLog('info')) {
             return;
         }
 
@@ -59,7 +64,7 @@ final class DnsLoggingService
             'record_types' => $recordTypes,
             'cache_hit' => $cacheHit,
             'timestamp' => $this->getTimestamp(),
-            'context' => 'dns_lookup'
+            'context' => 'dns_lookup',
         ];
 
         if ($this->includeMetrics) {
@@ -74,27 +79,29 @@ final class DnsLoggingService
      */
     public function logLookupFailure(string $domain, Exception $exception, string $serverType, string $server): void
     {
-        if (!$this->shouldLog('error')) {
+        if (! $this->shouldLog('error')) {
             return;
         }
 
         Log::error('DNS lookup failed', [
             'domain' => $domain,
             'error_message' => $exception->getMessage(),
-            'error_type' => get_class($exception),
+            'error_type' => $exception::class,
             'server_type' => $serverType,
             'server' => $server,
             'timestamp' => $this->getTimestamp(),
-            'context' => 'dns_lookup'
+            'context' => 'dns_lookup',
         ]);
     }
 
     /**
      * Log fallback DNS server activation.
+     *
+     * @param  array<string>  $fallbackServers
      */
     public function logFallbackActivated(string $domain, string $primaryError, array $fallbackServers): void
     {
-        if (!$this->shouldLog('warning')) {
+        if (! $this->shouldLog('warning')) {
             return;
         }
 
@@ -103,7 +110,7 @@ final class DnsLoggingService
             'primary_error' => $primaryError,
             'fallback_servers' => $fallbackServers,
             'timestamp' => $this->getTimestamp(),
-            'context' => 'dns_fallback'
+            'context' => 'dns_fallback',
         ]);
     }
 
@@ -112,7 +119,7 @@ final class DnsLoggingService
      */
     public function logCircuitBreakerTriggered(int $failureCount, int $timeoutSeconds): void
     {
-        if (!$this->shouldLog('error')) {
+        if (! $this->shouldLog('error')) {
             return;
         }
 
@@ -120,7 +127,7 @@ final class DnsLoggingService
             'failure_count' => $failureCount,
             'timeout_seconds' => $timeoutSeconds,
             'timestamp' => $this->getTimestamp(),
-            'context' => 'dns_circuit_breaker'
+            'context' => 'dns_circuit_breaker',
         ]);
     }
 
@@ -129,7 +136,7 @@ final class DnsLoggingService
      */
     public function logDegradationModeChanged(bool $degraded, string $reason, string $strategy): void
     {
-        if (!$this->shouldLog('warning')) {
+        if (! $this->shouldLog('warning')) {
             return;
         }
 
@@ -138,32 +145,36 @@ final class DnsLoggingService
             'reason' => $reason,
             'strategy' => $strategy,
             'timestamp' => $this->getTimestamp(),
-            'context' => 'dns_degradation'
+            'context' => 'dns_degradation',
         ]);
     }
 
     /**
      * Log DNS performance metrics.
+     *
+     * @param  array<string, mixed>  $metrics
      */
     public function logPerformanceMetrics(array $metrics): void
     {
-        if (!$this->includeMetrics || !$this->shouldLog('info')) {
+        if (! $this->includeMetrics || ! $this->shouldLog('info')) {
             return;
         }
 
         Log::info('DNS performance metrics', [
             'metrics' => $metrics,
             'timestamp' => $this->getTimestamp(),
-            'context' => 'dns_performance'
+            'context' => 'dns_performance',
         ]);
     }
 
     /**
      * Log DNS cache operations.
+     *
+     * @param  array<string>  $recordTypes
      */
     public function logCacheOperation(string $operation, string $domain, array $recordTypes, int $ttlSeconds): void
     {
-        if (!$this->shouldLog('debug')) {
+        if (! $this->shouldLog('debug')) {
             return;
         }
 
@@ -173,25 +184,28 @@ final class DnsLoggingService
             'record_types' => $recordTypes,
             'ttl_seconds' => $ttlSeconds,
             'timestamp' => $this->getTimestamp(),
-            'context' => 'dns_cache'
+            'context' => 'dns_cache',
         ]);
     }
 
     /**
      * Log DNS health alerts.
+     *
+     * @param  array<string, mixed>  $alert
      */
     public function logHealthAlert(array $alert): void
     {
-        $level = $alert['severity'] ?? 'warning';
+        $severity = $alert['severity'] ?? 'warning';
+        $level = is_string($severity) ? $severity : 'warning';
 
-        if (!$this->shouldLog($level)) {
+        if (! $this->shouldLog($level)) {
             return;
         }
 
         Log::$level('DNS health alert', [
             'alert' => $alert,
             'timestamp' => $this->getTimestamp(),
-            'context' => 'dns_health'
+            'context' => 'dns_health',
         ]);
     }
 
@@ -200,7 +214,7 @@ final class DnsLoggingService
      */
     public function logBatchOperation(string $operation, int $domainCount, string $batchType): void
     {
-        if (!$this->shouldLog('info')) {
+        if (! $this->shouldLog('info')) {
             return;
         }
 
@@ -209,16 +223,18 @@ final class DnsLoggingService
             'domain_count' => $domainCount,
             'batch_type' => $batchType,
             'timestamp' => $this->getTimestamp(),
-            'context' => 'dns_batch'
+            'context' => 'dns_batch',
         ]);
     }
 
     /**
      * Log DNS configuration changes.
+     *
+     * @param  array<string, mixed>  $changes
      */
     public function logConfigurationChange(array $changes, string $reason): void
     {
-        if (!$this->shouldLog('info')) {
+        if (! $this->shouldLog('info')) {
             return;
         }
 
@@ -226,7 +242,7 @@ final class DnsLoggingService
             'changes' => $changes,
             'reason' => $reason,
             'timestamp' => $this->getTimestamp(),
-            'context' => 'dns_config'
+            'context' => 'dns_config',
         ]);
     }
 
@@ -235,7 +251,7 @@ final class DnsLoggingService
      */
     public function logErrorRecovery(string $recoveryType, string $component, string $description): void
     {
-        if (!$this->shouldLog('info')) {
+        if (! $this->shouldLog('info')) {
             return;
         }
 
@@ -244,16 +260,18 @@ final class DnsLoggingService
             'component' => $component,
             'description' => $description,
             'timestamp' => $this->getTimestamp(),
-            'context' => 'dns_recovery'
+            'context' => 'dns_recovery',
         ]);
     }
 
     /**
      * Log DNS security events.
+     *
+     * @param  array<string, mixed>  $details
      */
     public function logSecurityEvent(string $eventType, string $domain, array $details): void
     {
-        if (!$this->shouldLog('error')) {
+        if (! $this->shouldLog('error')) {
             return;
         }
 
@@ -262,7 +280,7 @@ final class DnsLoggingService
             'domain' => $domain,
             'details' => $details,
             'timestamp' => $this->getTimestamp(),
-            'context' => 'dns_security'
+            'context' => 'dns_security',
         ]);
     }
 
@@ -271,7 +289,7 @@ final class DnsLoggingService
      */
     public function logRateLimitEvent(string $provider, int $remainingRequests, int $resetTime): void
     {
-        if (!$this->shouldLog('warning')) {
+        if (! $this->shouldLog('warning')) {
             return;
         }
 
@@ -280,16 +298,18 @@ final class DnsLoggingService
             'remaining_requests' => $remainingRequests,
             'reset_time' => $resetTime,
             'timestamp' => $this->getTimestamp(),
-            'context' => 'dns_rate_limit'
+            'context' => 'dns_rate_limit',
         ]);
     }
 
     /**
      * Log DNS service startup and shutdown events.
+     *
+     * @param  array<string, mixed>  $config
      */
     public function logServiceEvent(string $event, array $config = []): void
     {
-        if (!$this->shouldLog('info')) {
+        if (! $this->shouldLog('info')) {
             return;
         }
 
@@ -297,27 +317,29 @@ final class DnsLoggingService
             'event' => $event,
             'config' => $config,
             'timestamp' => $this->getTimestamp(),
-            'context' => 'dns_service'
+            'context' => 'dns_service',
         ]);
     }
 
     /**
      * Log critical DNS system errors that require immediate attention.
+     *
+     * @param  array<string, mixed>  $context
      */
     public function logCriticalError(string $component, Exception $exception, array $context = []): void
     {
-        if (!$this->shouldLog('critical')) {
+        if (! $this->shouldLog('critical')) {
             return;
         }
 
         Log::critical('DNS critical error', [
             'component' => $component,
             'error_message' => $exception->getMessage(),
-            'error_type' => get_class($exception),
+            'error_type' => $exception::class,
             'error_trace' => $exception->getTraceAsString(),
             'context_data' => $context,
             'timestamp' => $this->getTimestamp(),
-            'context' => 'dns_critical'
+            'context' => 'dns_critical',
         ]);
     }
 
@@ -326,7 +348,7 @@ final class DnsLoggingService
      */
     private function shouldLog(string $level): bool
     {
-        if (!$this->enabled) {
+        if (! $this->enabled) {
             return false;
         }
 
@@ -347,6 +369,8 @@ final class DnsLoggingService
      */
     private function getTimestamp(): string
     {
-        return Carbon::now()->toISOString();
+        $timestamp = Carbon::now()->toISOString();
+
+        return $timestamp ?? date('Y-m-d\TH:i:s.000\Z');
     }
 }

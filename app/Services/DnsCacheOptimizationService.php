@@ -5,22 +5,22 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Contracts\DnsLookupServiceInterface;
-use App\DTOs\DnsLookupResult;
 use App\Models\DnsLookupCache;
 use App\Models\DnsLookupMetrics;
 use App\Models\NameSuggestion;
-use Carbon\Carbon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-final class DnsCacheOptimizationService
+final readonly class DnsCacheOptimizationService
 {
     public function __construct(
-        private readonly DnsLookupServiceInterface $dnsService
+        private DnsLookupServiceInterface $dnsService
     ) {}
 
+    /**
+     * @return array{expired_removed: int, duplicates_cleaned: int, orphaned_cleaned: int, memory_freed: int, cache_stats: array<string, mixed>}
+     */
     public function optimizeCache(): array
     {
         $optimization = [
@@ -36,6 +36,9 @@ final class DnsCacheOptimizationService
         return $optimization;
     }
 
+    /**
+     * @return array{preloaded_count: int, preloaded_domains: array<string>, skipped_count: int, errors: array<array{domain: string, error: string}>}
+     */
     public function preloadPopularDomains(int $limit = 100): array
     {
         $popularDomains = $this->getPopularDomains($limit);
@@ -74,10 +77,14 @@ final class DnsCacheOptimizationService
         return [
             'preloaded_count' => count($preloaded),
             'preloaded_domains' => $preloaded,
+            'skipped_count' => count($popularDomains) - count($preloaded),
             'errors' => $errors,
         ];
     }
 
+    /**
+     * @return array{extended_ttl?: array<string>, stable_extended?: array<string>}
+     */
     public function optimizeCacheTtl(): array
     {
         $optimizations = [];
@@ -104,6 +111,9 @@ final class DnsCacheOptimizationService
         return $optimizations;
     }
 
+    /**
+     * @return array{total_entries: int, active_entries: int, valid_entries: int, expired_entries: int, hit_rate: float, cache_hit_rate: float, size_mb: float, top_tlds: array<mixed>, daily_stats: array{total_cache_hits_24h: int, total_lookups_24h: int}, total_cache_hits_24h: int, total_lookups_24h: int, memory_usage_estimate: float}
+     */
     public function getCacheStatistics(): array
     {
         $totalEntries = DnsLookupCache::count();
@@ -117,6 +127,7 @@ final class DnsCacheOptimizationService
             ->limit(10)
             ->get();
 
+        /** @var object{avg_hit_rate: float, total_cache_hits: int, total_lookups: int}|null $recentMetrics */
         $recentMetrics = DnsLookupMetrics::where('created_at', '>', now()->subDay())
             ->selectRaw('
                 AVG(cache_hits * 100.0 / domains_checked) as avg_hit_rate,
@@ -125,18 +136,30 @@ final class DnsCacheOptimizationService
             ')
             ->first();
 
+        $memoryUsage = $this->estimateCacheMemoryUsage();
+
         return [
             'total_entries' => $totalEntries,
-            'valid_entries' => $validEntries,
+            'active_entries' => $validEntries,
+            'valid_entries' => $validEntries, // Backward compatibility alias
             'expired_entries' => $expiredEntries,
-            'cache_hit_rate' => round($recentMetrics->avg_hit_rate ?? 0, 2),
-            'total_cache_hits_24h' => $recentMetrics->total_cache_hits ?? 0,
-            'total_lookups_24h' => $recentMetrics->total_lookups ?? 0,
+            'hit_rate' => round((float) ($recentMetrics->avg_hit_rate ?? 0), 2),
+            'cache_hit_rate' => round((float) ($recentMetrics->avg_hit_rate ?? 0), 2), // Backward compatibility alias
+            'size_mb' => round($memoryUsage / (1024 * 1024), 2),
             'top_tlds' => $cacheByTld->toArray(),
-            'memory_usage_estimate' => $this->estimateCacheMemoryUsage(),
+            'daily_stats' => [
+                'total_cache_hits_24h' => (int) ($recentMetrics->total_cache_hits ?? 0),
+                'total_lookups_24h' => (int) ($recentMetrics->total_lookups ?? 0),
+            ],
+            'total_cache_hits_24h' => (int) ($recentMetrics->total_cache_hits ?? 0), // Backward compatibility
+            'total_lookups_24h' => (int) ($recentMetrics->total_lookups ?? 0), // Backward compatibility
+            'memory_usage_estimate' => $memoryUsage,
         ];
     }
 
+    /**
+     * @return array{period_days: int, daily_breakdown: array<mixed>, overall_hit_rate: float, total_cache_hits: int, total_lookups: int, cache_efficiency: float}
+     */
     public function getCacheHitAnalysis(int $days = 7): array
     {
         $metrics = DnsLookupMetrics::where('created_at', '>', now()->subDays($days))
@@ -150,6 +173,7 @@ final class DnsCacheOptimizationService
             ->orderBy('date')
             ->get();
 
+        /** @var object{total_cache_hits: int, total_lookups: int, avg_hit_rate: float}|null $overallStats */
         $overallStats = DnsLookupMetrics::where('created_at', '>', now()->subDays($days))
             ->selectRaw('
                 SUM(cache_hits) as total_cache_hits,
@@ -161,13 +185,16 @@ final class DnsCacheOptimizationService
         return [
             'period_days' => $days,
             'daily_breakdown' => $metrics->toArray(),
-            'overall_hit_rate' => round($overallStats->avg_hit_rate ?? 0, 2),
-            'total_cache_hits' => $overallStats->total_cache_hits ?? 0,
-            'total_lookups' => $overallStats->total_lookups ?? 0,
+            'overall_hit_rate' => round((float) ($overallStats->avg_hit_rate ?? 0), 2),
+            'total_cache_hits' => (int) ($overallStats->total_cache_hits ?? 0),
+            'total_lookups' => (int) ($overallStats->total_lookups ?? 0),
             'cache_efficiency' => $this->calculateCacheEfficiency($overallStats),
         ];
     }
 
+    /**
+     * @return array{suggestions: array<array{type: string, priority: string, suggestion: string, current_rate?: float, expired_ratio?: float, memory_mb?: float, tld?: string, count?: int}>, optimization_score: int}
+     */
     public function suggestCacheImprovements(): array
     {
         $stats = $this->getCacheStatistics();
@@ -219,7 +246,7 @@ final class DnsCacheOptimizationService
 
         return [
             'suggestions' => $suggestions,
-            'optimization_score' => $this->calculateOptimizationScore($stats, $hitAnalysis),
+            'optimization_score' => (int) $this->calculateOptimizationScore($stats, $hitAnalysis),
         ];
     }
 
@@ -244,7 +271,7 @@ final class DnsCacheOptimizationService
                 ->get();
 
             // Keep the first (most recent) entry, delete the rest
-            $entries->slice(1)->each(function ($entry) use (&$removedCount) {
+            $entries->slice(1)->each(function ($entry) use (&$removedCount): void {
                 $entry->delete();
                 $removedCount++;
             });
@@ -262,6 +289,7 @@ final class DnsCacheOptimizationService
                 $parts = explode('.', $name);
                 $tld = array_pop($parts);
                 $domain = implode('.', $parts);
+
                 return ['domain' => $domain, 'tld' => $tld];
             })
             ->unique();
@@ -269,7 +297,7 @@ final class DnsCacheOptimizationService
         $activeDomainsCollection = collect($activeDomains);
 
         return DnsLookupCache::whereNotIn(DB::raw("CONCAT(domain, '.', tld)"),
-            $activeDomainsCollection->map(fn($d) => $d['domain'] . '.' . $d['tld'])
+            $activeDomainsCollection->map(fn ($d) => $d['domain'].'.'.$d['tld'])
         )->delete();
     }
 
@@ -279,6 +307,9 @@ final class DnsCacheOptimizationService
         return 0; // Would need before/after comparison
     }
 
+    /**
+     * @return array<string>
+     */
     private function getPopularDomains(int $limit): array
     {
         return NameSuggestion::select('name')
@@ -290,6 +321,9 @@ final class DnsCacheOptimizationService
             ->toArray();
     }
 
+    /**
+     * @return array{frequent_domains: array<mixed>, cache_hit_trends: array<mixed>}
+     */
     private function analyzeCacheHitPatterns(): array
     {
         // This would require more detailed tracking, for now return basic analysis
@@ -299,6 +333,9 @@ final class DnsCacheOptimizationService
         ];
     }
 
+    /**
+     * @return array<string>
+     */
     private function getStableDomainsWithRecords(): array
     {
         return DnsLookupCache::where('has_records', true)
@@ -323,18 +360,26 @@ final class DnsCacheOptimizationService
     {
         $avgRecordSize = 500; // Rough estimate in bytes per cache record
         $totalRecords = DnsLookupCache::count();
+
         return $totalRecords * $avgRecordSize;
     }
 
+    /**
+     * @param  object{total_cache_hits: int, total_lookups: int}|null  $stats
+     */
     private function calculateCacheEfficiency($stats): float
     {
-        if (!$stats || $stats->total_lookups == 0) {
+        if (! $stats || (int) ($stats->total_lookups ?? 0) == 0) {
             return 0.0;
         }
 
-        return round(($stats->total_cache_hits / $stats->total_lookups) * 100, 2);
+        return round(((int) ($stats->total_cache_hits ?? 0) / (int) ($stats->total_lookups ?? 0)) * 100, 2);
     }
 
+    /**
+     * @param  array<string, mixed>  $stats
+     * @param  array<string, mixed>  $hitAnalysis
+     */
     private function calculateOptimizationScore(array $stats, array $hitAnalysis): float
     {
         $score = 100.0;

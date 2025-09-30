@@ -21,9 +21,7 @@ describe('Circuit Breaker Service', function (): void {
     });
 
     it('executes successful operations in closed state', function (): void {
-        $result = $this->circuitBreaker->call(function () {
-            return 'success';
-        });
+        $result = $this->circuitBreaker->call(fn () => 'success');
 
         expect($result)->toBe('success')
             ->and($this->circuitBreaker->getState())->toBe('closed')
@@ -34,10 +32,10 @@ describe('Circuit Breaker Service', function (): void {
         // Execute 3 failed operations (threshold)
         for ($i = 0; $i < 3; $i++) {
             try {
-                $this->circuitBreaker->call(function () {
+                $this->circuitBreaker->call(function (): void {
                     throw new Exception('Test failure');
                 });
-            } catch (Exception $e) {
+            } catch (Exception) {
                 // Expected to fail
             }
         }
@@ -50,28 +48,26 @@ describe('Circuit Breaker Service', function (): void {
         // Force circuit to open
         for ($i = 0; $i < 3; $i++) {
             try {
-                $this->circuitBreaker->call(function () {
+                $this->circuitBreaker->call(function (): void {
                     throw new Exception('Test failure');
                 });
-            } catch (Exception $e) {
+            } catch (Exception) {
                 // Expected to fail
             }
         }
 
         // Now try to execute an operation - should be blocked
-        expect(fn () => $this->circuitBreaker->call(function () {
-            return 'should not execute';
-        }))->toThrow(Exception::class, 'Circuit breaker is OPEN');
+        expect(fn () => $this->circuitBreaker->call(fn () => 'should not execute'))->toThrow(Exception::class, 'Circuit breaker is OPEN');
     });
 
     it('transitions to half-open after timeout', function (): void {
         // Force circuit to open
         for ($i = 0; $i < 3; $i++) {
             try {
-                $this->circuitBreaker->call(function () {
+                $this->circuitBreaker->call(function (): void {
                     throw new Exception('Test failure');
                 });
-            } catch (Exception $e) {
+            } catch (Exception) {
                 // Expected to fail
             }
         }
@@ -79,13 +75,11 @@ describe('Circuit Breaker Service', function (): void {
         expect($this->circuitBreaker->getState())->toBe('open');
 
         // Simulate time passing by manipulating cache
-        $lastFailureKey = "circuit_breaker:test_service:last_failure_time";
+        $lastFailureKey = 'circuit_breaker:test_service:last_failure_time';
         Cache::put($lastFailureKey, now()->subMinutes(5), now()->addHours(24));
 
         // Next call should transition to half-open and then succeed
-        $result = $this->circuitBreaker->call(function () {
-            return 'success after timeout';
-        });
+        $result = $this->circuitBreaker->call(fn () => 'success after timeout');
 
         expect($result)->toBe('success after timeout');
         // After one successful call in half-open, it should still be half-open
@@ -96,23 +90,21 @@ describe('Circuit Breaker Service', function (): void {
         // Force circuit to open first
         for ($i = 0; $i < 3; $i++) {
             try {
-                $this->circuitBreaker->call(function () {
+                $this->circuitBreaker->call(function (): void {
                     throw new Exception('Test failure');
                 });
-            } catch (Exception $e) {
+            } catch (Exception) {
                 // Expected to fail
             }
         }
 
         // Simulate time passing to allow transition to half-open
-        $lastFailureKey = "circuit_breaker:test_service:last_failure_time";
+        $lastFailureKey = 'circuit_breaker:test_service:last_failure_time';
         Cache::put($lastFailureKey, now()->subMinutes(5), now()->addHours(24));
 
         // Execute successful operations (need 2 successes based on threshold)
         for ($i = 0; $i < 2; $i++) {
-            $result = $this->circuitBreaker->call(function () {
-                return 'success';
-            });
+            $result = $this->circuitBreaker->call(fn () => 'success');
             expect($result)->toBe('success');
         }
 
@@ -125,10 +117,10 @@ describe('Circuit Breaker Service', function (): void {
         // Force circuit to open
         for ($i = 0; $i < 3; $i++) {
             try {
-                $this->circuitBreaker->call(function () {
+                $this->circuitBreaker->call(function (): void {
                     throw new Exception('Test failure');
                 });
-            } catch (Exception $e) {
+            } catch (Exception) {
                 // Expected to fail
             }
         }
@@ -154,7 +146,7 @@ describe('Circuit Breaker Service', function (): void {
             'failure_threshold',
             'timeout_minutes',
             'success_threshold',
-            'last_failure_time'
+            'last_failure_time',
         ])
             ->and($stats['service_name'])->toBe('test_service')
             ->and($stats['failure_threshold'])->toBe(3)
@@ -166,10 +158,10 @@ describe('Circuit Breaker Service', function (): void {
         // Have some failures but not enough to open circuit
         for ($i = 0; $i < 2; $i++) {
             try {
-                $this->circuitBreaker->call(function () {
+                $this->circuitBreaker->call(function (): void {
                     throw new Exception('Test failure');
                 });
-            } catch (Exception $e) {
+            } catch (Exception) {
                 // Expected to fail
             }
         }
@@ -177,9 +169,7 @@ describe('Circuit Breaker Service', function (): void {
         expect($this->circuitBreaker->getFailureCount())->toBe(2);
 
         // Successful operation should reset failure count
-        $this->circuitBreaker->call(function () {
-            return 'success';
-        });
+        $this->circuitBreaker->call(fn () => 'success');
 
         expect($this->circuitBreaker->getFailureCount())->toBe(0)
             ->and($this->circuitBreaker->getState())->toBe('closed');
@@ -187,24 +177,20 @@ describe('Circuit Breaker Service', function (): void {
 
     it('handles mixed success and failure patterns correctly', function (): void {
         // Alternate between success and failure
-        $this->circuitBreaker->call(function () {
-            return 'success';
-        });
+        $this->circuitBreaker->call(fn () => 'success');
 
         try {
-            $this->circuitBreaker->call(function () {
+            $this->circuitBreaker->call(function (): void {
                 throw new Exception('failure');
             });
-        } catch (Exception $e) {
+        } catch (Exception) {
             // Expected
         }
 
         expect($this->circuitBreaker->getState())->toBe('closed')
             ->and($this->circuitBreaker->getFailureCount())->toBe(1);
 
-        $this->circuitBreaker->call(function () {
-            return 'success';
-        });
+        $this->circuitBreaker->call(fn () => 'success');
 
         expect($this->circuitBreaker->getFailureCount())->toBe(0);
     });

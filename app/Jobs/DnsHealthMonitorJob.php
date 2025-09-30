@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
-use App\Services\DnsHealthAlertService;
+use App\Services\DnsHealthCheckService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
@@ -35,21 +35,21 @@ final class DnsHealthMonitorJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(DnsHealthAlertService $alertService): void
+    public function handle(DnsHealthCheckService $healthCheckService): void
     {
         try {
             Log::info('DNS health monitoring job started');
 
-            // Check DNS service health and trigger alerts if needed
-            $alerts = $alertService->checkAndTriggerAlerts();
+            // Perform DNS health check - this will automatically trigger alerts
+            $healthStatus = $healthCheckService->performHealthCheck();
 
-            if (!empty($alerts)) {
-                Log::warning('DNS health alerts triggered', [
-                    'alert_count' => count($alerts),
-                    'alert_types' => array_column($alerts, 'type'),
+            if ($healthStatus['overall_status'] !== 'healthy') {
+                Log::warning('DNS health issues detected', [
+                    'status' => $healthStatus['overall_status'],
+                    'checked_at' => $healthStatus['checked_at'],
                 ]);
             } else {
-                Log::debug('DNS health check completed - no alerts triggered');
+                Log::debug('DNS health check completed - all metrics healthy');
             }
 
         } catch (\Exception $e) {

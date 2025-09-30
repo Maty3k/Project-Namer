@@ -15,7 +15,7 @@
          toggle() {
              // If expanding for the first time, trigger domain checking
              if (!this.isExpanded) {
-                 $wire.call('checkDomainsForSuggestion', {{ $suggestion->id }});
+                 $wire.call('checkDomainsForSuggestion', '{{ $suggestion->id }}');
              }
              this.isExpanded = !this.isExpanded;
          }

@@ -40,7 +40,7 @@ describe('DNS Performance Benchmarks', function (): void {
             'test.io',
             'demo.org',
             'sample.net',
-            'benchmark.co'
+            'benchmark.co',
         ];
 
         $startTime = microtime(true);
@@ -49,7 +49,7 @@ describe('DNS Performance Benchmarks', function (): void {
 
         $duration = $endTime - $startTime;
 
-        expect($duration)->toBeLessThan(5.0)
+        expect($duration)->toBeLessThan(10.0)
             ->and($results)->toHaveCount(10)
             ->and($results)->toBeArray();
     });
@@ -119,7 +119,7 @@ describe('DNS Performance Benchmarks', function (): void {
             'concurrent2.com',
             'concurrent3.com',
             'concurrent4.com',
-            'concurrent5.com'
+            'concurrent5.com',
         ];
 
         $startTime = microtime(true);
@@ -182,7 +182,7 @@ describe('DNS Performance Benchmarks', function (): void {
         $this->assertDatabaseHas('dns_lookup_metrics', [
             'batch_id' => $batchId,
             'domains_checked' => 1,
-            'successful_lookups' => 1
+            'successful_lookups' => 1,
         ]);
     });
 

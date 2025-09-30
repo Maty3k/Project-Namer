@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Models\DomainCache;
 use App\Models\GenerationCache;
 use Livewire\Volt\Volt;
+use Prism\Prism\Prism;
+use Prism\Prism\Testing\TextResponseFake;
 
 describe('Simplified Integration Workflow Tests', function (): void {
     beforeEach(function (): void {
@@ -14,27 +16,11 @@ describe('Simplified Integration Workflow Tests', function (): void {
     });
 
     test('name generation workflow with cached results works end-to-end', function (): void {
-        // Pre-populate generation cache for predictable testing
-        $businessNames = [
-            'UrbanCafe',
-            'CityBrew',
-            'MetroGrind',
-            'DowntownRoast',
-            'CentralPerk',
-            'MainStreetCoffee',
-            'CityBeanCo',
-            'UrbanGrind',
-            'MetroMocha',
-            'DowntownDrip',
-        ];
+        // Mock Prism to provide test responses since the component uses AI service
+        $response = "1. UrbanCafe\n2. CityBrew\n3. MetroGrind\n4. DowntownRoast\n5. CentralPerk\n6. MainStreetCoffee\n7. CityBeanCo\n8. UrbanGrind\n9. MetroMocha\n10. DowntownDrip";
 
-        GenerationCache::create([
-            'input_hash' => GenerationCache::generateHash('coffee shop', 'creative', false),
-            'business_description' => 'coffee shop',
-            'mode' => 'creative',
-            'deep_thinking' => false,
-            'generated_names' => $businessNames,
-            'cached_at' => now(),
+        Prism::fake([
+            TextResponseFake::make()->withText($response),
         ]);
 
         $component = Volt::test('name-generator');
@@ -46,8 +32,9 @@ describe('Simplified Integration Workflow Tests', function (): void {
             ->assertSet('isLoading', false)
             ->assertSet('generatedNames', []);
 
-        // Input business idea and generate names
+        // Input business idea and select AI model, then generate names
         $component->set('businessDescription', 'coffee shop')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
 
         // Verify names were generated (either from cache or AI)
@@ -69,6 +56,8 @@ describe('Simplified Integration Workflow Tests', function (): void {
     });
 
     test('different generation modes produce different cache keys', function (): void {
+        // Test cache behavior - should use cached results when available
+
         // Pre-populate cache for different modes
         $creativeNames = ['CreativeName1', 'CreativeName2', 'CreativeName3', 'CreativeName4', 'CreativeName5',
             'CreativeName6', 'CreativeName7', 'CreativeName8', 'CreativeName9', 'CreativeName10'];
@@ -76,7 +65,7 @@ describe('Simplified Integration Workflow Tests', function (): void {
             'ProfessionalName6', 'ProfessionalName7', 'ProfessionalName8', 'ProfessionalName9', 'ProfessionalName10'];
 
         GenerationCache::create([
-            'input_hash' => GenerationCache::generateHash('restaurant', 'creative', false),
+            'input_hash' => GenerationCache::generateHash('restaurant|model:claude-3.5-sonnet|params:[]', 'creative', false),
             'business_description' => 'restaurant',
             'mode' => 'creative',
             'deep_thinking' => false,
@@ -85,7 +74,7 @@ describe('Simplified Integration Workflow Tests', function (): void {
         ]);
 
         GenerationCache::create([
-            'input_hash' => GenerationCache::generateHash('restaurant', 'professional', false),
+            'input_hash' => GenerationCache::generateHash('restaurant|model:claude-3.5-sonnet|params:[]', 'professional', false),
             'business_description' => 'restaurant',
             'mode' => 'professional',
             'deep_thinking' => false,
@@ -98,6 +87,7 @@ describe('Simplified Integration Workflow Tests', function (): void {
 
         // Generate in creative mode
         $component->set('mode', 'creative')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
         expect($component->get('generatedNames'))->toBe($creativeNames);
 
@@ -106,7 +96,8 @@ describe('Simplified Integration Workflow Tests', function (): void {
         expect($component->get('generatedNames'))->toHaveCount(0);
 
         // Generate in professional mode (may fail due to API, but should handle gracefully)
-        $component->call('generateNames');
+        $component->set('selectedAIModels', ['claude-3.5-sonnet'])
+            ->call('generateNames');
 
         // Either succeeds with generated names or fails gracefully with error message
         // Note: In some cases the service may fail silently due to validation or cache issues
@@ -152,6 +143,7 @@ describe('Simplified Integration Workflow Tests', function (): void {
 
         // Generate without deep thinking (may fail due to cache/validation issues)
         $component->set('deepThinking', false)
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
 
         // Check if names were generated or handle graceful failure
@@ -168,6 +160,7 @@ describe('Simplified Integration Workflow Tests', function (): void {
 
         // Generate with deep thinking (may also fail gracefully)
         $component->set('deepThinking', true)
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
 
         // Verify either names were generated or graceful failure occurred
@@ -206,19 +199,16 @@ describe('Simplified Integration Workflow Tests', function (): void {
             ->call('generateNames');
         $component->assertHasErrors(['mode']);
 
-        // Test valid input with cached results
-        GenerationCache::create([
-            'input_hash' => GenerationCache::generateHash('valid business idea', 'creative', false),
-            'business_description' => 'valid business idea',
-            'mode' => 'creative',
-            'deep_thinking' => false,
-            'generated_names' => ['ValidName1', 'ValidName2', 'ValidName3', 'ValidName4', 'ValidName5',
-                'ValidName6', 'ValidName7', 'ValidName8', 'ValidName9', 'ValidName10'],
-            'cached_at' => now(),
+        // Test valid input with mocked AI response
+        $validResponse = "1. ValidName1\n2. ValidName2\n3. ValidName3\n4. ValidName4\n5. ValidName5\n6. ValidName6\n7. ValidName7\n8. ValidName8\n9. ValidName9\n10. ValidName10";
+
+        Prism::fake([
+            TextResponseFake::make()->withText($validResponse),
         ]);
 
         $component->set('businessDescription', 'valid business idea')
             ->set('mode', 'creative')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
         $component->assertHasNoErrors();
         expect($component->get('generatedNames'))->toHaveCount(10);
@@ -230,6 +220,7 @@ describe('Simplified Integration Workflow Tests', function (): void {
         // Simulate recent API call (within cooldown period)
         $component->set('lastApiCallTime', time() - 10); // 10 seconds ago, within 30-second cooldown
         $component->set('businessDescription', 'test business')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
 
         // Should show rate limit error message
@@ -273,15 +264,11 @@ describe('Simplified Integration Workflow Tests', function (): void {
     });
 
     test('mode changes clear generated results and domain results', function (): void {
-        // Pre-populate cache
-        GenerationCache::create([
-            'input_hash' => GenerationCache::generateHash('test business', 'creative', false),
-            'business_description' => 'test business',
-            'mode' => 'creative',
-            'deep_thinking' => false,
-            'generated_names' => ['TestName1', 'TestName2', 'TestName3', 'TestName4', 'TestName5',
-                'TestName6', 'TestName7', 'TestName8', 'TestName9', 'TestName10'],
-            'cached_at' => now(),
+        // Mock Prism to provide test responses
+        $testResponse = "1. TestName1\n2. TestName2\n3. TestName3\n4. TestName4\n5. TestName5\n6. TestName6\n7. TestName7\n8. TestName8\n9. TestName9\n10. TestName10";
+
+        Prism::fake([
+            TextResponseFake::make()->withText($testResponse),
         ]);
 
         $component = Volt::test('name-generator');
@@ -289,6 +276,7 @@ describe('Simplified Integration Workflow Tests', function (): void {
         // Generate names
         $component->set('businessDescription', 'test business')
             ->set('mode', 'creative')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
 
         expect($component->get('generatedNames'))->toHaveCount(10);
@@ -325,15 +313,11 @@ describe('Simplified Integration Workflow Tests', function (): void {
     });
 
     test('workflow performance meets requirements with cached results', function (): void {
-        // Pre-populate cache for instant response
-        GenerationCache::create([
-            'input_hash' => GenerationCache::generateHash('performance test', 'professional', false),
-            'business_description' => 'performance test',
-            'mode' => 'professional',
-            'deep_thinking' => false,
-            'generated_names' => ['PerfName1', 'PerfName2', 'PerfName3', 'PerfName4', 'PerfName5',
-                'PerfName6', 'PerfName7', 'PerfName8', 'PerfName9', 'PerfName10'],
-            'cached_at' => now(),
+        // Mock Prism for fast responses
+        $perfResponse = "1. PerfName1\n2. PerfName2\n3. PerfName3\n4. PerfName4\n5. PerfName5\n6. PerfName6\n7. PerfName7\n8. PerfName8\n9. PerfName9\n10. PerfName10";
+
+        Prism::fake([
+            TextResponseFake::make()->withText($perfResponse),
         ]);
 
         // Measure component mounting
@@ -346,6 +330,7 @@ describe('Simplified Integration Workflow Tests', function (): void {
         $startTime = microtime(true);
         $component->set('businessDescription', 'performance test')
             ->set('mode', 'professional')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
         $generationTime = (microtime(true) - $startTime) * 1000; // milliseconds
 
@@ -355,20 +340,17 @@ describe('Simplified Integration Workflow Tests', function (): void {
     });
 
     test('domain results structure supports responsive layout needs', function (): void {
-        // Pre-populate cache
-        GenerationCache::create([
-            'input_hash' => GenerationCache::generateHash('layout test', 'creative', false),
-            'business_description' => 'layout test',
-            'mode' => 'creative',
-            'deep_thinking' => false,
-            'generated_names' => ['LayoutName1', 'LayoutName2', 'LayoutName3', 'LayoutName4', 'LayoutName5',
-                'LayoutName6', 'LayoutName7', 'LayoutName8', 'LayoutName9', 'LayoutName10'],
-            'cached_at' => now(),
+        // Mock Prism for test responses
+        $layoutResponse = "1. LayoutName1\n2. LayoutName2\n3. LayoutName3\n4. LayoutName4\n5. LayoutName5\n6. LayoutName6\n7. LayoutName7\n8. LayoutName8\n9. LayoutName9\n10. LayoutName10";
+
+        Prism::fake([
+            TextResponseFake::make()->withText($layoutResponse),
         ]);
 
         $component = Volt::test('name-generator');
 
         $component->set('businessDescription', 'layout test')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
 
         $domainResults = $component->get('domainResults');

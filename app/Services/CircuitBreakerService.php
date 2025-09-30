@@ -9,17 +9,19 @@ use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
-final class CircuitBreakerService
+final readonly class CircuitBreakerService
 {
     private const STATE_CLOSED = 'closed';
+
     private const STATE_OPEN = 'open';
+
     private const STATE_HALF_OPEN = 'half_open';
 
     public function __construct(
-        private readonly string $serviceName,
-        private readonly int $failureThreshold = 5,
-        private readonly int $timeoutMinutes = 5,
-        private readonly int $successThreshold = 3
+        private string $serviceName,
+        private int $failureThreshold = 5,
+        private int $timeoutMinutes = 5,
+        private int $successThreshold = 3
     ) {}
 
     public function call(callable $operation): mixed
@@ -30,6 +32,7 @@ final class CircuitBreakerService
             case self::STATE_OPEN:
                 if ($this->shouldAttemptReset()) {
                     $this->setState(self::STATE_HALF_OPEN);
+
                     return $this->executeWithMonitoring($operation, true);
                 } else {
                     $this->logCircuitBreakerAction('blocked', 'Circuit breaker is OPEN, blocking request');
@@ -47,17 +50,23 @@ final class CircuitBreakerService
 
     public function getState(): string
     {
-        return Cache::get($this->getStateKey(), self::STATE_CLOSED);
+        $state = Cache::get($this->getStateKey(), self::STATE_CLOSED);
+
+        return is_string($state) ? $state : self::STATE_CLOSED;
     }
 
     public function getFailureCount(): int
     {
-        return Cache::get($this->getFailureCountKey(), 0);
+        $count = Cache::get($this->getFailureCountKey(), 0);
+
+        return is_int($count) ? $count : 0;
     }
 
     public function getSuccessCount(): int
     {
-        return Cache::get($this->getSuccessCountKey(), 0);
+        $count = Cache::get($this->getSuccessCountKey(), 0);
+
+        return is_int($count) ? $count : 0;
     }
 
     public function reset(): void
@@ -70,6 +79,9 @@ final class CircuitBreakerService
         $this->logCircuitBreakerAction('reset', 'Circuit breaker manually reset');
     }
 
+    /**
+     * @return array{service_name: string, state: string, failure_count: int, success_count: int, failure_threshold: int, timeout_minutes: int, success_threshold: int, last_failure_time: mixed}
+     */
     public function getStats(): array
     {
         return [
@@ -89,6 +101,7 @@ final class CircuitBreakerService
         try {
             $result = $operation();
             $this->recordSuccess($isHalfOpen);
+
             return $result;
         } catch (Exception $e) {
             $this->recordFailure();
@@ -127,7 +140,7 @@ final class CircuitBreakerService
     {
         $lastFailureTime = Cache::get($this->getLastFailureTimeKey());
 
-        if (!$lastFailureTime) {
+        if (! $lastFailureTime) {
             return true;
         }
 
@@ -136,7 +149,9 @@ final class CircuitBreakerService
         }
 
         // Handle string timestamps
-        return Carbon::parse($lastFailureTime)->addMinutes($this->timeoutMinutes)->isPast();
+        $timeValue = is_string($lastFailureTime) ? $lastFailureTime : now()->toISOString();
+
+        return Carbon::parse($timeValue)->addMinutes($this->timeoutMinutes)->isPast();
     }
 
     private function setState(string $state): void
@@ -147,16 +162,20 @@ final class CircuitBreakerService
     private function incrementFailureCount(): int
     {
         $key = $this->getFailureCountKey();
-        $count = Cache::get($key, 0) + 1;
+        $currentCount = Cache::get($key, 0);
+        $count = (is_int($currentCount) ? $currentCount : 0) + 1;
         Cache::put($key, $count, now()->addHours(24));
+
         return $count;
     }
 
     private function incrementSuccessCount(): int
     {
         $key = $this->getSuccessCountKey();
-        $count = Cache::get($key, 0) + 1;
+        $currentCount = Cache::get($key, 0);
+        $count = (is_int($currentCount) ? $currentCount : 0) + 1;
         Cache::put($key, $count, now()->addHours(24));
+
         return $count;
     }
 
@@ -184,6 +203,12 @@ final class CircuitBreakerService
     private function getLastFailureTimeKey(): string
     {
         return "circuit_breaker:{$this->serviceName}:last_failure_time";
+    }
+
+    public function forceClose(): void
+    {
+        $this->setState(self::STATE_CLOSED);
+        $this->logCircuitBreakerAction('force_closed', 'Circuit breaker manually forced to closed state');
     }
 
     private function logCircuitBreakerAction(string $action, string $message): void

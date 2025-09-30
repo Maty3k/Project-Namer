@@ -573,12 +573,13 @@ class ProjectPage extends Component
         $preferences = UserAIPreferences::where('user_id', auth()->id())->first();
 
         if ($preferences) {
-            $this->selectedAIModels = $preferences->preferred_models ?? [];
+            // Never pre-select models - let user choose from scratch
+            $this->selectedAIModels = [];
             $this->deepThinking = $preferences->default_deep_thinking ?? false;
             $this->enableModelComparison = $preferences->enable_model_comparison ?? false;
         } else {
-            // Default settings for users without saved preferences
-            $this->selectedAIModels = ['gpt-4'];
+            // Default settings for users without saved preferences - no models pre-selected
+            $this->selectedAIModels = [];
             $this->enableModelComparison = false;
             $this->deepThinking = false;
         }
@@ -1499,6 +1500,96 @@ class ProjectPage extends Component
         if (! isset($this->editableDescription)) {
             $this->editableDescription = $this->project->description ?? '';
         }
+    }
+
+    /**
+     * Get model recommendations based on user's historical AI generation performance.
+     *
+     * @return array{recommended_models: array<string>, model_scores: array<string, float>, based_on_generations: int}
+     */
+    public function getModelRecommendations(): array
+    {
+        // Get user's recent AI generations for analysis
+        $recentGenerations = AIGeneration::where('user_id', auth()->id())
+            ->whereIn('status', ['completed', 'partially_completed'])
+            ->where('created_at', '>', now()->subDays(30)) // Last 30 days
+            ->get();
+
+        if ($recentGenerations->isEmpty()) {
+            // Return default recommendations if no history
+            return [
+                'recommended_models' => ['gpt-4'],
+                'model_scores' => ['gpt-4' => 100.0],
+                'based_on_generations' => 0,
+            ];
+        }
+
+        $modelPerformance = [];
+
+        foreach ($recentGenerations as $generation) {
+            $modelsRequested = $generation->models_requested ?? [];
+
+            foreach ($modelsRequested as $modelId) {
+                if (! isset($modelPerformance[$modelId])) {
+                    $modelPerformance[$modelId] = [
+                        'total_names' => 0,
+                        'total_suggestions' => 0,
+                        'total_response_time' => 0,
+                        'total_generations' => 0,
+                        'success_rate' => 0,
+                    ];
+                }
+
+                $modelPerformance[$modelId]['total_generations']++;
+                $modelPerformance[$modelId]['total_names'] += $generation->total_names_generated ?? 0;
+                $modelPerformance[$modelId]['total_response_time'] += $generation->total_response_time_ms ?? 0;
+
+                // Count actual suggestions created from this generation
+                $suggestionsCount = NameSuggestion::where('ai_generation_session_id', $generation->generation_session_id)
+                    ->where('ai_model_used', $modelId)
+                    ->count();
+
+                $modelPerformance[$modelId]['total_suggestions'] += $suggestionsCount;
+
+                // Update success rate
+                if ($generation->status === 'completed') {
+                    $modelPerformance[$modelId]['success_rate']++;
+                }
+            }
+        }
+
+        // Calculate scores for each model
+        $modelScores = [];
+        foreach ($modelPerformance as $modelId => $performance) {
+            // Note: total_generations will always be >= 1 since we only create entries when incrementing
+            $totalGenerations = $performance['total_generations'];
+
+            $avgNamesPerGeneration = $performance['total_names'] / $totalGenerations;
+            $avgSuggestionsPerGeneration = $performance['total_suggestions'] / $totalGenerations;
+            $avgResponseTime = $performance['total_response_time'] / $totalGenerations;
+            $successRate = $performance['success_rate'] / $totalGenerations;
+
+            // Calculate composite score (weighted by different factors)
+            $score = 0;
+            $score += $avgNamesPerGeneration * 20; // Names generated weight
+            $score += $avgSuggestionsPerGeneration * 30; // Suggestions created weight
+            $score += $successRate * 40; // Success rate weight
+            $score += max(0, (5000 - $avgResponseTime) / 50); // Response time weight (lower is better)
+
+            $modelScores[$modelId] = round($score, 2);
+        }
+
+        // Sort models by score (highest first)
+        arsort($modelScores);
+
+        // Get top recommended models
+        $recommendedModels = array_keys(array_slice($modelScores, 0, 3, true));
+
+        return [
+            'recommended_models' => $recommendedModels,
+            'model_scores' => $modelScores,
+            'based_on_generations' => $recentGenerations->count(),
+        ];
     }
 
     /**

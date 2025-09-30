@@ -66,6 +66,7 @@ final class DnsCacheOptimizeCommand extends Command
         $this->displaySuggestions($suggestions, $format);
 
         $this->info('✅ DNS cache optimization completed successfully!');
+
         return Command::SUCCESS;
     }
 
@@ -81,6 +82,7 @@ final class DnsCacheOptimizeCommand extends Command
         }
 
         $this->info('✅ Cache cleaning completed!');
+
         return Command::SUCCESS;
     }
 
@@ -97,6 +99,7 @@ final class DnsCacheOptimizeCommand extends Command
         }
 
         $this->info('✅ Domain preloading completed!');
+
         return Command::SUCCESS;
     }
 
@@ -155,6 +158,9 @@ final class DnsCacheOptimizeCommand extends Command
         return Command::FAILURE;
     }
 
+    /**
+     * @param  array{expired_removed: int, duplicates_cleaned: int, orphaned_cleaned: int}  $result
+     */
     private function displayOptimizationResult(array $result): void
     {
         $this->table(
@@ -167,17 +173,20 @@ final class DnsCacheOptimizeCommand extends Command
         );
     }
 
+    /**
+     * @param  array{preloaded_count: int, skipped_count: int, errors?: array<array{domain: string, error: string}>}  $result
+     */
     private function displayPreloadResult(array $result): void
     {
         $this->table(
             ['Metric', 'Value'],
             [
                 ['Domains preloaded', $result['preloaded_count']],
-                ['Errors encountered', count($result['errors'])],
+                ['Errors encountered', isset($result['errors']) ? count($result['errors']) : 0],
             ]
         );
 
-        if (!empty($result['errors'])) {
+        if (! empty($result['errors'])) {
             $this->warn('⚠️  Errors encountered during preloading:');
             foreach ($result['errors'] as $error) {
                 $this->line("  - {$error['domain']}: {$error['error']}");
@@ -185,6 +194,9 @@ final class DnsCacheOptimizeCommand extends Command
         }
     }
 
+    /**
+     * @param  array{total_entries: int, active_entries: int, expired_entries: int, hit_rate: float, size_mb: float, valid_entries?: int, cache_hit_rate?: float, total_cache_hits_24h?: int, total_lookups_24h?: int, memory_usage_estimate?: float, top_tlds?: array<mixed>, daily_stats?: array{total_cache_hits_24h: int, total_lookups_24h: int}}  $stats
+     */
     private function displayCacheStats(array $stats, string $format): void
     {
         if ($format === 'json') {
@@ -195,16 +207,16 @@ final class DnsCacheOptimizeCommand extends Command
             ['Statistic', 'Value'],
             [
                 ['Total entries', number_format($stats['total_entries'])],
-                ['Valid entries', number_format($stats['valid_entries'])],
+                ['Valid entries', number_format($stats['valid_entries'] ?? $stats['active_entries'])],
                 ['Expired entries', number_format($stats['expired_entries'])],
-                ['Cache hit rate (24h)', $stats['cache_hit_rate'] . '%'],
-                ['Total cache hits (24h)', number_format($stats['total_cache_hits_24h'])],
-                ['Total lookups (24h)', number_format($stats['total_lookups_24h'])],
-                ['Memory usage estimate', $this->formatBytes($stats['memory_usage_estimate'])],
+                ['Cache hit rate (24h)', ($stats['cache_hit_rate'] ?? $stats['hit_rate']).'%'],
+                ['Total cache hits (24h)', number_format($stats['total_cache_hits_24h'] ?? 0)],
+                ['Total lookups (24h)', number_format($stats['total_lookups_24h'] ?? 0)],
+                ['Memory usage estimate', $this->formatBytes(isset($stats['memory_usage_estimate']) ? (int) $stats['memory_usage_estimate'] : (int) ($stats['size_mb'] * 1024 * 1024))],
             ]
         );
 
-        if (!empty($stats['top_tlds'])) {
+        if (! empty($stats['top_tlds'])) {
             $this->newLine();
             $this->line('<info>Top TLDs by cache entries:</info>');
             $tldData = [];
@@ -215,6 +227,9 @@ final class DnsCacheOptimizeCommand extends Command
         }
     }
 
+    /**
+     * @param  array{period_days: int, daily_breakdown: array<mixed>, overall_hit_rate: float, total_cache_hits: int, total_lookups: int, cache_efficiency: float, cache_hits?: int, cache_misses?: int, hit_rate?: float, top_domains?: array<mixed>}  $analysis
+     */
     private function displayHitAnalysis(array $analysis, string $format): void
     {
         if ($format === 'json') {
@@ -224,15 +239,18 @@ final class DnsCacheOptimizeCommand extends Command
         $this->table(
             ['Metric', 'Value'],
             [
-                ['Analysis period', $analysis['period_days'] . ' days'],
-                ['Overall hit rate', $analysis['overall_hit_rate'] . '%'],
-                ['Total cache hits', number_format($analysis['total_cache_hits'])],
-                ['Total lookups', number_format($analysis['total_lookups'])],
-                ['Cache efficiency', $analysis['cache_efficiency'] . '%'],
+                ['Analysis period', ($analysis['period_days'] ?? 7).' days'],
+                ['Overall hit rate', ($analysis['overall_hit_rate'] ?? $analysis['hit_rate']).'%'],
+                ['Total cache hits', number_format($analysis['total_cache_hits'] ?? $analysis['cache_hits'])],
+                ['Total lookups', number_format($analysis['total_lookups'] ?? ($analysis['cache_hits'] + $analysis['cache_misses']))],
+                ['Cache efficiency', ($analysis['cache_efficiency'] ?? $analysis['hit_rate']).'%'],
             ]
         );
     }
 
+    /**
+     * @param  array{suggestions: array<array{priority: string, type: string, suggestion: string}>, optimization_score: int}  $suggestions
+     */
     private function displaySuggestions(array $suggestions, string $format): void
     {
         if ($format === 'json') {
@@ -242,10 +260,11 @@ final class DnsCacheOptimizeCommand extends Command
         if (empty($suggestions['suggestions'])) {
             $this->info('✅ No optimization suggestions - your cache is performing well!');
             $this->line("Optimization score: <info>{$suggestions['optimization_score']}/100</info>");
+
             return;
         }
 
-        $this->warn('⚠️  Found ' . count($suggestions['suggestions']) . ' optimization suggestions:');
+        $this->warn('⚠️  Found '.count($suggestions['suggestions']).' optimization suggestions:');
         $this->line("Current optimization score: <comment>{$suggestions['optimization_score']}/100</comment>");
         $this->newLine();
 
@@ -277,6 +296,6 @@ final class DnsCacheOptimizeCommand extends Command
 
         $bytes /= (1 << (10 * $pow));
 
-        return round($bytes, 2) . ' ' . $units[$pow];
+        return round($bytes, 2).' '.$units[$pow];
     }
 }

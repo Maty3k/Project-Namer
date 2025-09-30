@@ -59,7 +59,7 @@ describe('Domain Checking Service', function (): void {
         expect($results)->toHaveKeys([
             'testbusiness.com', 'testbusiness.net', 'testbusiness.org', 'testbusiness.io',
             'testbusiness.co', 'testbusiness.app', 'testbusiness.dev', 'testbusiness.ai',
-            'testbusiness.tech', 'testbusiness.studio'
+            'testbusiness.tech', 'testbusiness.studio',
         ]);
 
         foreach ($results as $result) {

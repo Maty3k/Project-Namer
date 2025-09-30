@@ -38,7 +38,7 @@ new class extends Component {
     // AI Model Selection Properties
     public bool $enableModelComparison = false;
     /** @var array<int, string> */
-    public array $selectedAIModels = ['claude-3.5-sonnet'];
+    public array $selectedAIModels = [];
     /** @var array<int, array<string, string>> */
     public array $availableAIModels = [
         ['id' => 'gpt-4', 'name' => 'GPT-4', 'provider' => 'OpenAI'],
@@ -128,10 +128,7 @@ new class extends Component {
         if (!$this->enableModelComparison && count($this->selectedAIModels) > 1) {
             $this->selectedAIModels = [reset($this->selectedAIModels)];
         }
-        // When model comparison is enabled for the first time and no models are selected, select GPT-4
-        if ($this->enableModelComparison && empty($this->selectedAIModels)) {
-            $this->selectedAIModels = ['claude-3.5-sonnet'];
-        }
+        // Don't auto-select any models - let the user choose
     }
 
     public function selectSingleModel(string $modelId): void

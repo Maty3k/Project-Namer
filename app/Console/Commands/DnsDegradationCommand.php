@@ -30,7 +30,11 @@ final class DnsDegradationCommand extends Command
             'status' => $this->showStatus($degradationService),
             'enable' => $this->enableDegradation($degradationService),
             'disable' => $this->disableDegradation($degradationService),
-            default => $this->error("Invalid action: {$action}. Use: status, enable, or disable") ?: self::FAILURE,
+            default => (function () use ($action) {
+                $this->error("Invalid action: {$action}. Use: status, enable, or disable");
+
+                return self::FAILURE;
+            })(),
         };
     }
 
@@ -48,7 +52,12 @@ final class DnsDegradationCommand extends Command
             $this->line("Strategy: {$status['fallback_strategy']}");
 
             if ($status['estimated_recovery']) {
-                $this->line("Estimated Recovery: {$status['estimated_recovery']->format('Y-m-d H:i:s')}");
+                $estimatedRecovery = $status['estimated_recovery'];
+                if ($estimatedRecovery instanceof \DateTime || $estimatedRecovery instanceof \DateTimeInterface) {
+                    $this->line("Estimated Recovery: {$estimatedRecovery->format('Y-m-d H:i:s')}");
+                } else {
+                    $this->line("Estimated Recovery: {$estimatedRecovery}");
+                }
             } else {
                 $this->line('Estimated Recovery: Manual intervention required');
             }
@@ -66,7 +75,7 @@ final class DnsDegradationCommand extends Command
             $this->line("Average Response Time: {$health['avg_response_time']}ms");
             $this->line("Total Requests: {$health['total_requests']}");
 
-            if (!empty($health['issues'])) {
+            if (! empty($health['issues'])) {
                 $this->newLine();
                 $this->warn('Current Issues:');
                 foreach ($health['issues'] as $issue) {
@@ -84,6 +93,7 @@ final class DnsDegradationCommand extends Command
 
         if ($degradationService->isDegradedMode()) {
             $this->warn('DNS service is already in degradation mode');
+
             return self::SUCCESS;
         }
 
@@ -94,13 +104,15 @@ final class DnsDegradationCommand extends Command
 
         // Show new status
         $this->newLine();
+
         return $this->showStatus($degradationService);
     }
 
     private function disableDegradation(DnsDegradationService $degradationService): int
     {
-        if (!$degradationService->isDegradedMode()) {
+        if (! $degradationService->isDegradedMode()) {
             $this->info('DNS service is not in degradation mode');
+
             return self::SUCCESS;
         }
 
@@ -110,6 +122,7 @@ final class DnsDegradationCommand extends Command
 
         // Show new status
         $this->newLine();
+
         return $this->showStatus($degradationService);
     }
 }

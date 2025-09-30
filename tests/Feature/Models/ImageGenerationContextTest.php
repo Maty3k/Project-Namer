@@ -97,9 +97,9 @@ test('get analysis attribute method works', function (): void {
         ],
     ]);
 
-    expect($context->getAnalysisAttribute('colors'))->toBe(['red', 'blue']);
-    expect($context->getAnalysisAttribute('style'))->toBe('modern');
-    expect($context->getAnalysisAttribute('missing'))->toBeNull();
+    expect($context->vision_analysis['colors'])->toBe(['red', 'blue']);
+    expect($context->vision_analysis['style'])->toBe('modern');
+    expect($context->vision_analysis['missing'] ?? null)->toBeNull();
 });
 
 test('set influence score method works', function (): void {

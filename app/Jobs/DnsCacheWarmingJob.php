@@ -25,6 +25,8 @@ final class DnsCacheWarmingJob implements ShouldQueue
 
     /**
      * Create a new job instance.
+     *
+     * @param  array<string, mixed>  $options
      */
     public function __construct(
         public string $strategy = 'popular',
@@ -42,7 +44,7 @@ final class DnsCacheWarmingJob implements ShouldQueue
         try {
             Log::info('DNS cache warming job started', [
                 'strategy' => $this->strategy,
-                'options' => $this->options
+                'options' => $this->options,
             ]);
 
             $result = match ($this->strategy) {
@@ -55,14 +57,14 @@ final class DnsCacheWarmingJob implements ShouldQueue
 
             Log::info('DNS cache warming job completed', [
                 'strategy' => $this->strategy,
-                'result' => $result
+                'result' => $result,
             ]);
 
         } catch (\Exception $e) {
             Log::error('DNS cache warming job failed', [
                 'strategy' => $this->strategy,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
             // Re-throw to trigger job failure handling
@@ -78,21 +80,26 @@ final class DnsCacheWarmingJob implements ShouldQueue
         Log::critical('DNS cache warming job failed permanently', [
             'strategy' => $this->strategy,
             'error' => $exception->getMessage(),
-            'attempts' => $this->attempts()
+            'attempts' => $this->attempts(),
         ]);
     }
 
     /**
      * Warm popular domains based on frequency
+     *
+     * @return array<string, mixed>
      */
     protected function warmPopularDomains(DnsCacheWarmingService $warmingService): array
     {
         $limit = $this->options['limit'] ?? config('dns.warming.strategies.popular_domains_limit', 100);
+
         return $warmingService->warmPopularDomains($limit);
     }
 
     /**
      * Warm trending domains and TLDs
+     *
+     * @return array<string, mixed>
      */
     protected function warmTrendingDomains(DnsCacheWarmingService $warmingService): array
     {
@@ -101,20 +108,20 @@ final class DnsCacheWarmingJob implements ShouldQueue
 
     /**
      * Rewarm stale cache entries
+     *
+     * @return array<string, mixed>
      */
     protected function rewarmStaleDomains(DnsCacheWarmingService $warmingService): array
     {
         $staleDomains = $warmingService->getStaleDomainsForRewarming();
         $limit = $this->options['limit'] ?? config('dns.warming.strategies.stale_rewarming_limit', 50);
 
-        $domainList = $staleDomains->take($limit)->map(function ($cache) {
-            return ['domain' => $cache->domain, 'tld' => $cache->tld];
-        })->toArray();
+        $domainList = $staleDomains->take($limit)->map(fn ($cache) => ['domain' => $cache->domain, 'tld' => $cache->tld])->toArray();
 
         if (empty($domainList)) {
             return [
                 'warmed_count' => 0,
-                'reason' => 'No stale domains found for rewarming'
+                'reason' => 'No stale domains found for rewarming',
             ];
         }
 
@@ -123,6 +130,8 @@ final class DnsCacheWarmingJob implements ShouldQueue
 
     /**
      * Warm custom domain list
+     *
+     * @return array<string, mixed>
      */
     protected function warmCustomDomains(DnsCacheWarmingService $warmingService): array
     {
@@ -131,7 +140,7 @@ final class DnsCacheWarmingJob implements ShouldQueue
         if (empty($domains)) {
             return [
                 'warmed_count' => 0,
-                'reason' => 'No custom domains provided'
+                'reason' => 'No custom domains provided',
             ];
         }
 
@@ -141,10 +150,10 @@ final class DnsCacheWarmingJob implements ShouldQueue
     /**
      * Static method to dispatch popular domains warming job
      */
-    public static function warmPopular(int $limit = null): void
+    public static function warmPopular(?int $limit = null): void
     {
         $options = $limit ? ['limit' => $limit] : [];
-        static::dispatch('popular', $options);
+        self::dispatch('popular', $options);
     }
 
     /**
@@ -152,23 +161,25 @@ final class DnsCacheWarmingJob implements ShouldQueue
      */
     public static function warmTrending(): void
     {
-        static::dispatch('trending');
+        self::dispatch('trending');
     }
 
     /**
      * Static method to dispatch stale domains rewarming job
      */
-    public static function rewarmStale(int $limit = null): void
+    public static function rewarmStale(?int $limit = null): void
     {
         $options = $limit ? ['limit' => $limit] : [];
-        static::dispatch('stale', $options);
+        self::dispatch('stale', $options);
     }
 
     /**
      * Static method to dispatch custom domains warming job
+     *
+     * @param  array<array{domain: string, tld: string}>  $domains
      */
     public static function warmCustom(array $domains): void
     {
-        static::dispatch('custom', ['domains' => $domains]);
+        self::dispatch('custom', ['domains' => $domains]);
     }
 }

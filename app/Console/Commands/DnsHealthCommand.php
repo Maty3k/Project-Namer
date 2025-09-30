@@ -54,6 +54,7 @@ final class DnsHealthCommand extends Command
                 'health' => $healthStatus,
                 'config' => $config,
             ], JSON_PRETTY_PRINT));
+
             return 0;
         }
 
@@ -69,31 +70,31 @@ final class DnsHealthCommand extends Command
         $this->table(['Metric', 'Current Value', 'Threshold', 'Status'], [
             [
                 'Error Rate',
-                $healthStatus['error_rate'] . '%',
-                '< ' . $config['thresholds']['error_rate'] . '%',
-                $healthStatus['error_rate'] > $config['thresholds']['error_rate'] ? '❌' : '✅'
+                $healthStatus['metrics']['error_rate'].'%',
+                '< '.$config['thresholds']['error_rate_max'].'%',
+                $healthStatus['metrics']['error_rate'] > $config['thresholds']['error_rate_max'] ? '❌' : '✅',
             ],
             [
                 'Cache Hit Rate',
-                $healthStatus['cache_hit_rate'] . '%',
-                '> ' . $config['thresholds']['cache_hit_rate'] . '%',
-                $healthStatus['cache_hit_rate'] < $config['thresholds']['cache_hit_rate'] ? '❌' : '✅'
+                $healthStatus['metrics']['cache_hit_rate'].'%',
+                '> '.$config['thresholds']['cache_hit_rate_min'].'%',
+                $healthStatus['metrics']['cache_hit_rate'] < $config['thresholds']['cache_hit_rate_min'] ? '❌' : '✅',
             ],
             [
                 'Avg Response Time',
-                $healthStatus['avg_response_time'] . 'ms',
-                '< ' . $config['thresholds']['response_time'] . 'ms',
-                $healthStatus['avg_response_time'] > $config['thresholds']['response_time'] ? '❌' : '✅'
+                $healthStatus['metrics']['avg_response_time'].'ms',
+                '< '.$config['thresholds']['avg_response_time_max'].'ms',
+                $healthStatus['metrics']['avg_response_time'] > $config['thresholds']['avg_response_time_max'] ? '❌' : '✅',
             ],
             [
-                'Total Requests',
-                number_format($healthStatus['total_requests']),
+                'Uptime',
+                $healthStatus['metrics']['uptime_percentage'].'%',
                 '-',
-                '📊'
-            ]
+                '📊',
+            ],
         ]);
 
-        if (!empty($healthStatus['issues'])) {
+        if (! empty($healthStatus['issues'])) {
             $this->newLine();
             $this->warn('⚠️  Current Issues:');
             foreach ($healthStatus['issues'] as $issue) {
@@ -114,28 +115,29 @@ final class DnsHealthCommand extends Command
     {
         $this->info('Performing DNS health check...');
 
-        $alerts = $alertService->checkAndTriggerAlerts();
+        $alertService->checkAndTriggerAlerts();
+
+        // Get health status to show results
+        $healthStatus = $alertService->checkDnsHealth();
 
         if ($format === 'json') {
-            $this->line(json_encode(['alerts' => $alerts], JSON_PRETTY_PRINT));
+            $this->line(json_encode(['health_check' => $healthStatus], JSON_PRETTY_PRINT));
+
             return 0;
         }
 
-        if (empty($alerts)) {
+        if ($healthStatus['is_healthy']) {
             $this->info('✅ No alerts triggered - DNS service is healthy');
+
             return 0;
         }
 
-        $this->warn("⚠️  {count($alerts)} alerts triggered:");
+        $this->warn('⚠️  Health check detected issues:');
         $this->newLine();
 
-        $this->table(['Type', 'Severity', 'Message'], array_map(function ($alert) {
-            return [
-                $alert['type'],
-                $alert['severity'],
-                $alert['message'] ?? 'Alert triggered',
-            ];
-        }, $alerts));
+        foreach ($healthStatus['issues'] as $issue) {
+            $this->line("   • {$issue}");
+        }
 
         return 1;
     }
@@ -168,11 +170,13 @@ final class DnsHealthCommand extends Command
 
         if ($format === 'json') {
             $this->line(json_encode(['history' => $history], JSON_PRETTY_PRINT));
+
             return 0;
         }
 
         if (empty($history)) {
             $this->info('No alert history found');
+
             return 0;
         }
 
@@ -181,18 +185,16 @@ final class DnsHealthCommand extends Command
 
         $this->table(
             ['Type', 'Severity', 'Triggered At', 'Status'],
-            array_map(function ($alert) {
-                return [
-                    $alert['type'],
-                    $alert['severity'],
-                    $alert['triggered_at'],
-                    $alert['resolved_at'] ? '✅ Resolved' : '🔴 Active',
-                ];
-            }, array_slice($history, -10)) // Show last 10 alerts
+            array_map(fn ($alert) => [
+                $alert['type'],
+                $alert['severity'],
+                $alert['triggered_at'],
+                $alert['resolved_at'] ? '✅ Resolved' : '🔴 Active',
+            ], array_slice($history, -10)) // Show last 10 alerts
         );
 
         $this->newLine();
-        $this->line('Total alerts in history: ' . count($history));
+        $this->line('Total alerts in history: '.count($history));
 
         return 0;
     }
@@ -202,8 +204,9 @@ final class DnsHealthCommand extends Command
      */
     protected function clearAlertHistory(DnsHealthAlertService $alertService): int
     {
-        if (!$this->confirm('Are you sure you want to clear all alert history?')) {
+        if (! $this->confirm('Are you sure you want to clear all alert history?')) {
             $this->info('Alert history clearing cancelled');
+
             return 0;
         }
 

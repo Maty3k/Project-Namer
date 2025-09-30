@@ -246,7 +246,7 @@
                                             x-text="action.label"
                                             @click="
                                                 if (action.action === 'retryGeneration') {
-                                                    $wire.call('generateNamesWithAI');
+                                                    $wire.call('generateNames');
                                                 }
                                                 removeNotification(notification.id);
                                             "

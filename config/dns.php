@@ -64,6 +64,50 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Automatic Retry Strategies
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for intelligent retry mechanisms including exponential
+    | backoff, jitter, and error-specific retry policies.
+    |
+    */
+    'retry' => [
+        'enabled' => env('DNS_RETRY_ENABLED', true),
+        'max_attempts' => (int) env('DNS_RETRY_MAX_ATTEMPTS', 3),
+        'base_delay_ms' => (int) env('DNS_RETRY_BASE_DELAY_MS', 100),
+        'max_delay_ms' => (int) env('DNS_RETRY_MAX_DELAY_MS', 5000),
+        'exponential_backoff' => env('DNS_RETRY_EXPONENTIAL_BACKOFF', true),
+        'jitter_enabled' => env('DNS_RETRY_JITTER_ENABLED', true),
+        'jitter_factor' => (float) env('DNS_RETRY_JITTER_FACTOR', 0.1),
+
+        // Error-specific retry policies
+        'policies' => [
+            'network_timeout' => [
+                'max_attempts' => (int) env('DNS_RETRY_TIMEOUT_MAX_ATTEMPTS', 5),
+                'base_delay_ms' => (int) env('DNS_RETRY_TIMEOUT_BASE_DELAY', 200),
+            ],
+            'dns_server_error' => [
+                'max_attempts' => (int) env('DNS_RETRY_SERVER_ERROR_MAX_ATTEMPTS', 3),
+                'base_delay_ms' => (int) env('DNS_RETRY_SERVER_ERROR_BASE_DELAY', 500),
+            ],
+            'rate_limit' => [
+                'max_attempts' => (int) env('DNS_RETRY_RATE_LIMIT_MAX_ATTEMPTS', 2),
+                'base_delay_ms' => (int) env('DNS_RETRY_RATE_LIMIT_BASE_DELAY', 2000),
+            ],
+        ],
+
+        // Circuit breaker integration
+        'circuit_breaker_integration' => env('DNS_RETRY_CIRCUIT_BREAKER', true),
+        'stop_on_circuit_breaker' => env('DNS_RETRY_STOP_ON_CB', true),
+
+        // Retry metrics and monitoring
+        'collect_metrics' => env('DNS_RETRY_COLLECT_METRICS', true),
+        'log_retry_attempts' => env('DNS_RETRY_LOG_ATTEMPTS', true),
+        'detailed_failure_analysis' => env('DNS_RETRY_DETAILED_ANALYSIS', true),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Circuit Breaker Configuration
     |--------------------------------------------------------------------------
     |

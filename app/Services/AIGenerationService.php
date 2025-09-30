@@ -32,16 +32,9 @@ final readonly class AIGenerationService
 
     private const DEFAULT_COUNT = 10;
 
-    private const MAX_RETRIES = 3;
+    private const MAX_RETRIES = 2; // Reasonable retries for rate limits
 
-    private const RETRY_DELAY_SECONDS = 1;
-
-    private const FALLBACK_MODEL_ORDER = [
-        'gpt-4' => ['claude-3.5-sonnet', 'gemini-1.5-pro', 'grok-beta'],
-        'claude-3.5-sonnet' => ['gpt-4', 'gemini-1.5-pro', 'grok-beta'],
-        'gemini-1.5-pro' => ['gpt-4', 'claude-3.5-sonnet', 'grok-beta'],
-        'grok-beta' => ['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro'],
-    ];
+    private const RETRY_DELAY_SECONDS = 2; // Longer delay for rate limit recovery
 
     private const MODEL_CONFIGS = [
         'gpt-4' => [
@@ -105,7 +98,7 @@ final readonly class AIGenerationService
         $count = $customParams['count'] ?? self::DEFAULT_COUNT;
 
         foreach ($models as $model) {
-            $results[$model] = $this->generateWithFallback($businessIdea, $model, $mode, $deepThinking, $count, $customParams);
+            $results[$model] = $this->generateWithRetry($businessIdea, $model, $mode, $deepThinking, $count, $customParams);
         }
 
         $totalTime = (microtime(true) - $startTime) * 1000;
@@ -119,9 +112,8 @@ final readonly class AIGenerationService
                 'failed_models' => count(array_filter($results, fn ($result) => $result['status'] === 'failed')),
                 'total_execution_time_ms' => (int) round($totalTime),
                 'average_response_time_ms' => (int) round($totalTime / count($models)),
-                'models_with_fallback' => array_keys(array_filter($results, fn ($result) => $result['fallback_used'] ?? false)),
                 'cached_results' => array_keys(array_filter($results, fn ($result) => $result['cached'] ?? false)),
-                'execution_strategy' => 'sequential_with_fallback',
+                'execution_strategy' => 'sequential',
                 'executed_at' => now()->toISOString(),
             ],
         ];
@@ -205,7 +197,6 @@ final readonly class AIGenerationService
         $results = $generationResult['results'];
 
         $cacheHitRate = round((count($metadata['cached_results']) / $metadata['total_models_requested']) * 100, 1);
-        $fallbackRate = round((count($metadata['models_with_fallback']) / $metadata['total_models_requested']) * 100, 1);
 
         $stats = [
             'performance' => [
@@ -215,11 +206,9 @@ final readonly class AIGenerationService
                 'cache_hit_rate' => $cacheHitRate,
             ],
             'reliability' => [
-                'models_with_fallback' => count($metadata['models_with_fallback']),
-                'fallback_rate' => $fallbackRate,
                 'failed_models' => $metadata['failed_models'],
             ],
-            'recommendations' => $this->generateRecommendations($results, $metadata, $cacheHitRate, $fallbackRate),
+            'recommendations' => $this->generateRecommendations($results, $metadata, $cacheHitRate),
         ];
 
         return $stats;
@@ -232,7 +221,7 @@ final readonly class AIGenerationService
      * @param  array<string, mixed>  $metadata
      * @return array<string>
      */
-    private function generateRecommendations(array $results, array $metadata, float $cacheHitRate, float $fallbackRate): array
+    private function generateRecommendations(array $results, array $metadata, float $cacheHitRate): array
     {
         $recommendations = [];
         $successRate = round(($metadata['successful_models'] / $metadata['total_models_requested']) * 100, 1);
@@ -247,17 +236,13 @@ final readonly class AIGenerationService
         }
 
         // Reliability recommendations
-        if ($fallbackRate > 50) {
-            $recommendations[] = 'High fallback rate detected - primary models may be experiencing issues';
-        }
-
         if ($metadata['failed_models'] > 0) {
             $recommendations[] = 'Some models failed - check API quotas and connectivity';
         }
 
         // Success recommendations
-        if ($successRate == 100.0 && $fallbackRate == 0.0) {
-            $recommendations[] = 'Excellent performance - all models executed successfully without fallback';
+        if ($successRate == 100.0) {
+            $recommendations[] = 'Excellent performance - all models executed successfully';
         }
 
         return $recommendations;
@@ -329,12 +314,12 @@ final readonly class AIGenerationService
     }
 
     /**
-     * Generate names with intelligent fallback and retry logic using direct Prism integration.
+     * Generate names with retry logic using direct Prism integration.
      *
      * @param  array<string, mixed>  $customParams
      * @return array<string, mixed>
      */
-    private function generateWithFallback(
+    private function generateWithRetry(
         string $businessIdea,
         string $primaryModel,
         string $mode,
@@ -359,7 +344,6 @@ final readonly class AIGenerationService
                 'response_time_ms' => 0, // Cached response
                 'status' => 'completed',
                 'cached' => true,
-                'fallback_used' => false,
                 'retry_count' => 0,
                 'created_at' => $cachedResult->created_at->toISOString(),
             ];
@@ -382,7 +366,6 @@ final readonly class AIGenerationService
                     'response_time_ms' => (int) round($responseTime),
                     'status' => 'completed',
                     'cached' => false,
-                    'fallback_used' => false,
                     'retry_count' => $attempt - 1,
                     'created_at' => now()->toISOString(),
                 ];
@@ -408,80 +391,10 @@ final readonly class AIGenerationService
             }
         }
 
-        // Try fallback models if primary model failed
-        $fallbackModels = self::FALLBACK_MODEL_ORDER[$primaryModel] ?? [];
-        foreach ($fallbackModels as $fallbackModel) {
-            try {
-                $fallbackCacheKey = $this->generateCacheKey($businessIdea, $fallbackModel, $mode, $deepThinking, $customParams);
-                $fallbackCachedResult = GenerationCache::findByHash($fallbackCacheKey);
+        // No fallback models - if primary fails, we throw exception
 
-                if ($fallbackCachedResult !== null) {
-                    return [
-                        'names' => $fallbackCachedResult->generated_names,
-                        'model' => $fallbackModel,
-                        'generation_mode' => $mode,
-                        'deep_thinking' => $deepThinking,
-                        'temperature' => $this->getTemperature($fallbackModel, $deepThinking, $customParams),
-                        'max_tokens' => $this->getMaxTokens($fallbackModel, $customParams),
-                        'response_time_ms' => (int) round((microtime(true) - $startTime) * 1000),
-                        'status' => 'completed',
-                        'cached' => true,
-                        'fallback_used' => true,
-                        'fallback_from' => $primaryModel,
-                        'retry_count' => self::MAX_RETRIES,
-                        'created_at' => $fallbackCachedResult->created_at->toISOString(),
-                    ];
-                }
-
-                $names = $this->generateNamesForModel($businessIdea, $fallbackModel, $mode, $deepThinking, $count, $customParams);
-                $responseTime = (microtime(true) - $startTime) * 1000;
-
-                $result = [
-                    'names' => $names,
-                    'model' => $fallbackModel,
-                    'generation_mode' => $mode,
-                    'deep_thinking' => $deepThinking,
-                    'temperature' => $this->getTemperature($fallbackModel, $deepThinking, $customParams),
-                    'max_tokens' => $this->getMaxTokens($fallbackModel, $customParams),
-                    'response_time_ms' => (int) round($responseTime),
-                    'status' => 'completed',
-                    'cached' => false,
-                    'fallback_used' => true,
-                    'fallback_from' => $primaryModel,
-                    'retry_count' => self::MAX_RETRIES,
-                    'created_at' => now()->toISOString(),
-                ];
-
-                // Cache the result with the fallback model key
-                $this->cacheResult($fallbackCacheKey, $businessIdea, $fallbackModel, $mode, $deepThinking, $names);
-
-                return $result;
-
-            } catch (Exception) {
-                // Continue to next fallback model
-                continue;
-            }
-        }
-
-        // All models failed
-        $responseTime = (microtime(true) - $startTime) * 1000;
-
-        return [
-            'names' => [],
-            'model' => $primaryModel,
-            'generation_mode' => $mode,
-            'deep_thinking' => $deepThinking,
-            'temperature' => $this->getTemperature($primaryModel, $deepThinking, $customParams),
-            'max_tokens' => $this->getMaxTokens($primaryModel, $customParams),
-            'response_time_ms' => (int) round($responseTime),
-            'status' => 'failed',
-            'error' => $this->normalizeError($lastException->getMessage()),
-            'cached' => false,
-            'fallback_used' => true,
-            'fallback_from' => null,
-            'retry_count' => self::MAX_RETRIES,
-            'created_at' => now()->toISOString(),
-        ];
+        // All AI models failed, throw exception
+        throw new Exception('AI generation failed: '.$this->normalizeError($lastException->getMessage()));
     }
 
     /**
@@ -512,6 +425,7 @@ final readonly class AIGenerationService
             ->withClientOptions([
                 'max_tokens' => $maxTokens,
                 'temperature' => $temperature,
+                'timeout' => 15, // Reasonable timeout for AI API calls
             ])
             ->asText();
 

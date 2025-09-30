@@ -81,7 +81,8 @@ final class ThemeService
 
         $css = ":root {\n";
         foreach ($properties as $property => $value) {
-            $css .= "  {$property}: {$value};\n";
+            $propertyValue = is_string($value) ? $value : (is_numeric($value) ? (string) $value : '');
+            $css .= "  {$property}: {$propertyValue};\n";
         }
         $css .= '}';
 
@@ -402,7 +403,9 @@ final class ThemeService
             return $themes;
         }
 
-        return array_filter($themes, fn ($theme) => ($theme['category'] ?? 'standard') === $category);
+        $filteredThemes = array_filter($themes, fn ($theme) => ($theme['category'] ?? 'standard') === $category);
+
+        return array_values($filteredThemes); // Convert to list
     }
 
     /**
@@ -416,13 +419,17 @@ final class ThemeService
         $backgroundColor = $theme['background_color'] ?? '#ffffff';
         $textColor = $theme['text_color'] ?? '#111827';
 
+        // Ensure we have strings for color values
+        $bgColor = is_string($backgroundColor) ? $backgroundColor : '#ffffff';
+        $txtColor = is_string($textColor) ? $textColor : '#111827';
+
         // Calculate contrast ratio
-        $contrastRatio = $this->calculateContrastRatio($textColor, $backgroundColor);
+        $contrastRatio = $this->calculateContrastRatio($txtColor, $bgColor);
 
         // If contrast is poor, auto-adjust text color
         if ($contrastRatio < 4.5) {
             // Determine if background is light or dark
-            $backgroundLuminance = $this->calculateLuminance($this->hexToRgb($backgroundColor));
+            $backgroundLuminance = $this->calculateLuminance($this->hexToRgb($bgColor));
 
             if ($backgroundLuminance > 0.5) {
                 // Light background - use dark text
@@ -527,14 +534,17 @@ final class ThemeService
      *
      * @return array{r: int, g: int, b: int}
      */
+    /**
+     * @return array{r: int, g: int, b: int}
+     */
     protected function hexToRgb(string $hex): array
     {
         $hex = ltrim($hex, '#');
 
         return [
-            'r' => hexdec(substr($hex, 0, 2)),
-            'g' => hexdec(substr($hex, 2, 2)),
-            'b' => hexdec(substr($hex, 4, 2)),
+            'r' => (int) hexdec(substr($hex, 0, 2)),
+            'g' => (int) hexdec(substr($hex, 2, 2)),
+            'b' => (int) hexdec(substr($hex, 4, 2)),
         ];
     }
 

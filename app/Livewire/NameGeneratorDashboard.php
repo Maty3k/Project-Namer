@@ -202,31 +202,9 @@ class NameGeneratorDashboard extends Component
             // Ensure theme consistency after generation
             $this->ensureThemeConsistency();
 
-        } catch (Exception) {
-            // Try fallback generation when OpenAI fails
-            try {
-                $fallbackService = app(\App\Services\FallbackNameService::class);
-                $this->generatedNames = $fallbackService->generateNames(
-                    $this->businessIdea,
-                    $this->generationMode,
-                    10
-                );
-
-                $this->checkDomainAvailability();
-                $this->showResults = true;
-                $this->activeTab = 'results';
-                $this->autoSaveSession();
-
-                $this->successMessage = 'Generated '.count($this->generatedNames).' business names using creative generation!';
-                $this->dispatch('toast', message: 'API unavailable - used creative generation instead', type: 'warning');
-
-                // Ensure theme consistency after fallback generation
-                $this->ensureThemeConsistency();
-
-            } catch (Exception $fallbackException) {
-                $this->errorMessage = $this->getFriendlyErrorMessage($fallbackException->getMessage());
-                $this->dispatch('toast', message: $this->errorMessage, type: 'error');
-            }
+        } catch (Exception $e) {
+            $this->errorMessage = $this->getFriendlyErrorMessage($e->getMessage());
+            $this->dispatch('toast', message: $this->errorMessage, type: 'error');
         } finally {
             $this->isGeneratingNames = false;
         }
@@ -489,13 +467,15 @@ class NameGeneratorDashboard extends Component
 
     /**
      * Handle DNS check trigger event from name result cards.
+     *
+     * @param  array{suggestionId?: string}  $data
      */
     #[On('dns-check-triggered')]
     public function handleDnsCheckTriggered(array $data): void
     {
         $suggestionId = $data['suggestionId'] ?? null;
 
-        if (!$suggestionId) {
+        if (! $suggestionId) {
             return;
         }
 
@@ -523,13 +503,15 @@ class NameGeneratorDashboard extends Component
 
     /**
      * Handle DNS check completion event to refresh suggestion data.
+     *
+     * @param  array{suggestionId?: string}  $data
      */
     #[On('dns-check-completed')]
     public function handleDnsCheckCompleted(array $data): void
     {
         $suggestionId = $data['suggestionId'] ?? null;
 
-        if (!$suggestionId) {
+        if (! $suggestionId) {
             return;
         }
 
@@ -585,6 +567,8 @@ class NameGeneratorDashboard extends Component
 
     /**
      * Handle DNS check failure event.
+     *
+     * @param  array{suggestionId?: string, error?: string}  $data
      */
     #[On('dns-check-failed')]
     public function handleDnsCheckFailed(array $data): void
@@ -592,7 +576,7 @@ class NameGeneratorDashboard extends Component
         $suggestionId = $data['suggestionId'] ?? null;
         $errorMessage = $data['error'] ?? 'DNS check failed';
 
-        if (!$suggestionId) {
+        if (! $suggestionId) {
             return;
         }
 
@@ -1190,8 +1174,8 @@ class NameGeneratorDashboard extends Component
                 return;
             }
 
-            // For other errors, try fallback generation
-            $this->errorMessage = 'AI generation failed. Falling back to creative generation...';
+            // For other errors, set error message and fail
+            $this->errorMessage = 'AI generation failed. Please try again later.';
 
             // Dispatch error event
             $this->dispatch('ai-generation-error', [
@@ -1200,30 +1184,7 @@ class NameGeneratorDashboard extends Component
                 'generationId' => $aiGeneration?->id,
             ]);
 
-            // Fall back to creative generation using fallback service
-            try {
-                $fallbackService = app(\App\Services\FallbackNameService::class);
-                $this->generatedNames = $fallbackService->generateNames(
-                    $this->businessIdea,
-                    $this->generationMode,
-                    10
-                );
-
-                $this->checkDomainAvailability();
-                $this->showResults = true;
-                $this->activeTab = 'results';
-                $this->autoSaveSession();
-
-                $this->dispatch('show-toast', [
-                    'message' => 'Generated '.count($this->generatedNames).' creative names using fallback generation!',
-                    'type' => 'success',
-                ]);
-
-            } catch (Exception $fallbackException) {
-                $this->errorMessage = 'All generation methods failed. Please try again later.';
-                Log::error('Fallback generation also failed', ['error' => $fallbackException->getMessage()]);
-                $this->dispatch('toast', message: $this->errorMessage, type: 'error');
-            }
+            $this->dispatch('toast', message: $this->errorMessage, type: 'error');
         } finally {
             $this->isGeneratingNames = false;
             $this->currentAIGenerationId = null;

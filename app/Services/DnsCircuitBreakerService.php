@@ -9,12 +9,12 @@ use App\DTOs\DnsLookupResult;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
-final class DnsCircuitBreakerService implements DnsLookupServiceInterface
+final readonly class DnsCircuitBreakerService implements DnsLookupServiceInterface
 {
-    private readonly CircuitBreakerService $circuitBreaker;
+    private CircuitBreakerService $circuitBreaker;
 
     public function __construct(
-        private readonly DnsLookupServiceInterface $dnsService,
+        private DnsLookupServiceInterface $dnsService,
         ?CircuitBreakerService $circuitBreaker = null
     ) {
         $this->circuitBreaker = $circuitBreaker ?? new CircuitBreakerService(
@@ -28,9 +28,7 @@ final class DnsCircuitBreakerService implements DnsLookupServiceInterface
     public function checkDomain(string $fullDomain): DnsLookupResult
     {
         try {
-            return $this->circuitBreaker->call(function () use ($fullDomain) {
-                return $this->dnsService->checkDomain($fullDomain);
-            });
+            return $this->circuitBreaker->call(fn () => $this->dnsService->checkDomain($fullDomain));
         } catch (Exception $e) {
             // Check if this is a circuit breaker exception
             if (str_contains($e->getMessage(), 'Circuit breaker is OPEN')) {
@@ -72,6 +70,9 @@ final class DnsCircuitBreakerService implements DnsLookupServiceInterface
         return $this->dnsService->getCachedResult($fullDomain);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getCircuitBreakerStats(): array
     {
         return $this->circuitBreaker->getStats();
@@ -90,6 +91,17 @@ final class DnsCircuitBreakerService implements DnsLookupServiceInterface
     public function isCircuitBreakerHealthy(): bool
     {
         $state = $this->circuitBreaker->getState();
+
         return $state === 'closed' || $state === 'half_open';
+    }
+
+    public function reset(): void
+    {
+        $this->circuitBreaker->reset();
+    }
+
+    public function forceClose(): void
+    {
+        $this->circuitBreaker->forceClose();
     }
 }

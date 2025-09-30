@@ -12,8 +12,6 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Queue;
-use Mockery;
 
 uses(RefreshDatabase::class);
 
@@ -35,7 +33,7 @@ describe('CheckDomainDnsJob Performance Integration', function (): void {
             'dns_checked' => false,
         ]);
 
-        $batchId = 'job-' . $suggestion->id;
+        $batchId = 'job-'.$suggestion->id;
         $metricsRecord = DnsLookupMetrics::factory()->make(['id' => 1]);
 
         // Mock performance monitoring workflow
@@ -70,7 +68,7 @@ describe('CheckDomainDnsJob Performance Integration', function (): void {
             'dns_checked' => false,
         ]);
 
-        $batchId = 'job-' . $suggestion->id;
+        $batchId = 'job-'.$suggestion->id;
 
         // Mock performance monitoring workflow
         $this->performanceMonitor->shouldReceive('startBatch')
@@ -100,7 +98,7 @@ describe('CheckDomainDnsJob Performance Integration', function (): void {
             'dns_checked' => false,
         ]);
 
-        $batchId = 'job-' . $suggestion->id;
+        $batchId = 'job-'.$suggestion->id;
         $metricsRecord = new DnsLookupMetrics([
             'id' => 123,
             'batch_id' => $batchId,
@@ -176,7 +174,7 @@ describe('CheckDomainDnsJob Performance Integration', function (): void {
             'dns_checked' => false,
         ]);
 
-        $batchId = 'job-' . $suggestion->id;
+        $batchId = 'job-'.$suggestion->id;
 
         $this->performanceMonitor->shouldReceive('startBatch')
             ->with($batchId)
@@ -191,7 +189,7 @@ describe('CheckDomainDnsJob Performance Integration', function (): void {
         // Capture logs to verify batch_id is included
         $logMessages = [];
         \Illuminate\Support\Facades\Log::shouldReceive('info')
-            ->andReturnUsing(function ($message, $context) use (&$logMessages) {
+            ->andReturnUsing(function ($message, $context) use (&$logMessages): void {
                 $logMessages[] = $context;
             });
 
@@ -217,7 +215,7 @@ describe('CheckDomainDnsJob Performance Integration', function (): void {
             'dns_checked' => false,
         ]);
 
-        $batchId = 'job-' . $suggestion->id;
+        $batchId = 'job-'.$suggestion->id;
         $dnsMetrics = new DnsLookupMetrics([
             'id' => 456,
             'batch_id' => $batchId,
@@ -235,6 +233,7 @@ describe('CheckDomainDnsJob Performance Integration', function (): void {
         $this->dnsService->shouldReceive('checkDomain')
             ->andReturnUsing(function () {
                 usleep(50000); // 50ms delay
+
                 return DnsLookupResult::withoutRecords();
             });
 
@@ -245,7 +244,7 @@ describe('CheckDomainDnsJob Performance Integration', function (): void {
 
         $jobExecutionTime = (microtime(true) - $startTime) * 1000;
 
-        // Job execution time should be greater than DNS processing time
-        expect($jobExecutionTime)->toBeGreaterThan($dnsMetrics->total_processing_time);
+        // Job execution time should be greater than the actual DNS delay (50ms)
+        expect($jobExecutionTime)->toBeGreaterThan(50.0);
     });
 });

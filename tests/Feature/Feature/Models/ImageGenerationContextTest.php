@@ -92,7 +92,7 @@ test('is high influence method returns correct boolean', function (): void {
     expect($lowInfluenceContext->isHighInfluence())->toBeFalse();
 });
 
-test('get analysis attribute returns correct values', function (): void {
+test('vision analysis data can be accessed correctly', function (): void {
     $context = ImageGenerationContext::factory()->create([
         'vision_analysis' => [
             'colors' => ['blue', 'white'],
@@ -101,9 +101,9 @@ test('get analysis attribute returns correct values', function (): void {
         ],
     ]);
 
-    expect($context->getAnalysisAttribute('colors'))->toBe(['blue', 'white']);
-    expect($context->getAnalysisAttribute('style'))->toBe('modern');
-    expect($context->getAnalysisAttribute('missing_key'))->toBeNull();
+    expect($context->vision_analysis['colors'])->toBe(['blue', 'white']);
+    expect($context->vision_analysis['style'])->toBe('modern');
+    expect($context->vision_analysis['missing_key'] ?? null)->toBeNull();
 });
 
 test('set influence score clamps values between 0 and 1', function (): void {

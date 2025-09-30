@@ -67,7 +67,7 @@ describe('DNS Circuit Breaker Service', function (): void {
         for ($i = 0; $i < 2; $i++) {
             try {
                 $this->dnsCircuitBreakerService->checkDomain($domain);
-            } catch (Exception $e) {
+            } catch (Exception) {
                 // Expected
             }
         }
@@ -127,7 +127,7 @@ describe('DNS Circuit Breaker Service', function (): void {
         for ($i = 0; $i < 2; $i++) {
             try {
                 $this->dnsCircuitBreakerService->checkDomain('test.com');
-            } catch (Exception $e) {
+            } catch (Exception) {
                 // Expected
             }
         }
@@ -145,7 +145,7 @@ describe('DNS Circuit Breaker Service', function (): void {
         for ($i = 0; $i < 2; $i++) {
             try {
                 $this->dnsCircuitBreakerService->checkDomain('test.com');
-            } catch (Exception $e) {
+            } catch (Exception) {
                 // Expected
             }
         }
@@ -188,7 +188,7 @@ describe('DNS Circuit Breaker Service', function (): void {
             'success_count',
             'failure_threshold',
             'timeout_minutes',
-            'success_threshold'
+            'success_threshold',
         ])
             ->and($stats['service_name'])->toBe('test_dns')
             ->and($stats['state'])->toBe('closed');
@@ -215,7 +215,7 @@ describe('DNS Circuit Breaker Service', function (): void {
 
         try {
             $this->dnsCircuitBreakerService->checkDomain($domain);
-        } catch (Exception $e) {
+        } catch (Exception) {
             // Expected
         }
 

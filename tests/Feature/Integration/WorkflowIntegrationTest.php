@@ -29,7 +29,7 @@ describe('Workflow Integration Tests', function (): void {
         ];
 
         GenerationCache::create([
-            'input_hash' => GenerationCache::generateHash('coffee shop', 'creative', false),
+            'input_hash' => GenerationCache::generateHash('coffee shop|model:claude-3.5-sonnet|params:[]', 'creative', false),
             'business_description' => 'coffee shop',
             'mode' => 'creative',
             'deep_thinking' => false,
@@ -50,8 +50,9 @@ describe('Workflow Integration Tests', function (): void {
         // Step 2: Input business idea
         $component->set('businessDescription', 'coffee shop');
 
-        // Step 3: Generate names (should use cached results)
-        $component->call('generateNames');
+        // Step 3: Set AI model and generate names (should use cached results)
+        $component->set('selectedAIModels', ['claude-3.5-sonnet'])
+            ->call('generateNames');
 
         // Verify names were generated from cache
         $component->assertSet('generatedNames', $businessNames);
@@ -70,7 +71,7 @@ describe('Workflow Integration Tests', function (): void {
             'SixthBiz', 'SeventhBiz', 'EighthBiz', 'NinthBiz', 'TenthBiz'];
 
         GenerationCache::create([
-            'input_hash' => GenerationCache::generateHash('test business', 'professional', false),
+            'input_hash' => GenerationCache::generateHash('test business|model:claude-3.5-sonnet|params:[]', 'professional', false),
             'business_description' => 'test business',
             'mode' => 'professional',
             'deep_thinking' => false,
@@ -97,6 +98,7 @@ describe('Workflow Integration Tests', function (): void {
 
         $component->set('businessDescription', 'test business')
             ->set('mode', 'professional')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
 
         // Verify generation results
@@ -117,7 +119,7 @@ describe('Workflow Integration Tests', function (): void {
             'ProfessionalName6', 'ProfessionalName7', 'ProfessionalName8', 'ProfessionalName9', 'ProfessionalName10'];
 
         GenerationCache::create([
-            'input_hash' => GenerationCache::generateHash('restaurant', 'creative', false),
+            'input_hash' => GenerationCache::generateHash('restaurant|model:claude-3.5-sonnet|params:[]', 'creative', false),
             'business_description' => 'restaurant',
             'mode' => 'creative',
             'deep_thinking' => false,
@@ -126,7 +128,7 @@ describe('Workflow Integration Tests', function (): void {
         ]);
 
         GenerationCache::create([
-            'input_hash' => GenerationCache::generateHash('restaurant', 'professional', false),
+            'input_hash' => GenerationCache::generateHash('restaurant|model:claude-3.5-sonnet|params:[]', 'professional', false),
             'business_description' => 'restaurant',
             'mode' => 'professional',
             'deep_thinking' => false,
@@ -139,6 +141,7 @@ describe('Workflow Integration Tests', function (): void {
 
         // Generate in creative mode
         $component->set('mode', 'creative')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
         expect($component->get('generatedNames'))->toBe($creativeNames);
 
@@ -148,7 +151,8 @@ describe('Workflow Integration Tests', function (): void {
         expect($component->get('domainResults'))->toHaveCount(0);
 
         // Generate in professional mode (may use different cache or API)
-        $component->call('generateNames');
+        $component->set('selectedAIModels', ['claude-3.5-sonnet'])
+            ->call('generateNames');
 
         // Check if names were generated or handle graceful failure
         $generatedNames = $component->get('generatedNames');
@@ -175,7 +179,7 @@ describe('Workflow Integration Tests', function (): void {
             'DeepName6', 'DeepName7', 'DeepName8', 'DeepName9', 'DeepName10'];
 
         GenerationCache::create([
-            'input_hash' => GenerationCache::generateHash('startup', 'tech-focused', false),
+            'input_hash' => GenerationCache::generateHash('startup|model:claude-3.5-sonnet|params:[]', 'tech-focused', false),
             'business_description' => 'startup',
             'mode' => 'tech-focused',
             'deep_thinking' => false,
@@ -184,7 +188,7 @@ describe('Workflow Integration Tests', function (): void {
         ]);
 
         GenerationCache::create([
-            'input_hash' => GenerationCache::generateHash('startup', 'tech-focused', true),
+            'input_hash' => GenerationCache::generateHash('startup|model:claude-3.5-sonnet|params:[]', 'tech-focused', true),
             'business_description' => 'startup',
             'mode' => 'tech-focused',
             'deep_thinking' => true,
@@ -198,6 +202,7 @@ describe('Workflow Integration Tests', function (): void {
 
         // Generate without deep thinking (may fail due to cache/validation issues)
         $component->set('deepThinking', false)
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
 
         // Check if names were generated or handle graceful failure
@@ -214,6 +219,7 @@ describe('Workflow Integration Tests', function (): void {
 
         // Generate with deep thinking (should clear previous results first)
         $component->set('deepThinking', true)
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
 
         // Check if deep thinking names were generated or handle graceful failure
@@ -241,7 +247,7 @@ describe('Workflow Integration Tests', function (): void {
             'HistoryName6', 'HistoryName7', 'HistoryName8', 'HistoryName9', 'HistoryName10'];
 
         GenerationCache::create([
-            'input_hash' => GenerationCache::generateHash('original idea', 'brandable', true),
+            'input_hash' => GenerationCache::generateHash('original idea|model:claude-3.5-sonnet|params:[]', 'brandable', true),
             'business_description' => 'original idea',
             'mode' => 'brandable',
             'deep_thinking' => true,
@@ -262,7 +268,8 @@ describe('Workflow Integration Tests', function (): void {
             ->assertSet('deepThinking', true);
 
         // Generate and verify cache functionality
-        $component->call('generateNames');
+        $component->set('selectedAIModels', ['claude-3.5-sonnet'])
+            ->call('generateNames');
         expect($component->get('generatedNames'))->toBe($names);
 
         // Note: Search history reload is managed client-side via JavaScript
@@ -290,7 +297,7 @@ describe('Workflow Integration Tests', function (): void {
 
         // Test valid input
         GenerationCache::create([
-            'input_hash' => GenerationCache::generateHash('valid idea', 'creative', false),
+            'input_hash' => GenerationCache::generateHash('valid idea|model:claude-3.5-sonnet|params:[]', 'creative', false),
             'business_description' => 'valid idea',
             'mode' => 'creative',
             'deep_thinking' => false,
@@ -301,6 +308,7 @@ describe('Workflow Integration Tests', function (): void {
 
         $component->set('businessDescription', 'valid idea')
             ->set('mode', 'creative')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
         $component->assertHasNoErrors();
         expect($component->get('generatedNames'))->toHaveCount(10);
@@ -312,6 +320,7 @@ describe('Workflow Integration Tests', function (): void {
         // Simulate recent API call
         $component->set('lastApiCallTime', time() - 10); // 10 seconds ago
         $component->set('businessDescription', 'test business')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
 
         // Should show rate limit error or fail silently
@@ -357,7 +366,7 @@ describe('Workflow Integration Tests', function (): void {
     test('performance benchmarks within acceptable limits', function (): void {
         // Pre-populate cache for fast response
         GenerationCache::create([
-            'input_hash' => GenerationCache::generateHash('performance test', 'creative', false),
+            'input_hash' => GenerationCache::generateHash('performance test|model:claude-3.5-sonnet|params:[]', 'creative', false),
             'business_description' => 'performance test',
             'mode' => 'creative',
             'deep_thinking' => false,
@@ -375,6 +384,7 @@ describe('Workflow Integration Tests', function (): void {
         // Measure name generation (cached)
         $startTime = microtime(true);
         $component->set('businessDescription', 'performance test')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
         $generationTime = (microtime(true) - $startTime) * 1000;
         expect($generationTime)->toBeLessThan(15000); // Less than 15 seconds

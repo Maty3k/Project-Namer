@@ -29,6 +29,13 @@ class Sidebar extends Component
 
     public bool $showDeleteConfirmation = false;
 
+    public bool $bulkSelectionMode = false;
+
+    /** @var array<string> */
+    public array $selectedProjectsForBulkDelete = [];
+
+    public bool $showBulkDeleteConfirmation = false;
+
     public mixed $userTheme = null;
 
     /** @var array<string, string> */
@@ -271,6 +278,152 @@ class Sidebar extends Component
             ]);
         } finally {
             $this->cancelDeleteProject();
+        }
+    }
+
+    /**
+     * Toggle bulk selection mode.
+     */
+    public function toggleBulkSelectionMode(): void
+    {
+        $this->bulkSelectionMode = ! $this->bulkSelectionMode;
+
+        // Clear selected projects when toggling modes
+        $this->selectedProjectsForBulkDelete = [];
+    }
+
+    /**
+     * Toggle project selection for bulk delete.
+     */
+    public function toggleProjectSelection(string $uuid): void
+    {
+        if (in_array($uuid, $this->selectedProjectsForBulkDelete)) {
+            $this->selectedProjectsForBulkDelete = array_filter(
+                $this->selectedProjectsForBulkDelete,
+                fn ($id) => $id !== $uuid
+            );
+        } else {
+            $this->selectedProjectsForBulkDelete[] = $uuid;
+        }
+    }
+
+    /**
+     * Select all projects for bulk delete.
+     */
+    public function selectAllProjects(): void
+    {
+        $this->selectedProjectsForBulkDelete = $this->getProjectsProperty()->pluck('uuid')->toArray();
+    }
+
+    /**
+     * Deselect all projects.
+     */
+    public function deselectAllProjects(): void
+    {
+        $this->selectedProjectsForBulkDelete = [];
+    }
+
+    /**
+     * Check if a project is selected for bulk delete.
+     */
+    public function isProjectSelected(string $uuid): bool
+    {
+        return in_array($uuid, $this->selectedProjectsForBulkDelete);
+    }
+
+    /**
+     * Get count of selected projects.
+     */
+    public function getSelectedProjectsCountProperty(): int
+    {
+        return count($this->selectedProjectsForBulkDelete);
+    }
+
+    /**
+     * Show bulk delete confirmation modal.
+     */
+    public function confirmBulkDeleteProjects(): void
+    {
+        if (empty($this->selectedProjectsForBulkDelete)) {
+            $this->dispatch('show-toast', [
+                'message' => 'No projects selected for deletion',
+                'type' => 'warning',
+            ]);
+
+            return;
+        }
+
+        $this->showBulkDeleteConfirmation = true;
+    }
+
+    /**
+     * Cancel bulk delete operation.
+     */
+    public function cancelBulkDeleteProjects(): void
+    {
+        $this->showBulkDeleteConfirmation = false;
+    }
+
+    /**
+     * Delete selected projects in bulk.
+     */
+    public function bulkDeleteProjects(): void
+    {
+        if (empty($this->selectedProjectsForBulkDelete)) {
+            return;
+        }
+
+        $projects = Project::whereIn('uuid', $this->selectedProjectsForBulkDelete)
+            ->where('user_id', Auth::id())
+            ->get();
+
+        if ($projects->isEmpty()) {
+            $this->dispatch('show-toast', [
+                'message' => 'No valid projects found for deletion',
+                'type' => 'error',
+            ]);
+            $this->cancelBulkDeleteProjects();
+
+            return;
+        }
+
+        $deletedCount = 0;
+        $activeProjectDeleted = false;
+
+        try {
+            foreach ($projects as $project) {
+                if ($this->isActiveProject($project)) {
+                    $activeProjectDeleted = true;
+                }
+
+                $project->delete();
+                $deletedCount++;
+                $this->dispatch('project-deleted', $project->uuid);
+            }
+
+            // If we deleted the active project, redirect to dashboard
+            if ($activeProjectDeleted) {
+                $this->activeProjectUuid = null;
+                $this->selectedProject = null;
+                $this->redirect(route('dashboard'));
+
+                return;
+            }
+
+            $this->dispatch('show-toast', [
+                'message' => "Successfully deleted {$deletedCount} project".($deletedCount > 1 ? 's' : ''),
+                'type' => 'success',
+            ]);
+
+        } catch (\Exception $e) {
+            $this->dispatch('show-toast', [
+                'message' => 'Failed to delete some projects: '.$e->getMessage(),
+                'type' => 'error',
+            ]);
+        } finally {
+            $this->selectedProjectsForBulkDelete = [];
+            $this->bulkSelectionMode = false;
+            $this->cancelBulkDeleteProjects();
         }
     }
 

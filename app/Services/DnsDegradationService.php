@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Contracts\DnsLookupServiceInterface;
-use App\DTOs\DnsLookupResult;
-use App\Models\DnsLookupCache;
-use App\Models\NameSuggestion;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -18,20 +15,19 @@ use Illuminate\Support\Facades\Log;
  * Provides graceful degradation strategies when DNS services are unavailable
  * or experiencing issues, ensuring the application continues to function.
  */
-final class DnsDegradationService
+final readonly class DnsDegradationService
 {
     public function __construct(
-        private readonly DnsHealthAlertService $healthService,
-        private readonly ?DnsLookupServiceInterface $dnsService = null
-    ) {
-    }
+        private DnsHealthCheckService $healthService,
+        private ?DnsLookupServiceInterface $dnsService = null
+    ) {}
 
     /**
      * Check if DNS service is in degraded mode
      */
     public function isDegradedMode(): bool
     {
-        $healthStatus = $this->healthService->checkDnsHealth();
+        $healthStatus = $this->healthService->getHealthStatus();
 
         // Consider degraded if:
         // 1. Error rate is very high (>50%)
@@ -44,10 +40,12 @@ final class DnsDegradationService
 
     /**
      * Get degraded mode information
+     *
+     * @return array{degraded: bool, mode: string, reason: string|null, fallback_strategy: string|null, health_status?: array<string, mixed>, estimated_recovery?: Carbon|null}
      */
     public function getDegradationStatus(): array
     {
-        if (!$this->isDegradedMode()) {
+        if (! $this->isDegradedMode()) {
             return [
                 'degraded' => false,
                 'mode' => 'normal',
@@ -56,7 +54,7 @@ final class DnsDegradationService
             ];
         }
 
-        $healthStatus = $this->healthService->checkDnsHealth();
+        $healthStatus = $this->healthService->getHealthStatus();
         $reason = $this->determineDegradationReason($healthStatus);
         $strategy = $this->getFallbackStrategy($reason);
 
@@ -72,12 +70,14 @@ final class DnsDegradationService
 
     /**
      * Handle domain checking in degraded mode
+     *
+     * @return array<string, mixed>
      */
     public function checkDomainInDegradedMode(string $domain): array
     {
         $status = $this->getDegradationStatus();
 
-        if (!$status['degraded']) {
+        if (! $status['degraded']) {
             throw new \RuntimeException('DNS service is not in degraded mode');
         }
 
@@ -131,16 +131,20 @@ final class DnsDegradationService
     private function isManualDegradationEnabled(): bool
     {
         $manual = Cache::get('dns_manual_degradation');
+
         return $manual['enabled'] ?? false;
     }
 
     /**
      * Determine the reason for degradation
+     *
+     * @param  array<string, mixed>  $healthStatus
      */
     private function determineDegradationReason(array $healthStatus): string
     {
         if ($this->isManualDegradationEnabled()) {
             $manual = Cache::get('dns_manual_degradation');
+
             return $manual['reason'] ?? 'Manual override';
         }
 
@@ -178,9 +182,12 @@ final class DnsDegradationService
     /**
      * Check domain using only cached DNS results
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function checkDomainCacheOnly(string $domain): array
     {
-        if (!$this->dnsService) {
+        if (! $this->dnsService) {
             return $this->getDegradedResult($domain, 'no_dns_service');
         }
 
@@ -210,6 +217,9 @@ final class DnsDegradationService
     /**
      * Check domain with pessimistic assumption (assume domain is taken)
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function checkDomainPessimistic(string $domain): array
     {
         // Try cache first
@@ -232,6 +242,9 @@ final class DnsDegradationService
 
     /**
      * Check domain with optimistic assumption (assume domain is available)
+     */
+    /**
+     * @return array<string, mixed>
      */
     private function checkDomainOptimistic(string $domain): array
     {
@@ -256,6 +269,9 @@ final class DnsDegradationService
     /**
      * Disable DNS checking completely
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function checkDomainDisabled(string $domain): array
     {
         return [
@@ -271,6 +287,8 @@ final class DnsDegradationService
 
     /**
      * Get degraded result with specified reason
+     *
+     * @return array<string, mixed>
      */
     private function getDegradedResult(string $domain, string $reason): array
     {
@@ -289,10 +307,11 @@ final class DnsDegradationService
      */
     private function getEstimatedRecoveryTime(): ?Carbon
     {
-        $healthStatus = $this->healthService->checkDnsHealth();
+        $healthStatus = $this->healthService->getHealthStatus();
 
         if (in_array('Circuit breaker open', $healthStatus['issues'])) {
             $timeoutMinutes = config('dns.circuit_breaker.timeout_minutes', 5);
+
             return now()->addMinutes($timeoutMinutes);
         }
 
@@ -306,6 +325,8 @@ final class DnsDegradationService
 
     /**
      * Get degradation metrics for monitoring
+     *
+     * @return array<string, mixed>
      */
     public function getDegradationMetrics(): array
     {

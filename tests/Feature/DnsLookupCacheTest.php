@@ -5,12 +5,12 @@ declare(strict_types=1);
 use App\Models\DnsLookupCache;
 use Carbon\Carbon;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Clean up DNS cache table before each test
     DnsLookupCache::query()->delete();
 });
 
-test('dns cache model can be created with valid data', function () {
+test('dns cache model can be created with valid data', function (): void {
     $cache = DnsLookupCache::create([
         'domain' => 'example',
         'tld' => 'com',
@@ -28,7 +28,7 @@ test('dns cache model can be created with valid data', function () {
         ->and($cache->record_types)->toBe(['A', 'MX']);
 });
 
-test('dns cache model casts record_types to array', function () {
+test('dns cache model casts record_types to array', function (): void {
     $cache = DnsLookupCache::create([
         'domain' => 'test',
         'tld' => 'org',
@@ -43,7 +43,7 @@ test('dns cache model casts record_types to array', function () {
         ->toContain('A', 'AAAA', 'CNAME');
 });
 
-test('dns cache model casts has_records to boolean', function () {
+test('dns cache model casts has_records to boolean', function (): void {
     $cache = DnsLookupCache::create([
         'domain' => 'boolean-test',
         'tld' => 'net',
@@ -58,7 +58,7 @@ test('dns cache model casts has_records to boolean', function () {
     expect($cache->fresh()->has_records)->toBeFalse();
 });
 
-test('dns cache model casts timestamps correctly', function () {
+test('dns cache model casts timestamps correctly', function (): void {
     $checkedAt = now()->subHours(2);
     $expiresAt = now()->addHours(22);
 
@@ -76,7 +76,7 @@ test('dns cache model casts timestamps correctly', function () {
         ->toBeInstanceOf(Carbon::class);
 });
 
-test('dns cache model has isExpired method that works correctly', function () {
+test('dns cache model has isExpired method that works correctly', function (): void {
     // Create expired cache entry
     $expiredCache = DnsLookupCache::create([
         'domain' => 'expired',
@@ -99,7 +99,7 @@ test('dns cache model has isExpired method that works correctly', function () {
     expect($validCache->isExpired())->toBeFalse();
 });
 
-test('dns cache model findValidCache method returns valid cache', function () {
+test('dns cache model findValidCache method returns valid cache', function (): void {
     // Create expired cache first
     $expiredCache = DnsLookupCache::create([
         'domain' => 'findvalid',
@@ -126,7 +126,7 @@ test('dns cache model findValidCache method returns valid cache', function () {
         ->and($found->has_records)->toBeFalse();
 });
 
-test('dns cache model findValidCache method returns null for expired cache', function () {
+test('dns cache model findValidCache method returns null for expired cache', function (): void {
     // Create only expired cache
     DnsLookupCache::create([
         'domain' => 'expired-only',
@@ -141,13 +141,13 @@ test('dns cache model findValidCache method returns null for expired cache', fun
     expect($found)->toBeNull();
 });
 
-test('dns cache model findValidCache method returns null for non-existent domain', function () {
+test('dns cache model findValidCache method returns null for non-existent domain', function (): void {
     $found = DnsLookupCache::findValidCache('non-existent', 'xyz');
 
     expect($found)->toBeNull();
 });
 
-test('dns cache model handles error messages correctly', function () {
+test('dns cache model handles error messages correctly', function (): void {
     $cache = DnsLookupCache::create([
         'domain' => 'error-test',
         'tld' => 'com',
@@ -160,7 +160,7 @@ test('dns cache model handles error messages correctly', function () {
     expect($cache->error_message)->toBe('DNS lookup timeout');
 });
 
-test('dns cache model enforces unique constraint on domain and tld', function () {
+test('dns cache model enforces unique constraint on domain and tld', function (): void {
     DnsLookupCache::create([
         'domain' => 'unique-test',
         'tld' => 'com',
@@ -170,7 +170,7 @@ test('dns cache model enforces unique constraint on domain and tld', function ()
     ]);
 
     // Attempt to create duplicate should fail
-    expect(function () {
+    expect(function (): void {
         DnsLookupCache::create([
             'domain' => 'unique-test',
             'tld' => 'com',

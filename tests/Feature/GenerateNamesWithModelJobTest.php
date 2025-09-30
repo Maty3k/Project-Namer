@@ -83,7 +83,7 @@ describe('GenerateNamesWithModelJob', function (): void {
 
         // The job should throw an exception for retryable errors
         expect(fn () => $job->handle(app(\App\Services\AIGenerationService::class)))
-            ->toThrow(Exception::class, 'AI model gpt-4 failed to generate names');
+            ->toThrow(Exception::class, 'AI generation failed: Could not find a response for the request');
 
         // Check that error was cached even though exception was thrown
         $cacheKey = "ai_generation_result_{$aiGeneration->id}_gpt-4";

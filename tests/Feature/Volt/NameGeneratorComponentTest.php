@@ -468,7 +468,7 @@ describe('NameGeneratorComponent Results Display & Domain Status', function (): 
     });
 
     it('updates domain status in real-time', function (): void {
-        $fakeResponse = '1. TestName1';
+        $fakeResponse = "1. TestName1\n2. TestName2\n3. TestName3\n4. TestName4\n5. TestName5\n6. TestName6\n7. TestName7\n8. TestName8\n9. TestName9\n10. TestName10";
 
         Prism::fake([
             TextResponseFake::make()->withText($fakeResponse),

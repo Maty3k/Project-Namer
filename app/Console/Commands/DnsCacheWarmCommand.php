@@ -59,12 +59,14 @@ final class DnsCacheWarmCommand extends Command
         if ($async) {
             DnsCacheWarmingJob::warmPopular($limit);
             $this->info("✅ Popular domains warming job dispatched (limit: {$limit})");
+
             return 0;
         }
 
-        if (!$this->option('force') && !$warmingService->isOffPeakTime()) {
-            if (!$this->confirm('It\'s peak hours. Warming may impact performance. Continue?')) {
+        if (! $this->option('force') && ! $warmingService->isOffPeakTime()) {
+            if (! $this->confirm('It\'s peak hours. Warming may impact performance. Continue?')) {
                 $this->info('Warming cancelled');
+
                 return 0;
             }
         }
@@ -84,6 +86,7 @@ final class DnsCacheWarmCommand extends Command
         if ($async) {
             DnsCacheWarmingJob::warmTrending();
             $this->info('✅ Trending domains warming job dispatched');
+
             return 0;
         }
 
@@ -104,16 +107,16 @@ final class DnsCacheWarmCommand extends Command
         if ($async) {
             DnsCacheWarmingJob::rewarmStale($limit);
             $this->info("✅ Stale domains rewarming job dispatched (limit: {$limit})");
+
             return 0;
         }
 
         $staleDomains = $warmingService->getStaleDomainsForRewarming();
-        $domainList = $staleDomains->take($limit)->map(function ($cache) {
-            return ['domain' => $cache->domain, 'tld' => $cache->tld];
-        })->toArray();
+        $domainList = $staleDomains->take($limit)->map(fn ($cache) => ['domain' => $cache->domain, 'tld' => $cache->tld])->toArray();
 
         if (empty($domainList)) {
             $this->info('✅ No stale domains found for rewarming');
+
             return 0;
         }
 
@@ -129,8 +132,9 @@ final class DnsCacheWarmCommand extends Command
     {
         $domainsOption = $this->option('domains');
 
-        if (!$domainsOption) {
+        if (! $domainsOption) {
             $this->error('Please provide domains using --domains option (format: domain1:tld1,domain2:tld2)');
+
             return 1;
         }
 
@@ -144,6 +148,7 @@ final class DnsCacheWarmCommand extends Command
 
         if (empty($domains)) {
             $this->error('No valid domains parsed. Use format: domain1:tld1,domain2:tld2');
+
             return 1;
         }
 
@@ -151,7 +156,8 @@ final class DnsCacheWarmCommand extends Command
 
         if ($async) {
             DnsCacheWarmingJob::warmCustom($domains);
-            $this->info('✅ Custom domains warming job dispatched (' . count($domains) . ' domains)');
+            $this->info('✅ Custom domains warming job dispatched ('.count($domains).' domains)');
+
             return 0;
         }
 
@@ -169,6 +175,7 @@ final class DnsCacheWarmCommand extends Command
 
         if ($format === 'json') {
             $this->line(json_encode($analytics, JSON_PRETTY_PRINT));
+
             return 0;
         }
 
@@ -181,7 +188,7 @@ final class DnsCacheWarmCommand extends Command
         $this->table(['Metric', 'Value'], [
             ['Domains warmed today', number_format($stats['total_warmed_today'] ?? 0)],
             ['Domains warmed this week', number_format($stats['total_warmed_week'] ?? 0)],
-            ['Average success rate', number_format($stats['avg_success_rate'] ?? 0, 1) . '%'],
+            ['Average success rate', number_format($stats['avg_success_rate'] ?? 0, 1).'%'],
             ['Last warming', $stats['last_warming'] ? Carbon::parse($stats['last_warming'])->diffForHumans() : 'Never'],
         ]);
 
@@ -191,9 +198,9 @@ final class DnsCacheWarmCommand extends Command
         $performance = $analytics['performance_improvement'];
         $this->line('<info>Performance Impact:</info>');
         $this->table(['Metric', 'Value'], [
-            ['Current cache hit rate', number_format($performance['cache_hit_rate'], 1) . '%'],
+            ['Current cache hit rate', number_format($performance['cache_hit_rate'], 1).'%'],
             ['Total cached domains', number_format($performance['total_cached_domains'])],
-            ['Warming contribution', number_format($performance['warming_contribution'], 1) . '%'],
+            ['Warming contribution', number_format($performance['warming_contribution'], 1).'%'],
         ]);
 
         $this->newLine();
@@ -202,7 +209,7 @@ final class DnsCacheWarmCommand extends Command
         $efficiency = $analytics['warming_efficiency'];
         $this->line('<info>Warming Efficiency:</info>');
         $this->table(['Metric', 'Value'], [
-            ['Success rate', number_format($efficiency['success_rate'], 1) . '%'],
+            ['Success rate', number_format($efficiency['success_rate'], 1).'%'],
             ['Avg domains per session', number_format($efficiency['avg_domains_per_session'])],
             ['Cost effectiveness', $efficiency['cost_effectiveness']],
         ]);
@@ -229,6 +236,7 @@ final class DnsCacheWarmCommand extends Command
                 'schedule' => $schedule,
                 'config' => $config,
             ], JSON_PRETTY_PRINT));
+
             return 0;
         }
 
@@ -274,24 +282,30 @@ final class DnsCacheWarmCommand extends Command
     /**
      * Display warming result
      */
+    /**
+     * @param  array{warmed_count: int, failed_count: int, skipped_count: int, requested_count?: int, duration_seconds?: float, cache_hits_improved?: bool, errors?: array<array{domain: string, error: string}>, rate_limited?: bool, reason?: string}  $result
+     */
     protected function displayResult(array $result, string $title, string $format): int
     {
         if ($format === 'json') {
             $this->line(json_encode($result, JSON_PRETTY_PRINT));
+
             return 0;
         }
 
         $this->newLine();
-        $this->info($title . ' Results:');
+        $this->info($title.' Results:');
         $this->newLine();
 
         if (isset($result['rate_limited']) && $result['rate_limited']) {
             $this->warn('⚠️  Warming was rate limited. Try again later or increase rate limit.');
+
             return 1;
         }
 
         if (isset($result['reason'])) {
             $this->info("ℹ️  {$result['reason']}");
+
             return 0;
         }
 
@@ -303,12 +317,12 @@ final class DnsCacheWarmCommand extends Command
             ['Domains requested', number_format($result['requested_count'] ?? 0)],
             ['Successfully warmed', number_format($result['warmed_count'] ?? 0)],
             ['Failed', number_format($result['failed_count'] ?? 0)],
-            ['Success rate', number_format($successRate, 1) . '%'],
+            ['Success rate', number_format($successRate, 1).'%'],
             ['Duration (seconds)', number_format($result['duration_seconds'] ?? 0, 2)],
             ['Cache hits improved', ($result['cache_hits_improved'] ?? false) ? '✅ Yes' : '❌ No'],
         ]);
 
-        if (!empty($result['errors'])) {
+        if (! empty($result['errors'])) {
             $this->newLine();
             $this->warn('⚠️  Errors encountered:');
             foreach (array_slice($result['errors'], 0, 5) as $error) {
@@ -317,7 +331,7 @@ final class DnsCacheWarmCommand extends Command
 
             $totalErrors = count($result['errors']);
             if ($totalErrors > 5) {
-                $this->line("   ... and " . ($totalErrors - 5) . " more errors");
+                $this->line('   ... and '.($totalErrors - 5).' more errors');
             }
         }
 

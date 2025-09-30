@@ -27948,6 +27948,10 @@ namespace App\Livewire {
      */
     class ThemeCustomizer extends \Livewire\Component {
             }
+    /**
+     */
+    class DnsMetricsDashboard extends \Livewire\Component {
+            }
     }
 
 namespace App\Livewire\Settings {

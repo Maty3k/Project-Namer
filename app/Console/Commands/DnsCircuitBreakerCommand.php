@@ -23,8 +23,9 @@ final class DnsCircuitBreakerCommand extends Command
 
         $dnsService = app(DnsLookupServiceInterface::class);
 
-        if (!$dnsService instanceof DnsCircuitBreakerService) {
+        if (! $dnsService instanceof DnsCircuitBreakerService) {
             $this->error('DNS circuit breaker is not enabled or configured');
+
             return self::FAILURE;
         }
 
@@ -50,6 +51,7 @@ final class DnsCircuitBreakerCommand extends Command
                 'failure_count' => $stats['failure_count'],
                 'service_name' => $stats['service_name'],
             ], JSON_PRETTY_PRINT));
+
             return self::SUCCESS;
         }
 
@@ -65,7 +67,7 @@ final class DnsCircuitBreakerCommand extends Command
 
         $this->line("Status: <fg={$statusColor}>{$stats['state']}</>");
         $this->line("Service: {$stats['service_name']}");
-        $this->line("Healthy: " . ($isHealthy ? '<fg=green>Yes</>' : '<fg=red>No</>'));
+        $this->line('Healthy: '.($isHealthy ? '<fg=green>Yes</>' : '<fg=red>No</>'));
         $this->line("Failure Count: {$stats['failure_count']}");
         $this->line("Success Count: {$stats['success_count']}");
 
@@ -86,6 +88,7 @@ final class DnsCircuitBreakerCommand extends Command
 
         if ($format === 'json') {
             $this->line(json_encode($stats, JSON_PRETTY_PRINT));
+
             return self::SUCCESS;
         }
 
@@ -117,13 +120,14 @@ final class DnsCircuitBreakerCommand extends Command
 
             $afterState = $service->getCircuitBreakerStats()['state'];
 
-            $this->info("Circuit breaker reset successfully!");
+            $this->info('Circuit breaker reset successfully!');
             $this->line("State changed from <fg=red>{$beforeState}</> to <fg=green>{$afterState}</>");
 
             return self::SUCCESS;
         }
 
         $this->comment('Reset cancelled.');
+
         return self::SUCCESS;
     }
 

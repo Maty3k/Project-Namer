@@ -9,18 +9,18 @@ use App\Models\NameSuggestion;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 final class DnsCacheWarmingService
 {
     public function __construct(
         protected DnsLookupService $dnsLookupService
-    ) {
-    }
+    ) {}
 
     /**
      * Get popular domains based on frequency of use in name suggestions
+     *
+     * @return array<array{domain: string, tld: string, frequency: int}>
      */
     public function getPopularDomains(int $limit = 100): array
     {
@@ -29,18 +29,18 @@ final class DnsCacheWarmingService
         NameSuggestion::where('created_at', '>=', now()->subDays(30))
             ->whereNotNull('domains')
             ->get()
-            ->each(function ($suggestion) use (&$domainCounts) {
+            ->each(function ($suggestion) use (&$domainCounts): void {
                 $domains = $suggestion->domains ?? [];
 
                 foreach ($domains as $domainData) {
                     if (isset($domainData['domain']) && isset($domainData['tld'])) {
-                        $key = $domainData['domain'] . '.' . $domainData['tld'];
+                        $key = $domainData['domain'].'.'.$domainData['tld'];
 
-                        if (!isset($domainCounts[$key])) {
+                        if (! isset($domainCounts[$key])) {
                             $domainCounts[$key] = [
                                 'domain' => $domainData['domain'],
                                 'tld' => $domainData['tld'],
-                                'frequency' => 0
+                                'frequency' => 0,
                             ];
                         }
 
@@ -58,12 +58,14 @@ final class DnsCacheWarmingService
 
     /**
      * Warm cache for popular domains
+     *
+     * @return array{warmed_count: int, total_popular?: int, reason?: string, cache_hits_improved: bool, rate_limited?: bool, failed_count?: int, skipped_count?: int, errors?: array<array{domain: string, error: string}>}
      */
     public function warmPopularDomains(int $limit = 50): array
     {
         $config = $this->getWarmingConfig();
 
-        if (!$config['enabled']) {
+        if (! $config['enabled']) {
             return [
                 'warmed_count' => 0,
                 'total_popular' => 0,
@@ -80,7 +82,7 @@ final class DnsCacheWarmingService
             ];
         }
 
-        if ($config['off_peak_only'] && !$this->isOffPeakTime()) {
+        if ($config['off_peak_only'] && ! $this->isOffPeakTime()) {
             return [
                 'warmed_count' => 0,
                 'total_popular' => 0,
@@ -100,6 +102,9 @@ final class DnsCacheWarmingService
 
     /**
      * Warm cache for a specific list of domains
+     *
+     * @param  array<array{domain: string, tld: string}|string>  $domains
+     * @return array{warmed_count: int, failed_count: int, skipped_count?: int, errors?: array<array{domain: string, error: string}>, duration_seconds: float, cache_hits_improved: bool}
      */
     public function warmDomainList(array $domains): array
     {
@@ -166,6 +171,8 @@ final class DnsCacheWarmingService
 
     /**
      * Get stale domains that need rewarming
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\DnsLookupCache>
      */
     public function getStaleDomainsForRewarming(): Collection
     {
@@ -191,6 +198,8 @@ final class DnsCacheWarmingService
 
     /**
      * Get prioritized domains for warming based on business logic
+     *
+     * @return Collection<int, mixed>
      */
     public function getPrioritizedDomainsForWarming(): Collection
     {
@@ -203,21 +212,19 @@ final class DnsCacheWarmingService
 
                 foreach ($domains as $domainData) {
                     if (isset($domainData['domain']) && isset($domainData['tld'])) {
-                        $key = $domainData['domain'] . '.' . $domainData['tld'];
+                        $key = $domainData['domain'].'.'.$domainData['tld'];
                         $results[$key] = [
                             'domain' => $domainData['domain'],
                             'tld' => $domainData['tld'],
                             'frequency' => 1,
-                            'is_recent' => $suggestion->created_at >= now()->subDays(7)
+                            'is_recent' => $suggestion->created_at >= now()->subDays(7),
                         ];
                     }
                 }
 
                 return $results;
             })
-            ->groupBy(function ($item, $key) {
-                return $key;
-            })
+            ->groupBy(fn ($item, $key) => $key)
             ->map(function ($group) {
                 $first = $group->first();
                 $frequency = $group->count();
@@ -227,12 +234,10 @@ final class DnsCacheWarmingService
                     'domain' => $first['domain'],
                     'tld' => $first['tld'],
                     'frequency' => $frequency,
-                    'weighted_frequency' => $frequency * ($hasRecent ? 2 : 1)
+                    'weighted_frequency' => $frequency * ($hasRecent ? 2 : 1),
                 ];
             })
-            ->filter(function ($item) {
-                return $item['frequency'] >= 3;
-            })
+            ->filter(fn ($item) => $item['frequency'] >= 3)
             ->sortByDesc('weighted_frequency')
             ->take(200);
 
@@ -241,6 +246,8 @@ final class DnsCacheWarmingService
 
     /**
      * Warm cache for trending TLDs
+     *
+     * @return array<string, mixed>
      */
     public function warmTrendingTlds(): array
     {
@@ -250,7 +257,7 @@ final class DnsCacheWarmingService
         NameSuggestion::where('created_at', '>=', now()->subDays(7))
             ->whereNotNull('domains')
             ->get()
-            ->each(function ($suggestion) use (&$tldFrequency) {
+            ->each(function ($suggestion) use (&$tldFrequency): void {
                 $domains = $suggestion->domains ?? [];
                 foreach ($domains as $domainData) {
                     if (isset($domainData['tld'])) {
@@ -262,7 +269,7 @@ final class DnsCacheWarmingService
 
         // Filter and sort trending TLDs
         $trendingTlds = collect($tldFrequency)
-            ->filter(fn($frequency) => $frequency >= 5)
+            ->filter(fn ($frequency) => $frequency >= 5)
             ->sortDesc()
             ->take(10)
             ->keys()
@@ -281,10 +288,10 @@ final class DnsCacheWarmingService
 
                     foreach ($domains as $domainData) {
                         if (isset($domainData['domain'], $domainData['tld']) && $domainData['tld'] === $tld) {
-                            $key = $domainData['domain'] . '.' . $domainData['tld'];
+                            $key = $domainData['domain'].'.'.$domainData['tld'];
                             $results[$key] = [
                                 'domain' => $domainData['domain'],
-                                'tld' => $domainData['tld']
+                                'tld' => $domainData['tld'],
                             ];
                         }
                     }
@@ -296,7 +303,7 @@ final class DnsCacheWarmingService
                 ->values()
                 ->toArray();
 
-            if (!empty($domains)) {
+            if (! empty($domains)) {
                 $result = $this->warmDomainList($domains);
                 $totalWarmed += $result['warmed_count'];
 
@@ -315,6 +322,8 @@ final class DnsCacheWarmingService
 
     /**
      * Get warming statistics and analytics
+     *
+     * @return array<string, mixed>
      */
     public function getWarmingAnalytics(): array
     {
@@ -345,6 +354,8 @@ final class DnsCacheWarmingService
 
     /**
      * Get warming configuration
+     *
+     * @return array<string, mixed>
      */
     public function getWarmingConfig(): array
     {
@@ -360,6 +371,9 @@ final class DnsCacheWarmingService
 
     /**
      * Get optimal warming schedule
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getOptimalWarmingSchedule(): array
     {
@@ -384,6 +398,9 @@ final class DnsCacheWarmingService
 
     /**
      * Get warming statistics
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getWarmingStats(): array
     {
@@ -413,11 +430,12 @@ final class DnsCacheWarmingService
             ->where('tld', $tld)
             ->first();
 
-        if (!$cacheEntry) {
+        if (! $cacheEntry) {
             return false;
         }
 
         $staleThreshold = $this->getWarmingConfig()['stale_threshold_hours'];
+
         return $cacheEntry->checked_at > now()->subHours($staleThreshold);
     }
 
@@ -444,6 +462,9 @@ final class DnsCacheWarmingService
     /**
      * Update warming statistics
      */
+    /**
+     * @param  array<string, mixed>  $result
+     */
     protected function updateWarmingStats(array $result): void
     {
         $stats = $this->getWarmingStats();
@@ -453,8 +474,8 @@ final class DnsCacheWarmingService
         $stats['last_warming'] = now();
 
         // Update success rate
-        $totalAttempts = ($stats['total_attempted'] ?? 0) + $result['requested_count'];
-        $totalSuccesses = ($stats['total_successes'] ?? 0) + $result['warmed_count'];
+        $totalAttempts = (int) ($stats['total_attempted'] ?? 0) + (int) ($result['requested_count'] ?? 0);
+        $totalSuccesses = (int) ($stats['total_successes'] ?? 0) + (int) ($result['warmed_count'] ?? 0);
         $stats['avg_success_rate'] = $totalAttempts > 0 ? ($totalSuccesses / $totalAttempts) * 100 : 0;
         $stats['total_attempted'] = $totalAttempts;
         $stats['total_successes'] = $totalSuccesses;
@@ -481,6 +502,7 @@ final class DnsCacheWarmingService
     protected function calculateWarmingSuccessRate(): float
     {
         $stats = $this->getWarmingStats();
+
         return $stats['avg_success_rate'] ?? 0;
     }
 
@@ -511,6 +533,10 @@ final class DnsCacheWarmingService
 
     /**
      * Generate warming recommendation
+     */
+    /**
+     * @param  array<string, mixed>  $stats
+     * @param  array<string, mixed>  $performance
      */
     protected function generateWarmingRecommendation(array $stats, array $performance): string
     {

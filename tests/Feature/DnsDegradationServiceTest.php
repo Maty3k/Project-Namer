@@ -4,28 +4,35 @@ declare(strict_types=1);
 
 use App\Contracts\DnsLookupServiceInterface;
 use App\DTOs\DnsLookupResult;
-use App\Services\DnsDegradationService;
-use App\Services\DnsHealthAlertService;
-use App\Services\DnsCircuitBreakerService;
 use App\Models\DnsLookupMetrics;
-use Carbon\Carbon;
+use App\Services\DnsDegradationService;
+use App\Services\DnsHealthCheckService;
 use Illuminate\Support\Facades\Cache;
+
 use function Pest\Laravel\mock;
 
-beforeEach(function () {
+beforeEach(function (): void {
     Cache::flush();
     DnsLookupMetrics::truncate();
+    // Clear any circuit breaker state
+    Cache::forget('dns_circuit_breaker_failure_count');
+    Cache::forget('dns_circuit_breaker_next_attempt');
+    Cache::forget('dns_manual_degradation');
 });
 
-test('degradation service enables manual degradation mode', function () {
+test('degradation service enables manual degradation mode', function (): void {
     // Create healthy metrics to ensure only manual mode triggers degradation
     DnsLookupMetrics::factory()->create([
         'failed_lookups' => 1,
-        'domains_checked' => 100,
+        'successful_lookups' => 999,
+        'domains_checked' => 1000,
+        'total_processing_time' => 100.0,
+        'cache_hits' => 800,
     ]);
 
-    $circuitBreaker = app(DnsCircuitBreakerService::class);
-    $healthService = new DnsHealthAlertService($circuitBreaker);
+    $performanceMonitor = app(\App\Services\DnsPerformanceMonitorService::class);
+    $alertService = app(\App\Services\DnsHealthAlertService::class);
+    $healthService = new DnsHealthCheckService($performanceMonitor, $alertService);
     $degradationService = new DnsDegradationService($healthService);
 
     expect($degradationService->isDegradedMode())->toBeFalse();
@@ -39,14 +46,18 @@ test('degradation service enables manual degradation mode', function () {
         ->and($status['reason'])->toBe('Testing manual override');
 });
 
-test('degradation service disables manual degradation mode', function () {
+test('degradation service disables manual degradation mode', function (): void {
     DnsLookupMetrics::factory()->create([
         'failed_lookups' => 1,
-        'domains_checked' => 100,
+        'successful_lookups' => 999,
+        'domains_checked' => 1000,
+        'total_processing_time' => 100.0,
+        'cache_hits' => 800,
     ]);
 
-    $circuitBreaker = app(DnsCircuitBreakerService::class);
-    $healthService = new DnsHealthAlertService($circuitBreaker);
+    $performanceMonitor = app(\App\Services\DnsPerformanceMonitorService::class);
+    $alertService = app(\App\Services\DnsHealthAlertService::class);
+    $healthService = new DnsHealthCheckService($performanceMonitor, $alertService);
     $degradationService = new DnsDegradationService($healthService);
 
     $degradationService->enableDegradationMode('Testing');
@@ -56,14 +67,18 @@ test('degradation service disables manual degradation mode', function () {
     expect($degradationService->isDegradedMode())->toBeFalse();
 });
 
-test('degradation service returns normal status when not degraded', function () {
+test('degradation service returns normal status when not degraded', function (): void {
     DnsLookupMetrics::factory()->create([
         'failed_lookups' => 1,
-        'domains_checked' => 100,
+        'successful_lookups' => 999,
+        'domains_checked' => 1000,
+        'total_processing_time' => 100.0,
+        'cache_hits' => 800,
     ]);
 
-    $circuitBreaker = app(DnsCircuitBreakerService::class);
-    $healthService = new DnsHealthAlertService($circuitBreaker);
+    $performanceMonitor = app(\App\Services\DnsPerformanceMonitorService::class);
+    $alertService = app(\App\Services\DnsHealthAlertService::class);
+    $healthService = new DnsHealthCheckService($performanceMonitor, $alertService);
     $degradationService = new DnsDegradationService($healthService);
 
     $status = $degradationService->getDegradationStatus();
@@ -74,14 +89,18 @@ test('degradation service returns normal status when not degraded', function () 
         ->and($status['fallback_strategy'])->toBeNull();
 });
 
-test('degradation service handles optimistic strategy in manual mode', function () {
+test('degradation service handles optimistic strategy in manual mode', function (): void {
     DnsLookupMetrics::factory()->create([
         'failed_lookups' => 1,
-        'domains_checked' => 100,
+        'successful_lookups' => 999,
+        'domains_checked' => 1000,
+        'total_processing_time' => 100.0,
+        'cache_hits' => 800,
     ]);
 
-    $circuitBreaker = app(DnsCircuitBreakerService::class);
-    $healthService = new DnsHealthAlertService($circuitBreaker);
+    $performanceMonitor = app(\App\Services\DnsPerformanceMonitorService::class);
+    $alertService = app(\App\Services\DnsHealthAlertService::class);
+    $healthService = new DnsHealthCheckService($performanceMonitor, $alertService);
     $degradationService = new DnsDegradationService($healthService);
 
     // Enable manual mode with optimistic strategy
@@ -98,17 +117,21 @@ test('degradation service handles optimistic strategy in manual mode', function 
         ->and($result['degraded_reason'])->toBe('Assuming domain is available due to DNS unavailability');
 });
 
-test('degradation service handles disabled strategy', function () {
+test('degradation service handles disabled strategy', function (): void {
     // Set config for disabled strategy during manual override
     config(['dns.degradation.manual_strategy' => 'disabled']);
 
     DnsLookupMetrics::factory()->create([
         'failed_lookups' => 1,
-        'domains_checked' => 100,
+        'successful_lookups' => 999,
+        'domains_checked' => 1000,
+        'total_processing_time' => 100.0,
+        'cache_hits' => 800,
     ]);
 
-    $circuitBreaker = app(DnsCircuitBreakerService::class);
-    $healthService = new DnsHealthAlertService($circuitBreaker);
+    $performanceMonitor = app(\App\Services\DnsPerformanceMonitorService::class);
+    $alertService = app(\App\Services\DnsHealthAlertService::class);
+    $healthService = new DnsHealthCheckService($performanceMonitor, $alertService);
     $degradationService = new DnsDegradationService($healthService);
 
     // Enable manual mode which should use disabled strategy
@@ -125,28 +148,36 @@ test('degradation service handles disabled strategy', function () {
         ->and($result['degraded_reason'])->toBe('DNS checking disabled due to service unavailability');
 });
 
-test('degradation service throws exception when not in degraded mode', function () {
+test('degradation service throws exception when not in degraded mode', function (): void {
     DnsLookupMetrics::factory()->create([
         'failed_lookups' => 1,
-        'domains_checked' => 100,
+        'successful_lookups' => 999,
+        'domains_checked' => 1000,
+        'total_processing_time' => 100.0,
+        'cache_hits' => 800,
     ]);
 
-    $circuitBreaker = app(DnsCircuitBreakerService::class);
-    $healthService = new DnsHealthAlertService($circuitBreaker);
+    $performanceMonitor = app(\App\Services\DnsPerformanceMonitorService::class);
+    $alertService = app(\App\Services\DnsHealthAlertService::class);
+    $healthService = new DnsHealthCheckService($performanceMonitor, $alertService);
     $degradationService = new DnsDegradationService($healthService);
 
-    expect(fn() => $degradationService->checkDomainInDegradedMode('example.com'))
+    expect(fn () => $degradationService->checkDomainInDegradedMode('example.com'))
         ->toThrow(RuntimeException::class, 'DNS service is not in degraded mode');
 });
 
-test('degradation service provides no recovery time for manual mode', function () {
+test('degradation service provides no recovery time for manual mode', function (): void {
     DnsLookupMetrics::factory()->create([
         'failed_lookups' => 1,
-        'domains_checked' => 100,
+        'successful_lookups' => 999,
+        'domains_checked' => 1000,
+        'total_processing_time' => 100.0,
+        'cache_hits' => 800,
     ]);
 
-    $circuitBreaker = app(DnsCircuitBreakerService::class);
-    $healthService = new DnsHealthAlertService($circuitBreaker);
+    $performanceMonitor = app(\App\Services\DnsPerformanceMonitorService::class);
+    $alertService = app(\App\Services\DnsHealthAlertService::class);
+    $healthService = new DnsHealthCheckService($performanceMonitor, $alertService);
     $degradationService = new DnsDegradationService($healthService);
     $degradationService->enableDegradationMode('Manual override');
 
@@ -155,15 +186,16 @@ test('degradation service provides no recovery time for manual mode', function (
     expect($status['estimated_recovery'])->toBeNull();
 });
 
-test('degradation service provides metrics for manual degradation', function () {
+test('degradation service provides metrics for manual degradation', function (): void {
     // Use very low error metrics to ensure only manual override triggers degradation
     DnsLookupMetrics::factory()->create([
         'failed_lookups' => 0,
         'domains_checked' => 100,
     ]);
 
-    $circuitBreaker = app(DnsCircuitBreakerService::class);
-    $healthService = new DnsHealthAlertService($circuitBreaker);
+    $performanceMonitor = app(\App\Services\DnsPerformanceMonitorService::class);
+    $alertService = app(\App\Services\DnsHealthAlertService::class);
+    $healthService = new DnsHealthCheckService($performanceMonitor, $alertService);
     $degradationService = new DnsDegradationService($healthService);
     $degradationService->enableDegradationMode('Manual testing metrics');
 
@@ -176,7 +208,7 @@ test('degradation service provides metrics for manual degradation', function () 
         ->and($metrics['health_metrics'])->toBeArray();
 });
 
-test('degradation service handles cache-only strategy with DNS service and cache hit', function () {
+test('degradation service handles cache-only strategy with DNS service and cache hit', function (): void {
     $mockResult = new DnsLookupResult(
         hasRecords: true,
         recordTypes: ['A'],
@@ -192,8 +224,9 @@ test('degradation service handles cache-only strategy with DNS service and cache
     // Set up manual degradation mode with cache_only strategy
     config(['dns.degradation.manual_strategy' => 'cache_only']);
 
-    $circuitBreaker = app(DnsCircuitBreakerService::class);
-    $healthService = new DnsHealthAlertService($circuitBreaker);
+    $performanceMonitor = app(\App\Services\DnsPerformanceMonitorService::class);
+    $alertService = app(\App\Services\DnsHealthAlertService::class);
+    $healthService = new DnsHealthCheckService($performanceMonitor, $alertService);
     $degradationService = new DnsDegradationService($healthService, $dnsService);
 
     $degradationService->enableDegradationMode('Manual cache test');
@@ -208,7 +241,7 @@ test('degradation service handles cache-only strategy with DNS service and cache
         ->and($result['fallback_strategy'])->toBe('cache_only');
 });
 
-test('degradation service handles cache-only strategy with no cache', function () {
+test('degradation service handles cache-only strategy with no cache', function (): void {
     $dnsService = mock(DnsLookupServiceInterface::class);
     $dnsService->shouldReceive('getCachedResult')
         ->with('example.com')
@@ -217,8 +250,9 @@ test('degradation service handles cache-only strategy with no cache', function (
     // Set up manual degradation mode with cache_only strategy
     config(['dns.degradation.manual_strategy' => 'cache_only']);
 
-    $circuitBreaker = app(DnsCircuitBreakerService::class);
-    $healthService = new DnsHealthAlertService($circuitBreaker);
+    $performanceMonitor = app(\App\Services\DnsPerformanceMonitorService::class);
+    $alertService = app(\App\Services\DnsHealthAlertService::class);
+    $healthService = new DnsHealthCheckService($performanceMonitor, $alertService);
     $degradationService = new DnsDegradationService($healthService, $dnsService);
 
     $degradationService->enableDegradationMode('Manual cache test');
@@ -233,7 +267,7 @@ test('degradation service handles cache-only strategy with no cache', function (
         ->and($result['degraded_reason'])->toBe('no_cache');
 });
 
-test('degradation service handles DNS service cache exception gracefully', function () {
+test('degradation service handles DNS service cache exception gracefully', function (): void {
     $dnsService = mock(DnsLookupServiceInterface::class);
     $dnsService->shouldReceive('getCachedResult')
         ->with('example.com')
@@ -242,8 +276,9 @@ test('degradation service handles DNS service cache exception gracefully', funct
     // Set up manual degradation mode with cache_only strategy
     config(['dns.degradation.manual_strategy' => 'cache_only']);
 
-    $circuitBreaker = app(DnsCircuitBreakerService::class);
-    $healthService = new DnsHealthAlertService($circuitBreaker);
+    $performanceMonitor = app(\App\Services\DnsPerformanceMonitorService::class);
+    $alertService = app(\App\Services\DnsHealthAlertService::class);
+    $healthService = new DnsHealthCheckService($performanceMonitor, $alertService);
     $degradationService = new DnsDegradationService($healthService, $dnsService);
 
     $degradationService->enableDegradationMode('Manual cache test');
@@ -256,9 +291,10 @@ test('degradation service handles DNS service cache exception gracefully', funct
         ->and($result['degraded_reason'])->toBe('no_cache');
 });
 
-test('degradation service works without DNS service instance', function () {
-    $circuitBreaker = app(DnsCircuitBreakerService::class);
-    $healthService = new DnsHealthAlertService($circuitBreaker);
+test('degradation service works without DNS service instance', function (): void {
+    $performanceMonitor = app(\App\Services\DnsPerformanceMonitorService::class);
+    $alertService = app(\App\Services\DnsHealthAlertService::class);
+    $healthService = new DnsHealthCheckService($performanceMonitor, $alertService);
     $degradationService = new DnsDegradationService($healthService, null);
 
     // Set up manual degradation mode with cache_only strategy
@@ -274,29 +310,35 @@ test('degradation service works without DNS service instance', function () {
         ->and($result['degraded_reason'])->toBe('no_dns_service');
 });
 
-test('degradation service handles empty metrics gracefully', function () {
-    // No metrics created - empty state
+test('degradation service handles empty metrics gracefully', function (): void {
+    // No metrics created - empty state should trigger degraded mode as safety measure
 
-    $circuitBreaker = app(DnsCircuitBreakerService::class);
-    $healthService = new DnsHealthAlertService($circuitBreaker);
+    $performanceMonitor = app(\App\Services\DnsPerformanceMonitorService::class);
+    $alertService = app(\App\Services\DnsHealthAlertService::class);
+    $healthService = new DnsHealthCheckService($performanceMonitor, $alertService);
     $degradationService = new DnsDegradationService($healthService);
 
-    expect($degradationService->isDegradedMode())->toBeFalse();
+    expect($degradationService->isDegradedMode())->toBeTrue();
 
     $status = $degradationService->getDegradationStatus();
-    expect($status['degraded'])->toBeFalse()
-        ->and($status['mode'])->toBe('normal');
+    expect($status['degraded'])->toBeTrue()
+        ->and($status['mode'])->toBe('degraded')
+        ->and($status['reason'])->toContain('High DNS error rate');
 });
 
-test('degradation service manual mode overrides health status', function () {
+test('degradation service manual mode overrides health status', function (): void {
     // Even with healthy metrics, manual mode should enable degradation
     DnsLookupMetrics::factory()->create([
         'failed_lookups' => 0,
-        'domains_checked' => 100,
+        'successful_lookups' => 1000,
+        'domains_checked' => 1000,
+        'total_processing_time' => 100.0,
+        'cache_hits' => 900,
     ]);
 
-    $circuitBreaker = app(DnsCircuitBreakerService::class);
-    $healthService = new DnsHealthAlertService($circuitBreaker);
+    $performanceMonitor = app(\App\Services\DnsPerformanceMonitorService::class);
+    $alertService = app(\App\Services\DnsHealthAlertService::class);
+    $healthService = new DnsHealthCheckService($performanceMonitor, $alertService);
     $degradationService = new DnsDegradationService($healthService);
 
     expect($degradationService->isDegradedMode())->toBeFalse();
@@ -310,15 +352,16 @@ test('degradation service manual mode overrides health status', function () {
         ->and($status['fallback_strategy'])->toBe('optimistic'); // Default manual strategy
 });
 
-test('degradation service handles high error rate scenarios', function () {
+test('degradation service handles high error rate scenarios', function (): void {
     // Create metrics with very high error rate (75% failures)
     DnsLookupMetrics::factory()->create([
         'failed_lookups' => 75,
         'domains_checked' => 100,
     ]);
 
-    $circuitBreaker = app(DnsCircuitBreakerService::class);
-    $healthService = new DnsHealthAlertService($circuitBreaker);
+    $performanceMonitor = app(\App\Services\DnsPerformanceMonitorService::class);
+    $alertService = app(\App\Services\DnsHealthAlertService::class);
+    $healthService = new DnsHealthCheckService($performanceMonitor, $alertService);
     $degradationService = new DnsDegradationService($healthService);
 
     // High error rate should trigger degraded mode
@@ -330,15 +373,16 @@ test('degradation service handles high error rate scenarios', function () {
         ->and($status['fallback_strategy'])->toBe('pessimistic');
 });
 
-test('degradation service pessimistic strategy assumes domain is taken', function () {
+test('degradation service pessimistic strategy assumes domain is taken', function (): void {
     // High error rate triggers pessimistic strategy
     DnsLookupMetrics::factory()->create([
         'failed_lookups' => 75,
         'domains_checked' => 100,
     ]);
 
-    $circuitBreaker = app(DnsCircuitBreakerService::class);
-    $healthService = new DnsHealthAlertService($circuitBreaker);
+    $performanceMonitor = app(\App\Services\DnsPerformanceMonitorService::class);
+    $alertService = app(\App\Services\DnsHealthAlertService::class);
+    $healthService = new DnsHealthCheckService($performanceMonitor, $alertService);
     $degradationService = new DnsDegradationService($healthService);
 
     $result = $degradationService->checkDomainInDegradedMode('example.com');

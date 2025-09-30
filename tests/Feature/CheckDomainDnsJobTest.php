@@ -3,20 +3,26 @@
 declare(strict_types=1);
 
 use App\Contracts\DnsLookupServiceInterface;
+use App\Contracts\DnsPerformanceMonitorInterface;
+use App\DTOs\DnsLookupResult;
 use App\Jobs\CheckDomainDnsJob;
 use App\Models\NameSuggestion;
-use App\DTOs\DnsLookupResult;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Clean up any existing data before each test
     NameSuggestion::query()->delete();
+
+    // Create shared mock performance monitor
+    $this->mockPerformanceMonitor = $this->mock(DnsPerformanceMonitorInterface::class);
+    $this->mockPerformanceMonitor->shouldReceive('startBatch')->andReturn('test-batch-id')->byDefault();
+    $this->mockPerformanceMonitor->shouldReceive('completeBatch')->andReturn(null)->byDefault();
 });
 
-test('dns job can process single domain suggestion', function () {
+test('dns job can process single domain suggestion', function (): void {
     // Create a name suggestion without DNS data
     $suggestion = NameSuggestion::factory()->create([
         'name' => 'example.com',
@@ -34,7 +40,7 @@ test('dns job can process single domain suggestion', function () {
 
     // Create and process the job
     $job = new CheckDomainDnsJob($suggestion->id);
-    $job->handle($mockDnsService);
+    $job->handle($mockDnsService, $this->mockPerformanceMonitor);
 
     // Verify the suggestion was updated
     $suggestion->refresh();
@@ -43,7 +49,7 @@ test('dns job can process single domain suggestion', function () {
         ->and($suggestion->dns_checked_at)->not->toBeNull();
 });
 
-test('dns job handles domain with existing records', function () {
+test('dns job handles domain with existing records', function (): void {
     $suggestion = NameSuggestion::factory()->create([
         'name' => 'taken.com',
         'dns_checked' => false,
@@ -56,7 +62,7 @@ test('dns job handles domain with existing records', function () {
         ->once();
 
     $job = new CheckDomainDnsJob($suggestion->id);
-    $job->handle($mockDnsService);
+    $job->handle($mockDnsService, $this->mockPerformanceMonitor);
 
     $suggestion->refresh();
     expect($suggestion->dns_checked)->toBeTrue()
@@ -64,7 +70,7 @@ test('dns job handles domain with existing records', function () {
         ->and($suggestion->dns_checked_at)->not->toBeNull();
 });
 
-test('dns job handles DNS lookup errors gracefully', function () {
+test('dns job handles DNS lookup errors gracefully', function (): void {
     $suggestion = NameSuggestion::factory()->create([
         'name' => 'error.com',
         'dns_checked' => false,
@@ -77,7 +83,7 @@ test('dns job handles DNS lookup errors gracefully', function () {
         ->once();
 
     $job = new CheckDomainDnsJob($suggestion->id);
-    $job->handle($mockDnsService);
+    $job->handle($mockDnsService, $this->mockPerformanceMonitor);
 
     $suggestion->refresh();
     expect($suggestion->dns_checked)->toBeTrue()
@@ -85,29 +91,27 @@ test('dns job handles DNS lookup errors gracefully', function () {
         ->and($suggestion->dns_checked_at)->not->toBeNull();
 });
 
-test('dns job handles missing suggestion gracefully', function () {
+test('dns job handles missing suggestion gracefully', function (): void {
     $mockDnsService = $this->mock(DnsLookupServiceInterface::class);
     $mockDnsService->shouldNotReceive('checkDomain');
 
     $job = new CheckDomainDnsJob(99999); // Non-existent ID
 
     // Job should complete without error even if suggestion doesn't exist
-    expect(fn() => $job->handle($mockDnsService))->not->toThrow(Exception::class);
+    expect(fn () => $job->handle($mockDnsService))->not->toThrow(Exception::class);
 });
 
-test('dns job is queued correctly', function () {
+test('dns job is queued correctly', function (): void {
     Queue::fake();
 
     $suggestion = NameSuggestion::factory()->create();
 
     CheckDomainDnsJob::dispatch($suggestion->id);
 
-    Queue::assertPushed(CheckDomainDnsJob::class, function ($job) use ($suggestion) {
-        return $job->suggestionId === $suggestion->id;
-    });
+    Queue::assertPushed(CheckDomainDnsJob::class, fn ($job) => $job->suggestionId === $suggestion->id);
 });
 
-test('dns job can be retried on failure', function () {
+test('dns job can be retried on failure', function (): void {
     $suggestion = NameSuggestion::factory()->create([
         'name' => 'retry.com',
         'dns_checked' => false,
@@ -120,10 +124,10 @@ test('dns job can be retried on failure', function () {
     $job = new CheckDomainDnsJob($suggestion->id);
 
     // Job should throw exception for retry mechanism
-    expect(fn() => $job->handle($mockDnsService))->toThrow(Exception::class);
+    expect(fn () => $job->handle($mockDnsService, $this->mockPerformanceMonitor))->toThrow(Exception::class);
 });
 
-test('dns job updates suggestion with cached result', function () {
+test('dns job updates suggestion with cached result', function (): void {
     $suggestion = NameSuggestion::factory()->create([
         'name' => 'cached.com',
         'dns_checked' => false,
@@ -143,7 +147,7 @@ test('dns job updates suggestion with cached result', function () {
         ->once();
 
     $job = new CheckDomainDnsJob($suggestion->id);
-    $job->handle($mockDnsService);
+    $job->handle($mockDnsService, $this->mockPerformanceMonitor);
 
     $suggestion->refresh();
     expect($suggestion->dns_checked)->toBeTrue()
@@ -151,7 +155,7 @@ test('dns job updates suggestion with cached result', function () {
         ->and($suggestion->dns_checked_at)->not->toBeNull();
 });
 
-test('dns job skips already processed suggestions', function () {
+test('dns job skips already processed suggestions', function (): void {
     $suggestion = NameSuggestion::factory()->create([
         'name' => 'processed.com',
         'dns_checked' => true,
@@ -163,7 +167,7 @@ test('dns job skips already processed suggestions', function () {
     $mockDnsService->shouldNotReceive('checkDomain');
 
     $job = new CheckDomainDnsJob($suggestion->id);
-    $job->handle($mockDnsService);
+    $job->handle($mockDnsService, $this->mockPerformanceMonitor);
 
     // Suggestion should remain unchanged
     $originalCheckedAt = $suggestion->dns_checked_at;
@@ -171,7 +175,7 @@ test('dns job skips already processed suggestions', function () {
     expect($suggestion->dns_checked_at->equalTo($originalCheckedAt))->toBeTrue();
 });
 
-test('dns job handles invalid domain names', function () {
+test('dns job handles invalid domain names', function (): void {
     $suggestion = NameSuggestion::factory()->create([
         'name' => 'invalid..domain',
         'dns_checked' => false,
@@ -184,7 +188,7 @@ test('dns job handles invalid domain names', function () {
         ->once();
 
     $job = new CheckDomainDnsJob($suggestion->id);
-    $job->handle($mockDnsService);
+    $job->handle($mockDnsService, $this->mockPerformanceMonitor);
 
     $suggestion->refresh();
     expect($suggestion->dns_checked)->toBeTrue()
@@ -192,7 +196,7 @@ test('dns job handles invalid domain names', function () {
         ->and($suggestion->dns_checked_at)->not->toBeNull();
 });
 
-test('dns job tracks processing time and metrics', function () {
+test('dns job tracks processing time and metrics', function (): void {
     $suggestion = NameSuggestion::factory()->create([
         'name' => 'metrics.com',
         'dns_checked' => false,
@@ -207,7 +211,7 @@ test('dns job tracks processing time and metrics', function () {
     $startTime = now();
 
     $job = new CheckDomainDnsJob($suggestion->id);
-    $job->handle($mockDnsService);
+    $job->handle($mockDnsService, $this->mockPerformanceMonitor);
 
     $suggestion->refresh();
     expect($suggestion->dns_checked_at)->not->toBeNull()

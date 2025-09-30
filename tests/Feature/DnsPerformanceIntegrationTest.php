@@ -3,9 +3,6 @@
 declare(strict_types=1);
 
 use App\Models\DnsLookupMetrics;
-use App\Models\NameSuggestion;
-use App\Models\Project;
-use App\Models\User;
 use App\Services\DnsPerformanceMonitorService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -13,7 +10,7 @@ uses(RefreshDatabase::class);
 
 describe('DNS Performance Integration', function (): void {
     it('can create and complete performance monitoring batch', function (): void {
-        $monitor = new DnsPerformanceMonitorService();
+        $monitor = new DnsPerformanceMonitorService;
 
         // Start a batch
         $batchId = $monitor->startBatch('test-batch');
@@ -45,7 +42,7 @@ describe('DNS Performance Integration', function (): void {
     });
 
     it('can get aggregated performance statistics', function (): void {
-        $monitor = new DnsPerformanceMonitorService();
+        $monitor = new DnsPerformanceMonitorService;
 
         // Create multiple batches
         for ($i = 0; $i < 3; $i++) {
@@ -68,7 +65,7 @@ describe('DNS Performance Integration', function (): void {
     });
 
     it('can check performance thresholds', function (): void {
-        $monitor = new DnsPerformanceMonitorService();
+        $monitor = new DnsPerformanceMonitorService;
 
         // Create a batch with good performance
         $batchId = $monitor->startBatch('good-performance');
@@ -83,7 +80,7 @@ describe('DNS Performance Integration', function (): void {
     });
 
     it('detects performance threshold violations', function (): void {
-        $monitor = new DnsPerformanceMonitorService();
+        $monitor = new DnsPerformanceMonitorService;
 
         // Create a batch with poor performance
         $batchId = $monitor->startBatch('poor-performance');
@@ -103,7 +100,7 @@ describe('DNS Performance Integration', function (): void {
     });
 
     it('handles empty metrics gracefully', function (): void {
-        $monitor = new DnsPerformanceMonitorService();
+        $monitor = new DnsPerformanceMonitorService;
 
         // Get stats when no metrics exist
         $stats = $monitor->getAggregatedStats(10);

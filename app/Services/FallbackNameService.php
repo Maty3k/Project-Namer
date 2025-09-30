@@ -11,17 +11,17 @@ namespace App\Services;
 class FallbackNameService
 {
     private const PREFIXES = [
-        'creative' => ['Smart', 'Bright', 'Fresh', 'Quick', 'Bold', 'Pure', 'Swift', 'Sharp', 'Clear', 'Wise'],
-        'professional' => ['Prime', 'Elite', 'Core', 'Pro', 'Summit', 'Peak', 'Alpha', 'Omega', 'Strategic', 'Vision'],
-        'brandable' => ['Zeph', 'Axio', 'Lumi', 'Velo', 'Koda', 'Nyx', 'Orb', 'Link', 'Loop', 'Grid'],
-        'tech-focused' => ['Byte', 'Code', 'Data', 'Logic', 'Binary', 'Neural', 'Quantum', 'Digital', 'Cyber', 'Tech'],
+        'creative' => ['Spark', 'Bright', 'Echo', 'Flow', 'Wild', 'Bold', 'Nova', 'Zen', 'Arc', 'Flux', 'Edge', 'Glow', 'Rise', 'Bloom', 'Wave'],
+        'professional' => ['Prime', 'Atlas', 'Meridian', 'Sterling', 'Pinnacle', 'Vertex', 'Apex', 'Compass', 'Cardinal', 'Cornerstone', 'Foundation', 'Keystone'],
+        'brandable' => ['Zeno', 'Axiom', 'Nexus', 'Vibe', 'Flux', 'Echo', 'Sync', 'Pulse', 'Shift', 'Spark', 'Orbit', 'Link', 'Mint', 'Dash', 'Edge'],
+        'tech-focused' => ['Code', 'Pixel', 'Logic', 'Neural', 'Quantum', 'Vector', 'Matrix', 'Cyber', 'Binary', 'Forge', 'Stack', 'Node', 'Hash', 'Sync'],
     ];
 
     private const SUFFIXES = [
-        'creative' => ['Studio', 'Lab', 'Works', 'Forge', 'Craft', 'House', 'Space', 'Hub', 'Zone', 'Base'],
-        'professional' => ['Solutions', 'Consulting', 'Partners', 'Group', 'Associates', 'Corp', 'Ventures', 'Capital', 'Holdings', 'Systems'],
-        'brandable' => ['ly', 'fy', 'io', 'co', 'go', 'me', 'up', 'it', 'ai', 'x'],
-        'tech-focused' => ['Tech', 'Labs', 'Systems', 'Logic', 'Core', 'Net', 'Web', 'Cloud', 'Apps', 'Dev'],
+        'creative' => ['Studio', 'Works', 'House', 'Collective', 'Atelier', 'Workshop', 'Gallery', 'Haven', 'Nest', 'Space'],
+        'professional' => ['Group', 'Partners', 'Associates', 'Consulting', 'Advisory', 'Capital', 'Ventures', 'Holdings', 'Corporation', 'Enterprises'],
+        'brandable' => ['ly', 'fy', 'io', 'co', 'go', 'me', 'up', 'it', 'ai', 'ex', 'ix', 'ox', 'us', 'em', 'en'],
+        'tech-focused' => ['Labs', 'Core', 'Hub', 'Cloud', 'Stack', 'Forge', 'Works', 'Engine', 'Platform', 'Network'],
     ];
 
     private const CONNECTORS = ['', '-', '.', ''];
@@ -60,26 +60,42 @@ class FallbackNameService
      */
     private function generateName(array $prefixes, array $suffixes, array $keywords, string $mode): string
     {
-        $patterns = [
+        $patterns = [];
+
+        // If we have keywords, use them more frequently
+        if (! empty($keywords)) {
+            $patterns = [
+                // Pure keyword
+                fn () => ucfirst($keywords[array_rand($keywords)]),
+
+                // Keyword + Suffix
+                fn () => ucfirst($keywords[array_rand($keywords)]).$suffixes[array_rand($suffixes)],
+
+                // Prefix + Keyword
+                fn () => $prefixes[array_rand($prefixes)].ucfirst($keywords[array_rand($keywords)]),
+
+                // Modified keyword
+                fn () => $this->modifyKeyword($keywords[array_rand($keywords)], $mode),
+
+                // Keyword combinations
+                fn () => count($keywords) > 1 ? ucfirst($keywords[0]).ucfirst($keywords[1]) : ucfirst($keywords[0]).$suffixes[array_rand($suffixes)],
+            ];
+        }
+
+        // Add generic patterns as backup
+        $patterns = array_merge($patterns, [
             // Prefix + Suffix
             fn () => $prefixes[array_rand($prefixes)].$suffixes[array_rand($suffixes)],
 
-            // Keyword + Suffix
-            fn () => (! empty($keywords) ? ucfirst((string) $keywords[array_rand($keywords)]) : $prefixes[array_rand($prefixes)]).$suffixes[array_rand($suffixes)],
-
-            // Prefix + Keyword
-            fn () => $prefixes[array_rand($prefixes)].(! empty($keywords) ? ucfirst((string) $keywords[array_rand($keywords)]) : $suffixes[array_rand($suffixes)]),
-
             // Compound words
             fn () => $prefixes[array_rand($prefixes)].self::CONNECTORS[array_rand(self::CONNECTORS)].$prefixes[array_rand($prefixes)],
-
-            // Modified keywords
-            fn () => ! empty($keywords) ? $this->modifyKeyword($keywords[array_rand($keywords)], $mode) : $prefixes[array_rand($prefixes)].$suffixes[array_rand($suffixes)],
-        ];
+        ]);
 
         $pattern = $patterns[array_rand($patterns)];
+        $result = $pattern();
 
-        return $pattern();
+        // Ensure reasonable length
+        return strlen($result) > 20 ? substr($result, 0, 15) : $result;
     }
 
     /**
@@ -89,15 +105,21 @@ class FallbackNameService
      */
     private function extractKeywords(string $idea): array
     {
-        // Remove common words
-        $stopWords = ['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'can'];
+        // Remove common words and business jargon
+        $stopWords = ['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'can', 'service', 'services', 'company', 'business', 'platform', 'application', 'app', 'website', 'system', 'solution', 'tool', 'software'];
 
+        // Clean and split the input
+        $cleanIdea = preg_replace('/[^a-zA-Z\s]/', ' ', $idea);
         $words = array_filter(
-            array_map('trim', explode(' ', strtolower($idea))),
+            array_map('trim', explode(' ', strtolower((string) $cleanIdea))),
             fn ($word) => strlen($word) > 2 && ! in_array($word, $stopWords) && ! is_numeric($word)
         );
 
-        return array_values($words);
+        // Prioritize longer, more meaningful words
+        $keywords = array_values($words);
+        usort($keywords, fn ($a, $b) => strlen($b) - strlen($a));
+
+        return array_slice($keywords, 0, 3); // Take top 3 most meaningful keywords
     }
 
     /**

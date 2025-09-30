@@ -66,9 +66,12 @@ describe('DNS Metrics Dashboard', function (): void {
     });
 
     it('can optimize cache', function (): void {
-        // Create some test cache data
-        DnsLookupCache::factory()->count(3)->create(['expires_at' => now()->subHour()]);
-        DnsLookupCache::factory()->count(2)->create(['expires_at' => now()->addHour()]);
+        // Create some test cache data with unique domain/TLD combinations
+        DnsLookupCache::factory()->forDomain('expired1', 'com')->create(['expires_at' => now()->subHour()]);
+        DnsLookupCache::factory()->forDomain('expired2', 'io')->create(['expires_at' => now()->subHour()]);
+        DnsLookupCache::factory()->forDomain('expired3', 'org')->create(['expires_at' => now()->subHour()]);
+        DnsLookupCache::factory()->forDomain('valid1', 'net')->create(['expires_at' => now()->addHour()]);
+        DnsLookupCache::factory()->forDomain('valid2', 'co')->create(['expires_at' => now()->addHour()]);
 
         Livewire::test(DnsMetricsDashboard::class)
             ->call('optimizeCache')
@@ -106,7 +109,7 @@ describe('DNS Metrics Dashboard', function (): void {
         DnsLookupMetrics::factory()->create([
             'cache_hits' => 10,
             'domains_checked' => 100,
-            'created_at' => now()->subHour()
+            'created_at' => now()->subHour(),
         ]);
 
         Livewire::test(DnsMetricsDashboard::class)
@@ -147,13 +150,13 @@ describe('DNS Metrics Dashboard', function (): void {
         DnsLookupMetrics::factory()->create([
             'cache_hits' => 80,
             'domains_checked' => 100,
-            'created_at' => now()->subDays(2)
+            'created_at' => now()->subDays(2),
         ]);
 
         DnsLookupMetrics::factory()->create([
             'cache_hits' => 90,
             'domains_checked' => 120,
-            'created_at' => now()->subDay()
+            'created_at' => now()->subDay(),
         ]);
 
         Livewire::test(DnsMetricsDashboard::class)
@@ -167,12 +170,12 @@ describe('DNS Metrics Dashboard', function (): void {
     it('shows top TLDs when cache data exists', function (): void {
         DnsLookupCache::factory()->count(5)->create([
             'tld' => 'com',
-            'expires_at' => now()->addHour()
+            'expires_at' => now()->addHour(),
         ]);
 
         DnsLookupCache::factory()->count(3)->create([
             'tld' => 'io',
-            'expires_at' => now()->addHour()
+            'expires_at' => now()->addHour(),
         ]);
 
         Livewire::test(DnsMetricsDashboard::class)

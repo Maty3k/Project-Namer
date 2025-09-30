@@ -47,15 +47,21 @@ final readonly class OpenAINameService
         $cachedResult = GenerationCache::findByHash($inputHash);
 
         if ($cachedResult !== null) {
-            return $cachedResult->generated_names;
+            $generatedNames = $cachedResult->generated_names;
+            if (is_array($generatedNames)) {
+                // Filter to ensure we only return strings
+                return array_values(array_filter($generatedNames, 'is_string'));
+            }
+
+            return [];
         }
 
-        $systemPrompt = $this->promptBuilder->buildSystemPrompt('gpt-5-mini', 10, $mode, $deepThinking);
-        $userPrompt = $this->promptBuilder->buildUserPrompt($businessIdea, 'gpt-5-mini', $mode, $deepThinking);
+        $systemPrompt = $this->promptBuilder->buildSystemPrompt('gpt-4o-mini', 10, $mode, $deepThinking);
+        $userPrompt = $this->promptBuilder->buildUserPrompt($businessIdea, 'gpt-4o-mini', $mode, $deepThinking);
 
         try {
             $response = Prism::text()
-                ->using('openai', 'gpt-5-mini')
+                ->using('openai', 'gpt-4o-mini')
                 ->withMessages([
                     new SystemMessage($systemPrompt),
                     new UserMessage($userPrompt),
@@ -63,6 +69,7 @@ final readonly class OpenAINameService
                 ->withClientOptions([
                     'max_tokens' => 200,
                     'temperature' => $deepThinking ? 0.3 : 0.7,
+                    'timeout' => 15, // 15 second timeout for OpenAI API
                 ])
                 ->asText();
 
@@ -134,7 +141,9 @@ final readonly class OpenAINameService
      */
     public function clearExpiredCache(): int
     {
-        return GenerationCache::expired()->delete();
+        $deleted = GenerationCache::expired()->delete();
+
+        return is_int($deleted) ? $deleted : 0;
     }
 
     /**

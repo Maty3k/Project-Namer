@@ -27,15 +27,22 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int|null $ai_cost_cents
  * @property string|null $ai_generation_session_id
  * @property array<array-key, mixed>|null $ai_prompt_metadata
+ * @property bool $dns_checked
+ * @property bool|null $dns_has_records
+ * @property \Illuminate\Support\Carbon|null $dns_checked_at
  * @property-read \App\Models\Project $project
  *
  * @method static Builder<static>|NameSuggestion aiGenerated()
+ * @method static Builder<static>|NameSuggestion availableDns()
  * @method static Builder<static>|NameSuggestion byAiModel(string $modelName)
+ * @method static Builder<static>|NameSuggestion dnsChecked()
  * @method static \Database\Factories\NameSuggestionFactory factory($count = null, $state = [])
  * @method static Builder<static>|NameSuggestion hidden()
  * @method static Builder<static>|NameSuggestion newModelQuery()
  * @method static Builder<static>|NameSuggestion newQuery()
+ * @method static Builder<static>|NameSuggestion pendingDnsCheck()
  * @method static Builder<static>|NameSuggestion query()
+ * @method static Builder<static>|NameSuggestion takenDns()
  * @method static Builder<static>|NameSuggestion visible()
  * @method static Builder<static>|NameSuggestion whereAiCostCents($value)
  * @method static Builder<static>|NameSuggestion whereAiDeepThinking($value)
@@ -46,6 +53,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|NameSuggestion whereAiResponseTimeMs($value)
  * @method static Builder<static>|NameSuggestion whereAiTokensUsed($value)
  * @method static Builder<static>|NameSuggestion whereCreatedAt($value)
+ * @method static Builder<static>|NameSuggestion whereDnsChecked($value)
+ * @method static Builder<static>|NameSuggestion whereDnsCheckedAt($value)
+ * @method static Builder<static>|NameSuggestion whereDnsHasRecords($value)
  * @method static Builder<static>|NameSuggestion whereDomains($value)
  * @method static Builder<static>|NameSuggestion whereGenerationMetadata($value)
  * @method static Builder<static>|NameSuggestion whereId($value)
@@ -161,7 +171,7 @@ final class NameSuggestion extends Model
     protected function scopeAvailableDns(Builder $query): Builder
     {
         return $query->where('dns_checked', true)
-                    ->where('dns_has_records', false);
+            ->where('dns_has_records', false);
     }
 
     /**
@@ -173,7 +183,7 @@ final class NameSuggestion extends Model
     protected function scopeTakenDns(Builder $query): Builder
     {
         return $query->where('dns_checked', true)
-                    ->where('dns_has_records', true);
+            ->where('dns_has_records', true);
     }
 
     /**

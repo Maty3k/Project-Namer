@@ -186,6 +186,8 @@ class NameResultCard extends Component
 
     /**
      * Handle DNS check in progress event.
+     *
+     * @param  array<string, mixed>  $data
      */
     #[On('dns-check-in-progress')]
     public function handleDnsCheckInProgress(array $data): void
@@ -199,6 +201,8 @@ class NameResultCard extends Component
 
     /**
      * Handle suggestion DNS update event.
+     *
+     * @param  array<string, mixed>  $data
      */
     #[On('suggestion-dns-updated')]
     public function handleSuggestionDnsUpdated(array $data): void
@@ -213,6 +217,8 @@ class NameResultCard extends Component
 
     /**
      * Handle DNS check error event.
+     *
+     * @param  array<string, mixed>  $data
      */
     #[On('dns-check-error')]
     public function handleDnsCheckError(array $data): void
@@ -290,6 +296,8 @@ class NameResultCard extends Component
 
     /**
      * Get DNS status information.
+     *
+     * @return array<string, mixed>
      */
     public function getDnsStatusProperty(): array
     {
@@ -310,6 +318,7 @@ class NameResultCard extends Component
                 if (is_string($key) && ! is_numeric($key)) {
                     return ($domainData['available'] ?? null) === true;
                 }
+
                 return ($domainData['available'] ?? null) === true;
             })
             ->count();

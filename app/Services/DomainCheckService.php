@@ -21,7 +21,7 @@ use InvalidArgumentException;
  * Provides functionality to check domain availability across multiple TLDs
  * with caching support and error handling.
  */
-final class DomainCheckService
+final readonly class DomainCheckService
 {
     private const SUPPORTED_TLDS = ['com', 'net', 'org', 'io', 'co', 'app', 'dev', 'ai', 'tech', 'studio'];
 
@@ -30,8 +30,8 @@ final class DomainCheckService
     private const CACHE_HOURS = 24;
 
     public function __construct(
-        private readonly ?DnsLookupServiceInterface $dnsService = null,
-        private readonly ?DnsDegradationService $degradationService = null
+        private ?DnsLookupServiceInterface $dnsService = null,
+        private ?DnsDegradationService $degradationService = null
     ) {}
 
     /**
@@ -62,7 +62,8 @@ final class DomainCheckService
             $result = $this->checkDomainViaAPI($domain);
 
             // Cache the result
-            $this->cacheResult($domain, $result['available']);
+            $available = is_bool($result['available']) ? $result['available'] : false;
+            $this->cacheResult($domain, $available);
 
             return array_merge($result, ['cached' => false]);
         } catch (Exception $e) {
@@ -124,7 +125,9 @@ final class DomainCheckService
     {
         $cutoff = now()->subHours(self::CACHE_HOURS);
 
-        return DomainCache::where('checked_at', '<', $cutoff)->delete();
+        $deleted = DomainCache::where('checked_at', '<', $cutoff)->delete();
+
+        return is_int($deleted) ? $deleted : 0;
     }
 
     /**
@@ -245,7 +248,7 @@ final class DomainCheckService
 
             try {
                 $this->validateDomain($domain);
-            } catch (InvalidArgumentException $e) {
+            } catch (InvalidArgumentException) {
                 continue; // Skip invalid domains
             }
 
@@ -422,10 +425,16 @@ final class DomainCheckService
 
             if (! $response->successful()) {
                 $error = $response->json('error', 'Domain API request failed');
-                throw new Exception($error);
+                $errorMessage = is_string($error) ? $error : 'Domain API request failed';
+                throw new Exception($errorMessage);
             }
 
             $data = $response->json();
+
+            // Validate response data is array
+            if (! is_array($data)) {
+                throw new Exception('Invalid response format from domain API');
+            }
 
             // Check for expected response format
             if (! isset($data['available']) && ! isset($data['domains'])) {
@@ -433,7 +442,7 @@ final class DomainCheckService
                 return $this->checkViaWhoisAPI($domain);
             }
 
-            $available = $data['available'] ?? false;
+            $available = is_bool($data['available']) ? $data['available'] : false;
 
             return [
                 'domain' => $domain,
@@ -464,6 +473,11 @@ final class DomainCheckService
             }
 
             $data = $response->json();
+
+            // Validate response data is array
+            if (! is_array($data)) {
+                throw new Exception('Invalid response format from domain API');
+            }
 
             if (! isset($data['available'])) {
                 throw new Exception('Invalid response format from domain API');

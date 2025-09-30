@@ -75,7 +75,7 @@ describe('DNS Service Failure Scenarios', function (): void {
             $result = $dnsService->checkDomain($domain);
 
             expect($result->error)->not->toBeNull()
-                ->and(str_contains($result->error, 'Invalid domain format'))->toBeTrue()
+                ->and(str_contains((string) $result->error, 'Invalid domain format'))->toBeTrue()
                 ->and($result->hasRecords)->toBeFalse();
         }
     });
@@ -108,7 +108,7 @@ describe('DNS Service Failure Scenarios', function (): void {
         // Next request should be rejected by circuit breaker
         $result = $circuitBreakerService->checkDomain('rejected.com');
         expect($result->error)->not->toBeNull()
-            ->and(str_contains($result->error, 'temporarily unavailable'))->toBeTrue();
+            ->and(str_contains((string) $result->error, 'temporarily unavailable'))->toBeTrue();
     });
 
     it('handles DNS server returning malformed responses', function (): void {
@@ -143,7 +143,7 @@ describe('DNS Service Failure Scenarios', function (): void {
 
         // Create a name suggestion
         $suggestion = NameSuggestion::factory()->create([
-            'domains' => [['domain' => 'test', 'tld' => 'com', 'available' => null]]
+            'domains' => [['domain' => 'test', 'tld' => 'com', 'available' => null]],
         ]);
 
         // Dispatch the job - this tests job queuing functionality
@@ -187,7 +187,7 @@ describe('DNS Service Failure Scenarios', function (): void {
         // Mock a resolver to avoid actual DNS calls
         $mockResolver = mock(DnsResolverInterface::class);
         $mockResolver->shouldReceive('query')
-            ->andReturn((object)['answer' => []]);
+            ->andReturn((object) ['answer' => []]);
 
         $dnsService = new DnsLookupService($mockResolver);
 
@@ -228,10 +228,11 @@ describe('DNS Service Failure Scenarios', function (): void {
         $mockResolver->shouldReceive('query')
             ->andReturnUsing(function () {
                 // Randomly fail some requests
-                if (rand(1, 3) === 1) {
+                if (random_int(1, 3) === 1) {
                     throw new \Exception('Random failure');
                 }
-                return (object)['answer' => []];
+
+                return (object) ['answer' => []];
             });
 
         $dnsService = new DnsLookupService($mockResolver);

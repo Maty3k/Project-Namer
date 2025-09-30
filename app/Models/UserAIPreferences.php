@@ -114,7 +114,7 @@ final class UserAIPreferences extends Model
         return self::firstOrCreate(
             ['user_id' => $userId],
             [
-                'preferred_models' => ['gpt-4', 'claude-3.5-sonnet'],
+                'preferred_models' => [],
                 'default_generation_mode' => 'creative',
                 'default_deep_thinking' => false,
                 'model_priorities' => [
@@ -128,7 +128,7 @@ final class UserAIPreferences extends Model
                     'email_on_completion' => false,
                     'email_on_failure' => true,
                 ],
-                'auto_select_best_model' => true,
+                'auto_select_best_model' => false,
                 'enable_model_comparison' => true,
                 'max_concurrent_generations' => 3,
             ]

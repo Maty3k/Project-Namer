@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
-use App\Jobs\CheckDomainDnsJob;
 use App\Models\GenerationSession;
 use App\Models\NameSuggestion;
 use App\Services\AI\CachingService;

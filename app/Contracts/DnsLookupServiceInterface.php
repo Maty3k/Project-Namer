@@ -10,6 +10,10 @@ interface DnsLookupServiceInterface
 {
     public function checkDomain(string $fullDomain): DnsLookupResult;
 
+    /**
+     * @param  array<string>  $domains
+     * @return array<string, DnsLookupResult>
+     */
     public function checkBatch(array $domains): array;
 
     public function getCachedResult(string $fullDomain): ?DnsLookupResult;

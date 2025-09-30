@@ -8,7 +8,6 @@ use App\Models\AIGeneration;
 use App\Models\NameSuggestion;
 use App\Models\Project;
 use App\Models\User;
-use App\Services\AIGenerationService;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Livewire;
 
@@ -24,14 +23,12 @@ beforeEach(function (): void {
 
 describe('Parallel Model Execution', function (): void {
     test('AI generation service can execute multiple models in parallel', function (): void {
-        $mockService = $this->mock(AIGenerationService::class);
-        $mockService->shouldReceive('generateWithModels')
-            ->once()
-            ->andReturn([
-                'gpt-4' => ['ParallelTech', 'SyncFlow', 'MultiCore'],
-                'claude-3.5-sonnet' => ['ConcurrentWorks', 'AsyncLogic', 'ParallelStream'],
-                'gemini-1.5-pro' => ['ThreadedSoft', 'BatchProcess', 'QueuedTasks'],
-            ]);
+        // Mock Prism responses for different models
+        \Prism\Prism\Prism::fake([
+            \Prism\Prism\Testing\TextResponseFake::make()->withText("1. ParallelTech\n2. SyncFlow\n3. MultiCore"),
+            \Prism\Prism\Testing\TextResponseFake::make()->withText("1. ConcurrentWorks\n2. AsyncLogic\n3. ParallelStream"),
+            \Prism\Prism\Testing\TextResponseFake::make()->withText("1. ThreadedSoft\n2. BatchProcess\n3. QueuedTasks"),
+        ]);
 
         $aiGeneration = AIGeneration::factory()->create([
             'user_id' => $this->user->id,
@@ -39,18 +36,19 @@ describe('Parallel Model Execution', function (): void {
             'models_requested' => ['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro'],
         ]);
 
-        $results = $mockService->generateWithModels(
-            $aiGeneration,
+        $service = app(\App\Services\AIGenerationService::class);
+        $results = $service->generateNamesParallel(
+            'parallel processing software',
             ['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro'],
-            'Generate business names for parallel processing software',
-            ['mode' => 'tech-focused']
+            'tech-focused'
         );
 
         expect($results)->toBeArray();
-        expect($results)->toHaveKeys(['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro']);
-        expect($results['gpt-4'])->toHaveCount(3);
-        expect($results['claude-3.5-sonnet'])->toHaveCount(3);
-        expect($results['gemini-1.5-pro'])->toHaveCount(3);
+        expect($results)->toHaveKey('results');
+        expect($results['results'])->toHaveKeys(['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro']);
+        expect($results['results']['gpt-4']['names'])->toContain('ParallelTech', 'SyncFlow', 'MultiCore');
+        expect($results['results']['claude-3.5-sonnet']['names'])->toContain('ConcurrentWorks', 'AsyncLogic', 'ParallelStream');
+        expect($results['results']['gemini-1.5-pro']['names'])->toContain('ThreadedSoft', 'BatchProcess', 'QueuedTasks');
     });
 
     test('Dashboard can handle parallel model generation', function (): void {

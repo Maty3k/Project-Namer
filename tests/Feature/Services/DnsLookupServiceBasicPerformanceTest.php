@@ -42,9 +42,7 @@ describe('DNS Lookup Service Basic Performance Integration', function (): void {
         $monitor = \Mockery::mock(DnsPerformanceMonitorInterface::class);
         $monitor->shouldReceive('recordLookup')
             ->once()
-            ->withArgs(function ($domain, $time, $success, $cache, $error) {
-                return $domain === 'test.com' && $success === true && $cache === false;
-            });
+            ->withArgs(fn ($domain, $time, $success, $cache, $error) => $domain === 'test.com' && $success === true && $cache === false);
 
         $service = new DnsLookupService(
             resolver: $resolver,

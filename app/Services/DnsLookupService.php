@@ -9,33 +9,46 @@ use App\Contracts\DnsPerformanceMonitorInterface;
 use App\Contracts\DnsResolverInterface;
 use App\DTOs\DnsLookupResult;
 use App\Models\DnsLookupCache;
-use App\Services\DnsLoggingService;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use NetDNS2\Resolver;
 
-final class DnsLookupService implements DnsLookupServiceInterface
+final readonly class DnsLookupService implements DnsLookupServiceInterface
 {
+    /**
+     * @var array<string>
+     */
     private array $recordTypes;
+
     private int $timeout;
+
     private int $cacheTtl;
+
+    /**
+     * @var array<string>
+     */
     private array $primaryServers;
+
+    /**
+     * @var array<string>
+     */
     private array $fallbackServers;
+
     private bool $fallbackEnabled;
 
     public function __construct(
-        private readonly ?DnsResolverInterface $resolver = null,
-        private readonly ?DnsPerformanceMonitorInterface $performanceMonitor = null,
-        private readonly ?DnsLoggingService $logger = null
+        private ?DnsResolverInterface $resolver = null,
+        private ?DnsPerformanceMonitorInterface $performanceMonitor = null,
+        private ?DnsLoggingService $logger = null,
+        private ?DnsRetryService $retryService = null
     ) {
         $this->recordTypes = config('dns.record_types', ['A', 'AAAA', 'CNAME', 'MX', 'NS', 'TXT']);
         $this->timeout = config('dns.timeout', 2);
         $this->cacheTtl = config('dns.cache_ttl', 86400);
-        $this->primaryServers = explode(',', config('dns.servers', '8.8.8.8,1.1.1.1'));
+        $this->primaryServers = explode(',', (string) config('dns.servers', '8.8.8.8,1.1.1.1'));
         $this->fallbackServers = config('dns.fallback_servers', [
-            '8.8.8.8', '8.8.4.4', '1.1.1.1', '1.0.0.1', '208.67.222.222', '208.67.220.220'
+            '8.8.8.8', '8.8.4.4', '1.1.1.1', '1.0.0.1', '208.67.222.222', '208.67.220.220',
         ]);
         $this->fallbackEnabled = config('dns.fallback.enabled', true);
     }
@@ -45,10 +58,11 @@ final class DnsLookupService implements DnsLookupServiceInterface
         $startTime = microtime(true);
 
         // Validate domain format
-        if (!$this->isValidDomain($fullDomain)) {
+        if (! $this->isValidDomain($fullDomain)) {
             $this->logger?->logLookupFailure($fullDomain, new Exception('Invalid domain format'), 'validation', 'local');
             Log::warning('Invalid domain format', ['domain' => $fullDomain]);
             $this->recordDnsLookup($fullDomain, $startTime, false, false, 'Invalid domain format');
+
             return DnsLookupResult::withError('Invalid domain format');
         }
 
@@ -61,24 +75,25 @@ final class DnsLookupService implements DnsLookupServiceInterface
             $this->logger?->logCacheOperation('hit', $fullDomain, $cachedResult->recordTypes, $this->cacheTtl);
             $this->logger?->logLookupSuccess($fullDomain, $cachedResult->recordTypes, $responseTime, true);
             $this->recordDnsLookup($fullDomain, $startTime, true, true);
+
             return $cachedResult;
         }
 
         // Try primary servers first, then fallback servers if enabled
         $result = $this->performDnsLookup($fullDomain, false);
 
-        if ($result->isError() && $this->fallbackEnabled && !empty($this->fallbackServers)) {
+        if ($result->isError() && $this->fallbackEnabled && ! empty($this->fallbackServers)) {
             $this->logger?->logFallbackActivated($fullDomain, $result->error, $this->fallbackServers);
             Log::info('Primary DNS servers failed, trying fallback servers', [
                 'domain' => $fullDomain,
-                'primary_error' => $result->error
+                'primary_error' => $result->error,
             ]);
 
             $fallbackResult = $this->performDnsLookup($fullDomain, true);
 
             if ($fallbackResult->isSuccessful()) {
                 Log::info('DNS lookup succeeded using fallback servers', [
-                    'domain' => $fullDomain
+                    'domain' => $fullDomain,
                 ]);
                 $result = $fallbackResult;
             }
@@ -91,6 +106,7 @@ final class DnsLookupService implements DnsLookupServiceInterface
         }
 
         $this->recordDnsLookup($fullDomain, $startTime, $result->isSuccessful(), false, $result->error);
+
         return $result;
     }
 
@@ -132,6 +148,9 @@ final class DnsLookupService implements DnsLookupServiceInterface
         return $this->createResolverWithServers($this->primaryServers);
     }
 
+    /**
+     * @param  array<string>  $servers
+     */
     private function createResolverWithServers(array $servers, bool $isFallback = false): DnsResolverInterface
     {
         $timeout = $isFallback
@@ -153,7 +172,9 @@ final class DnsLookupService implements DnsLookupServiceInterface
 
     private function performDnsLookup(string $fullDomain, bool $useFallback = false): DnsLookupResult
     {
-        try {
+        $operationName = $useFallback ? "dns-lookup-fallback:{$fullDomain}" : "dns-lookup-primary:{$fullDomain}";
+
+        $lookupOperation = function () use ($fullDomain, $useFallback) {
             $resolver = $useFallback
                 ? $this->createResolverWithServers($this->fallbackServers, true)
                 : $this->getResolver();
@@ -165,7 +186,7 @@ final class DnsLookupService implements DnsLookupServiceInterface
                 try {
                     $response = $resolver->query($fullDomain, $recordType);
 
-                    if (!empty($response->answer)) {
+                    if (! empty($response->answer)) {
                         $foundRecords[] = $recordType;
                     }
                 } catch (Exception $e) {
@@ -173,7 +194,7 @@ final class DnsLookupService implements DnsLookupServiceInterface
                         'domain' => $fullDomain,
                         'type' => $recordType,
                         'server_type' => $useFallback ? 'fallback' : 'primary',
-                        'error' => $e->getMessage()
+                        'error' => $e->getMessage(),
                     ]);
                 }
             }
@@ -181,13 +202,21 @@ final class DnsLookupService implements DnsLookupServiceInterface
             return empty($foundRecords)
                 ? DnsLookupResult::withoutRecords()
                 : DnsLookupResult::withRecords($foundRecords);
+        };
 
+        try {
+            // Use retry service if available, otherwise execute directly
+            if ($this->retryService !== null) {
+                return $this->retryService->execute($operationName, $lookupOperation);
+            }
+
+            return $lookupOperation();
         } catch (Exception $e) {
             Log::error('DNS lookup failed', [
                 'domain' => $fullDomain,
                 'server_type' => $useFallback ? 'fallback' : 'primary',
                 'servers' => $useFallback ? $this->fallbackServers : $this->primaryServers,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return DnsLookupResult::withError($e->getMessage());
@@ -202,12 +231,12 @@ final class DnsLookupService implements DnsLookupServiceInterface
         }
 
         // Check for invalid characters
-        if (!preg_match('/^[a-zA-Z0-9.-]+$/', $domain)) {
+        if (! preg_match('/^[a-zA-Z0-9.-]+$/', $domain)) {
             return false;
         }
 
         // Check for consecutive dots
-        if (strpos($domain, '..') !== false) {
+        if (str_contains($domain, '..')) {
             return false;
         }
 
@@ -220,10 +249,19 @@ final class DnsLookupService implements DnsLookupServiceInterface
         return true;
     }
 
+    /**
+     * @return array{0: string, 1: string}
+     */
     private function parseDomain(string $fullDomain): array
     {
+        // Handle empty or invalid input
+        if (empty($fullDomain) || $fullDomain === '.') {
+            return ['', ''];
+        }
+
         $parts = explode('.', $fullDomain);
 
+        // Ensure we always return exactly 2 elements
         if (count($parts) < 2) {
             // Handle invalid domain structure
             return [$fullDomain, ''];
@@ -237,7 +275,7 @@ final class DnsLookupService implements DnsLookupServiceInterface
 
     private function cacheResult(string $domain, string $tld, DnsLookupResult $result, ?int $ttl = null): void
     {
-        $ttl = $ttl ?? $this->cacheTtl;
+        $ttl ??= $this->cacheTtl;
         $expiresAt = now()->addSeconds($ttl);
 
         try {
@@ -259,13 +297,13 @@ final class DnsLookupService implements DnsLookupServiceInterface
             Log::error('Failed to cache DNS result', [
                 'domain' => $domain,
                 'tld' => $tld,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
     }
 
     private function recordDnsLookup(
-        string $domain,
+        string $fullDomain,
         float $startTime,
         bool $successful,
         bool $cacheHit = false,
@@ -278,7 +316,7 @@ final class DnsLookupService implements DnsLookupServiceInterface
         $responseTimeMs = round((microtime(true) - $startTime) * 1000, 2);
 
         $this->performanceMonitor->recordLookup(
-            $domain,
+            $fullDomain,
             $responseTimeMs,
             $successful,
             $cacheHit,

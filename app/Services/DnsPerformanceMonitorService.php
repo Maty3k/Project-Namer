@@ -17,8 +17,14 @@ use Illuminate\Support\Str;
  */
 final class DnsPerformanceMonitorService implements DnsPerformanceMonitorInterface
 {
+    /**
+     * @var array<string, array<string, mixed>>
+     */
     private array $batchMetrics = [];
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $currentBatch = [];
 
     private ?string $currentBatchId = null;
@@ -28,7 +34,7 @@ final class DnsPerformanceMonitorService implements DnsPerformanceMonitorInterfa
     /**
      * Start monitoring a new batch of DNS lookups.
      */
-    public function startBatch(string $batchId = null): string
+    public function startBatch(?string $batchId = null): string
     {
         $this->currentBatchId = $batchId ?? Str::uuid()->toString();
         $this->batchStartTime = now();
@@ -61,11 +67,12 @@ final class DnsPerformanceMonitorService implements DnsPerformanceMonitorInterfa
         bool $cacheHit = false,
         ?string $error = null
     ): void {
-        if (!$this->currentBatchId) {
+        if (! $this->currentBatchId) {
             Log::warning('DNS lookup recorded without active batch', [
                 'domain' => $domain,
                 'response_time' => $responseTimeMs,
             ]);
+
             return;
         }
 
@@ -105,8 +112,9 @@ final class DnsPerformanceMonitorService implements DnsPerformanceMonitorInterfa
      */
     public function completeBatch(): ?DnsLookupMetrics
     {
-        if (!$this->currentBatchId || !$this->batchStartTime) {
+        if (! $this->currentBatchId || ! $this->batchStartTime) {
             Log::warning('Attempted to complete batch without active monitoring');
+
             return null;
         }
 
@@ -160,7 +168,7 @@ final class DnsPerformanceMonitorService implements DnsPerformanceMonitorInterfa
      */
     public function getCurrentBatchStats(): array
     {
-        if (!$this->currentBatchId) {
+        if (! $this->currentBatchId) {
             return [];
         }
 
@@ -303,5 +311,45 @@ final class DnsPerformanceMonitorService implements DnsPerformanceMonitorInterfa
             'failed_lookups' => $metrics->failed_lookups,
             'cache_hits' => $metrics->cache_hits,
         ]);
+    }
+
+    /**
+     * Get current DNS error rate percentage.
+     */
+    public function getErrorRate(): float
+    {
+        $stats = $this->getAggregatedStats(10);
+
+        return 100.0 - $stats['overall_success_rate'];
+    }
+
+    /**
+     * Get current average DNS response time in milliseconds.
+     */
+    public function getAverageResponseTime(): float
+    {
+        $stats = $this->getAggregatedStats(10);
+
+        return $stats['average_lookup_time'];
+    }
+
+    /**
+     * Get current DNS cache hit rate percentage.
+     */
+    public function getCacheHitRate(): float
+    {
+        $stats = $this->getAggregatedStats(10);
+
+        return $stats['overall_cache_hit_rate'];
+    }
+
+    /**
+     * Get current count of circuit breaker failures.
+     */
+    public function getCircuitBreakerFailures(): int
+    {
+        // For now, return 0 - this would integrate with circuit breaker service
+        // In a real implementation, this would check circuit breaker state
+        return 0;
     }
 }

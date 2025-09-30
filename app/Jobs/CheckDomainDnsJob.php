@@ -15,13 +15,16 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 
-final class CheckDomainDnsJob implements ShouldQueue
+class CheckDomainDnsJob implements ShouldQueue
 {
     use InteractsWithQueue, Queueable, SerializesModels;
 
     public int $timeout = 30;
+
     public int $tries = 3;
+
     public int $maxExceptions = 2;
+
     public int $backoff = 5;
 
     public function __construct(
@@ -33,7 +36,7 @@ final class CheckDomainDnsJob implements ShouldQueue
     public function handle(DnsLookupServiceInterface $dnsService, DnsPerformanceMonitorInterface $performanceMonitor): void
     {
         $startTime = microtime(true);
-        $batchId = null;
+        $batchId = '';
 
         try {
             $suggestion = NameSuggestion::find($this->suggestionId);
@@ -41,8 +44,9 @@ final class CheckDomainDnsJob implements ShouldQueue
             if ($suggestion === null) {
                 Log::warning('DNS job: Suggestion not found', [
                     'suggestion_id' => $this->suggestionId,
-                    'job_id' => $this->job->getJobId(),
+                    'job_id' => $this->job?->getJobId(),
                 ]);
+
                 return;
             }
 
@@ -52,6 +56,7 @@ final class CheckDomainDnsJob implements ShouldQueue
                     'suggestion_id' => $this->suggestionId,
                     'name' => $suggestion->name,
                 ]);
+
                 return;
             }
 
@@ -102,7 +107,7 @@ final class CheckDomainDnsJob implements ShouldQueue
             $processingTime = round((microtime(true) - $startTime) * 1000, 2);
 
             // Complete performance monitoring with error
-            if ($batchId !== null) {
+            if ($batchId !== '') {
                 $performanceMonitor->completeBatch();
             }
 
@@ -130,7 +135,7 @@ final class CheckDomainDnsJob implements ShouldQueue
 
         // Mark suggestion as processed with error state
         $suggestion = NameSuggestion::find($this->suggestionId);
-        if ($suggestion !== null && !$suggestion->dns_checked) {
+        if ($suggestion !== null && ! $suggestion->dns_checked) {
             $suggestion->update([
                 'dns_checked' => true,
                 'dns_has_records' => null,
@@ -149,16 +154,19 @@ final class CheckDomainDnsJob implements ShouldQueue
         }
     }
 
-    public function retryUntil()
+    public function retryUntil(): \DateTime
     {
         return now()->addMinutes(10);
     }
 
+    /**
+     * @return array<string>
+     */
     public function tags(): array
     {
         return [
             'dns',
-            'suggestion:' . $this->suggestionId,
+            'suggestion:'.$this->suggestionId,
         ];
     }
 }

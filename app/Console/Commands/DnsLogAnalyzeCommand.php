@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use Carbon\Carbon;
 
 /**
  * Command for analyzing DNS logs to identify patterns, errors, and performance issues.
@@ -37,8 +37,9 @@ final class DnsLogAnalyzeCommand extends Command
 
         $logFile = storage_path('logs/laravel.log');
 
-        if (!File::exists($logFile)) {
-            $this->error('Log file not found: ' . $logFile);
+        if (! File::exists($logFile)) {
+            $this->error('Log file not found: '.$logFile);
+
             return self::FAILURE;
         }
 
@@ -47,6 +48,7 @@ final class DnsLogAnalyzeCommand extends Command
 
         if (empty($logs)) {
             $this->warn('No DNS logs found for the specified criteria.');
+
             return self::SUCCESS;
         }
 
@@ -83,23 +85,26 @@ final class DnsLogAnalyzeCommand extends Command
         };
     }
 
+    /**
+     * @return array<int, array{timestamp: Carbon, level: string, message: string, context: array<string, mixed>, raw_line: string}>
+     */
     private function parseLogs(string $logFile, Carbon $startTime, ?string $type, ?string $domain, bool $errorsOnly): array
     {
         $logs = [];
         $handle = fopen($logFile, 'r');
 
-        if (!$handle) {
+        if (! $handle) {
             return [];
         }
 
         while (($line = fgets($handle)) !== false) {
-            if (!$this->isDnsLog($line)) {
+            if (! $this->isDnsLog($line)) {
                 continue;
             }
 
             $logEntry = $this->parseLogLine($line);
 
-            if (!$logEntry) {
+            if (! $logEntry) {
                 continue;
             }
 
@@ -109,17 +114,17 @@ final class DnsLogAnalyzeCommand extends Command
             }
 
             // Filter by type
-            if ($type && !str_contains($logEntry['message'], $type)) {
+            if ($type && ! str_contains((string) $logEntry['message'], $type)) {
                 continue;
             }
 
             // Filter by domain
-            if ($domain && !str_contains($logEntry['context'], $domain)) {
+            if ($domain && ! str_contains(json_encode($logEntry['context']), $domain)) {
                 continue;
             }
 
             // Filter errors only
-            if ($errorsOnly && !in_array($logEntry['level'], ['ERROR', 'CRITICAL'])) {
+            if ($errorsOnly && ! in_array($logEntry['level'], ['ERROR', 'CRITICAL'])) {
                 continue;
             }
 
@@ -136,12 +141,15 @@ final class DnsLogAnalyzeCommand extends Command
         return str_contains($line, 'DNS') || str_contains($line, 'dns_');
     }
 
+    /**
+     * @return array{timestamp: Carbon, level: string, message: string, context: array<string, mixed>, raw_line: string}|null
+     */
     private function parseLogLine(string $line): ?array
     {
         // Parse Laravel log format: [timestamp] level: message context
         $pattern = '/\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\] \w+\.(\w+): (.+)/';
 
-        if (!preg_match($pattern, $line, $matches)) {
+        if (! preg_match($pattern, $line, $matches)) {
             return null;
         }
 
@@ -166,6 +174,9 @@ final class DnsLogAnalyzeCommand extends Command
         ];
     }
 
+    /**
+     * @param  array<int, array<string, mixed>>  $logs
+     */
     private function displaySummary(array $logs, string $period): void
     {
         $total = count($logs);
@@ -183,12 +194,16 @@ final class DnsLogAnalyzeCommand extends Command
         }
     }
 
+    /**
+     * @param  array<int, array<string, mixed>>  $logs
+     */
     private function displayErrorAnalysis(array $logs): void
     {
-        $errors = array_filter($logs, fn($log) => in_array($log['level'], ['ERROR', 'CRITICAL']));
+        $errors = array_filter($logs, fn ($log) => in_array($log['level'], ['ERROR', 'CRITICAL']));
 
         if (empty($errors)) {
             $this->info("\nNo errors found in the specified period.");
+
             return;
         }
 
@@ -201,19 +216,23 @@ final class DnsLogAnalyzeCommand extends Command
         $this->info('Top error messages:');
         $count = 0;
         foreach ($errorMessages as $message => $occurrences) {
-            if ($count++ >= 10) break;
-            $this->line("  {$occurrences}x: " . substr($message, 0, 80) . '...');
+            if ($count++ >= 10) {
+                break;
+            }
+            $this->line("  {$occurrences}x: ".substr($message, 0, 80).'...');
         }
     }
 
+    /**
+     * @param  array<int, array<string, mixed>>  $logs
+     */
     private function displayPerformanceAnalysis(array $logs): void
     {
-        $performanceLogs = array_filter($logs, function($log) {
-            return isset($log['context']['response_time_ms']);
-        });
+        $performanceLogs = array_filter($logs, fn ($log) => isset($log['context']['response_time_ms']));
 
         if (empty($performanceLogs)) {
             $this->info("\nNo performance data found.");
+
             return;
         }
 
@@ -228,14 +247,14 @@ final class DnsLogAnalyzeCommand extends Command
 
         $this->newLine();
         $this->info('Performance Analysis:');
-        $this->line("  Average response time: " . round($avg, 2) . "ms");
-        $this->line("  Median response time: " . round($median, 2) . "ms");
-        $this->line("  Min response time: " . round($min, 2) . "ms");
-        $this->line("  Max response time: " . round($max, 2) . "ms");
+        $this->line('  Average response time: '.round($avg, 2).'ms');
+        $this->line('  Median response time: '.round($median, 2).'ms');
+        $this->line('  Min response time: '.round($min, 2).'ms');
+        $this->line('  Max response time: '.round($max, 2).'ms');
 
         // Response time distribution
-        $slow = count(array_filter($responseTimes, fn($time) => $time > 5000));
-        $medium = count(array_filter($responseTimes, fn($time) => $time > 1000 && $time <= 5000));
+        $slow = count(array_filter($responseTimes, fn ($time) => $time > 5000));
+        $medium = count(array_filter($responseTimes, fn ($time) => $time > 1000 && $time <= 5000));
         $fast = count($responseTimes) - $slow - $medium;
 
         $this->line("  Fast (<1s): {$fast}");
@@ -243,6 +262,9 @@ final class DnsLogAnalyzeCommand extends Command
         $this->line("  Slow (>5s): {$slow}");
     }
 
+    /**
+     * @param  array<int, array<string, mixed>>  $logs
+     */
     private function displayTopDomains(array $logs): void
     {
         $domains = [];
@@ -264,14 +286,19 @@ final class DnsLogAnalyzeCommand extends Command
         $this->info('Top domains by lookup count:');
         $count = 0;
         foreach ($domains as $domain => $lookups) {
-            if ($count++ >= 10) break;
+            if ($count++ >= 10) {
+                break;
+            }
             $this->line("  {$lookups}x: {$domain}");
         }
     }
 
+    /**
+     * @param  array<int, array<string, mixed>>  $logs
+     */
     private function displayErrorPatterns(array $logs): void
     {
-        $errors = array_filter($logs, fn($log) => in_array($log['level'], ['ERROR', 'CRITICAL']));
+        $errors = array_filter($logs, fn ($log) => in_array($log['level'], ['ERROR', 'CRITICAL']));
 
         if (empty($errors)) {
             return;
@@ -287,13 +314,16 @@ final class DnsLogAnalyzeCommand extends Command
         $this->newLine();
         $this->info('Error patterns by hour:');
         for ($hour = 0; $hour < 24; $hour++) {
-            $hourStr = str_pad((string)$hour, 2, '0', STR_PAD_LEFT);
+            $hourStr = str_pad((string) $hour, 2, '0', STR_PAD_LEFT);
             $count = $errorsByHour[$hour] ?? 0;
             $bar = str_repeat('█', min(50, $count));
             $this->line("  {$hourStr}:00 {$count} {$bar}");
         }
     }
 
+    /**
+     * @param  array<int, array{timestamp: Carbon, level: string, message: string, context: array<string, mixed>, raw_line: string}>  $logs
+     */
     private function exportResults(array $logs, string $filename): void
     {
         $data = [

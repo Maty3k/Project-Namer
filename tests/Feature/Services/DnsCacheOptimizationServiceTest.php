@@ -37,7 +37,7 @@ describe('DNS Cache Optimization Service', function (): void {
                 'duplicates_cleaned',
                 'orphaned_cleaned',
                 'memory_freed',
-                'cache_stats'
+                'cache_stats',
             ])
                 ->and($result['expired_removed'])->toBe(5)
                 ->and($result['cache_stats'])->toBeArray();
@@ -47,12 +47,12 @@ describe('DNS Cache Optimization Service', function (): void {
             DnsLookupCache::factory()->create([
                 'domain' => 'expired',
                 'tld' => 'com',
-                'expires_at' => now()->subHour()
+                'expires_at' => now()->subHour(),
             ]);
             DnsLookupCache::factory()->create([
                 'domain' => 'valid',
                 'tld' => 'com',
-                'expires_at' => now()->addHour()
+                'expires_at' => now()->addHour(),
             ]);
 
             // Create name suggestions to prevent orphaned removal
@@ -78,15 +78,15 @@ describe('DNS Cache Optimization Service', function (): void {
 
             // Insert duplicates directly without constraint
             DB::statement('INSERT INTO dns_lookup_cache (domain, tld, has_records, checked_at, expires_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)', [
-                $domain, $tld, false, now()->subHours(3), now()->addHour(), now()->subHours(2), now()->subHours(2)
+                $domain, $tld, false, now()->subHours(3), now()->addHour(), now()->subHours(2), now()->subHours(2),
             ]);
 
             DB::statement('INSERT INTO dns_lookup_cache (domain, tld, has_records, checked_at, expires_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)', [
-                $domain, $tld, false, now()->subHours(2), now()->addHour(), now()->subHour(), now()->subHour()
+                $domain, $tld, false, now()->subHours(2), now()->addHour(), now()->subHour(), now()->subHour(),
             ]);
 
             DB::statement('INSERT INTO dns_lookup_cache (domain, tld, has_records, checked_at, expires_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)', [
-                $domain, $tld, false, now()->subHour(), now()->addHour(), now(), now()
+                $domain, $tld, false, now()->subHour(), now()->addHour(), now(), now(),
             ]);
 
             expect(DnsLookupCache::where('domain', $domain)->where('tld', $tld)->count())->toBe(3);
@@ -109,13 +109,13 @@ describe('DNS Cache Optimization Service', function (): void {
             DnsLookupCache::factory()->create([
                 'domain' => 'active',
                 'tld' => 'com',
-                'expires_at' => now()->addHour()
+                'expires_at' => now()->addHour(),
             ]);
 
             DnsLookupCache::factory()->create([
                 'domain' => 'orphaned',
                 'tld' => 'com',
-                'expires_at' => now()->addHour()
+                'expires_at' => now()->addHour(),
             ]);
 
             // Create matching name suggestion for active domain
@@ -198,7 +198,7 @@ describe('DNS Cache Optimization Service', function (): void {
                 ->and($result['errors'])->toHaveCount(1)
                 ->and($result['errors'][0])->toMatchArray([
                     'domain' => 'failing.com',
-                    'error' => 'DNS lookup failed'
+                    'error' => 'DNS lookup failed',
                 ]);
         });
 
@@ -243,7 +243,7 @@ describe('DNS Cache Optimization Service', function (): void {
             DnsLookupMetrics::factory()->create([
                 'cache_hits' => 80,
                 'domains_checked' => 100,
-                'created_at' => now()->subHours(2)
+                'created_at' => now()->subHours(2),
             ]);
 
             $result = $this->optimizationService->getCacheStatistics();
@@ -256,7 +256,7 @@ describe('DNS Cache Optimization Service', function (): void {
                 'total_cache_hits_24h',
                 'total_lookups_24h',
                 'top_tlds',
-                'memory_usage_estimate'
+                'memory_usage_estimate',
             ])
                 ->and($result['total_entries'])->toBe(6)
                 ->and($result['valid_entries'])->toBe(4)
@@ -269,13 +269,13 @@ describe('DNS Cache Optimization Service', function (): void {
             DnsLookupMetrics::factory()->create([
                 'cache_hits' => 75,
                 'domains_checked' => 100,
-                'created_at' => now()->subHours(2)
+                'created_at' => now()->subHours(2),
             ]);
 
             DnsLookupMetrics::factory()->create([
                 'cache_hits' => 85,
                 'domains_checked' => 100,
-                'created_at' => now()->subHour()
+                'created_at' => now()->subHour(),
             ]);
 
             $result = $this->optimizationService->getCacheStatistics();
@@ -298,13 +298,13 @@ describe('DNS Cache Optimization Service', function (): void {
             DnsLookupMetrics::factory()->create([
                 'cache_hits' => 80,
                 'domains_checked' => 100,
-                'created_at' => now()->subDays(2)
+                'created_at' => now()->subDays(2),
             ]);
 
             DnsLookupMetrics::factory()->create([
                 'cache_hits' => 90,
                 'domains_checked' => 120,
-                'created_at' => now()->subDay()
+                'created_at' => now()->subDay(),
             ]);
 
             $result = $this->optimizationService->getCacheHitAnalysis(7);
@@ -315,7 +315,7 @@ describe('DNS Cache Optimization Service', function (): void {
                 'overall_hit_rate',
                 'total_cache_hits',
                 'total_lookups',
-                'cache_efficiency'
+                'cache_efficiency',
             ])
                 ->and($result['period_days'])->toBe(7)
                 ->and($result['daily_breakdown'])->toBeArray()
@@ -327,13 +327,13 @@ describe('DNS Cache Optimization Service', function (): void {
             DnsLookupMetrics::factory()->create([
                 'cache_hits' => 50,
                 'domains_checked' => 100,
-                'created_at' => now()->subDays(3)
+                'created_at' => now()->subDays(3),
             ]);
 
             DnsLookupMetrics::factory()->create([
                 'cache_hits' => 60,
                 'domains_checked' => 80,
-                'created_at' => now()->subDays(2)
+                'created_at' => now()->subDays(2),
             ]);
 
             $result = $this->optimizationService->getCacheHitAnalysis(7);
@@ -347,14 +347,14 @@ describe('DNS Cache Optimization Service', function (): void {
             DnsLookupMetrics::factory()->create([
                 'cache_hits' => 40,
                 'domains_checked' => 50,
-                'created_at' => now()->subDays(5)
+                'created_at' => now()->subDays(5),
             ]);
 
             // This should be excluded from 3-day analysis
             DnsLookupMetrics::factory()->create([
                 'cache_hits' => 30,
                 'domains_checked' => 40,
-                'created_at' => now()->subDays(5)
+                'created_at' => now()->subDays(5),
             ]);
 
             $result = $this->optimizationService->getCacheHitAnalysis(3);
@@ -369,7 +369,7 @@ describe('DNS Cache Optimization Service', function (): void {
             DnsLookupMetrics::factory()->create([
                 'cache_hits' => 20,
                 'domains_checked' => 100,
-                'created_at' => now()->subHour()
+                'created_at' => now()->subHour(),
             ]);
 
             $result = $this->optimizationService->suggestCacheImprovements();
@@ -417,7 +417,7 @@ describe('DNS Cache Optimization Service', function (): void {
                 DnsLookupCache::factory()->create([
                     'domain' => "domain{$i}",
                     'tld' => 'com',
-                    'expires_at' => now()->addHour()
+                    'expires_at' => now()->addHour(),
                 ]);
             }
 
@@ -438,7 +438,7 @@ describe('DNS Cache Optimization Service', function (): void {
                 DnsLookupCache::factory()->create([
                     'domain' => "tld-test-{$i}",
                     'tld' => 'com',
-                    'expires_at' => now()->addHour()
+                    'expires_at' => now()->addHour(),
                 ]);
             }
 
@@ -457,7 +457,7 @@ describe('DNS Cache Optimization Service', function (): void {
             DnsLookupMetrics::factory()->create([
                 'cache_hits' => 80,
                 'domains_checked' => 100,
-                'created_at' => now()->subHour()
+                'created_at' => now()->subHour(),
             ]);
 
             DnsLookupCache::factory()->count(10)->create(['expires_at' => now()->addHour()]);
@@ -472,7 +472,7 @@ describe('DNS Cache Optimization Service', function (): void {
             DnsLookupMetrics::factory()->create([
                 'cache_hits' => 90,
                 'domains_checked' => 100,
-                'created_at' => now()->subHour()
+                'created_at' => now()->subHour(),
             ]);
 
             DnsLookupCache::factory()->count(10)->create(['expires_at' => now()->addHour()]);

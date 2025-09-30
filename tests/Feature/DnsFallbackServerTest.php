@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 use App\Contracts\DnsResolverInterface;
 use App\DTOs\DnsLookupResult;
-use App\Services\DnsLookupService;
 use App\Models\DnsLookupCache;
+use App\Services\DnsLookupService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+
 use function Pest\Laravel\mock;
 
-beforeEach(function () {
+beforeEach(function (): void {
     Cache::flush();
     DnsLookupCache::truncate();
 });
 
-test('DNS fallback configuration loads correctly', function () {
+test('DNS fallback configuration loads correctly', function (): void {
     // Test default fallback configuration
     Config::set('dns.fallback.enabled', true);
     Config::set('dns.fallback_servers', ['8.8.8.8', '1.1.1.1']);
@@ -25,7 +26,7 @@ test('DNS fallback configuration loads correctly', function () {
         ->and(config('dns.fallback_servers'))->toContain('1.1.1.1');
 });
 
-test('DNS service configures different timeouts for primary and fallback servers', function () {
+test('DNS service configures different timeouts for primary and fallback servers', function (): void {
     Config::set('dns.fallback.timeout_primary', 2);
     Config::set('dns.fallback.timeout_fallback', 5);
     Config::set('dns.fallback.max_retries_primary', 1);
@@ -37,20 +38,20 @@ test('DNS service configures different timeouts for primary and fallback servers
         ->and(config('dns.fallback.max_retries_fallback'))->toBe(3);
 });
 
-test('DNS service loads custom fallback servers from configuration', function () {
+test('DNS service loads custom fallback servers from configuration', function (): void {
     $customFallbackServers = ['1.2.3.4', '5.6.7.8', '9.10.11.12'];
     Config::set('dns.fallback_servers', $customFallbackServers);
 
     expect(config('dns.fallback_servers'))->toBe($customFallbackServers);
 });
 
-test('DNS service can be configured with fallback disabled', function () {
+test('DNS service can be configured with fallback disabled', function (): void {
     Config::set('dns.fallback.enabled', false);
 
     expect(config('dns.fallback.enabled'))->toBeFalse();
 });
 
-test('DNS service falls back when primary resolver is mocked to fail', function () {
+test('DNS service falls back when primary resolver is mocked to fail', function (): void {
     Config::set('dns.fallback.enabled', true);
     Config::set('dns.fallback_servers', ['8.8.8.8']);
 
@@ -67,7 +68,7 @@ test('DNS service falls back when primary resolver is mocked to fail', function 
     expect($result)->toBeInstanceOf(DnsLookupResult::class);
 });
 
-test('DNS service respects fallback disabled configuration', function () {
+test('DNS service respects fallback disabled configuration', function (): void {
     Config::set('dns.fallback.enabled', false);
 
     // Mock a resolver that fails during initialization or first query
@@ -101,7 +102,7 @@ test('DNS service respects fallback disabled configuration', function () {
         ->and($result->isSuccessful())->toBeTrue();
 });
 
-test('DNS service caches results when DNS queries have no records', function () {
+test('DNS service caches results when DNS queries have no records', function (): void {
     $mockResolver = mock(DnsResolverInterface::class);
     $mockResolver->shouldReceive('query')
         ->with('test-domain.com', 'A')
@@ -139,8 +140,8 @@ test('DNS service caches results when DNS queries have no records', function () 
         ->and($cached->error_message)->toBeNull();
 });
 
-test('DNS service validates basic domain format', function () {
-    $dnsService = new DnsLookupService();
+test('DNS service validates basic domain format', function (): void {
+    $dnsService = new DnsLookupService;
 
     // Test clearly invalid domains that should be rejected
     $invalidDomains = [
@@ -157,8 +158,8 @@ test('DNS service validates basic domain format', function () {
     }
 });
 
-test('DNS service parses domains correctly for caching', function () {
-    $dnsService = new DnsLookupService();
+test('DNS service parses domains correctly for caching', function (): void {
+    $dnsService = new DnsLookupService;
 
     // Test with cached result to verify parsing without actual DNS calls
     DnsLookupCache::create([
@@ -177,7 +178,7 @@ test('DNS service parses domains correctly for caching', function () {
         ->and($result->hasRecords)->toBeFalse();
 });
 
-test('DNS service handles batch domain checking', function () {
+test('DNS service handles batch domain checking', function (): void {
     $mockResolver = mock(DnsResolverInterface::class);
 
     // Mock successful lookup for first domain (A record found)
@@ -211,7 +212,7 @@ test('DNS service handles batch domain checking', function () {
         ->and($results['bad-domain.com']->isError())->toBeFalse(); // Should be withoutRecords, not an error
 });
 
-test('DNS service returns cached results when available', function () {
+test('DNS service returns cached results when available', function (): void {
     // Create a cached entry
     DnsLookupCache::create([
         'domain' => 'cached-domain',
@@ -223,7 +224,7 @@ test('DNS service returns cached results when available', function () {
         'expires_at' => now()->addDay(),
     ]);
 
-    $dnsService = new DnsLookupService();
+    $dnsService = new DnsLookupService;
     $result = $dnsService->checkDomain('cached-domain.com');
 
     expect($result->hasRecords)->toBeTrue()
@@ -231,7 +232,7 @@ test('DNS service returns cached results when available', function () {
         ->and($result->error)->toBeNull();
 });
 
-test('DNS fallback configuration has sensible defaults', function () {
+test('DNS fallback configuration has sensible defaults', function (): void {
     // Test that the configuration file has reasonable default values
     $fallbackConfig = config('dns.fallback');
     $fallbackServers = config('dns.fallback_servers');

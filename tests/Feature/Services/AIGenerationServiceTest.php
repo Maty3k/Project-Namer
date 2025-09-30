@@ -50,7 +50,7 @@ describe('AI Generation Service', function (): void {
 
         expect($result['execution_metadata']['total_models_requested'])->toBe(2);
         expect($result['results'])->toHaveKeys(['gpt-4', 'claude-3.5-sonnet']);
-        expect($result['execution_metadata']['execution_strategy'])->toBe('sequential_with_fallback');
+        expect($result['execution_metadata']['execution_strategy'])->toBe('sequential');
     });
 
     it('provides comprehensive generation with all models and deep thinking', function (): void {
@@ -123,7 +123,7 @@ describe('AI Generation Service', function (): void {
 
         expect($stats)->toHaveKeys(['performance', 'reliability', 'recommendations']);
         expect($stats['performance'])->toHaveKeys(['success_rate', 'average_response_time', 'total_execution_time', 'cache_hit_rate']);
-        expect($stats['reliability'])->toHaveKeys(['models_with_fallback', 'fallback_rate', 'failed_models']);
+        expect($stats['reliability'])->toHaveKeys(['failed_models']);
         expect($stats['recommendations'])->toBeArray();
         expect($stats['performance']['success_rate'])->toBe(100.0);
     });
@@ -146,7 +146,7 @@ describe('AI Generation Service', function (): void {
 
         expect($stats['recommendations'])->toBeArray();
         expect($stats['performance']['success_rate'])->toBe(100.0);
-        expect($stats['reliability']['fallback_rate'])->toBe(0.0);
+        // No fallback functionality - removed as requested
     });
 
     it('tracks execution metadata correctly', function (): void {
@@ -170,7 +170,6 @@ describe('AI Generation Service', function (): void {
             'failed_models',
             'total_execution_time_ms',
             'average_response_time_ms',
-            'models_with_fallback',
             'cached_results',
             'execution_strategy',
             'executed_at',
@@ -179,7 +178,7 @@ describe('AI Generation Service', function (): void {
         expect($metadata['total_models_requested'])->toBe(1);
         expect($metadata['successful_models'])->toBe(1);
         expect($metadata['failed_models'])->toBe(0);
-        expect($metadata['execution_strategy'])->toBe('sequential_with_fallback');
+        expect($metadata['execution_strategy'])->toBe('sequential');
         expect($metadata['total_execution_time_ms'])->toBeInt();
         expect($metadata['average_response_time_ms'])->toBeInt();
     });

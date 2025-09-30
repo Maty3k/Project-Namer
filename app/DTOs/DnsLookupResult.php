@@ -8,6 +8,9 @@ use Carbon\Carbon;
 
 final readonly class DnsLookupResult
 {
+    /**
+     * @param  array<string>  $recordTypes
+     */
     public function __construct(
         public bool $hasRecords,
         public array $recordTypes,
@@ -15,6 +18,9 @@ final readonly class DnsLookupResult
         public Carbon $checkedAt,
     ) {}
 
+    /**
+     * @param  array<string>  $recordTypes
+     */
     public static function withRecords(array $recordTypes): self
     {
         return new self(
@@ -45,6 +51,9 @@ final readonly class DnsLookupResult
         );
     }
 
+    /**
+     * @param  array<string>  $recordTypes
+     */
     public static function fromCache(
         bool $hasRecords,
         array $recordTypes,
@@ -69,6 +78,9 @@ final readonly class DnsLookupResult
         return $this->error === null;
     }
 
+    /**
+     * @return array{has_records: bool, record_types: array<string>, error: string|null, checked_at: string}
+     */
     public function toArray(): array
     {
         return [

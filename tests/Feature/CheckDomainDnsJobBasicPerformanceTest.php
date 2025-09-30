@@ -33,7 +33,7 @@ describe('CheckDomainDnsJob Basic Performance Integration', function (): void {
             'dns_checked' => false,
         ]);
 
-        $batchId = 'job-' . $suggestion->id;
+        $batchId = 'job-'.$suggestion->id;
         $metrics = DnsLookupMetrics::factory()->make([
             'id' => 1,
             'batch_id' => $batchId,
@@ -56,8 +56,10 @@ describe('CheckDomainDnsJob Basic Performance Integration', function (): void {
             ->andReturn(DnsLookupResult::withoutRecords());
 
         // Create a job instance that won't access $this->job
-        $job = new class($suggestion->id) extends CheckDomainDnsJob {
-            public function __construct(int $suggestionId) {
+        $job = new class($suggestion->id) extends CheckDomainDnsJob
+        {
+            public function __construct(int $suggestionId)
+            {
                 parent::__construct($suggestionId);
             }
         };
@@ -82,8 +84,10 @@ describe('CheckDomainDnsJob Basic Performance Integration', function (): void {
         $this->performanceMonitor->shouldNotReceive('startBatch');
         $this->performanceMonitor->shouldNotReceive('completeBatch');
 
-        $job = new class($suggestion->id) extends CheckDomainDnsJob {
-            public function __construct(int $suggestionId) {
+        $job = new class($suggestion->id) extends CheckDomainDnsJob
+        {
+            public function __construct(int $suggestionId)
+            {
                 parent::__construct($suggestionId);
             }
         };
@@ -102,7 +106,7 @@ describe('CheckDomainDnsJob Basic Performance Integration', function (): void {
             'dns_checked' => false,
         ]);
 
-        $batchId = 'job-' . $suggestion->id;
+        $batchId = 'job-'.$suggestion->id;
 
         // Mock performance monitoring workflow
         $this->performanceMonitor->shouldReceive('startBatch')
@@ -119,8 +123,10 @@ describe('CheckDomainDnsJob Basic Performance Integration', function (): void {
             ->once()
             ->andThrow(new Exception('DNS lookup failed'));
 
-        $job = new class($suggestion->id) extends CheckDomainDnsJob {
-            public function __construct(int $suggestionId) {
+        $job = new class($suggestion->id) extends CheckDomainDnsJob
+        {
+            public function __construct(int $suggestionId)
+            {
                 parent::__construct($suggestionId);
             }
         };

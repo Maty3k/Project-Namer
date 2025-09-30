@@ -29,10 +29,13 @@ test('name suggestion has correct fillable attributes', function (): void {
         'ai_cost_cents',
         'ai_generation_session_id',
         'ai_prompt_metadata',
+        'dns_checked',
+        'dns_has_records',
+        'dns_checked_at',
     ];
     $suggestion = new NameSuggestion;
 
-    expect($suggestion->getFillable())->toBe($fillable);
+    expect($suggestion->getFillable())->toEqualCanonicalizing($fillable);
 });
 
 test('name suggestion casts attributes correctly', function (): void {

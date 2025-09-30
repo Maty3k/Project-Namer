@@ -51,7 +51,9 @@ class SessionService
 
         // Auto-update title if business description changed
         if (isset($data['business_description']) && $data['business_description'] !== $session->business_description) {
-            $data['title'] = Str::limit($data['business_description'], 50, '...');
+            $businessDescriptionValue = $data['business_description'];
+            $businessDescription = is_string($businessDescriptionValue) ? $businessDescriptionValue : '';
+            $data['title'] = Str::limit($businessDescription, 50, '...');
         }
 
         $session->update($data);
@@ -70,7 +72,7 @@ class SessionService
             return false;
         }
 
-        return $session->delete();
+        return (bool) $session->delete();
     }
 
     /**

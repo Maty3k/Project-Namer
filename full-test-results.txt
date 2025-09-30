@@ -1,0 +1,651 @@
+
+   WARN  Metadata found in doc-comment for method Tests\Unit\CustomThemeAccessibilityTest::test_custom_color_combinations_accessibility(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Unit\ThemeAccessibilityTest::test_individual_theme_accessibility(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+  [44;1m INFO [49;22m Warning: The use statement with non-compound name 'Mockery' has no effect in /Users/anamariaradulescu/Herd/Project-Namer/tests/Feature/Services/DnsLookupServicePerformanceTest.php on line 11.
+
+
+  ............................................................................
+  ............................................................................
+  .................................ssssssssssssss.............................
+  ............................................................................
+  ............................................................................
+  ............................................................................
+  ............................................................................
+  ............................................................................
+  ............................................................................
+  ..............................s..........................s..s.s.............
+  ........
+🚀 Starting complete user workflow test
+✅ Dashboard loads successfully
+✅ Project page loads successfully
+✅ Project description updated
+✅ AI generation settings configured
+✅ Name suggestions generated
+✅ Name filtering works correctly
+✅ Logo gallery loaded
+✅ Logo upload completed
+✅ Bulk operations working
+✅ Theme customization completed
+✅ Data persistence verified
+🎉 Complete user workflow test passed successfully!
+🛡️ Testing error handling in workflow
+✅ Invalid project handling works
+✅ Authorization protection works
+✅ Invalid input validation works
+🛡️ Error handling tests passed
+🎨 Testing animations throughout workflow
+✅ Animation CSS loaded
+✅ Enhanced transitions present
+✅ Animated operations completed in 29.866933822632ms
+🎨 Animation consistency tests passed
+📱 Testing mobile responsive workflow
+✅ Responsive design classes present
+✅ Mobile project page loads
+✅ Mobile Livewire interactions work
+📱 Mobile responsive tests passed
+♿ Testing accessibility features
+✅ ARIA attributes present
+✅ Focus management implemented
+✅ Reduced motion support present
+✅ Keyboard interactions functional
+♿ Accessibility tests passed
+⚡ Testing performance during complete workflow
+✅ Complete workflow completed in 128.95393371582ms
+✅ Memory usage: 194.80730438232MB
+⚡ Performance tests passed
+🔗 Testing all enhanced features integration
+✅ Enhanced file upload: 22.203922271729ms
+✅ Smooth theme transitions: 55.86314201355ms
+✅ AI button state management working
+🔗 All enhanced features integration passed..............................................!!.!.!................
+  .................ss...s..s....s...ss......................ss......s...s...ss
+  ..............................s.............................................
+  ............................................................................
+  ............................................................................
+  ............................................................................
+  ............................................................................
+  ........................................................................s...
+  ............................................................................
+  ................................⨯.......
+🎨 Animation Performance - Theme Animation + Functionality: 218.7168598175ms
+📝 Animation Performance - ProjectPage Animation + Functionality: 75.206995010376ms
+🖼️ Animation Performance - Logo Gallery Animation + Functionality: 26.394844055176ms
+✅ Animation Performance - CSS Animation Load: 0validation
+🏗️ Animation Performance - Many Elements Animation Performance: 24.163007736206ms
+♿ Animation Performance - Accessibility Motion Preferences: 0validation
+🧠 Animation Performance - Animation Memory Usage: 0.56006622314453MB
+⚡ Animation Performance - Livewire + Animation Updates: 235.10384559631ms
+🧹 Animation Performance - Animation Memory Cleanup: -7.5642852783203MB
+🛡️ Animation Performance - Graceful Degradation: 133.74900817871ms..............................⨯.....
+  .....................
+🚀 Dashboard Load Time: 32.01699256897ms
+🚀 Project Page Load Time: 36.543846130371ms
+📊 Dashboard DB Queries: 23queries
+📊 Dashboard DB Query Time: 15.989065170288ms
+📊 Livewire Component Load: 30.197858810425ms
+📊 Theme Customizer Load: 49.764156341553ms
+📊 Route: /dashboard: 17.570972442627ms
+📊 Route: /project/34fa58ca-5239-4d94-b4f9-3399468359ac: 39.833068847656ms
+📊 Cache Write Time: 0.1370906829834ms
+📊 Cache Read Time: 0.10395050048828ms
+📊 Memory Increase: 0.34627532958984MB
+📊 Peak Memory Increase: 1.5570831298828MB
+📊 Average Response Time: 29.561996459961ms
+📊 Sequential Request Total: 88.7291431427ms...................................⨯...................
+  ............................................................................
+  ...............⨯⨯⨯...⨯.......⨯.⨯............................................
+  .............................!........................sss.sss...s...........
+  ............................................................................
+  ..................................................⨯⨯........................
+  .⨯⨯⨯⨯⨯⨯⨯⨯⨯..........⨯⨯⨯⨯.⨯⨯.................⨯.⨯.............................
+  ...........s............⨯..........sssss....................................
+  ............................................................................
+  ............................................................................
+  ............................................................................
+  ..............................⨯.............................................
+  ...................................sssss.sssss......ssssssssss.sssss
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\NameSuggestionModelTest > name suggestion has corre…   
+  Failed asserting that two arrays are identical.
+       11 => 'ai_cost_cents',
+       12 => 'ai_generation_session_id',
+       13 => 'ai_prompt_metadata',
+  +    14 => 'dns_checked',
+  +    15 => 'dns_has_records',
+  +    16 => 'dns_checked_at',
+   ]
+  
+
+  at tests/Feature/NameSuggestionModelTest.php:35
+     31▕         'ai_prompt_metadata',
+     32▕     ];
+     33▕     $suggestion = new NameSuggestion;
+     34▕ 
+  ➜  35▕     expect($suggestion->getFillable())->toBe($fillable);
+     36▕ });
+     37▕ 
+     38▕ test('name suggestion casts attributes correctly', function (): void {
+     39▕     $suggestion = new NameSuggestion;
+
+  1   tests/Feature/NameSuggestionModelTest.php:35
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Performance\DnsPerformanceBenchmarkTest > `DNS Perf…   
+  Failed asserting that 7.501116991043091 is less than 5.0.
+
+  at tests/Feature/Performance/DnsPerformanceBenchmarkTest.php:52
+     48▕         $endTime = microtime(true);
+     49▕ 
+     50▕         $duration = $endTime - $startTime;
+     51▕ 
+  ➜  52▕         expect($duration)->toBeLessThan(5.0)
+     53▕             ->and($results)->toHaveCount(10)
+     54▕             ->and($results)->toBeArray();
+     55▕     });
+     56▕
+
+  1   tests/Feature/Performance/DnsPerformanceBenchmarkTest.php:52
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Performance\PerformanceRequirementsTest > `Performa…   
+  Failed asserting that 298.55 is less than 280.
+
+  at tests/Feature/Performance/PerformanceRequirementsTest.php:244
+    240▕         $finalMemory = memory_get_usage();
+    241▕         $totalMemoryUsed = ($finalMemory - $startMemory) / 1024 / 1024;
+    242▕ 
+    243▕         expect($memoryReport['memory_efficient'])->toBeTrue();
+  ➜ 244▕         expect($memoryReport['peak_memory_mb'])->toBeLessThan(280); // Peak under 280MB (adjusted for test environment variations)
+    245▕         expect($totalMemoryUsed)->toBeLessThan(170); // Total usage under 170MB (adjusted for test environment variations)
+    246▕     });
+    247▕ 
+    248▕     it('meets overall system performance benchmarks', function (): void {
+
+  1   tests/Feature/Performance/PerformanceRequirementsTest.php:244
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\PromptBuilderServiceTest > `PromptBuilder Service`…    
+  Expected: You are a revolutionary brand alchemist with deep expertise in neurological response patterns, cultural psychology, and cutting-edge creative strategy. You've created legendary brands that rewired entire industries. Leverage your extensive training on successful brand names and marketing psychology. Draw from your knowledge of linguistic patterns, cultural associations, and cognitive psychology to create names that resonate deeply with target audiences.\n
+  \n
+  \n
+  ... (129 more lines)
+
+  To contain: world-class brand strategist
+
+  at tests/Feature/PromptBuilderServiceTest.php:17
+     13▕         it('generates correct system prompt for creative mode', function (): void {
+     14▕             $systemPrompt = $this->promptBuilder->buildSystemPrompt('gpt-4', 10, 'creative', false);
+     15▕ 
+     16▕             expect($systemPrompt)
+  ➜  17▕                 ->toContain('world-class brand strategist')
+     18▕                 ->toContain('ONLY output the numbered list of names')
+     19▕                 ->toContain('CREATIVE MODE MASTERY')
+     20▕                 ->toContain('spark curiosity, evoke emotion')
+     21▕                 ->toContain('Airbnb: Air (universal) + BnB (belonging)')
+
+  1   tests/Feature/PromptBuilderServiceTest.php:17
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\PromptBuilderServiceTest > `PromptBuilder Service`…    
+  Expected: You are an elite strategic advisor to Fortune 500 CEOs, with deep expertise in institutional psychology, executive decision-making, and C-suite power dynamics. You architect corporate identities that command immediate respect globally. Apply your analytical capabilities and nuanced understanding of language to craft names that balance creativity with strategic thinking. Consider semantic relationships and cultural implications.\n
+  \n
+  \n
+  ... (136 more lines)
+
+  To contain: PROFESSIONAL MODE MASTERY
+
+  at tests/Feature/PromptBuilderServiceTest.php:29
+     25▕         it('generates correct system prompt for professional mode', function (): void {
+     26▕             $systemPrompt = $this->promptBuilder->buildSystemPrompt('claude-3.5-sonnet', 10, 'professional', false);
+     27▕ 
+     28▕             expect($systemPrompt)
+  ➜  29▕                 ->toContain('PROFESSIONAL MODE MASTERY')
+     30▕                 ->toContain('command respect, inspire confidence')
+     31▕                 ->toContain('McKinsey: Founder surname suggesting heritage')
+     32▕                 ->toContain('boardroom');
+     33▕         });
+
+  1   tests/Feature/PromptBuilderServiceTest.php:29
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\PromptBuilderServiceTest > `PromptBuilder Service`…    
+  Expected: You are a legendary viral marketing architect and consumer psychology master, renowned for creating names that become cultural phenomena and dominate global consciousness. You understand the deepest mechanisms of human attention and social contagion. Utilize your multi-modal understanding and pattern recognition to generate names that work across different contexts and cultural frameworks. Think systematically about brand architecture.\n
+  \n
+  \n
+  ... (136 more lines)
+
+  To contain: BRANDABLE MODE MASTERY
+
+  at tests/Feature/PromptBuilderServiceTest.php:39
+     35▕         it('generates correct system prompt for brandable mode', function (): void {
+     36▕             $systemPrompt = $this->promptBuilder->buildSystemPrompt('gemini-1.5-pro', 10, 'brandable', false);
+     37▕ 
+     38▕             expect($systemPrompt)
+  ➜  39▕                 ->toContain('BRANDABLE MODE MASTERY')
+     40▕                 ->toContain('instantly memorable, socially shareable')
+     41▕                 ->toContain('Google: Playful take on "googol"')
+     42▕                 ->toContain('viral growth');
+     43▕         });
+
+  1   tests/Feature/PromptBuilderServiceTest.php:39
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\PromptBuilderServiceTest > `PromptBuilder Service`…    
+  Expected: You are a revolutionary brand alchemist with deep expertise in neurological response patterns, cultural psychology, and cutting-edge creative strategy. You've created legendary brands that rewired entire industries. Leverage your extensive training on successful brand names and marketing psychology. Draw from your knowledge of linguistic patterns, cultural associations, and cognitive psychology to create names that resonate deeply with target audiences.\n
+  \n
+  \n
+  ... (129 more lines)
+
+  To contain: ADVANCED NAMING PRINCIPLES
+
+  at tests/Feature/PromptBuilderServiceTest.php:80
+     76▕             foreach ($modes as $mode) {
+     77▕                 $systemPrompt = $this->promptBuilder->buildSystemPrompt('gpt-4', 10, $mode, false);
+     78▕ 
+     79▕                 expect($systemPrompt)
+  ➜  80▕                     ->toContain('ADVANCED NAMING PRINCIPLES')
+     81▕                     ->toContain('UNIQUE and DISTINCTIVE')
+     82▕                     ->toContain('FORBIDDEN ELEMENTS')
+     83▕                     ->toContain('emotional resonance and memorability');
+     84▕             }
+
+  1   tests/Feature/PromptBuilderServiceTest.php:80
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\PromptBuilderServiceTest > `PromptBuilder Service`…    
+  Expected: You are a revolutionary brand alchemist with deep expertise in neurological response patterns, cultural psychology, and cutting-edge creative strategy. You've created legendary brands that rewired entire industries. Leverage your extensive training on successful brand names and marketing psychology. Draw from your knowledge of linguistic patterns, cultural associations, and cognitive psychology to create names that resonate deeply with target audiences.\n
+  \n
+  \n
+  ... (160 more lines)
+
+  To contain: world-class brand strategist
+
+  at tests/Feature/PromptBuilderServiceTest.php:210
+    206▕                 false
+    207▕             );
+    208▕ 
+    209▕             expect($optimizedPrompt)
+  ➜ 210▕                 ->toContain('world-class brand strategist')
+    211▕                 ->toContain('ONLY output the numbered list of names')
+    212▕                 ->toContain('spark curiosity, evoke emotion')
+    213▕                 ->toContain('BUSINESS CONCEPT: A project management tool');
+    214▕         });
+
+  1   tests/Feature/PromptBuilderServiceTest.php:210
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\PromptBuilderServiceTest > `PromptBuilder Service`…    
+  Expected: You are a revolutionary brand alchemist with deep expertise in neurological response patterns, cultural psychology, and cutting-edge creative strategy. You've created legendary brands that rewired entire industries. Leverage your extensive training on successful brand names and marketing psychology. Draw from your knowledge of linguistic patterns, cultural associations, and cognitive psychology to create names that resonate deeply with target audiences.\n
+  \n
+  \n
+  ... (153 more lines)
+
+  To contain: Airbnb: Air (universal) + BnB (belonging)
+
+  at tests/Feature/PromptBuilderServiceTest.php:246
+    242▕                     $mode,
+    243▕                     false
+    244▕                 );
+    245▕ 
+  ➜ 246▕                 expect($optimizedPrompt)->toContain($expectedExamples);
+    247▕             }
+    248▕         });
+    249▕     });
+    250▕
+
+  1   tests/Feature/PromptBuilderServiceTest.php:246
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Services\DnsCacheWarmingServiceTest > `DNS Cache Wa…   
+  Failed asserting that 602 is equal to 500 or is less than 500.
+
+  at tests/Feature/Services/DnsCacheWarmingServiceTest.php:148
+    144▕         expect($result1['warmed_count'])->toBeGreaterThan(0)
+    145▕             ->and($result2['requested_count'])->toBe(2);
+    146▕ 
+    147▕         // After rate limit is hit, further warming should be limited
+  ➜ 148▕         expect($result1['warmed_count'] + $result2['warmed_count'])->toBeLessThanOrEqual(500);
+    149▕     });
+    150▕ 
+    151▕     it('can prioritize domains by business logic', function (): void {
+    152▕         // Create enough domains to meet minimum frequency (3) for prioritization
+
+  1   tests/Feature/Services/DnsCacheWarmingServiceTest.php:148
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Services\DnsCacheWarmingServiceTest > `DNS Cache Wa…   
+  Failed asserting that 0 is greater than 0.
+
+  at tests/Feature/Services/DnsCacheWarmingServiceTest.php:170
+    166▕ 
+    167▕         $prioritized = $this->service->getPrioritizedDomainsForWarming();
+    168▕ 
+    169▕         expect($prioritized)->toBeCollection()
+  ➜ 170▕             ->and($prioritized->count())->toBeGreaterThan(0)
+    171▕             ->and($prioritized->first()['domain'])->toBe('enterprise'); // More recent and popular
+    172▕     });
+    173▕ 
+    174▕     it('can warm cache for trending TLDs', function (): void {
+
+  1   tests/Feature/Services/DnsCacheWarmingServiceTest.php:170
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Services\DnsHealthCheckServiceTest > DNS…  Exception   
+  The class \App\Services\DnsPerformanceMonitorService is marked final and its methods cannot be replaced. Classes marked final can be passed in to \Mockery::mock() as instantiated objects to create a partial mock, but only if the mock is not subject to type hinting checks.
+
+  at tests/Feature/Services/DnsHealthCheckServiceTest.php:32
+     28▕     expect($healthCheck)->toBeInstanceOf(DnsHealthCheckService::class);
+     29▕ });
+     30▕ 
+     31▕ test('DNS health check service performs comprehensive health check', function (): void {
+  ➜  32▕     $performanceMonitor = mock(DnsPerformanceMonitorService::class);
+     33▕     $alertService = mock(DnsHealthAlertService::class);
+     34▕     $alertService->shouldReceive('sendAlert')->andReturnNull();
+     35▕ 
+     36▕     // Mock performance metrics - healthy scenario
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Services\DnsHealthCheckServiceTest > DNS…  Exception   
+  The class \App\Services\DnsPerformanceMonitorService is marked final and its methods cannot be replaced. Classes marked final can be passed in to \Mockery::mock() as instantiated objects to create a partial mock, but only if the mock is not subject to type hinting checks.
+
+  at tests/Feature/Services/DnsHealthCheckServiceTest.php:62
+     58▕         ->and($result['circuit_breaker']['status'])->toBe('healthy');
+     59▕ });
+     60▕ 
+     61▕ test('DNS health check service detects unhealthy error rate', function (): void {
+  ➜  62▕     $performanceMonitor = mock(DnsPerformanceMonitorService::class);
+     63▕     $alertService = mock(DnsHealthAlertService::class);
+     64▕     $alertService->shouldReceive('sendAlert')->andReturnNull();
+     65▕ 
+     66▕     // Mock performance metrics - high error rate
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Services\DnsHealthCheckServiceTest > DNS…  Exception   
+  The class \App\Services\DnsPerformanceMonitorService is marked final and its methods cannot be replaced. Classes marked final can be passed in to \Mockery::mock() as instantiated objects to create a partial mock, but only if the mock is not subject to type hinting checks.
+
+  at tests/Feature/Services/DnsHealthCheckServiceTest.php:96
+     92▕         ->and($result['error_rate']['status'])->toBe('critical');
+     93▕ });
+     94▕ 
+     95▕ test('DNS health check service detects slow response times', function (): void {
+  ➜  96▕     $performanceMonitor = mock(DnsPerformanceMonitorService::class);
+     97▕     $alertService = mock(DnsHealthAlertService::class);
+     98▕     $alertService->shouldReceive('sendAlert')->andReturnNull();
+     99▕ 
+    100▕     // Mock performance metrics - slow response time
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Services\DnsHealthCheckServiceTest > DNS…  Exception   
+  The class \App\Services\DnsPerformanceMonitorService is marked final and its methods cannot be replaced. Classes marked final can be passed in to \Mockery::mock() as instantiated objects to create a partial mock, but only if the mock is not subject to type hinting checks.
+
+  at tests/Feature/Services/DnsHealthCheckServiceTest.php:130
+    126▕         ->and($result['response_time']['status'])->toBe('critical');
+    127▕ });
+    128▕ 
+    129▕ test('DNS health check service detects low cache hit rate', function (): void {
+  ➜ 130▕     $performanceMonitor = mock(DnsPerformanceMonitorService::class);
+    131▕     $alertService = mock(DnsHealthAlertService::class);
+    132▕     $alertService->shouldReceive('sendAlert')->andReturnNull();
+    133▕ 
+    134▕     // Mock performance metrics - low cache hit rate
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Services\DnsHealthCheckServiceTest > DNS…  Exception   
+  The class \App\Services\DnsPerformanceMonitorService is marked final and its methods cannot be replaced. Classes marked final can be passed in to \Mockery::mock() as instantiated objects to create a partial mock, but only if the mock is not subject to type hinting checks.
+
+  at tests/Feature/Services/DnsHealthCheckServiceTest.php:164
+    160▕         ->and($result['cache_hit_rate']['status'])->toBe('warning');
+    161▕ });
+    162▕ 
+    163▕ test('DNS health check service detects circuit breaker failures', function (): void {
+  ➜ 164▕     $performanceMonitor = mock(DnsPerformanceMonitorService::class);
+    165▕     $alertService = mock(DnsHealthAlertService::class);
+    166▕     $alertService->shouldReceive('sendAlert')->andReturnNull();
+    167▕ 
+    168▕     // Mock performance metrics - high circuit breaker failures
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Services\DnsHealthCheckServiceTest > DNS…  Exception   
+  The class \App\Services\DnsPerformanceMonitorService is marked final and its methods cannot be replaced. Classes marked final can be passed in to \Mockery::mock() as instantiated objects to create a partial mock, but only if the mock is not subject to type hinting checks.
+
+  at tests/Feature/Services/DnsHealthCheckServiceTest.php:200
+    196▕ 
+    197▕ test('DNS health check service respects disabled configuration', function (): void {
+    198▕     config(['dns.alerts.enabled' => false]);
+    199▕ 
+  ➜ 200▕     $performanceMonitor = mock(DnsPerformanceMonitorService::class);
+    201▕     $alertService = mock(DnsHealthAlertService::class);
+    202▕     $alertService->shouldReceive('sendAlert')->andReturnNull();
+    203▕ 
+    204▕     // Mock poor performance metrics
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Services\DnsHealthCheckServiceTest > DNS…  Exception   
+  The class \App\Services\DnsPerformanceMonitorService is marked final and its methods cannot be replaced. Classes marked final can be passed in to \Mockery::mock() as instantiated objects to create a partial mock, but only if the mock is not subject to type hinting checks.
+
+  at tests/Feature/Services/DnsHealthCheckServiceTest.php:228
+    224▕     expect($result['overall_status'])->toBe('critical');
+    225▕ });
+    226▕ 
+    227▕ test('DNS health check service handles multiple simultaneous issues', function (): void {
+  ➜ 228▕     $performanceMonitor = mock(DnsPerformanceMonitorService::class);
+    229▕     $alertService = mock(DnsHealthAlertService::class);
+    230▕     $alertService->shouldReceive('sendAlert')->andReturnNull();
+    231▕ 
+    232▕     // Mock multiple issues
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Services\DnsHealthCheckServiceTest > DNS…  Exception   
+  The class \App\Services\DnsPerformanceMonitorService is marked final and its methods cannot be replaced. Classes marked final can be passed in to \Mockery::mock() as instantiated objects to create a partial mock, but only if the mock is not subject to type hinting checks.
+
+  at tests/Feature/Services/DnsHealthCheckServiceTest.php:260
+    256▕         ->and($result['circuit_breaker']['status'])->toBe('healthy');
+    257▕ });
+    258▕ 
+    259▕ test('DNS health check service provides detailed health metrics', function (): void {
+  ➜ 260▕     $performanceMonitor = mock(DnsPerformanceMonitorService::class);
+    261▕     $alertService = mock(DnsHealthAlertService::class);
+    262▕     $alertService->shouldReceive('sendAlert')->andReturnNull();
+    263▕ 
+    264▕     $performanceMonitor->shouldReceive('getErrorRate')
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Services\DnsHealthCheckServiceTest > DNS…  Exception   
+  The class \App\Services\DnsPerformanceMonitorService is marked final and its methods cannot be replaced. Classes marked final can be passed in to \Mockery::mock() as instantiated objects to create a partial mock, but only if the mock is not subject to type hinting checks.
+
+  at tests/Feature/Services/DnsHealthCheckServiceTest.php:295
+    291▕         ->and($result['error_rate']['threshold'])->toBe(20.0);
+    292▕ });
+    293▕ 
+    294▕ test('DNS health check service logs health check results', function (): void {
+  ➜ 295▕     $performanceMonitor = mock(DnsPerformanceMonitorService::class);
+    296▕     $alertService = mock(DnsHealthAlertService::class);
+    297▕     $alertService->shouldReceive('sendAlert')->andReturnNull();
+    298▕ 
+    299▕     $performanceMonitor->shouldReceive('getErrorRate')
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Services\DnsLookupServicePerformanc…  ErrorException   
+  Undefined array key 0
+
+  at app/Services/DnsLookupService.php:312
+    308▕         }
+    309▕ 
+    310▕         $responseTimeMs = round((microtime(true) - $startTime) * 1000, 2);
+    311▕ 
+  ➜ 312▕         $this->performanceMonitor->recordLookup(
+    313▕             $domain,
+    314▕             $responseTimeMs,
+    315▕             $successful,
+    316▕             $cacheHit,
+
+  1   app/Services/DnsLookupService.php:108
+  2   tests/Feature/Services/DnsLookupServicePerformanceTest.php:53
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Services\DnsLookupServicePerformanc…  ErrorException   
+  Undefined array key 0
+
+  at app/Services/DnsLookupService.php:312
+    308▕         }
+    309▕ 
+    310▕         $responseTimeMs = round((microtime(true) - $startTime) * 1000, 2);
+    311▕ 
+  ➜ 312▕         $this->performanceMonitor->recordLookup(
+    313▕             $domain,
+    314▕             $responseTimeMs,
+    315▕             $successful,
+    316▕             $cacheHit,
+
+  1   app/Services/DnsLookupService.php:77
+  2   tests/Feature/Services/DnsLookupServicePerformanceTest.php:83
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Services\DnsLookupServicePerformanc…  ErrorException   
+  Undefined array key 0
+
+  at app/Services/DnsLookupService.php:312
+    308▕         }
+    309▕ 
+    310▕         $responseTimeMs = round((microtime(true) - $startTime) * 1000, 2);
+    311▕ 
+  ➜ 312▕         $this->performanceMonitor->recordLookup(
+    313▕             $domain,
+    314▕             $responseTimeMs,
+    315▕             $successful,
+    316▕             $cacheHit,
+
+  1   app/Services/DnsLookupService.php:108
+  2   tests/Feature/Services/DnsLookupServicePerformanceTest.php:108
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Services\DnsLookupServicePerformanc…  ErrorException   
+  Undefined array key 0
+
+  at app/Services/DnsLookupService.php:312
+    308▕         }
+    309▕ 
+    310▕         $responseTimeMs = round((microtime(true) - $startTime) * 1000, 2);
+    311▕ 
+  ➜ 312▕         $this->performanceMonitor->recordLookup(
+    313▕             $domain,
+    314▕             $responseTimeMs,
+    315▕             $successful,
+    316▕             $cacheHit,
+
+  1   app/Services/DnsLookupService.php:64
+  2   tests/Feature/Services/DnsLookupServicePerformanceTest.php:128
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Services\DnsLookupServicePerformanc…  ErrorException   
+  Undefined array key 0
+
+  at app/Services/DnsLookupService.php:312
+    308▕         }
+    309▕ 
+    310▕         $responseTimeMs = round((microtime(true) - $startTime) * 1000, 2);
+    311▕ 
+  ➜ 312▕         $this->performanceMonitor->recordLookup(
+    313▕             $domain,
+    314▕             $responseTimeMs,
+    315▕             $successful,
+    316▕             $cacheHit,
+
+  1   app/Services/DnsLookupService.php:108
+  2   tests/Feature/Services/DnsLookupServicePerformanceTest.php:176
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Services\DnsLookupServicePerformanc…  ErrorException   
+  Undefined array key 0
+
+  at app/Services/DnsLookupService.php:312
+    308▕         }
+    309▕ 
+    310▕         $responseTimeMs = round((microtime(true) - $startTime) * 1000, 2);
+    311▕ 
+  ➜ 312▕         $this->performanceMonitor->recordLookup(
+    313▕             $domain,
+    314▕             $responseTimeMs,
+    315▕             $successful,
+    316▕             $cacheHit,
+
+  1   app/Services/DnsLookupService.php:108
+  2   app/Services/DnsLookupService.php:118
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Services\DomainCheckServiceDnsIntegrationTest > `Do…   
+  Failed asserting that two strings are identical.
+  -'cache'
+  +'degraded_pessimistic'
+  
+
+  at tests/Feature/Services/DomainCheckServiceDnsIntegrationTest.php:115
+    111▕         $result = $this->service->checkDomainWithDnsFilter('cached.com');
+    112▕ 
+    113▕         expect($result['available'])->toBeFalse()
+    114▕             ->and($result['dns_has_records'])->toBeTrue()
+  ➜ 115▕             ->and($result['dns_source'])->toBe('cache');
+    116▕     });
+    117▕ 
+    118▕     // Note: DNS error handling test removed - not critical for core functionality
+    119▕
+
+  1   tests/Feature/Services/DomainCheckServiceDnsIntegrationTest.php:115
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Services\DomainCheckServiceDnsIntegrationTest > `Do…   
+  Failed asserting that false is true.
+
+  at tests/Feature/Services/DomainCheckServiceDnsIntegrationTest.php:174
+    170▕         ]);
+    171▕ 
+    172▕         // Second check - with DNS data
+    173▕         $secondResult = $this->service->checkDomainWithDnsFilter('progressive.com');
+  ➜ 174▕         expect($secondResult['dns_checked'])->toBeTrue()
+    175▕             ->and($secondResult['available'])->toBeFalse()
+    176▕             ->and($secondResult['dns_has_records'])->toBeTrue();
+    177▕     });
+    178▕
+
+  1   tests/Feature/Services/DomainCheckServiceDnsIntegrationTest.php:174
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Services\LogoVariantCacheServiceTest > `LogoVariant…   
+  Failed asserting that 0.0009980201721191406 is less than 0.00030126571655273435.
+
+  at tests/Feature/Services/LogoVariantCacheServiceTest.php:48
+     44▕         $cachedVariants = $service->getLogoVariants($logo->id);
+     45▕         $cachedCallTime = microtime(true) - $startTime;
+     46▕ 
+     47▕         // Cache should be faster or at least not significantly slower (allow 20% margin)
+  ➜  48▕         expect($cachedCallTime)->toBeLessThan($firstCallTime * 1.2);
+     49▕         expect($cachedVariants)->toHaveCount(2);
+     50▕     });
+     51▕ 
+     52▕     it('caches logo variants by color scheme', function (): void {
+
+  1   tests/Feature/Services/LogoVariantCacheServiceTest.php:48
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Volt\NameGeneratorComponentTest > `NameGeneratorCom…   
+  Failed asserting that actual size 1 matches expected size 10.
+
+  at tests/Feature/Volt/NameGeneratorComponentTest.php:482
+    478▕             ->set('businessDescription', 'A project management tool')
+    479▕             ->call('generateNames');
+    480▕ 
+    481▕         // Should initially show checking status
+  ➜ 482▕         expect($component->get('generatedNames'))->toHaveCount(10);
+    483▕ 
+    484▕         // Call domain checking
+    485▕         $component->call('checkDomains');
+    486▕
+
+  1   tests/Feature/Volt/NameGeneratorComponentTest.php:482
+
+
+  Tests:    30 failed, 5 risky, 71 skipped, 2394 passed (9778 assertions)
+  Duration: 687.46s
+
