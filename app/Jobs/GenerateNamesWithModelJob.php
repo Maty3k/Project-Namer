@@ -135,9 +135,9 @@ class GenerateNamesWithModelJob implements ShouldQueue
             // Cache the results for the coordinator to collect
             $resultData = [
                 'model_id' => $this->modelId,
-                'results' => is_array($results) ? $results : [$results],
+                'results' => $results,
                 'execution_time_ms' => $executionTime,
-                'names_generated' => is_array($results) ? count($results) : 1,
+                'names_generated' => count($results),
                 'status' => 'completed',
                 'completed_at' => now()->toISOString(),
             ];
