@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 use App\Models\DomainCache;
 use App\Models\GenerationCache;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Volt\Volt;
 
+uses(Tests\TestCase::class, RefreshDatabase::class);
+
 describe('Workflow Integration Tests', function (): void {
-    beforeEach(function (): void {
-        // Clear cache for clean test state
-        DomainCache::query()->delete();
-        GenerationCache::query()->delete();
-    });
 
     test('complete workflow with cached generation results', function (): void {
         // Pre-populate generation cache for predictable testing

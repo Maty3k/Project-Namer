@@ -9,7 +9,7 @@ use App\Services\DnsLookupService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 
-uses(RefreshDatabase::class);
+uses(Tests\TestCase::class, RefreshDatabase::class);
 
 describe('DNS Performance Benchmarks', function (): void {
     beforeEach(function (): void {

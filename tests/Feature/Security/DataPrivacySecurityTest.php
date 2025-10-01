@@ -178,6 +178,7 @@ describe('Data Privacy & localStorage Security Tests', function (): void {
         // Trigger rate limiting
         $component->set('lastApiCallTime', time() - 10);
         $component->set('businessDescription', 'sensitive test data')
+            ->set('selectedAIModels', ['gpt-4']) // Set AI model to pass validation
             ->call('generateNames');
 
         // Rate limiting should work but not store the sensitive input

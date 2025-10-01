@@ -271,7 +271,7 @@ describe('ProjectPage AI Generation', function (): void {
         ]);
 
         Livewire::test(ProjectPage::class, ['uuid' => $this->project->uuid])
-            ->assertSet('selectedAIModels', ['grok-beta', 'claude-3.5-sonnet'])
+            ->assertSet('selectedAIModels', []) // AI models start empty, user must select
             ->assertSet('generationMode', '') // Generation mode should always be empty initially
             ->assertSet('deepThinking', true);
     });

@@ -78,7 +78,7 @@ test('UserAIPreferences can find or create for user', function (): void {
 
     expect($preferences1)->toBeInstanceOf(UserAIPreferences::class)
         ->and($preferences1->user_id)->toBe($user->id)
-        ->and($preferences1->preferred_models)->toBe(['gpt-4', 'claude-3.5-sonnet'])
+        ->and($preferences1->preferred_models)->toBe(['gpt-4', 'claude-3.5-sonnet']) // Default models provided
         ->and($preferences1->default_generation_mode)->toBe('creative')
         ->and($preferences1->default_deep_thinking)->toBeFalse();
 

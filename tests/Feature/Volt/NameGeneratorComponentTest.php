@@ -111,6 +111,7 @@ describe('NameGeneratorComponent Validation', function (): void {
         Volt::test('name-generator')
             ->set('businessDescription', 'A project management tool')
             ->set('mode', 'creative')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames')
             ->assertHasNoErrors(['businessDescription', 'mode']);
     });
@@ -127,6 +128,7 @@ describe('NameGeneratorComponent Name Generation', function (): void {
         Volt::test('name-generator')
             ->set('businessDescription', 'A project management tool')
             ->set('mode', 'creative')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames')
             ->assertSet('isLoading', false)
             ->assertSet('errorMessage', '')
@@ -170,6 +172,7 @@ describe('NameGeneratorComponent Name Generation', function (): void {
             ->set('businessDescription', 'A project management tool')
             ->set('mode', 'creative')
             ->set('deepThinking', true)
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames')
             ->assertSet('isLoading', false)
             ->assertSee('SynergyFlow');
@@ -293,6 +296,7 @@ describe('NameGeneratorComponent Deep Thinking Mode', function (): void {
             ->set('businessDescription', 'A project management tool')
             ->set('mode', 'creative')
             ->set('deepThinking', true)
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames')
             ->assertSet('isLoading', false)
             ->assertSee('ThoughtfulName')
@@ -398,6 +402,7 @@ describe('NameGeneratorComponent Results Display & Domain Status', function (): 
         Volt::test('name-generator')
             ->set('businessDescription', 'A project management tool')
             ->set('mode', 'creative')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames')
             ->assertSee('ProjectFlow')
             ->assertSee('TaskMaster')
@@ -414,6 +419,7 @@ describe('NameGeneratorComponent Results Display & Domain Status', function (): 
         Volt::test('name-generator')
             ->set('businessDescription', 'A project management tool')
             ->set('mode', 'creative')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames')
             ->assertSee('ProjectFlow')
             ->assertSee('TaskMaster')
@@ -430,6 +436,7 @@ describe('NameGeneratorComponent Results Display & Domain Status', function (): 
         $component = Volt::test('name-generator')
             ->set('businessDescription', 'A project management tool')
             ->set('mode', 'creative')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
 
         // Initially should show checking status
@@ -448,6 +455,7 @@ describe('NameGeneratorComponent Results Display & Domain Status', function (): 
 
         Volt::test('name-generator')
             ->set('businessDescription', 'A project management tool')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames')
             ->assertSee('TestName1')
             ->assertSee('TestName2');
@@ -476,6 +484,7 @@ describe('NameGeneratorComponent Results Display & Domain Status', function (): 
 
         $component = Volt::test('name-generator')
             ->set('businessDescription', 'A project management tool')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
 
         // Should initially show checking status
@@ -499,6 +508,7 @@ describe('NameGeneratorComponent Domain Availability Indicators', function (): v
 
         Volt::test('name-generator')
             ->set('businessDescription', 'A project management tool')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames')
             ->call('checkDomains')
             ->assertSee('AvailableName');
@@ -513,6 +523,7 @@ describe('NameGeneratorComponent Domain Availability Indicators', function (): v
 
         Volt::test('name-generator')
             ->set('businessDescription', 'A project management tool')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames')
             ->call('checkDomains')
             ->assertSee('TakenName');
@@ -527,6 +538,7 @@ describe('NameGeneratorComponent Domain Availability Indicators', function (): v
 
         Volt::test('name-generator')
             ->set('businessDescription', 'A project management tool')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames')
             ->assertSee('Checking...');
     });
@@ -654,6 +666,7 @@ describe('NameGeneratorComponent Search History Management', function (): void {
         Volt::test('name-generator')
             ->set('businessDescription', 'A project management tool')
             ->set('mode', 'creative')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames')
             ->assertSee('HistoryName1')
             ->assertSee('HistoryName2');
@@ -682,6 +695,7 @@ describe('NameGeneratorComponent Search History Management', function (): void {
 
         $component = Volt::test('name-generator')
             ->set('businessDescription', 'Recent search')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
 
         // History should be in chronological order with most recent first
@@ -742,6 +756,7 @@ describe('NameGeneratorComponent Search History Management', function (): void {
 
         Volt::test('name-generator')
             ->set('businessDescription', 'Persistent search')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames')
             ->assertSee('PersistentName');
 
@@ -845,6 +860,7 @@ describe('NameGeneratorComponent Error Handling & API Failures', function (): vo
         $component = Volt::test('name-generator')
             ->set('errorMessage', 'Previous error')
             ->set('businessDescription', 'Retry test')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('retryGeneration')
             ->assertSet('errorMessage', '');
     });
@@ -858,6 +874,7 @@ describe('NameGeneratorComponent Error Handling & API Failures', function (): vo
 
         $component = Volt::test('name-generator')
             ->set('businessDescription', 'A project management tool')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
 
         // Set lastApiCallTime to simulate recent call within cooldown period
@@ -889,6 +906,7 @@ describe('NameGeneratorComponent Error Handling & API Failures', function (): vo
 
         $component = Volt::test('name-generator')
             ->set('businessDescription', 'A project management tool')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
 
         // The domain checking should handle errors internally
@@ -912,6 +930,7 @@ describe('NameGeneratorComponent Error Handling & API Failures', function (): vo
         Volt::test('name-generator')
             ->set('errorMessage', 'Previous error')
             ->set('businessDescription', 'New description')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames')
             ->assertSet('errorMessage', '');
     });
@@ -925,6 +944,7 @@ describe('NameGeneratorComponent Error Handling & API Failures', function (): vo
 
         $component = Volt::test('name-generator')
             ->set('businessDescription', 'A project management tool')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames')
             ->call('checkDomains');
 
@@ -1027,6 +1047,7 @@ describe('NameGeneratorComponent Timeout Handling & Recovery', function (): void
         $component = Volt::test('name-generator')
             ->set('errorMessage', 'Previous error')
             ->set('businessDescription', 'Retry test')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames')
             ->assertSet('errorMessage', '')
             ->assertSee('RetryName');
@@ -1065,6 +1086,7 @@ describe('NameGeneratorComponent Domain Check Error Handling', function (): void
 
         $component = Volt::test('name-generator')
             ->set('businessDescription', 'A project management tool')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames')
             ->call('checkDomains');
 
@@ -1081,6 +1103,7 @@ describe('NameGeneratorComponent Domain Check Error Handling', function (): void
 
         Volt::test('name-generator')
             ->set('businessDescription', 'A project management tool')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames')
             ->call('checkDomains')
             ->assertSee('ErrorDomain');
@@ -1095,6 +1118,7 @@ describe('NameGeneratorComponent Domain Check Error Handling', function (): void
 
         Volt::test('name-generator')
             ->set('businessDescription', 'A project management tool')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames')
             ->call('checkDomains')
             ->assertSee('RetryDomain')
@@ -1137,6 +1161,7 @@ describe('NameGeneratorComponent Performance & Caching', function (): void {
 
         $component = Volt::test('name-generator')
             ->set('businessDescription', 'A project management tool')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames')
             ->call('checkDomains');
 
@@ -1189,6 +1214,7 @@ describe('NameGeneratorComponent Performance & Caching', function (): void {
 
         $component = Volt::test('name-generator')
             ->set('businessDescription', 'A project management tool')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
 
         // Verify that domain results structure is created
@@ -1230,11 +1256,13 @@ describe('NameGeneratorComponent Cache Optimization', function (): void {
         $component1 = Volt::test('name-generator')
             ->set('businessDescription', 'Duplicate test request')
             ->set('mode', 'creative')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
 
         $component2 = Volt::test('name-generator')
             ->set('businessDescription', 'Duplicate test request')
             ->set('mode', 'creative')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
 
         // Both should succeed
@@ -1349,6 +1377,7 @@ describe('NameGeneratorComponent Responsive Design', function (): void {
         $component = Volt::test('name-generator')
             ->set('businessDescription', 'A project management tool')
             ->set('mode', 'creative')
+            ->set('selectedAIModels', ['claude-3.5-sonnet'])
             ->call('generateNames');
 
         // Check that domain results are populated

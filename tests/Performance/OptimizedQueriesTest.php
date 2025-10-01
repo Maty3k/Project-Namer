@@ -8,7 +8,7 @@ use App\Models\LogoGeneration;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
-uses(RefreshDatabase::class);
+uses(Tests\TestCase::class, RefreshDatabase::class);
 
 describe('Optimized Database Queries', function (): void {
     it('efficiently filters generations by status and creation time', function (): void {

@@ -8,7 +8,7 @@ use App\Models\LogoGeneration;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
-uses(RefreshDatabase::class);
+uses(Tests\TestCase::class, RefreshDatabase::class);
 
 describe('Database Query Optimization', function (): void {
     it('tests logo generation by session query performance', function (): void {

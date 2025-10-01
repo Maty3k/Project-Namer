@@ -76,11 +76,23 @@
         ],
         "test": [
             "@php artisan config:clear --ansi",
-            "@php artisan test"
+            "@php artisan test --testsuite=Unit,Feature"
         ],
         "test-parallel": [
             "@php artisan config:clear --ansi",
-            "@php artisan test --parallel --recreate-databases"
+            "@php artisan test --testsuite=Unit,Feature --parallel --recreate-databases"
+        ],
+        "test-integration": [
+            "@php artisan config:clear --ansi",
+            "@php artisan test --testsuite=Integration"
+        ],
+        "test-performance": [
+            "@php artisan config:clear --ansi",
+            "@php artisan test --testsuite=Performance"
+        ],
+        "test-all": [
+            "@php artisan config:clear --ansi",
+            "@php artisan test"
         ],
         "lint": [
             "vendor/bin/pint"
@@ -98,7 +110,7 @@
             "composer rector",
             "composer lint",
             "composer stan",
-            "composer test",
+            "composer test-parallel",
             "composer update --dry-run roave/security-advisories"
         ],
         "coverage-html": [

@@ -5,12 +5,16 @@ declare(strict_types=1);
 use App\Models\Project;
 use App\Models\ProjectImage;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
+uses(Tests\TestCase::class, RefreshDatabase::class);
+
 beforeEach(function (): void {
     Storage::fake('public');
+    Queue::fake(); // Prevent background job processing during tests
     $this->user = User::factory()->create();
     $this->project = Project::factory()->create(['user_id' => $this->user->id]);
     $this->withoutVite();

@@ -2,18 +2,15 @@
 
 declare(strict_types=1);
 
-use App\Models\DomainCache;
 use App\Models\GenerationCache;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Volt\Volt;
 use Prism\Prism\Prism;
 use Prism\Prism\Testing\TextResponseFake;
 
+uses(Tests\TestCase::class, RefreshDatabase::class);
+
 describe('Simplified Integration Workflow Tests', function (): void {
-    beforeEach(function (): void {
-        // Clear cache for clean test state
-        DomainCache::query()->delete();
-        GenerationCache::query()->delete();
-    });
 
     test('name generation workflow with cached results works end-to-end', function (): void {
         // Mock Prism to provide test responses since the component uses AI service

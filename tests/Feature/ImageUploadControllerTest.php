@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 
 beforeEach(function (): void {
     Storage::fake('public');
+    Queue::fake(); // Prevent background job processing during tests
     $this->user = User::factory()->create();
     $this->project = Project::factory()->create(['user_id' => $this->user->id]);
     $this->withoutVite();
@@ -123,7 +124,7 @@ test('stores image metadata correctly', function (): void {
     expect($image->title)->toBe('Test Image Title');
     expect($image->description)->toBe('Test description for image');
     expect($image->tags)->toBe(['inspiration', 'branding']);
-    // Width/height will be null until background job processes the image
+    // Width/height are set after background processing, so null initially
     expect($image->width)->toBeNull();
     expect($image->height)->toBeNull();
 });

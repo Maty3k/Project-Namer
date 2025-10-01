@@ -11,6 +11,12 @@
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
         </testsuite>
+        <testsuite name="Integration">
+            <directory>tests/Integration</directory>
+        </testsuite>
+        <testsuite name="Performance">
+            <directory>tests/Performance</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>
@@ -30,5 +36,12 @@
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="TWO_FACTOR_AUTHENTICATION" value="true"/>
+        <!-- Prevent external API calls during testing -->
+        <env name="OPENAI_API_KEY" value="test-key-fake"/>
+        <env name="ANTHROPIC_API_KEY" value="test-key-fake"/>
+        <env name="GOOGLE_API_KEY" value="test-key-fake"/>
+        <env name="XAI_API_KEY" value="test-key-fake"/>
+        <env name="DNS_PRIMARY_SERVER" value="127.0.0.1"/>
+        <env name="DNS_FALLBACK_SERVERS" value="127.0.0.1"/>
     </php>
 </phpunit>

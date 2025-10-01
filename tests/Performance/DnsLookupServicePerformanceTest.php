@@ -8,9 +8,9 @@ use App\DTOs\DnsLookupResult;
 use App\Models\DnsLookupCache;
 use App\Services\DnsLookupService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Mockery;
 
-uses(RefreshDatabase::class);
+
+uses(Tests\TestCase::class, RefreshDatabase::class);
 
 beforeEach(function (): void {
     $this->dnsResolver = Mockery::mock(DnsResolverInterface::class);
