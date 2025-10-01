@@ -136,13 +136,20 @@
                 @foreach($this->projects as $project)
                     <div
                         wire:click="{{ $bulkDeleteMode ? '' : 'selectProject(\'' . $project->uuid . '\')' }}"
-                        class="group cursor-pointer rounded-lg transition-all duration-300 ease-out {{ $collapsed ? 'p-2' : 'p-3' }} {{ $userTheme ? ($this->isActiveProject($project) ? 'theme-interactive' : 'theme-hover') : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm transform hover:scale-[1.02]' }}"
-                        @if($this->isActiveProject($project))
+                        class="group {{ $bulkDeleteMode ? 'cursor-default' : 'cursor-pointer' }} rounded-lg transition-all duration-300 ease-out {{ $collapsed ? 'p-2' : 'p-3' }}
+                        {{ !$bulkDeleteMode && $userTheme ? ($this->isActiveProject($project) ? 'theme-interactive' : 'theme-hover') : '' }}
+                        {{ !$bulkDeleteMode && !$userTheme ? 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm transform hover:scale-[1.02]' : '' }}
+                        {{ $bulkDeleteMode && in_array($project->uuid, $selectedProjects) ? 'bg-blue-50 dark:bg-blue-900/30 shadow-md ring-2 ring-blue-500 dark:ring-blue-400' : '' }}
+                        {{ $bulkDeleteMode && !in_array($project->uuid, $selectedProjects) ? 'hover:bg-gray-50 dark:hover:bg-gray-800/50' : '' }}"
+                        @if(!$bulkDeleteMode && $this->isActiveProject($project))
                             @if($userTheme)
                                 style="background: {{ $userTheme->primary_color }}15; border-left: 4px solid {{ $userTheme->primary_color }}; box-shadow: 0 1px 3px rgba(0,0,0,0.1);"
                             @else
                                 style="background: {{ ($userTheme?->primary_color ?? '#3B82F6') }}15; border-left: 4px solid {{ ($userTheme?->primary_color ?? '#3B82F6') }}; box-shadow: 0 1px 3px rgba(0,0,0,0.1);"
                             @endif
+                        @endif
+                        @if($bulkDeleteMode && in_array($project->uuid, $selectedProjects))
+                            style="border-left: 4px solid #3B82F6;"
                         @endif
                         wire:key="project-{{ $project->uuid }}"
                         @if($collapsed)
@@ -175,10 +182,12 @@
                                 @if(!$collapsed)
                                     <div class="flex items-start gap-3 group-hover:pr-8 transition-all duration-200">
                                         @if($bulkDeleteMode)
-                                            <div class="flex-shrink-0 pt-1">
-                                                <flux:checkbox
+                                            <div class="flex-shrink-0 pt-1" wire:key="checkbox-{{ $project->uuid }}">
+                                                <input
+                                                    type="checkbox"
                                                     wire:click.stop="toggleProjectSelection('{{ $project->uuid }}')"
-                                                    :checked="in_array($project->uuid, $selectedProjects)"
+                                                    @checked(in_array($project->uuid, $selectedProjects))
+                                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer transition-all duration-200"
                                                 />
                                             </div>
                                         @endif
