@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
+use App\Models\GenerationCache;
 use App\Services\AIGenerationService;
-use App\Services\PrismAIService;
 use Prism\Prism\Prism;
 use Prism\Prism\Testing\TextResponseFake;
 
 beforeEach(function (): void {
     $this->service = app(AIGenerationService::class);
+    GenerationCache::query()->delete(); // Clear cache before each test
 });
 
 describe('AI Generation Service', function (): void {

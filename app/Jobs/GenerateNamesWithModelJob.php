@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Jobs;
 
 use App\Models\AIGeneration;
-use App\Services\AI\PrismAIService;
+use App\Services\PromptBuilder;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -13,6 +13,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Prism\Prism\Enums\Provider;
+use Prism\Prism\Prism;
 
 /**
  * Job for generating names with a specific AI model in parallel.
@@ -26,6 +28,25 @@ class GenerateNamesWithModelJob implements ShouldQueue
     public int $maxExceptions = 2;
 
     public int $timeout = 120; // 2 minutes timeout
+
+    private const MODEL_CONFIGS = [
+        'gpt-4' => [
+            'provider' => Provider::OpenAI,
+            'model' => 'gpt-4o',
+        ],
+        'claude-3.5-sonnet' => [
+            'provider' => Provider::Anthropic,
+            'model' => 'claude-3-5-sonnet-20241022',
+        ],
+        'gemini-1.5-pro' => [
+            'provider' => Provider::Gemini,
+            'model' => 'gemini-1.5-pro',
+        ],
+        'grok-beta' => [
+            'provider' => Provider::XAI,
+            'model' => 'grok-beta',
+        ],
+    ];
 
     /**
      * Create a new job instance.
@@ -44,7 +65,7 @@ class GenerateNamesWithModelJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(PrismAIService $prismAI): void
+    public function handle(PromptBuilder $promptBuilder): void
     {
         $startTime = microtime(true);
         $cacheKey = "ai_generation_result_{$this->aiGeneration->id}_{$this->modelId}";
@@ -70,21 +91,32 @@ class GenerateNamesWithModelJob implements ShouldQueue
             // Update model status to running
             $this->updateModelStatus('running');
 
-            // Check if model is available
-            if (! $prismAI->isModelAvailable($this->modelId)) {
-                throw new Exception("AI model {$this->modelId} is not available");
+            // Check if model configuration exists
+            if (! isset(self::MODEL_CONFIGS[$this->modelId])) {
+                throw new Exception("AI model {$this->modelId} is not configured");
             }
 
-            // Optimize prompt for this specific model
-            $optimizedPrompt = $prismAI->optimizePrompt(
-                $this->modelId,
-                $this->prompt,
-                $this->parameters['mode'] ?? 'creative',
-                $this->parameters['deep_thinking'] ?? false
-            );
+            $config = self::MODEL_CONFIGS[$this->modelId];
+            $mode = $this->parameters['mode'] ?? 'creative';
+            $deepThinking = $this->parameters['deep_thinking'] ?? false;
+            $count = $this->parameters['count'] ?? 10;
 
-            // Generate names
-            $results = $prismAI->generateNames($this->modelId, $optimizedPrompt, $this->parameters);
+            // Build prompts
+            $prompts = $promptBuilder->build($this->prompt, $this->modelId, $count, $mode, $deepThinking);
+
+            // Generate names using Prism directly
+            $response = Prism::text()
+                ->using($config['provider'], $config['model'])
+                ->withSystemPrompt($prompts['system'])
+                ->withPrompt($prompts['user'])
+                ->withClientOptions([
+                    'max_tokens' => 200,
+                    'temperature' => $deepThinking ? 0.3 : 0.7,
+                ])
+                ->asText();
+
+            // Parse results
+            $results = $this->parseResponse($response->text, $count);
 
             $endTime = microtime(true);
             $executionTime = ($endTime - $startTime) * 1000; // milliseconds
@@ -103,9 +135,9 @@ class GenerateNamesWithModelJob implements ShouldQueue
             // Cache the results for the coordinator to collect
             $resultData = [
                 'model_id' => $this->modelId,
-                'results' => $results,
+                'results' => is_array($results) ? $results : [$results],
                 'execution_time_ms' => $executionTime,
-                'names_generated' => count($results),
+                'names_generated' => is_array($results) ? count($results) : 1,
                 'status' => 'completed',
                 'completed_at' => now()->toISOString(),
             ];
@@ -248,5 +280,34 @@ class GenerateNamesWithModelJob implements ShouldQueue
 
         // Retry for network errors, rate limits, etc.
         return true;
+    }
+
+    /**
+     * Parse response text into array of names.
+     *
+     * @return array<int, string>
+     */
+    private function parseResponse(string $responseText, int $expectedCount): array
+    {
+        $lines = explode("\n", trim($responseText));
+        $names = [];
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+
+            // Remove numbering (1., 2., etc.) and clean up
+            if (preg_match('/^\d+\.\s*(.+)$/', $line, $matches)) {
+                $name = trim($matches[1]);
+                if (! empty($name)) {
+                    $names[] = $name;
+                }
+            } elseif (! empty($line) && ! preg_match('/^\d+$/', $line)) {
+                // Handle cases where names aren't numbered
+                $names[] = $line;
+            }
+        }
+
+        // Ensure we have the expected number of names
+        return array_slice($names, 0, $expectedCount);
     }
 }

@@ -16,7 +16,6 @@ use App\Models\Share;
 use App\Models\UserAIPreferences;
 use App\Models\UserThemePreference;
 use App\Services\AI\AIGenerationService;
-use App\Services\AI\PrismAIService;
 use App\Services\DomainCheckService;
 use App\Services\ExportService;
 use App\Services\OpenAINameService;
@@ -861,10 +860,9 @@ class NameGeneratorDashboard extends Component
     public function checkModelAvailability(): void
     {
         try {
-            $aiService = app(PrismAIService::class);
-
+            // All models are available through Prism
             foreach ($this->availableAIModels as $model) {
-                $this->modelAvailability[$model['id']] = $aiService->isModelAvailable($model['id']);
+                $this->modelAvailability[$model['id']] = true;
             }
         } catch (Exception $e) {
             Log::warning('Failed to check model availability', ['error' => $e->getMessage()]);

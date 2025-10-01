@@ -8,6 +8,8 @@ use App\Jobs\GenerateNamesWithModelJob;
 use App\Models\AIGeneration;
 use App\Models\Project;
 use App\Models\User;
+use App\Services\AIGenerationService as CoreAIGenerationService;
+use App\Services\PromptBuilder;
 use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -18,12 +20,20 @@ use Illuminate\Support\Str;
  * AI Generation Service - Manages AI generation sessions and coordination.
  *
  * Handles the orchestration of AI generation requests, tracking sessions,
- * and coordinating between different AI models and the PrismAI service.
+ * and coordinating between different AI models using Prism directly.
  */
 class AIGenerationService
 {
+    private const VALID_MODELS = [
+        'gpt-4',
+        'claude-3.5-sonnet',
+        'gemini-1.5-pro',
+        'grok-beta',
+    ];
+
     public function __construct(
-        protected PrismAIService $prismAI
+        protected CoreAIGenerationService $coreAIService,
+        protected PromptBuilder $promptBuilder
     ) {}
 
     /**
@@ -94,7 +104,7 @@ class AIGenerationService
         try {
             // Filter available models
             $availableModels = collect($models)->filter(function ($modelId) use ($aiGeneration) {
-                $available = $this->prismAI->isModelAvailable($modelId);
+                $available = in_array($modelId, self::VALID_MODELS);
                 if (! $available) {
                     Log::warning('AI model not available during parallel generation', [
                         'model' => $modelId,
@@ -245,31 +255,26 @@ class AIGenerationService
         $startTime = microtime(true);
 
         try {
-            foreach ($models as $modelId) {
-                if ($this->prismAI->isModelAvailable($modelId)) {
-                    try {
-                        $optimizedPrompt = $this->prismAI->optimizePrompt(
-                            $modelId,
-                            $prompt,
-                            $parameters['mode'] ?? 'creative',
-                            $parameters['deep_thinking'] ?? false
-                        );
+            $mode = $parameters['mode'] ?? 'creative';
+            $deepThinking = $parameters['deep_thinking'] ?? false;
 
-                        $modelResults = $this->prismAI->generateNames($modelId, $optimizedPrompt, $parameters);
-                        $results[$modelId] = $modelResults;
-                    } catch (Exception $e) {
-                        Log::error('Model generation failed during sequential execution', [
-                            'model' => $modelId,
-                            'error' => $e->getMessage(),
-                            'session' => $aiGeneration->generation_session_id,
-                        ]);
+            // Use core AIGenerationService to generate names for all models
+            $generationResult = $this->coreAIService->generateNamesParallel(
+                $prompt,
+                $models,
+                $mode,
+                $deepThinking,
+                $parameters
+            );
 
-                        // Rethrow the exception to trigger proper error handling
-                        throw $e;
-                    }
+            // Extract names from results for each model
+            foreach ($generationResult['results'] as $modelId => $modelResult) {
+                if ($modelResult['status'] === 'completed' && ! empty($modelResult['names'])) {
+                    $results[$modelId] = $modelResult['names'];
                 } else {
-                    Log::warning('AI model not available during generation', [
+                    Log::warning('Model generation failed during sequential execution', [
                         'model' => $modelId,
+                        'error' => $modelResult['error'] ?? 'Unknown error',
                         'session' => $aiGeneration->generation_session_id,
                     ]);
                 }
@@ -340,16 +345,8 @@ class AIGenerationService
      */
     public function getAvailableModels(User $user): array
     {
-        $allModels = ['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro', 'grok-beta'];
-        $availableModels = [];
-
-        foreach ($allModels as $model) {
-            if ($this->prismAI->isModelAvailable($model)) {
-                $availableModels[] = $model;
-            }
-        }
-
-        return $availableModels;
+        // All models are available through Prism
+        return self::VALID_MODELS;
     }
 
     /**
@@ -363,7 +360,24 @@ class AIGenerationService
         $capabilities = [];
 
         foreach ($models as $model) {
-            $capabilities[$model] = $this->prismAI->getModelCapabilities($model);
+            $capabilities[$model] = [
+                'name' => match ($model) {
+                    'gpt-4' => 'GPT-4',
+                    'claude-3.5-sonnet' => 'Claude 3.5 Sonnet',
+                    'gemini-1.5-pro' => 'Gemini 1.5 Pro',
+                    'grok-beta' => 'Grok Beta',
+                    default => $model,
+                },
+                'provider' => match ($model) {
+                    'gpt-4' => 'OpenAI',
+                    'claude-3.5-sonnet' => 'Anthropic',
+                    'gemini-1.5-pro' => 'Google',
+                    'grok-beta' => 'xAI',
+                    default => 'Unknown',
+                },
+                'supports_deep_thinking' => true,
+                'max_tokens' => 200,
+            ];
         }
 
         return $capabilities;
