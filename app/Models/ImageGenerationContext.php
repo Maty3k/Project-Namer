@@ -22,7 +22,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read mixed|null $analysis
  * @property-read \App\Models\GenerationSession $generationSession
  * @property-read \App\Models\ProjectImage $projectImage
- *
  * @method static \Database\Factories\ImageGenerationContextFactory factory($count = null, $state = [])
  * @method static Builder<static>|ImageGenerationContext forGenerationType(string $type)
  * @method static Builder<static>|ImageGenerationContext forSession(int $sessionId)
@@ -37,7 +36,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|ImageGenerationContext whereInfluenceScore($value)
  * @method static Builder<static>|ImageGenerationContext whereProjectImageId($value)
  * @method static Builder<static>|ImageGenerationContext whereVisionAnalysis($value)
- *
  * @mixin \Eloquent
  */
 class ImageGenerationContext extends Model
@@ -125,7 +123,7 @@ class ImageGenerationContext extends Model
         $this->update(['influence_score' => max(0, min(1, $score))]);
     }
 
-    protected function getAnalysisAttribute(string $key): mixed
+    public function getAnalysisAttribute(string $key): mixed
     {
         return $this->vision_analysis[$key] ?? null;
     }

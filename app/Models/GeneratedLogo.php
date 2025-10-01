@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 
 /**
  * Generated logo model.
- *
+ * 
  * Represents an individual generated logo with its style, file path,
  * and metadata from the AI generation process.
  *
@@ -34,7 +34,6 @@ use Illuminate\Support\Str;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LogoColorVariant> $colorVariants
  * @property-read int|null $color_variants_count
  * @property-read \App\Models\LogoGeneration $logoGeneration
- *
  * @method static \Database\Factories\GeneratedLogoFactory factory($count = null, $state = [])
  * @method static Builder<static>|GeneratedLogo newModelQuery()
  * @method static Builder<static>|GeneratedLogo newQuery()
@@ -53,7 +52,6 @@ use Illuminate\Support\Str;
  * @method static Builder<static>|GeneratedLogo whereStyle($value)
  * @method static Builder<static>|GeneratedLogo whereUpdatedAt($value)
  * @method static Builder<static>|GeneratedLogo whereVariationNumber($value)
- *
  * @mixin \Eloquent
  */
 final class GeneratedLogo extends Model

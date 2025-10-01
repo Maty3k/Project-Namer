@@ -11,6 +11,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Sleep;
 use Illuminate\Support\Str;
 
 /**
@@ -210,7 +211,7 @@ class AIGenerationService
                 break;
             }
 
-            sleep($checkInterval);
+            Sleep::for($checkInterval)->seconds();
             $elapsedTime += $checkInterval;
         }
 

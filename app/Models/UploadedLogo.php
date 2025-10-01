@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 
 /**
  * Uploaded logo model.
- *
+ * 
  * Represents a logo file uploaded by a user, with metadata
  * and file management capabilities.
  *
@@ -31,7 +31,6 @@ use Illuminate\Support\Str;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User|null $user
- *
  * @method static \Database\Factories\UploadedLogoFactory factory($count = null, $state = [])
  * @method static Builder<static>|UploadedLogo forSession(string $sessionId)
  * @method static Builder<static>|UploadedLogo forUser(int $userId)
@@ -53,7 +52,6 @@ use Illuminate\Support\Str;
  * @method static Builder<static>|UploadedLogo whereSessionId($value)
  * @method static Builder<static>|UploadedLogo whereUpdatedAt($value)
  * @method static Builder<static>|UploadedLogo whereUserId($value)
- *
  * @mixin \Eloquent
  */
 final class UploadedLogo extends Model

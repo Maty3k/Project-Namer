@@ -36,7 +36,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $text_color
  * @property bool $is_dark_mode
  * @property-read \App\Models\User $user
- *
  * @method static Builder<static>|UserThemePreference customThemes()
  * @method static \Database\Factories\UserThemePreferenceFactory factory($count = null, $state = [])
  * @method static Builder<static>|UserThemePreference forTheme(string $themeName)
@@ -66,7 +65,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|UserThemePreference whereThemeName($value)
  * @method static Builder<static>|UserThemePreference whereUpdatedAt($value)
  * @method static Builder<static>|UserThemePreference whereUserId($value)
- *
  * @mixin \Eloquent
  */
 class UserThemePreference extends Model

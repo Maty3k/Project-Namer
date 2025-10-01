@@ -1,0 +1,215 @@
+
+   WARN  Metadata found in doc-comment for method Tests\Unit\CustomThemeAccessibilityTest::test_custom_color_combinations_accessibility(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Unit\ThemeAccessibilityTest::test_individual_theme_accessibility(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   PASS  Tests\Unit\Enums\ColorSchemeTest
+  ✓ ColorScheme Enum → it has correct enum values                        0.01s  
+  ✓ ColorScheme Enum → it can check if value exists
+  ✓ ColorScheme Enum → it can get all display names as array
+  ✓ ColorScheme Enum → it can get display names for all schemes
+  ✓ ColorScheme Enum → it can get descriptions for all schemes
+  ✓ ColorScheme Enum → it can try from string value
+  ✓ ColorScheme Enum → it can create from string value
+  ✓ ColorScheme Enum → it can get all values as array
+
+   PASS  Tests\Unit\ExampleTest
+  ✓ that true is true                                                    0.01s  
+
+   PASS  Tests\Unit\Models\ShareAccessTest
+  ✓ ShareAccess Model → it handles null optional fields gracefully       0.59s  
+  ✓ ShareAccess Model → it provides analytics methods                    0.04s  
+  ✓ ShareAccess Model → it handles long user agent strings               0.03s  
+  ✓ ShareAccess Model → it handles IPv6 addresses                        0.03s  
+  ✓ ShareAccess Model → it creates a share access record with required…  0.05s  
+  ✓ ShareAccess Model → it cascades delete when share is deleted         0.04s  
+  ✓ ShareAccess Model → it automatically sets accessed_at timestamp      0.03s  
+  ✓ ShareAccess Model → it has proper fillable attributes                0.03s  
+  ✓ ShareAccess Model → it scopes by date range                          0.03s  
+  ✓ ShareAccess Model → it belongs to a share                            0.03s  
+
+   FAIL  Tests\Unit\Utils\DomainUtilsTest
+  ✓ DomainUtils → isValidDomain → it rejects domains with invalid characters
+  ✓ DomainUtils → sanitizeBusinessName → it removes special characters
+  ✓ DomainUtils → formatDomain → it removes protocol prefixes
+  ✓ DomainUtils → isDomainCacheFresh → it handles boundary conditions
+  ✓ DomainUtils → getAvailabilityStatus → it returns correct status for unavailable domains
+  ✓ DomainUtils → formatDomain → it converts domain to lowercase
+  ✓ DomainUtils → formatDomain → it trims whitespace
+  ✓ DomainUtils → isValidDomain → it rejects invalid domain formats
+  ✓ DomainUtils → isDomainCacheFresh → it returns true for fresh cache entries
+  ✓ DomainUtils → buildDomainsFromName → it sanitizes business name before building domains
+  ✓ DomainUtils → formatDomain → it handles complex URLs
+  ✓ DomainUtils → extractTLD → it extracts correct TLD from domains
+  ⨯ DomainUtils → buildDomainsFromName → it builds domains with default… 0.01s  
+  ✓ DomainUtils → sanitizeBusinessName → it handles empty results
+  ✓ DomainUtils → isValidDomain → it validates correct domain formats
+  ✓ DomainUtils → sanitizeBusinessName → it preserves alphanumeric characters
+  ✓ DomainUtils → isDomainCacheFresh → it returns false for expired cache entries
+  ✓ DomainUtils → getAvailabilityStatus → it returns correct status for available domains
+  ✓ DomainUtils → sanitizeBusinessName → it converts to lowercase
+  ✓ DomainUtils → formatDomain → it removes www prefix
+  ✓ DomainUtils → getAvailabilityStatus → it returns checking status when specified
+  ✓ DomainUtils → buildDomainsFromName → it builds domains with custom TLDs
+  ✓ DomainUtils → sanitizeBusinessName → it trims whitespace before processing
+  ✓ DomainUtils → extractTLD → it handles domains without TLD
+  ✓ DomainUtils → formatDomain → it removes trailing slash
+  ✓ DomainUtils → getAvailabilityStatus → it returns error status when availability is null
+  ✓ DomainUtils → sanitizeBusinessName → it removes spaces
+
+   PASS  Tests\Unit\ThemeAccessibilityTest
+  ✓ aaa compliant themes exceed standards                                0.04s  
+  ✓ theme accessibility scores                                           0.03s  
+  ✓ individual theme accessibility with data set "hot-pink"              0.03s  
+  ✓ individual theme accessibility with data set "winter"                0.03s  
+  ✓ individual theme accessibility with data set "cosmic-violet"         0.03s  
+  ✓ individual theme accessibility with data set "electric-blue"         0.03s  
+  ✓ individual theme accessibility with data set "spring"                0.03s  
+  ✓ individual theme accessibility with data set "default"               0.03s  
+  ✓ individual theme accessibility with data set "neon-cyber"            0.03s  
+  ✓ individual theme accessibility with data set "gold-rush"             0.03s  
+  ✓ individual theme accessibility with data set "matrix-green"          0.03s  
+  ✓ individual theme accessibility with data set "sunset"                0.03s  
+  ✓ individual theme accessibility with data set "dark"                  0.03s  
+  ✓ individual theme accessibility with data set "forest"                0.03s  
+  ✓ individual theme accessibility with data set "summer"                0.03s  
+  ✓ individual theme accessibility with data set "autumn"                0.03s  
+  ✓ individual theme accessibility with data set "midnight-teal"         0.03s  
+  ✓ individual theme accessibility with data set "coral-reef"            0.03s  
+  ✓ individual theme accessibility with data set "lava-red"              0.04s  
+  ✓ individual theme accessibility with data set "ocean"                 0.06s  
+  ✓ individual theme accessibility with data set "halloween"             0.05s  
+  ✓ individual theme accessibility with data set "lime-punch"            0.03s  
+  ✓ color validation                                                     0.09s  
+  ✓ dark mode themes contrast                                            0.03s  
+  ✓ all predefined themes meet wcag aa standards                         0.10s  
+  ✓ theme accessibility feedback                                         0.05s  
+  ✓ seasonal themes accessibility                                        0.05s  
+
+   PASS  Tests\Unit\CustomThemeAccessibilityTest
+  ✓ accessibility feedback for poor combinations                         0.03s  
+  ✓ contrast calculation edge cases                                      0.03s  
+  ✓ custom color combinations accessibility with data set "high contras… 0.03s  
+  ✓ custom color combinations accessibility with data set "poor contras… 0.03s  
+  ✓ custom color combinations accessibility with data set "good contras… 0.05s  
+  ✓ custom color combinations accessibility with data set "red on dark…  0.04s  
+  ✓ custom color combinations accessibility with data set "borderline c… 0.03s  
+  ✓ color validation edge cases                                          0.03s  
+  ✓ extreme contrast combinations                                        0.03s  
+  ✓ css property generation                                              0.03s  
+  ✓ wcag level classification                                            0.04s  
+  ✓ accessibility score consistency                                      0.03s  
+
+   PASS  Tests\Unit\Services\ShareServiceTest
+  ✓ ShareService → it validates expired shares are not accessible        0.04s  
+  ✓ ShareService → it validates share access with proper authentication  0.81s  
+  ✓ ShareService → it handles share expiration correctly                 0.04s  
+  ✓ ShareService → it generates social media metadata for shares         0.03s  
+  ✓ ShareService → it creates a public share with valid data             0.03s  
+  ✓ ShareService → it creates a password-protected share with hashed pa… 0.79s  
+  ✓ ShareService → it allows rate limiting bypass for valid requests     0.03s  
+  ✓ ShareService → it validates share data before creation               0.03s  
+  ✓ ShareService → it enforces rate limiting for share creation          0.03s  
+  ✓ ShareService → it deactivates shares instead of hard delete          0.03s  
+  ✓ ShareService → it updates share settings and preferences             0.03s  
+  ✓ ShareService → it requires password for password-protected shares    0.03s  
+  ✓ ShareService → it gets user shares with pagination and filtering     0.04s  
+  ✓ ShareService → it records share access with analytics                0.04s  
+  ✓ ShareService → it generates share analytics data                     0.03s  
+  ✓ ShareService → it handles inactive shares properly                   0.05s  
+
+   PASS  Tests\Unit\Services\ComponentMappingServiceTest
+  ✓ can map free components to pro variants                              0.01s  
+  ✓ can identify flux ui free components in blade templates
+  ✓ can find component dependencies
+  ✓ can handle flux icon components
+  ✓ can generate upgrade suggestions
+  ✓ can determine component upgrade priority
+  ✓ can generate comprehensive audit report
+  ✓ can scan directory for flux components
+
+   PASS  Tests\Unit\Models\ShareTest
+  ✓ Share Model → it belongs to a user                                   0.03s  
+  ✓ Share Model → it records share access and updates view count         0.03s  
+  ✓ Share Model → it creates a share with required attributes            0.02s  
+  ✓ Share Model → it scopes to accessible shares                         0.03s  
+  ✓ Share Model → it has proper fillable attributes                      0.02s  
+  ✓ Share Model → it checks if share is accessible                       0.03s  
+  ✓ Share Model → it generates UUID automatically if not provided        0.02s  
+  ✓ Share Model → it casts settings as array                             0.02s  
+  ✓ Share Model → it handles password-protected shares with proper hash… 0.53s  
+  ✓ Share Model → it scopes to active shares                             0.03s  
+  ✓ Share Model → it provides share URL generation                       0.02s  
+  ✓ Share Model → it has many share accesses for analytics               0.04s  
+  ✓ Share Model → it checks if share is expired                          0.03s  
+  ✓ Share Model → it validates password for protected shares             0.78s  
+  ✓ Share Model → it has polymorphic relationship to shareable models    0.03s  
+
+   PASS  Tests\Unit\Models\ExportTest
+  ✓ Export Model → it has proper fillable attributes                     0.03s  
+  ✓ Export Model → it increments download count                          0.03s  
+  ✓ Export Model → it creates an export with required attributes         0.03s  
+  ✓ Export Model → it formats file size for display                      0.03s  
+  ✓ Export Model → it deletes associated file when export is deleted     0.03s  
+  ✓ Export Model → it belongs to a user                                  0.03s  
+  ✓ Export Model → it validates export type enum values                  0.03s  
+  ✓ Export Model → it scopes to non-expired exports                      0.03s  
+  ✓ Export Model → it provides download URL generation                   0.03s  
+  ✓ Export Model → it generates UUID automatically if not provided       0.02s  
+  ✓ Export Model → it scopes by export type                              0.03s  
+  ✓ Export Model → it checks if export is expired                        0.03s  
+  ✓ Export Model → it checks file existence                              0.03s  
+  ✓ Export Model → it has polymorphic relationship to exportable models  0.03s  
+  ✓ Export Model → it handles null file size gracefully                  0.03s  
+  ✓ Export Model → it generates appropriate filename based on export ty… 0.03s  
+  ✓ Export Model → it provides content type based on export type         0.03s  
+
+   PASS  Tests\Unit\Performance\PerformanceUtilsTest
+  ✓ Performance Utilities → it compares array vs collection performance  0.01s  
+  ✓ Performance Utilities → it tests array chunking performance for large datasets
+  ✓ Performance Utilities → it tests string manipulation performance
+  ✓ Performance Utilities → it measures regex performance vs string functions
+  ✓ Performance Utilities → it measures execution time accurately        0.01s  
+  ✓ Performance Utilities → it measures memory usage patterns            0.01s  
+  ✓ Performance Utilities → it benchmarks JSON encoding performance
+
+   PASS  Tests\Unit\Services\ExportServiceTest
+  ✓ ExportService → it supports custom export templates and styling      0.15s  
+  ✓ ExportService → it creates a CSV export with proper headers and dat… 0.03s  
+  ✓ ExportService → it handles large exports with memory management      0.05s  
+  ✓ ExportService → it validates export data before creation             0.03s  
+  ✓ ExportService → it generates appropriate filenames for different ex… 0.22s  
+  ✓ ExportService → it provides export analytics and statistics          0.03s  
+  ✓ ExportService → it handles export errors gracefully                  0.03s  
+  ✓ ExportService → it respects user export limits and rate limiting     0.22s  
+  ✓ ExportService → it serves export files with proper headers and down… 0.03s  
+  ✓ ExportService → it creates a JSON export with complete data structu… 0.03s  
+  ✓ ExportService → it creates a PDF export with proper formatting       0.21s  
+  ✓ ExportService → it handles concurrent export requests safely         1.01s  
+  ✓ ExportService → it sets appropriate expiration dates for exports     0.21s  
+  ✓ ExportService → it cleans up expired exports                         0.03s  
+
+   PASS  Tests\Feature\ErrorHandlingTest
+  ✓ Error Handling and User Experience → Accessibility Error Messages →… 0.07s  
+  ✓ Error Handling and User Experience → Recovery Options → it allows p… 0.03s  
+  ✓ Error Handling and User Experience → Validation Error Messages → it… 0.03s  
+  ✓ Error Handling and User Experience → User Feedback and Progress → i… 0.03s  
+  ✓ Error Handling and User Experience → API Failure Handling → it hand… 0.03s  
+  ✓ Error Handling and User Experience → User Feedback and Progress → i… 0.03s  
+  ✓ Error Handling and User Experience → Recovery Options → it provides… 0.03s  
+  ✓ Error Handling and User Experience → API Failure Handling → it hand… 0.03s  
+  ✓ Error Handling and User Experience → API Failure Handling → it hand… 0.04s  
+  ✓ Error Handling and User Experience → Queue and Job Failures → it tr… 0.03s  
+  ✓ Error Handling and User Experience → Queue and Job Failures → it ha… 0.03s  
+  ✓ Error Handling and User Experience → Recovery Options → it provides… 0.03s  
+  ✓ Error Handling and User Experience → Graceful Degradation → it fall… 0.03s  
+  ✓ Error Handling and User Experience → File Processing Errors → it ha… 0.03s  
+  ✓ Error Handling and User Experience → Accessibility Error Messages →… 0.03s  
+  ✓ Error Handling and User Experience → API Failure Handling → it hand… 0.02s  
+  ✓ Error Handling and User Experience → Graceful Degradation → it degr… 0.03s  
+  ✓ Error Handling and User Experience → Graceful Degradation → it prov… 0.04s  
+  ✓ Error Handling and User Experience → Validation Error Messages → it… 0.03s  
+  ✓ Error Handling and User Experience → File Processing Errors → it ha… 0.03s  
+  ✓ Error Handling and User Experience → Validation Error Messages → it… 0.03s  
+  ✓ Error Handling and User Experience → File Processing Errors → it ha… 0.03s  
+  ✓ Error Handling and User Experience → User Feedback and Progress → i… 0.03s  

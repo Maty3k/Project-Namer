@@ -42,7 +42,6 @@ use Illuminate\Support\Str;
  * @property-read int|null $mood_board_images_count
  * @property-read \App\Models\Project $project
  * @property-read \App\Models\User $user
- *
  * @method static Builder<static>|ProjectImage completed()
  * @method static \Database\Factories\ProjectImageFactory factory($count = null, $state = [])
  * @method static Builder<static>|ProjectImage forProject(int $projectId)
@@ -76,7 +75,6 @@ use Illuminate\Support\Str;
  * @method static Builder<static>|ProjectImage whereUuid($value)
  * @method static Builder<static>|ProjectImage whereWidth($value)
  * @method static Builder<static>|ProjectImage withTags(array $tags)
- *
  * @mixin \Eloquent
  */
 class ProjectImage extends Model

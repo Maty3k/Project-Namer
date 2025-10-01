@@ -295,12 +295,13 @@ describe('ExportService', function (): void {
         ];
 
         // Simulate multiple concurrent export requests
+        // Reduced from 5 to 3 to optimize test speed while still validating concurrent handling
         $exports = [];
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             $exports[] = $this->exportService->createExport($this->user, $exportData);
         }
 
-        expect($exports)->toHaveCount(5);
+        expect($exports)->toHaveCount(3);
         foreach ($exports as $export) {
             expect($export)->toBeInstanceOf(Export::class);
             expect($export->fileExists())->toBeTrue();

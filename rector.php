@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use RectorLaravel\Rector\MakeModelAttributesAndScopesProtectedRector;
 use RectorLaravel\Set\LaravelLevelSetList;
 use RectorLaravel\Set\LaravelSetList;
 
@@ -22,6 +23,11 @@ return RectorConfig::configure()
         LaravelLevelSetList::UP_TO_LARAVEL_120,
         LaravelSetList::LARAVEL_CODE_QUALITY,
         LaravelSetList::LARAVEL_COLLECTION,
+    ])
+    ->withSkip([
+        MakeModelAttributesAndScopesProtectedRector::class => [
+            __DIR__.'/app/Models/ImageGenerationContext.php',
+        ],
     ])
     ->withTypeCoverageLevel(1)
     ->withDeadCodeLevel(1)

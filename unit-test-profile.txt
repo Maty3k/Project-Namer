@@ -1,0 +1,211 @@
+
+   WARN  Metadata found in doc-comment for method Tests\Unit\CustomThemeAccessibilityTest::test_custom_color_combinations_accessibility(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Unit\ThemeAccessibilityTest::test_individual_theme_accessibility(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   PASS  Tests\Unit\CustomThemeAccessibilityTest
+  ✓ custom color combinations accessibility with data set "high contras… 0.13s  
+  ✓ custom color combinations accessibility with data set "good contras… 0.03s  
+  ✓ custom color combinations accessibility with data set "poor contras… 0.02s  
+  ✓ custom color combinations accessibility with data set "borderline c… 0.02s  
+  ✓ custom color combinations accessibility with data set "red on dark…  0.02s  
+  ✓ accessibility feedback for poor combinations                         0.02s  
+  ✓ contrast calculation edge cases                                      0.02s  
+  ✓ wcag level classification                                            0.02s  
+  ✓ accessibility score consistency                                      0.02s  
+  ✓ color validation edge cases                                          0.02s  
+  ✓ css property generation                                              0.02s  
+  ✓ extreme contrast combinations                                        0.02s  
+
+   PASS  Tests\Unit\Enums\ColorSchemeTest
+  ✓ ColorScheme Enum → it has correct enum values                        0.05s  
+  ✓ ColorScheme Enum → it can get display names for all schemes
+  ✓ ColorScheme Enum → it can get descriptions for all schemes
+  ✓ ColorScheme Enum → it can create from string value
+  ✓ ColorScheme Enum → it can try from string value
+  ✓ ColorScheme Enum → it can get all values as array
+  ✓ ColorScheme Enum → it can get all display names as array
+  ✓ ColorScheme Enum → it can check if value exists
+
+   PASS  Tests\Unit\ExampleTest
+  ✓ that true is true                                                    0.01s  
+
+   PASS  Tests\Unit\Models\ExportTest
+  ✓ Export Model → it creates an export with required attributes         0.47s  
+  ✓ Export Model → it generates UUID automatically if not provided       0.02s  
+  ✓ Export Model → it belongs to a user                                  0.03s  
+  ✓ Export Model → it has polymorphic relationship to exportable models  0.03s  
+  ✓ Export Model → it provides download URL generation                   0.03s  
+  ✓ Export Model → it checks if export is expired                        0.03s  
+  ✓ Export Model → it increments download count                          0.03s  
+  ✓ Export Model → it formats file size for display                      0.03s  
+  ✓ Export Model → it handles null file size gracefully                  0.02s  
+  ✓ Export Model → it checks file existence                              0.03s  
+  ✓ Export Model → it deletes associated file when export is deleted     0.03s  
+  ✓ Export Model → it scopes to non-expired exports                      0.03s  
+  ✓ Export Model → it scopes by export type                              0.03s  
+  ✓ Export Model → it validates export type enum values                  0.03s  
+  ✓ Export Model → it provides content type based on export type         0.03s  
+  ✓ Export Model → it generates appropriate filename based on export ty… 0.03s  
+  ✓ Export Model → it has proper fillable attributes                     0.02s  
+
+   PASS  Tests\Unit\Models\ShareAccessTest
+  ✓ ShareAccess Model → it creates a share access record with required…  0.03s  
+  ✓ ShareAccess Model → it belongs to a share                            0.03s  
+  ✓ ShareAccess Model → it automatically sets accessed_at timestamp      0.03s  
+  ✓ ShareAccess Model → it handles IPv6 addresses                        0.03s  
+  ✓ ShareAccess Model → it handles long user agent strings               0.05s  
+  ✓ ShareAccess Model → it handles null optional fields gracefully       0.03s  
+  ✓ ShareAccess Model → it scopes by date range                          0.03s  
+  ✓ ShareAccess Model → it provides analytics methods                    0.03s  
+  ✓ ShareAccess Model → it has proper fillable attributes                0.02s  
+  ✓ ShareAccess Model → it cascades delete when share is deleted         0.02s  
+
+   PASS  Tests\Unit\Models\ShareTest
+  ✓ Share Model → it creates a share with required attributes            0.03s  
+  ✓ Share Model → it generates UUID automatically if not provided        0.02s  
+  ✓ Share Model → it handles password-protected shares with proper hash… 0.51s  
+  ✓ Share Model → it belongs to a user                                   0.03s  
+  ✓ Share Model → it has polymorphic relationship to shareable models    0.03s  
+  ✓ Share Model → it has many share accesses for analytics               0.03s  
+  ✓ Share Model → it provides share URL generation                       0.03s  
+  ✓ Share Model → it checks if share is expired                          0.03s  
+  ✓ Share Model → it checks if share is accessible                       0.03s  
+  ✓ Share Model → it records share access and updates view count         0.03s  
+  ✓ Share Model → it validates password for protected shares             0.76s  
+  ✓ Share Model → it scopes to active shares                             0.03s  
+  ✓ Share Model → it scopes to accessible shares                         0.03s  
+  ✓ Share Model → it casts settings as array                             0.02s  
+  ✓ Share Model → it has proper fillable attributes                      0.02s  
+
+   PASS  Tests\Unit\Performance\PerformanceUtilsTest
+  ✓ Performance Utilities → it measures execution time accurately        0.02s  
+  ✓ Performance Utilities → it measures memory usage patterns
+  ✓ Performance Utilities → it tests array chunking performance for large datasets
+  ✓ Performance Utilities → it compares array vs collection performance
+  ✓ Performance Utilities → it tests string manipulation performance
+  ✓ Performance Utilities → it benchmarks JSON encoding performance
+  ✓ Performance Utilities → it measures regex performance vs string functions
+
+   PASS  Tests\Unit\Services\ComponentMappingServiceTest
+  ✓ can identify flux ui free components in blade templates
+  ✓ can map free components to pro variants
+  ✓ can determine component upgrade priority
+  ✓ can find component dependencies
+  ✓ can scan directory for flux components
+  ✓ can generate upgrade suggestions
+  ✓ can handle flux icon components
+  ✓ can generate comprehensive audit report
+
+   PASS  Tests\Unit\Services\ExportServiceTest
+  ✓ ExportService → it creates a PDF export with proper formatting       0.25s  
+  ✓ ExportService → it creates a CSV export with proper headers and dat… 0.03s  
+  ✓ ExportService → it creates a JSON export with complete data structu… 0.03s  
+  ✓ ExportService → it validates export data before creation             0.03s  
+  ✓ ExportService → it sets appropriate expiration dates for exports     0.20s  
+  ✓ ExportService → it serves export files with proper headers and down… 0.03s  
+  ✓ ExportService → it handles large exports with memory management      0.05s  
+  ✓ ExportService → it cleans up expired exports                         0.04s  
+  ✓ ExportService → it generates appropriate filenames for different ex… 0.20s  
+  ✓ ExportService → it handles export errors gracefully                  0.03s  
+  ✓ ExportService → it respects user export limits and rate limiting     0.21s  
+  ✓ ExportService → it provides export analytics and statistics          0.03s  
+  ✓ ExportService → it supports custom export templates and styling      0.12s  
+  ✓ ExportService → it handles concurrent export requests safely         0.90s  
+
+   PASS  Tests\Unit\Services\ShareServiceTest
+  ✓ ShareService → it creates a public share with valid data             0.04s  
+  ✓ ShareService → it creates a password-protected share with hashed pa… 0.77s  
+  ✓ ShareService → it validates share data before creation               0.03s  
+  ✓ ShareService → it requires password for password-protected shares    0.03s  
+  ✓ ShareService → it handles share expiration correctly                 0.03s  
+  ✓ ShareService → it validates share access with proper authentication  0.77s  
+  ✓ ShareService → it records share access with analytics                0.04s  
+  ✓ ShareService → it generates social media metadata for shares         0.03s  
+  ✓ ShareService → it enforces rate limiting for share creation          0.03s  
+  ✓ ShareService → it allows rate limiting bypass for valid requests     0.03s  
+  ✓ ShareService → it updates share settings and preferences             0.03s  
+  ✓ ShareService → it deactivates shares instead of hard delete          0.03s  
+  ✓ ShareService → it gets user shares with pagination and filtering     0.04s  
+  ✓ ShareService → it generates share analytics data                     0.03s  
+  ✓ ShareService → it validates expired shares are not accessible        0.03s  
+  ✓ ShareService → it handles inactive shares properly                   0.03s  
+
+   PASS  Tests\Unit\ThemeAccessibilityTest
+  ✓ all predefined themes meet wcag aa standards                         0.03s  
+  ✓ individual theme accessibility with data set "default"               0.02s  
+  ✓ individual theme accessibility with data set "dark"                  0.02s  
+  ✓ individual theme accessibility with data set "ocean"                 0.02s  
+  ✓ individual theme accessibility with data set "sunset"                0.02s  
+  ✓ individual theme accessibility with data set "forest"                0.02s  
+  ✓ individual theme accessibility with data set "cosmic-violet"         0.02s  
+  ✓ individual theme accessibility with data set "coral-reef"            0.02s  
+  ✓ individual theme accessibility with data set "midnight-teal"         0.02s  
+  ✓ individual theme accessibility with data set "summer"                0.02s  
+  ✓ individual theme accessibility with data set "winter"                0.02s  
+  ✓ individual theme accessibility with data set "halloween"             0.02s  
+  ✓ individual theme accessibility with data set "spring"                0.02s  
+  ✓ individual theme accessibility with data set "autumn"                0.02s  
+  ✓ individual theme accessibility with data set "neon-cyber"            0.03s  
+  ✓ individual theme accessibility with data set "electric-blue"         0.02s  
+  ✓ individual theme accessibility with data set "hot-pink"              0.03s  
+  ✓ individual theme accessibility with data set "lava-red"              0.02s  
+  ✓ individual theme accessibility with data set "lime-punch"            0.02s  
+  ✓ individual theme accessibility with data set "gold-rush"             0.02s  
+  ✓ individual theme accessibility with data set "matrix-green"          0.02s  
+  ✓ aaa compliant themes exceed standards                                0.02s  
+  ✓ theme accessibility scores                                           0.02s  
+  ✓ dark mode themes contrast                                            0.02s  
+  ✓ seasonal themes accessibility                                        0.02s  
+  ✓ theme accessibility feedback                                         0.02s  
+  ✓ color validation                                                     0.02s  
+
+   FAIL  Tests\Unit\Utils\DomainUtilsTest
+  ✓ DomainUtils → formatDomain → it converts domain to lowercase         0.01s  
+  ✓ DomainUtils → formatDomain → it trims whitespace
+  ✓ DomainUtils → formatDomain → it removes protocol prefixes
+  ✓ DomainUtils → formatDomain → it removes www prefix
+  ✓ DomainUtils → formatDomain → it removes trailing slash
+  ✓ DomainUtils → formatDomain → it handles complex URLs
+  ✓ DomainUtils → isValidDomain → it validates correct domain formats
+  ✓ DomainUtils → isValidDomain → it rejects invalid domain formats
+  ✓ DomainUtils → isValidDomain → it rejects domains with invalid characters
+  ✓ DomainUtils → sanitizeBusinessName → it converts to lowercase
+  ✓ DomainUtils → sanitizeBusinessName → it removes spaces
+  ✓ DomainUtils → sanitizeBusinessName → it removes special characters
+  ✓ DomainUtils → sanitizeBusinessName → it preserves alphanumeric characters
+  ✓ DomainUtils → sanitizeBusinessName → it handles empty results
+  ✓ DomainUtils → sanitizeBusinessName → it trims whitespace before processing
+  ✓ DomainUtils → extractTLD → it extracts correct TLD from domains
+  ✓ DomainUtils → extractTLD → it handles domains without TLD
+  ⨯ DomainUtils → buildDomainsFromName → it builds domains with default… 0.01s  
+  ✓ DomainUtils → buildDomainsFromName → it builds domains with custom TLDs
+  ✓ DomainUtils → buildDomainsFromName → it sanitizes business name before building domains
+  ✓ DomainUtils → isDomainCacheFresh → it returns true for fresh cache entries
+  ✓ DomainUtils → isDomainCacheFresh → it returns false for expired cache entries
+  ✓ DomainUtils → isDomainCacheFresh → it handles boundary conditions
+  ✓ DomainUtils → getAvailabilityStatus → it returns correct status for available domains
+  ✓ DomainUtils → getAvailabilityStatus → it returns correct status for unavailable domains
+  ✓ DomainUtils → getAvailabilityStatus → it returns error status when availability is null
+  ✓ DomainUtils → getAvailabilityStatus → it returns checking status when specified
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Utils\DomainUtilsTest > `DomainUtils` → `buildDomainsF…   
+  Failed asserting that actual size 10 matches expected size 4.
+
+  at tests/Unit/Utils/DomainUtilsTest.php:113
+    109▕     describe('buildDomainsFromName', function (): void {
+    110▕         it('builds domains with default TLDs', function (): void {
+    111▕             $domains = DomainUtils::buildDomainsFromName('testbusiness');
+    112▕ 
+  ➜ 113▕             expect($domains)->toHaveCount(4)
+    114▕                 ->and($domains)->toContain('testbusiness.com')
+    115▕                 ->and($domains)->toContain('testbusiness.io')
+    116▕                 ->and($domains)->toContain('testbusiness.co')
+    117▕                 ->and($domains)->toContain('testbusiness.net');
+
+  1   tests/Unit/Utils/DomainUtilsTest.php:113
+
+
+  Tests:    1 failed, 161 passed (840 assertions)
+  Duration: 8.20s
+

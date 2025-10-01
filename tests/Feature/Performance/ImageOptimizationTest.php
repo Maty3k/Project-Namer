@@ -48,7 +48,8 @@ describe('Image Processing Performance', function (): void {
         $response->assertSuccessful();
 
         $image = ProjectImage::first();
-        expect($image->processing_status)->toBe('pending'); // Initially pending, thumbnail created by background job
+        // Jobs are queued, status remains 'pending' until background processing completes
+        expect($image->processing_status)->toBe('pending');
 
         // Verify the image record was created successfully
         expect($image->original_filename)->toBe('thumbnail-test.jpg');
@@ -67,7 +68,8 @@ describe('Image Processing Performance', function (): void {
 
         $image = ProjectImage::first();
         expect($image->original_filename)->toBe('large.jpg');
-        expect($image->processing_status)->toBe('pending'); // Width/height set after background processing
+        // Jobs are queued, status remains 'pending' until background processing completes
+        expect($image->processing_status)->toBe('pending');
     });
 });
 
