@@ -2,9 +2,15 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Http;
 use Livewire\Volt\Volt;
 
 describe('Input Validation & XSS Prevention Security Tests', function (): void {
+    beforeEach(function (): void {
+        // Prevent any actual HTTP requests
+        Http::preventStrayRequests();
+    });
+
     test('business description validates required field', function (): void {
         $component = Volt::test('name-generator');
 

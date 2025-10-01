@@ -2,9 +2,15 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Http;
 use Livewire\Volt\Volt;
 
 describe('Data Privacy & localStorage Security Tests', function (): void {
+    beforeEach(function (): void {
+        // Prevent any actual HTTP requests
+        Http::preventStrayRequests();
+    });
+
     test('no personal identifiable information is stored in database cache', function (): void {
         $component = Volt::test('name-generator');
         $component->set('businessDescription', 'My Personal Coffee Shop for John Smith')

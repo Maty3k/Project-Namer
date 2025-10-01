@@ -54,6 +54,65 @@
         </flux:button>
     </div>
 
+    <!-- Bulk Delete Controls -->
+    @if(!$this->projects->isEmpty() && !$collapsed)
+        <div class="px-4 pb-4 border-b {{ $userTheme ? 'border-current border-opacity-20' : 'border-gray-200 dark:border-slate-600' }}">
+            @if($bulkDeleteMode)
+                <div class="space-y-2">
+                    <div class="flex gap-2">
+                        <flux:button
+                            wire:click="selectAllProjects"
+                            variant="ghost"
+                            size="sm"
+                            class="flex-1 text-xs"
+                        >
+                            Select All
+                        </flux:button>
+                        <flux:button
+                            wire:click="deselectAllProjects"
+                            variant="ghost"
+                            size="sm"
+                            class="flex-1 text-xs"
+                        >
+                            Deselect All
+                        </flux:button>
+                    </div>
+                    <div class="flex gap-2">
+                        <flux:button
+                            wire:click="confirmBulkDelete"
+                            variant="danger"
+                            size="sm"
+                            class="flex-1"
+                            :disabled="count($selectedProjects) === 0"
+                        >
+                            Delete ({{ count($selectedProjects) }})
+                        </flux:button>
+                        <flux:button
+                            wire:click="toggleBulkDeleteMode"
+                            variant="ghost"
+                            size="sm"
+                            class="flex-1"
+                        >
+                            Cancel
+                        </flux:button>
+                    </div>
+                </div>
+            @else
+                <flux:button
+                    wire:click="toggleBulkDeleteMode"
+                    variant="ghost"
+                    size="sm"
+                    class="w-full"
+                >
+                    <div class="flex items-center gap-2">
+                        <x-app-icon name="trash" size="sm" />
+                        <span>Bulk Delete</span>
+                    </div>
+                </flux:button>
+            @endif
+        </div>
+    @endif
+
     <!-- Projects List -->
     <div class="flex-1 overflow-y-auto transition-all duration-300 ease-out">
         @if($this->projects->isEmpty())
@@ -76,14 +135,21 @@
             <div class="space-y-1 p-2 transition-all duration-300 ease-out">
                 @foreach($this->projects as $project)
                     <div
-                        wire:click="selectProject('{{ $project->uuid }}')"
-                        class="group cursor-pointer rounded-lg transition-all duration-300 ease-out {{ $collapsed ? 'p-2' : 'p-3' }} {{ $userTheme ? ($this->isActiveProject($project) ? 'theme-interactive' : 'theme-hover') : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm transform hover:scale-[1.02]' }}"
-                        @if($this->isActiveProject($project))
+                        wire:click="{{ $bulkDeleteMode ? '' : 'selectProject(\'' . $project->uuid . '\')' }}"
+                        class="group {{ $bulkDeleteMode ? 'cursor-default' : 'cursor-pointer' }} rounded-lg transition-all duration-300 ease-out {{ $collapsed ? 'p-2' : 'p-3' }}
+                        {{ !$bulkDeleteMode && $userTheme ? ($this->isActiveProject($project) ? 'theme-interactive' : 'theme-hover') : '' }}
+                        {{ !$bulkDeleteMode && !$userTheme ? 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm transform hover:scale-[1.02]' : '' }}
+                        {{ $bulkDeleteMode && in_array($project->uuid, $selectedProjects) ? 'bg-blue-50 dark:bg-blue-900/30 shadow-md ring-2 ring-blue-500 dark:ring-blue-400' : '' }}
+                        {{ $bulkDeleteMode && !in_array($project->uuid, $selectedProjects) ? 'hover:bg-gray-50 dark:hover:bg-gray-800/50' : '' }}"
+                        @if(!$bulkDeleteMode && $this->isActiveProject($project))
                             @if($userTheme)
                                 style="background: {{ $userTheme->primary_color }}15; border-left: 4px solid {{ $userTheme->primary_color }}; box-shadow: 0 1px 3px rgba(0,0,0,0.1);"
                             @else
                                 style="background: {{ ($userTheme?->primary_color ?? '#3B82F6') }}15; border-left: 4px solid {{ ($userTheme?->primary_color ?? '#3B82F6') }}; box-shadow: 0 1px 3px rgba(0,0,0,0.1);"
                             @endif
+                        @endif
+                        @if($bulkDeleteMode && in_array($project->uuid, $selectedProjects))
+                            style="border-left: 4px solid #3B82F6;"
                         @endif
                         wire:key="project-{{ $project->uuid }}"
                         @if($collapsed)
@@ -114,7 +180,17 @@
                             <!-- Expanded view -->
                             <div class="overflow-hidden transition-all duration-500 ease-out {{ $collapsed ? 'max-w-0 opacity-0' : 'max-w-full opacity-100' }}">
                                 @if(!$collapsed)
-                                    <div class="flex items-start justify-between group-hover:pr-8 transition-all duration-200">
+                                    <div class="flex items-start gap-3 group-hover:pr-8 transition-all duration-200">
+                                        @if($bulkDeleteMode)
+                                            <div class="flex-shrink-0 pt-1" wire:key="checkbox-{{ $project->uuid }}">
+                                                <input
+                                                    type="checkbox"
+                                                    wire:click.stop="toggleProjectSelection('{{ $project->uuid }}')"
+                                                    @checked(in_array($project->uuid, $selectedProjects))
+                                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer transition-all duration-200"
+                                                />
+                                            </div>
+                                        @endif
                                         <div class="flex-1 min-w-0 transition-all duration-300 ease-out delay-150">
                                             <h3 class="text-sm {{ $userTheme ? 'theme-text-primary' : 'text-gray-900 dark:text-white font-medium' }} truncate transition-opacity duration-300 ease-out">
                                                 {{ $this->truncateName($project->name, 22) }}
@@ -140,26 +216,28 @@
                                             </p>
                                         </div>
 
-                                        <div class="flex-shrink-0 ml-2 flex items-center transition-all duration-300 ease-out delay-100">
-                                            @if($this->isActiveProject($project))
-                                                <div class="w-2 h-2 {{ $userTheme ? 'bg-current opacity-70' : '' }} rounded-full mr-2 transition-all duration-200 ease-out"
-                                                     @if(!$userTheme) style="background-color: {{ ($userTheme?->primary_color ?? '#3B82F6') }};" @endif></div>
-                                            @endif
+                                        @if(!$bulkDeleteMode)
+                                            <div class="flex-shrink-0 ml-2 flex items-center transition-all duration-300 ease-out delay-100">
+                                                @if($this->isActiveProject($project))
+                                                    <div class="w-2 h-2 {{ $userTheme ? 'bg-current opacity-70' : '' }} rounded-full mr-2 transition-all duration-200 ease-out"
+                                                         @if(!$userTheme) style="background-color: {{ ($userTheme?->primary_color ?? '#3B82F6') }};" @endif></div>
+                                                @endif
 
-                                            <!-- Delete Button (hidden by default, shown on hover) -->
-                                            <flux:button
-                                                wire:click.stop="confirmDeleteProject('{{ $project->uuid }}')"
-                                                variant="ghost"
-                                                size="sm"
-                                                class="opacity-0 group-hover:opacity-100 w-9 h-9 rounded-lg shadow-sm transition-all duration-200 ease-out {{ $userTheme ? 'theme-hover-delete' : 'hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400 text-red-500 border border-red-200' }} hover:scale-105 active:scale-95"
-                                                style="display: flex !important; align-items: center !important; justify-content: center !important; padding: 0 !important;"
-                                                title="Delete project"
-                                            >
-                                                <svg class="w-5 h-5 transition-transform duration-200 ease-out" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clip-rule="evenodd"/>
-                                                </svg>
-                                            </flux:button>
-                                        </div>
+                                                <!-- Delete Button (hidden by default, shown on hover) -->
+                                                <flux:button
+                                                    wire:click.stop="confirmDeleteProject('{{ $project->uuid }}')"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    class="opacity-0 group-hover:opacity-100 w-9 h-9 rounded-lg shadow-sm transition-all duration-200 ease-out {{ $userTheme ? 'theme-hover-delete' : 'hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400 text-red-500 border border-red-200' }} hover:scale-105 active:scale-95"
+                                                    style="display: flex !important; align-items: center !important; justify-content: center !important; padding: 0 !important;"
+                                                    title="Delete project"
+                                                >
+                                                    <svg class="w-5 h-5 transition-transform duration-200 ease-out" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clip-rule="evenodd"/>
+                                                    </svg>
+                                                </flux:button>
+                                            </div>
+                                        @endif
                                     </div>
                                 @endif
                             </div>
@@ -216,6 +294,38 @@
                         variant="danger"
                     >
                         Delete Project
+                    </flux:button>
+                </div>
+            </div>
+        </flux:modal>
+    @endif
+
+    <!-- Bulk Delete Confirmation Modal -->
+    @if($showBulkDeleteConfirmation)
+        <flux:modal wire:model="showBulkDeleteConfirmation">
+            <div class="space-y-4">
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                        Delete Multiple Projects?
+                    </h2>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Are you sure you want to delete {{ count($selectedProjects) }} {{ count($selectedProjects) === 1 ? 'project' : 'projects' }}?
+                        This action cannot be undone.
+                    </p>
+                </div>
+
+                <div class="flex justify-end space-x-2">
+                    <flux:button
+                        wire:click="cancelBulkDelete"
+                        variant="ghost"
+                    >
+                        Cancel
+                    </flux:button>
+                    <flux:button
+                        wire:click="bulkDeleteProjects"
+                        variant="danger"
+                    >
+                        Delete {{ count($selectedProjects) }} {{ count($selectedProjects) === 1 ? 'Project' : 'Projects' }}
                     </flux:button>
                 </div>
             </div>

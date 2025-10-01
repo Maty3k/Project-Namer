@@ -5,12 +5,16 @@ declare(strict_types=1);
 use App\Services\OpenAILogoService;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Sleep;
 
 beforeEach(function (): void {
     $this->service = app(OpenAILogoService::class);
 
     // Mock API key configuration
     Config::set('services.openai.api_key', 'test-api-key');
+
+    // Fake sleep to speed up tests with retry logic
+    Sleep::fake();
 });
 
 describe('OpenAI Logo Service', function (): void {

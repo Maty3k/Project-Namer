@@ -2,9 +2,15 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Http;
 use Livewire\Volt\Volt;
 
 describe('API Key Security & Environment Configuration Tests', function (): void {
+    beforeEach(function (): void {
+        // Prevent any actual HTTP requests
+        Http::preventStrayRequests();
+    });
+
     test('OpenAI API key is not exposed in client-side code', function (): void {
         $response = $this->get('/');
 

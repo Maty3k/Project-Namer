@@ -1,0 +1,57 @@
+
+   WARN  Metadata found in doc-comment for method Tests\Unit\CustomThemeAccessibilityTest::test_custom_color_combinations_accessibility(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Unit\ThemeAccessibilityTest::test_individual_theme_accessibility(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+  ............................................................................
+  ............................................................................
+  ⨯................................ssssssssssssss.............................
+  ............................................................................
+  ............................................................................
+  ............................................................................
+  .............⨯..............................................................
+  ...............................................s..........................s.
+  .s.s.....................
+🚀 Starting complete user workflow test
+✅ Dashboard loads successfully
+✅ Project page loads successfully
+✅ Project description updated
+✅ AI generation settings configured
+✅ Name suggestions generated
+✅ Name filtering works correctly
+✅ Logo gallery loaded
+✅ Logo upload completed
+✅ Bulk operations working
+✅ Theme customization completed
+✅ Data persistence verified
+🎉 Complete user workflow test passed successfully!
+🛡️ Testing error handling in workflow
+✅ Invalid project handling works
+✅ Authorization protection works
+✅ Invalid input validation works
+🛡️ Error handling tests passed
+🎨 Testing animations throughout workflow
+✅ Animation CSS loaded
+✅ Enhanced transitions present
+✅ Animated operations completed in 27.944803237915ms
+🎨 Animation consistency tests passed
+📱 Testing mobile responsive workflow
+✅ Responsive design classes present
+✅ Mobile project page loads
+✅ Mobile Livewire interactions work
+📱 Mobile responsive tests passed
+♿ Testing accessibility features
+✅ ARIA attributes present
+✅ Focus management implemented
+✅ Reduced motion support present
+✅ Keyboard interactions functional
+♿ Accessibility tests passed
+⚡ Testing performance during complete workflow
+✅ Complete workflow completed in 121.71483039856ms
+✅ Memory usage: 173.42823028564MB
+⚡ Performance tests passed
+🔗 Testing all enhanced features integration
+✅ Enhanced file upload: 31.31103515625ms
+✅ Smooth theme transitions: 45.361042022705ms
+✅ AI button state management working
+🔗 All enhanced features integration passed.......

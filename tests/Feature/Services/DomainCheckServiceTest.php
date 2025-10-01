@@ -55,8 +55,19 @@ describe('Domain Checking Service', function (): void {
 
         $results = $this->service->checkBusinessName('testbusiness');
 
-        expect($results)->toHaveCount(4);
-        expect($results)->toHaveKeys(['testbusiness.com', 'testbusiness.io', 'testbusiness.co', 'testbusiness.net']);
+        expect($results)->toHaveCount(10);
+        expect($results)->toHaveKeys([
+            'testbusiness.com',
+            'testbusiness.net',
+            'testbusiness.org',
+            'testbusiness.io',
+            'testbusiness.co',
+            'testbusiness.app',
+            'testbusiness.dev',
+            'testbusiness.ai',
+            'testbusiness.tech',
+            'testbusiness.studio',
+        ]);
 
         foreach ($results as $result) {
             expect($result['available'])->toBeTrue();
