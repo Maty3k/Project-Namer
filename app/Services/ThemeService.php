@@ -66,23 +66,43 @@ final class ThemeService
     }
 
     /**
-     * Generate CSS custom properties for theme.
+     * Generate FluxUI-compliant CSS custom properties for theme.
      *
      * @param  array<string, mixed>  $themeData
      */
     public function generateCssProperties(array $themeData): string
     {
-        $properties = [
-            '--color-primary' => $themeData['primary_color'],
-            '--color-accent' => $themeData['accent_color'] ?? $themeData['primary_color'],
-            '--color-background' => $themeData['background_color'],
-            '--color-text' => $themeData['text_color'],
-        ];
+        $accentColor = $themeData['accent_color'] ?? '#3b82f6';
+        $accentContentColor = $themeData['accent_content_color'] ?? $accentColor;
+        $accentForegroundColor = $themeData['accent_foreground_color'] ?? '#ffffff';
+        $baseColorShade = $themeData['base_color_shade'] ?? 'zinc';
+        $isDarkMode = $themeData['is_dark_mode'] ?? false;
 
-        $css = ":root {\n";
-        foreach ($properties as $property => $value) {
-            $css .= "  {$property}: {$value};\n";
+        // Start with @theme block for light mode
+        $css = "@theme {\n";
+
+        // Add zinc remapping if using a different base shade
+        if ($baseColorShade !== 'zinc') {
+            $zincShades = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
+            foreach ($zincShades as $shade) {
+                $css .= "  --color-zinc-{$shade}: var(--color-{$baseColorShade}-{$shade});\n";
+            }
+            $css .= "\n";
         }
+
+        // Add accent colors for light mode
+        $css .= "  --color-accent: {$accentColor};\n";
+        $css .= "  --color-accent-content: {$accentContentColor};\n";
+        $css .= "  --color-accent-foreground: {$accentForegroundColor};\n";
+        $css .= "}\n\n";
+
+        // Add dark mode variations
+        $css .= "@layer theme {\n";
+        $css .= "  .dark {\n";
+        $css .= "    --color-accent: {$accentColor};\n";
+        $css .= "    --color-accent-content: {$accentContentColor};\n";
+        $css .= "    --color-accent-foreground: {$accentForegroundColor};\n";
+        $css .= "  }\n";
         $css .= '}';
 
         return $css;
@@ -99,12 +119,10 @@ final class ThemeService
             [
                 'name' => 'default',
                 'display_name' => 'Default Blue',
-                'primary_color' => '#3b82f6',
-                'accent_color' => '#059669',
-                'background_color' => '#ffffff',
-                'text_color' => '#111827',
-                'text_primary_color' => '#111827',
-                'text_secondary_color' => '#6b7280',
+                'accent_color' => '#3b82f6',
+                'accent_content_color' => '#2563eb',
+                'accent_foreground_color' => '#ffffff',
+                'base_color_shade' => 'zinc',
                 'theme_name' => 'default',
                 'is_dark_mode' => false,
                 'preview_url' => '/images/theme-previews/default.png',

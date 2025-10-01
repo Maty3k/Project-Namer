@@ -20,15 +20,15 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 1.10 Run `npm run build` and verify CSS compiles without errors
   - [x] 1.11 Verify all tests pass
 
-- [ ] 2. Theme Customizer Component Refactor
-  - [ ] 2.1 Write tests for updated theme customizer with FluxUI variables
-  - [ ] 2.2 Update ThemeCustomizer component properties (remove primaryColor, backgroundColor, textColor)
-  - [ ] 2.3 Add baseColorShade property for zinc remapping (slate, neutral, gray, stone)
-  - [ ] 2.4 Update accent color system to use three-variable approach
-  - [ ] 2.5 Modify CSS generation method to output FluxUI-compliant CSS
-  - [ ] 2.6 Update accessibility calculation for new color system
+- [x] 2. Theme Customizer Component Refactor
+  - [x] 2.1 Write tests for updated theme customizer with FluxUI variables
+  - [x] 2.2 Update ThemeCustomizer component properties (remove primaryColor, backgroundColor, textColor)
+  - [x] 2.3 Add baseColorShade property for zinc remapping (slate, neutral, gray, stone)
+  - [x] 2.4 Update accent color system to use three-variable approach
+  - [x] 2.5 Modify CSS generation method to output FluxUI-compliant CSS
+  - [x] 2.6 Update accessibility calculation for new color system
   - [ ] 2.7 Update predefined themes to use FluxUI standard variables
-  - [ ] 2.8 Update theme import/export to work with new variable structure
+  - [x] 2.8 Update theme import/export to work with new variable structure
   - [ ] 2.9 Update theme customizer Blade template UI for new options
   - [ ] 2.10 Verify all tests pass
 
