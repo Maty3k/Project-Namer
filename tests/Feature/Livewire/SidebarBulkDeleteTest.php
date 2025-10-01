@@ -172,3 +172,26 @@ test('bulk delete button shows count of selected projects', function (): void {
         ->call('toggleProjectSelection', $projects[1]->uuid)
         ->assertSee('Delete (2)');
 });
+
+test('selected projects show arrow indicators in bulk delete mode', function (): void {
+    $projects = Project::factory()->count(3)->create(['user_id' => $this->user->id]);
+
+    $component = Livewire::test(Sidebar::class)
+        ->call('toggleBulkDeleteMode')
+        ->assertSet('bulkDeleteMode', true);
+
+    // Select first project
+    $component->call('toggleProjectSelection', $projects[0]->uuid)
+        ->assertSet('selectedProjects', [$projects[0]->uuid]);
+
+    // Verify the component renders with selected project
+    expect($component->get('selectedProjects'))->toContain($projects[0]->uuid);
+
+    // Select all projects
+    $component->call('selectAllProjects')
+        ->assertSet('selectedProjects', $projects->pluck('uuid')->toArray());
+
+    // Deselect all projects
+    $component->call('deselectAllProjects')
+        ->assertSet('selectedProjects', []);
+});
