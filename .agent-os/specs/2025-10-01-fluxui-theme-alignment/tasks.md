@@ -7,18 +7,18 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
 
 ## Tasks
 
-- [ ] 1. CSS File Cleanup and Standardization
-  - [ ] 1.1 Create baseline tests for theme customizer functionality
-  - [ ] 1.2 Remove all custom primary color variables (--color-primary-* scales)
-  - [ ] 1.3 Remove custom color variables (--color-background, --color-text)
-  - [ ] 1.4 Remove manually defined color hex values (--color-zinc-*, --color-green-*, --color-red-*)
-  - [ ] 1.5 Replace accent color definitions with FluxUI standard three-variable system
-  - [ ] 1.6 Add proper dark mode accent colors in @layer theme .dark block
-  - [ ] 1.7 Remove all custom theme CSS classes (.theme-hover, .theme-text-primary, .theme-interactive, etc.)
-  - [ ] 1.8 Remove color override selectors (.themed-generator-dashboard *, .themed-sidebar *, etc.)
-  - [ ] 1.9 Update focus ring styles to use ring-accent instead of custom variables
-  - [ ] 1.10 Run `npm run build` and verify CSS compiles without errors
-  - [ ] 1.11 Verify all tests pass
+- [x] 1. CSS File Cleanup and Standardization
+  - [x] 1.1 Create baseline tests for theme customizer functionality
+  - [x] 1.2 Remove all custom primary color variables (--color-primary-* scales)
+  - [x] 1.3 Remove custom color variables (--color-background, --color-text)
+  - [x] 1.4 Remove manually defined color hex values (--color-zinc-*, --color-green-*, --color-red-*)
+  - [x] 1.5 Replace accent color definitions with FluxUI standard three-variable system
+  - [x] 1.6 Add proper dark mode accent colors in @layer theme .dark block
+  - [x] 1.7 Remove all custom theme CSS classes (.theme-hover, .theme-text-primary, .theme-interactive, etc.)
+  - [x] 1.8 Remove color override selectors (.themed-generator-dashboard *, .themed-sidebar *, etc.)
+  - [x] 1.9 Update focus ring styles to use ring-accent instead of custom variables
+  - [x] 1.10 Run `npm run build` and verify CSS compiles without errors
+  - [x] 1.11 Verify all tests pass
 
 - [ ] 2. Theme Customizer Component Refactor
   - [ ] 2.1 Write tests for updated theme customizer with FluxUI variables

@@ -17,54 +17,7 @@
     /* Custom Responsive Breakpoints */
     --breakpoint-xs: 400px;
 
-    /* Theme-aware Primary Colors */
-    --color-primary-50: color-mix(in srgb, var(--color-primary, #3B82F6) 8%, transparent);
-    --color-primary-100: color-mix(in srgb, var(--color-primary, #3B82F6) 15%, transparent);
-    --color-primary-200: color-mix(in srgb, var(--color-primary, #3B82F6) 30%, transparent);
-    --color-primary-300: color-mix(in srgb, var(--color-primary, #3B82F6) 50%, transparent);
-    --color-primary-400: color-mix(in srgb, var(--color-primary, #3B82F6) 80%, white);
-    --color-primary-500: var(--color-primary, #3B82F6);
-    --color-primary-600: color-mix(in srgb, var(--color-primary, #3B82F6) 90%, black);
-    --color-primary-700: color-mix(in srgb, var(--color-primary, #3B82F6) 80%, black);
-    --color-primary-800: color-mix(in srgb, var(--color-primary, #3B82F6) 70%, black);
-    --color-primary-900: color-mix(in srgb, var(--color-primary, #3B82F6) 20%, black);
-
-    --color-zinc-50: #fafafa;
-    --color-zinc-100: #f5f5f5;
-    --color-zinc-200: #e5e5e5;
-    --color-zinc-300: #d4d4d4;
-    --color-zinc-400: #a3a3a3;
-    --color-zinc-500: #737373;
-    --color-zinc-600: #525252;
-    --color-zinc-700: #404040;
-    --color-zinc-800: #262626;
-    --color-zinc-900: #171717;
-    --color-zinc-950: #0a0a0a;
-
-    --color-green-50: #f0fdf4;
-    --color-green-100: #dcfce7;
-    --color-green-200: #bbf7d0;
-    --color-green-300: #86efac;
-    --color-green-400: #4ade80;
-    --color-green-500: #22c55e;
-    --color-green-600: #16a34a;
-    --color-green-700: #15803d;
-    --color-green-800: #166534;
-    --color-green-900: #14532d;
-    --color-green-950: #052e16;
-
-    --color-red-50: #fef2f2;
-    --color-red-100: #fee2e2;
-    --color-red-200: #fecaca;
-    --color-red-300: #fca5a5;
-    --color-red-400: #f87171;
-    --color-red-500: #ef4444;
-    --color-red-600: #dc2626;
-    --color-red-700: #b91c1c;
-    --color-red-800: #991b1b;
-    --color-red-900: #7f1d1d;
-    --color-red-950: #450a0a;
-
+    /* FluxUI Standard Accent Colors (Light Mode) */
     --color-accent: var(--color-green-600);
     --color-accent-content: var(--color-green-600);
     --color-accent-foreground: var(--color-white);
@@ -80,34 +33,20 @@
 
 @layer theme {
     .dark {
+        /* FluxUI Standard Accent Colors (Dark Mode) */
         --color-accent: var(--color-green-500);
-        --color-accent-content: var(--color-green-500);
-        --color-accent-foreground: var(--color-neutral-800);
+        --color-accent-content: var(--color-green-400);
+        --color-accent-foreground: var(--color-white);
     }
 }
 
 @layer base {
-
-    /* Theme-aware primary color definitions */
-    :root {
-        --color-primary-50: color-mix(in srgb, var(--color-primary, #3B82F6) 8%, transparent);
-        --color-primary-100: color-mix(in srgb, var(--color-primary, #3B82F6) 15%, transparent);
-        --color-primary-200: color-mix(in srgb, var(--color-primary, #3B82F6) 30%, transparent);
-        --color-primary-300: color-mix(in srgb, var(--color-primary, #3B82F6) 50%, transparent);
-        --color-primary-400: color-mix(in srgb, var(--color-primary, #3B82F6) 80%, white);
-        --color-primary-500: var(--color-primary, #3B82F6);
-        --color-primary-600: color-mix(in srgb, var(--color-primary, #3B82F6) 90%, black);
-        --color-primary-700: color-mix(in srgb, var(--color-primary, #3B82F6) 80%, black);
-        --color-primary-800: color-mix(in srgb, var(--color-primary, #3B82F6) 70%, black);
-        --color-primary-900: color-mix(in srgb, var(--color-primary, #3B82F6) 20%, black);
-    }
-
     *,
     ::after,
     ::before,
     ::backdrop,
     ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
+        border-color: var(--color-zinc-200, currentColor);
     }
 
     /* Modern Animation Base */
@@ -148,143 +87,6 @@ select:focus[data-flux-control] {
 
 /* Modern UI Components */
 @layer components {
-    
-    /* Theme-aware hover states */
-    .theme-hover {
-        transition: all 0.2s ease-in-out;
-    }
-    
-    .theme-hover:hover {
-        background-color: color-mix(in srgb, var(--color-primary, #3b82f6) 8%, transparent);
-        transform: scale(1.02);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    .theme-hover-delete {
-        transition: all 0.2s ease-in-out;
-        color: #dc2626;
-        border: 1px solid color-mix(in srgb, var(--color-primary, #3b82f6) 25%, transparent);
-        background: var(--color-background, #ffffff);
-    }
-    
-    .theme-hover-delete:hover {
-        background-color: color-mix(in srgb, var(--color-primary, #3b82f6) 10%, transparent);
-        transform: scale(1.05);
-        box-shadow: 0 2px 12px rgba(220, 38, 38, 0.2);
-    }
-    
-    /* Theme-aware text classes for accessibility */
-    .theme-text-primary {
-        color: color-mix(in srgb, var(--color-text, #111827) 90%, #1f2937);
-        font-weight: 600;
-    }
-    
-    .theme-text-secondary {
-        color: color-mix(in srgb, var(--color-text, #111827) 85%, #374151);
-        font-weight: 500;
-    }
-    
-    .theme-text-muted {
-        color: color-mix(in srgb, var(--color-text, #111827) 75%, #6b7280);
-        font-weight: 400;
-    }
-    
-    /* Ensure icons are always visible */
-    .theme-icon {
-        color: color-mix(in srgb, var(--color-text, #111827) 85%, #374151);
-        opacity: 0.9;
-        transition: all 0.2s ease-in-out;
-    }
-    
-    .theme-icon:hover {
-        opacity: 1;
-        color: var(--color-primary, #3b82f6);
-        transform: scale(1.05);
-    }
-    
-    /* High contrast mode for better accessibility */
-    .theme-text-contrast {
-        color: color-mix(in srgb, var(--color-text, #111827) 95%, #111827);
-        font-weight: 600;
-        text-shadow: 0 0 1px rgba(0, 0, 0, 0.15);
-    }
-    
-    /* Ensure buttons and interactive elements have proper contrast */
-    .theme-button {
-        background-color: var(--color-primary, #3b82f6);
-        color: var(--color-background, #ffffff);
-        border: 1px solid var(--color-primary, #3b82f6);
-        transition: all 0.2s ease-in-out;
-    }
-    
-    .theme-button:hover {
-        background-color: color-mix(in srgb, var(--color-primary, #3b82f6) 90%, black);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary, #3b82f6) 25%, transparent);
-    }
-    
-    /* Enhanced contrast for low-contrast themes */
-    .theme-contrast-enhanced {
-        text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
-        font-weight: 600;
-    }
-    
-    .theme-primary-enhanced {
-        color: color-mix(in srgb, var(--color-primary, #3b82f6) 85%, black);
-        font-weight: 600;
-    }
-    
-    /* Ensure minimum contrast for all interactive elements */
-    .theme-interactive {
-        color: var(--color-text, #111827);
-        background: color-mix(in srgb, var(--color-primary, #3b82f6) 8%, var(--color-background, #ffffff));
-        border: 1px solid color-mix(in srgb, var(--color-primary, #3b82f6) 20%, transparent);
-        transition: all 0.2s ease-in-out;
-    }
-    
-    .theme-interactive:hover {
-        background: color-mix(in srgb, var(--color-primary, #3b82f6) 15%, var(--color-background, #ffffff));
-        border-color: color-mix(in srgb, var(--color-primary, #3b82f6) 40%, transparent);
-        color: color-mix(in srgb, var(--color-text, #111827) 90%, black);
-    }
-    
-    /* Better visibility for header elements in custom themes */
-    header [data-flux-profile] {
-        color: color-mix(in srgb, var(--color-text, #111827) 90%, #374151) !important;
-        font-weight: 600 !important;
-    }
-    
-    header [data-flux-profile] * {
-        color: color-mix(in srgb, var(--color-text, #111827) 90%, #374151) !important;
-        font-weight: 600 !important;
-    }
-    
-    /* Specifically target user name text */
-    header [data-flux-profile] [data-flux-text] {
-        color: #374151 !important;
-        font-weight: 700 !important;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
-    }
-    
-    /* User menu wrapper with strong text visibility */
-    .user-menu-wrapper {
-        color: #374151 !important;
-    }
-    
-    .user-menu-wrapper * {
-        color: #374151 !important;
-        font-weight: 600 !important;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
-    }
-    
-    .user-menu-wrapper button {
-        color: #374151 !important;
-    }
-    
-    .user-menu-wrapper button * {
-        color: #374151 !important;
-    }
-    
     /* Glass Morphism Effects */
     .glass {
         @apply backdrop-blur-xl bg-white/10 border border-white/20;
@@ -578,12 +380,12 @@ select:focus[data-flux-control] {
     .gesture-feedback {
         transition: all 0.2s ease-out;
     }
-    
+
     .touch-active {
         transform: scale(0.98);
         opacity: 0.9;
     }
-    
+
     .swipe-progress {
         position: absolute;
         top: 50%;
@@ -595,12 +397,12 @@ select:focus[data-flux-control] {
         opacity: 0;
         transition: all 0.2s ease-out;
     }
-    
+
     .swipeable-row {
         position: relative;
         overflow: hidden;
     }
-    
+
     .swipeable-row::before {
         content: '';
         position: absolute;
@@ -611,17 +413,17 @@ select:focus[data-flux-control] {
         background: rgba(255,255,255,0.1);
         transition: left 0.3s ease-out;
     }
-    
+
     .swipeable-row:hover::before {
         left: 100%;
     }
-    
+
     /* Touch Ripple Effect */
     .touch-ripple {
         position: relative;
         overflow: hidden;
     }
-    
+
     .touch-ripple::after {
         content: '';
         position: absolute;
@@ -631,17 +433,17 @@ select:focus[data-flux-control] {
         animation: ripple 0.6s linear;
         pointer-events: none;
     }
-    
+
     /* Pull-to-Refresh Styles */
     .pull-to-refresh {
         position: relative;
     }
-    
+
     .refresh-indicator {
         backdrop-filter: blur(8px);
         border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    
+
     .pull-refresh-trigger {
         position: absolute;
         top: -60px;
@@ -649,12 +451,12 @@ select:focus[data-flux-control] {
         transform: translateX(-50%);
         transition: all 0.3s ease-out;
     }
-    
+
     /* Swipe Navigation Indicators */
     .swipe-navigation {
         position: relative;
     }
-    
+
     .swipe-indicator {
         position: absolute;
         top: 50%;
@@ -664,87 +466,54 @@ select:focus[data-flux-control] {
         opacity: 0.3;
         transition: opacity 0.3s ease;
     }
-    
+
     .swipe-indicator::before {
         content: '→';
         font-size: 16px;
         color: currentColor;
     }
-    
+
     .gesture-enabled:hover .swipe-indicator {
         opacity: 0.6;
     }
-    
+
     /* Mobile-specific gesture enhancements */
     @media (max-width: 1024px) {
         .swipe-container {
             touch-action: pan-x;
             -webkit-overflow-scrolling: touch;
         }
-        
+
         .gesture-visual {
             display: block;
         }
-        
+
         .swipe-hint {
             pointer-events: none;
             user-select: none;
         }
-        
+
         .touch-device .swipe-indicator {
             opacity: 0.5;
         }
-        
+
         .gesture-capable .swipeable-row {
             cursor: grab;
         }
-        
+
         .gesture-capable .swipeable-row:active {
             cursor: grabbing;
         }
     }
-    
+
     /* Gesture animation timing */
     .gesture-transition {
         transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
         transition-duration: 0.3s;
     }
-    
+
     .swipe-animation {
         animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    
-    /* Global Blue Color Override - Use Theme Colors Instead */
-    .themed-generator-dashboard *,
-    .themed-sidebar *,
-    .theme-customizer *,
-    [data-flux-panel] *,
-    [data-flux-tab] *,
-    [data-flux-button] * {
-        /* Override hardcoded blue backgrounds */
-        &.bg-blue-50 { background-color: color-mix(in srgb, var(--color-primary, #3B82F6) 8%, transparent) !important; }
-        &.bg-blue-100 { background-color: color-mix(in srgb, var(--color-primary, #3B82F6) 15%, transparent) !important; }
-        &.bg-blue-500 { background-color: var(--color-primary, #3B82F6) !important; }
-        &.bg-blue-600 { background-color: color-mix(in srgb, var(--color-primary, #3B82F6) 90%, black) !important; }
-        &.bg-blue-900 { background-color: color-mix(in srgb, var(--color-primary, #3B82F6) 20%, black) !important; }
-        
-        /* Override hardcoded blue text colors */
-        &.text-blue-400 { color: color-mix(in srgb, var(--color-primary, #3B82F6) 80%, white) !important; }
-        &.text-blue-500 { color: var(--color-primary, #3B82F6) !important; }
-        &.text-blue-600 { color: color-mix(in srgb, var(--color-primary, #3B82F6) 90%, black) !important; }
-        &.text-blue-700 { color: color-mix(in srgb, var(--color-primary, #3B82F6) 80%, black) !important; }
-        &.text-blue-800 { color: color-mix(in srgb, var(--color-primary, #3B82F6) 70%, black) !important; }
-        
-        /* Override hardcoded blue border colors */
-        &.border-blue-200 { border-color: color-mix(in srgb, var(--color-primary, #3B82F6) 30%, transparent) !important; }
-        &.border-blue-300 { border-color: color-mix(in srgb, var(--color-primary, #3B82F6) 40%, transparent) !important; }
-        &.border-blue-500 { border-color: var(--color-primary, #3B82F6) !important; }
-        &.border-blue-600 { border-color: color-mix(in srgb, var(--color-primary, #3B82F6) 90%, black) !important; }
-        
-        /* Override blue hover states */
-        &.hover\\:bg-blue-700:hover { background-color: color-mix(in srgb, var(--color-primary, #3B82F6) 80%, black) !important; }
-        &.hover\\:text-blue-800:hover { color: color-mix(in srgb, var(--color-primary, #3B82F6) 70%, black) !important; }
-        &.hover\\:border-blue-500:hover { border-color: var(--color-primary, #3B82F6) !important; }
     }
 
     /* Screen reader only content */
