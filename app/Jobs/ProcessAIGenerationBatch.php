@@ -7,7 +7,7 @@ namespace App\Jobs;
 use App\Models\GenerationSession;
 use App\Models\NameSuggestion;
 use App\Services\AI\CachingService;
-use App\Services\PrismAIService;
+use App\Services\AIGenerationService;
 use Exception;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -70,7 +70,7 @@ final class ProcessAIGenerationBatch implements ShouldQueue
      * Execute the job.
      */
     public function handle(
-        PrismAIService $prismService,
+        AIGenerationService $aiService,
         CachingService $cachingService
     ): void {
         if ($this->batch()?->cancelled()) {
@@ -92,7 +92,7 @@ final class ProcessAIGenerationBatch implements ShouldQueue
             }
 
             try {
-                $this->processSession($sessionId, $prismService, $cachingService);
+                $this->processSession($sessionId, $aiService, $cachingService);
                 $processed++;
             } catch (Exception $e) {
                 $errors++;
@@ -135,7 +135,7 @@ final class ProcessAIGenerationBatch implements ShouldQueue
      */
     private function processSession(
         string $sessionId,
-        PrismAIService $prismService,
+        AIGenerationService $aiService,
         CachingService $cachingService
     ): void {
         $session = GenerationSession::where('session_id', $sessionId)->first();
@@ -180,7 +180,7 @@ final class ProcessAIGenerationBatch implements ShouldQueue
         }
 
         // Process with AI
-        $this->processWithAI($session, $prismService, $cachingService);
+        $this->processWithAI($session, $aiService, $cachingService);
     }
 
     /**
@@ -208,69 +208,75 @@ final class ProcessAIGenerationBatch implements ShouldQueue
      */
     private function processWithAI(
         GenerationSession $session,
-        PrismAIService $prismService,
+        AIGenerationService $aiService,
         CachingService $cachingService
     ): void {
         $results = [];
         $totalModels = count($session->requested_models);
-        $processedModels = 0;
 
+        $session->update([
+            'current_step' => 'Generating names with AI models',
+            'progress_percentage' => 30,
+        ]);
+
+        // Check individual model cache for each model
+        $uncachedModels = [];
         foreach ($session->requested_models as $model) {
-            try {
-                $session->update([
-                    'current_step' => "Processing with {$model}",
-                    'progress_percentage' => 20 + (($processedModels / $totalModels) * 60),
-                ]);
+            $modelResults = $cachingService->getCachedAPIResponse(
+                $model,
+                $session->business_description,
+                $session->generation_mode,
+                $session->deep_thinking
+            );
 
-                // Check individual model cache
-                $modelResults = $cachingService->getCachedAPIResponse(
-                    $model,
+            if ($modelResults) {
+                $results[$model] = $modelResults;
+            } else {
+                $uncachedModels[] = $model;
+            }
+        }
+
+        // Generate for uncached models if any
+        if (! empty($uncachedModels)) {
+            try {
+                $generationResult = $aiService->generateNamesParallel(
                     $session->business_description,
+                    $uncachedModels,
                     $session->generation_mode,
                     $session->deep_thinking
                 );
 
-                if (! $modelResults) {
-                    // Generate with AI
-                    $modelResults = $prismService->generateNames(
-                        $session->business_description,
-                        [$model],
-                        $session->generation_mode,
-                        $session->deep_thinking
-                    );
+                // Extract and cache results from each model
+                foreach ($generationResult['results'] as $model => $modelResult) {
+                    if ($modelResult['status'] === 'completed' && ! empty($modelResult['names'])) {
+                        $results[$model] = $modelResult['names'];
 
-                    // Cache the results
-                    if (isset($modelResults[$model])) {
+                        // Cache the results
                         $cachingService->cacheAPIResponse(
                             $model,
                             $session->business_description,
                             $session->generation_mode,
                             $session->deep_thinking,
-                            $modelResults[$model]
+                            $modelResult['names']
                         );
+                    } else {
+                        Log::warning('No results from model', [
+                            'model' => $model,
+                            'session_id' => $session->session_id,
+                            'error' => $modelResult['error'] ?? 'Unknown error',
+                        ]);
                     }
                 }
-
-                if (isset($modelResults[$model])) {
-                    $results[$model] = $modelResults[$model];
-                } else {
-                    Log::warning('No results from model', [
-                        'model' => $model,
-                        'session_id' => $session->session_id,
-                    ]);
-                }
-
-                $processedModels++;
-
             } catch (Exception $e) {
-                Log::error('Model processing failed', [
-                    'model' => $model,
+                Log::error('AI generation failed for session', [
                     'session_id' => $session->session_id,
                     'error' => $e->getMessage(),
                 ]);
 
-                // Continue with other models
-                $processedModels++;
+                // If we have some cached results, continue with those
+                if (empty($results)) {
+                    throw $e;
+                }
             }
         }
 

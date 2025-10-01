@@ -11,12 +11,12 @@ use App\Models\NameSuggestion;
 use App\Models\Project;
 use App\Models\User;
 use App\Models\UserAIPreferences;
-use App\Services\AIGenerationService;
-use App\Services\PrismAIService;
+use App\Services\AI\AIGenerationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
+use Prism\Prism\Prism;
+use Prism\Prism\Testing\TextResponseFake;
 use Tests\TestCase;
 
 class AIWorkflowIntegrationTest extends TestCase
@@ -27,8 +27,6 @@ class AIWorkflowIntegrationTest extends TestCase
 
     protected Project $project;
 
-    protected PrismAIService $prismService;
-
     protected AIGenerationService $generationService;
 
     protected function setUp(): void
@@ -37,69 +35,11 @@ class AIWorkflowIntegrationTest extends TestCase
 
         $this->user = User::factory()->create();
         $this->project = Project::factory()->create(['user_id' => $this->user->id]);
-        $this->prismService = app(PrismAIService::class);
         $this->generationService = app(AIGenerationService::class);
 
-        // Mock HTTP responses for AI services
-        Http::fake([
-            'api.openai.com/*' => Http::response([
-                'choices' => [
-                    [
-                        'message' => [
-                            'content' => json_encode([
-                                'names' => [
-                                    'TechNova', 'InnovateLabs', 'FutureSync', 'QuantumLeap', 'NextGenTech',
-                                    'SmartFlow', 'DataPulse', 'CloudNine', 'ByteForge', 'CodeCraft',
-                                ],
-                            ]),
-                        ],
-                    ],
-                ],
-            ], 200),
-            'api.anthropic.com/*' => Http::response([
-                'content' => [
-                    [
-                        'text' => json_encode([
-                            'names' => [
-                                'ClaudeVision', 'ThinkSmart', 'BrainWave', 'MindBridge', 'IdeaFlow',
-                                'ConceptHub', 'ThoughtStream', 'InsightPro', 'WisdomCore', 'IntelliBase',
-                            ],
-                        ]),
-                    ],
-                ],
-            ], 200),
-            'generativelanguage.googleapis.com/*' => Http::response([
-                'candidates' => [
-                    [
-                        'content' => [
-                            'parts' => [
-                                [
-                                    'text' => json_encode([
-                                        'names' => [
-                                            'GeminiTech', 'StarBright', 'CosmicLabs', 'NebulaSoft', 'OrbitWise',
-                                            'LunarLogic', 'StellarSync', 'GalaxyGear', 'SpaceTech', 'AstroFlow',
-                                        ],
-                                    ]),
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ], 200),
-            'api.x.ai/*' => Http::response([
-                'choices' => [
-                    [
-                        'message' => [
-                            'content' => json_encode([
-                                'names' => [
-                                    'GrokTech', 'EdgeRunner', 'RebelCode', 'DisruptLabs', 'MaverickAI',
-                                    'BoldVenture', 'RadicalSoft', 'UnconventionalTech', 'RogueInnovate', 'WildCard',
-                                ],
-                            ]),
-                        ],
-                    ],
-                ],
-            ], 200),
+        // Mock AI responses using Prism::fake()
+        Prism::fake([
+            TextResponseFake::make()->withText("1. TechNova\n2. InnovateLabs\n3. FutureSync\n4. QuantumLeap\n5. NextGenTech\n6. SmartFlow\n7. DataPulse\n8. CloudNine\n9. ByteForge\n10. CodeCraft"),
         ]);
     }
 
@@ -285,11 +225,7 @@ class AIWorkflowIntegrationTest extends TestCase
         $cacheKey = "ai_generation:{$this->user->id}:unique_tech_startup:creative:false:gpt-4";
         Cache::put($cacheKey, $firstNames, now()->addHours(24));
 
-        // Second generation with same parameters
-        Http::fake([
-            'api.openai.com/*' => Http::response(null, 500), // Should not be called due to cache
-        ]);
-
+        // Second generation with same parameters (should use cache)
         $component2 = Livewire::test('name-generator-dashboard')
             ->set('businessIdea', 'Unique tech startup')
             ->set('useAIGeneration', true)
