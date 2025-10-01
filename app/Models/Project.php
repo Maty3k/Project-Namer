@@ -40,6 +40,7 @@ use Illuminate\Support\Str;
  * @property-read \App\Models\User $user
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\NameSuggestion> $visibleNameSuggestions
  * @property-read int|null $visible_name_suggestions_count
+ *
  * @method static \Database\Factories\ProjectFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Project newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Project newQuery()
@@ -62,6 +63,7 @@ use Illuminate\Support\Str;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Project whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Project whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Project whereUuid($value)
+ *
  * @mixin \Eloquent
  */
 final class Project extends Model

@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * User AI preferences configuration model.
- * 
+ *
  * Stores user-specific AI configuration preferences including
  * model selection, generation parameters, and notification settings.
  *
@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User $user
+ *
  * @method static \Database\Factories\UserAIPreferencesFactory factory($count = null, $state = [])
  * @method static Builder<static>|UserAIPreferences newModelQuery()
  * @method static Builder<static>|UserAIPreferences newQuery()
@@ -47,6 +48,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|UserAIPreferences whereUpdatedAt($value)
  * @method static Builder<static>|UserAIPreferences whereUserId($value)
  * @method static Builder<static>|UserAIPreferences withPreferredModel(string $modelName)
+ *
  * @mixin \Eloquent
  */
 final class UserAIPreferences extends Model

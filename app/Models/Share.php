@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 
 /**
  * Share model for managing shareable content.
- * 
+ *
  * Provides functionality for creating public and password-protected shares
  * of name generation results with analytics tracking and expiration support.
  *
@@ -39,6 +39,7 @@ use Illuminate\Support\Str;
  * @property-write string|null $password
  * @property-read \Illuminate\Database\Eloquent\Model $shareable
  * @property-read \App\Models\User|null $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Share accessible()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Share active()
  * @method static \Database\Factories\ShareFactory factory($count = null, $state = [])
@@ -62,6 +63,7 @@ use Illuminate\Support\Str;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereViewCount($value)
+ *
  * @mixin \Eloquent
  */
 final class Share extends Model

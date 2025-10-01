@@ -54,6 +54,65 @@
         </flux:button>
     </div>
 
+    <!-- Bulk Delete Controls -->
+    @if(!$this->projects->isEmpty() && !$collapsed)
+        <div class="px-4 pb-4 border-b {{ $userTheme ? 'border-current border-opacity-20' : 'border-gray-200 dark:border-slate-600' }}">
+            @if($bulkDeleteMode)
+                <div class="space-y-2">
+                    <div class="flex gap-2">
+                        <flux:button
+                            wire:click="selectAllProjects"
+                            variant="ghost"
+                            size="sm"
+                            class="flex-1 text-xs"
+                        >
+                            Select All
+                        </flux:button>
+                        <flux:button
+                            wire:click="deselectAllProjects"
+                            variant="ghost"
+                            size="sm"
+                            class="flex-1 text-xs"
+                        >
+                            Deselect All
+                        </flux:button>
+                    </div>
+                    <div class="flex gap-2">
+                        <flux:button
+                            wire:click="confirmBulkDelete"
+                            variant="danger"
+                            size="sm"
+                            class="flex-1"
+                            :disabled="count($selectedProjects) === 0"
+                        >
+                            Delete ({{ count($selectedProjects) }})
+                        </flux:button>
+                        <flux:button
+                            wire:click="toggleBulkDeleteMode"
+                            variant="ghost"
+                            size="sm"
+                            class="flex-1"
+                        >
+                            Cancel
+                        </flux:button>
+                    </div>
+                </div>
+            @else
+                <flux:button
+                    wire:click="toggleBulkDeleteMode"
+                    variant="ghost"
+                    size="sm"
+                    class="w-full"
+                >
+                    <div class="flex items-center gap-2">
+                        <x-app-icon name="trash" size="sm" />
+                        <span>Bulk Delete</span>
+                    </div>
+                </flux:button>
+            @endif
+        </div>
+    @endif
+
     <!-- Projects List -->
     <div class="flex-1 overflow-y-auto transition-all duration-300 ease-out">
         @if($this->projects->isEmpty())
@@ -76,7 +135,7 @@
             <div class="space-y-1 p-2 transition-all duration-300 ease-out">
                 @foreach($this->projects as $project)
                     <div
-                        wire:click="selectProject('{{ $project->uuid }}')"
+                        wire:click="{{ $bulkDeleteMode ? '' : 'selectProject(\'' . $project->uuid . '\')' }}"
                         class="group cursor-pointer rounded-lg transition-all duration-300 ease-out {{ $collapsed ? 'p-2' : 'p-3' }} {{ $userTheme ? ($this->isActiveProject($project) ? 'theme-interactive' : 'theme-hover') : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm transform hover:scale-[1.02]' }}"
                         @if($this->isActiveProject($project))
                             @if($userTheme)
@@ -114,7 +173,15 @@
                             <!-- Expanded view -->
                             <div class="overflow-hidden transition-all duration-500 ease-out {{ $collapsed ? 'max-w-0 opacity-0' : 'max-w-full opacity-100' }}">
                                 @if(!$collapsed)
-                                    <div class="flex items-start justify-between group-hover:pr-8 transition-all duration-200">
+                                    <div class="flex items-start gap-3 group-hover:pr-8 transition-all duration-200">
+                                        @if($bulkDeleteMode)
+                                            <div class="flex-shrink-0 pt-1">
+                                                <flux:checkbox
+                                                    wire:click.stop="toggleProjectSelection('{{ $project->uuid }}')"
+                                                    :checked="in_array($project->uuid, $selectedProjects)"
+                                                />
+                                            </div>
+                                        @endif
                                         <div class="flex-1 min-w-0 transition-all duration-300 ease-out delay-150">
                                             <h3 class="text-sm {{ $userTheme ? 'theme-text-primary' : 'text-gray-900 dark:text-white font-medium' }} truncate transition-opacity duration-300 ease-out">
                                                 {{ $this->truncateName($project->name, 22) }}
@@ -216,6 +283,38 @@
                         variant="danger"
                     >
                         Delete Project
+                    </flux:button>
+                </div>
+            </div>
+        </flux:modal>
+    @endif
+
+    <!-- Bulk Delete Confirmation Modal -->
+    @if($showBulkDeleteConfirmation)
+        <flux:modal wire:model="showBulkDeleteConfirmation">
+            <div class="space-y-4">
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                        Delete Multiple Projects?
+                    </h2>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Are you sure you want to delete {{ count($selectedProjects) }} {{ count($selectedProjects) === 1 ? 'project' : 'projects' }}?
+                        This action cannot be undone.
+                    </p>
+                </div>
+
+                <div class="flex justify-end space-x-2">
+                    <flux:button
+                        wire:click="cancelBulkDelete"
+                        variant="ghost"
+                    >
+                        Cancel
+                    </flux:button>
+                    <flux:button
+                        wire:click="bulkDeleteProjects"
+                        variant="danger"
+                    >
+                        Delete {{ count($selectedProjects) }} {{ count($selectedProjects) === 1 ? 'Project' : 'Projects' }}
                     </flux:button>
                 </div>
             </div>

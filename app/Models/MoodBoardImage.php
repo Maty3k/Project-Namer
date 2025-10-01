@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon $created_at
  * @property-read \App\Models\MoodBoard $moodBoard
  * @property-read \App\Models\ProjectImage $projectImage
+ *
  * @method static Builder<static>|MoodBoardImage byMoodBoard(int $moodBoardId)
  * @method static \Database\Factories\MoodBoardImageFactory factory($count = null, $state = [])
  * @method static Builder<static>|MoodBoardImage newModelQuery()
@@ -43,6 +44,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|MoodBoardImage whereYPosition($value)
  * @method static Builder<static>|MoodBoardImage whereZIndex($value)
  * @method static Builder<static>|MoodBoardImage withinBounds(int $x, int $y, int $width, int $height)
+ *
  * @mixin \Eloquent
  */
 class MoodBoardImage extends Model

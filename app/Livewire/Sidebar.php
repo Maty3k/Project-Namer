@@ -29,6 +29,13 @@ class Sidebar extends Component
 
     public bool $showDeleteConfirmation = false;
 
+    public bool $bulkDeleteMode = false;
+
+    /** @var array<string> */
+    public array $selectedProjects = [];
+
+    public bool $showBulkDeleteConfirmation = false;
+
     /** @var array<string, string> */
     protected $listeners = [
         'project-created' => 'refreshProjects',
@@ -256,6 +263,127 @@ class Sidebar extends Component
             $this->dispatch('toast', message: 'Failed to delete project: '.$e->getMessage(), type: 'error');
         } finally {
             $this->cancelDeleteProject();
+        }
+    }
+
+    /**
+     * Toggle bulk delete mode.
+     */
+    public function toggleBulkDeleteMode(): void
+    {
+        $this->bulkDeleteMode = ! $this->bulkDeleteMode;
+
+        // Clear selections when exiting bulk delete mode
+        if (! $this->bulkDeleteMode) {
+            $this->selectedProjects = [];
+        }
+    }
+
+    /**
+     * Toggle project selection for bulk delete.
+     */
+    public function toggleProjectSelection(string $uuid): void
+    {
+        if (in_array($uuid, $this->selectedProjects)) {
+            $this->selectedProjects = array_values(array_filter(
+                $this->selectedProjects,
+                fn ($id) => $id !== $uuid
+            ));
+        } else {
+            $this->selectedProjects[] = $uuid;
+        }
+    }
+
+    /**
+     * Select all projects for bulk delete.
+     */
+    public function selectAllProjects(): void
+    {
+        $this->selectedProjects = $this->getProjectsProperty()
+            ->pluck('uuid')
+            ->toArray();
+    }
+
+    /**
+     * Deselect all projects.
+     */
+    public function deselectAllProjects(): void
+    {
+        $this->selectedProjects = [];
+    }
+
+    /**
+     * Show bulk delete confirmation modal.
+     */
+    public function confirmBulkDelete(): void
+    {
+        if (empty($this->selectedProjects)) {
+            $this->dispatch('toast', message: 'No projects selected', type: 'error');
+
+            return;
+        }
+
+        $this->showBulkDeleteConfirmation = true;
+    }
+
+    /**
+     * Cancel bulk delete operation.
+     */
+    public function cancelBulkDelete(): void
+    {
+        $this->showBulkDeleteConfirmation = false;
+    }
+
+    /**
+     * Execute bulk delete operation.
+     */
+    public function bulkDeleteProjects(): void
+    {
+        if (empty($this->selectedProjects)) {
+            $this->dispatch('toast', message: 'No projects selected', type: 'error');
+            $this->cancelBulkDelete();
+
+            return;
+        }
+
+        $deletedCount = 0;
+        $wasActiveProjectDeleted = false;
+
+        try {
+            $projects = Project::whereIn('uuid', $this->selectedProjects)
+                ->where('user_id', Auth::id())
+                ->get();
+
+            foreach ($projects as $project) {
+                if ($this->isActiveProject($project)) {
+                    $wasActiveProjectDeleted = true;
+                }
+
+                $project->delete();
+                $deletedCount++;
+            }
+
+            $message = $deletedCount === 1
+                ? '1 project deleted successfully'
+                : "{$deletedCount} projects deleted successfully";
+
+            $this->dispatch('toast', message: $message, type: 'success');
+            $this->dispatch('project-deleted');
+
+            // Reset state
+            $this->selectedProjects = [];
+            $this->bulkDeleteMode = false;
+            $this->showBulkDeleteConfirmation = false;
+
+            // If active project was deleted, redirect to dashboard
+            if ($wasActiveProjectDeleted) {
+                $this->activeProjectUuid = null;
+                $this->selectedProject = null;
+                $this->redirect(route('dashboard'));
+            }
+
+        } catch (\Exception $e) {
+            $this->dispatch('toast', message: 'Failed to delete projects: '.$e->getMessage(), type: 'error');
         }
     }
 
