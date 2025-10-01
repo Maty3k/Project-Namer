@@ -33,6 +33,7 @@ test('can upload single image to project', function (): void {
     expect($image->original_filename)->toBe('test-image.jpg');
     expect($image->user_id)->toBe($this->user->id);
     expect($image->project_id)->toBe($this->project->id);
+    // Jobs are queued, status remains 'pending' until background processing completes
     expect($image->processing_status)->toBe('pending');
 });
 

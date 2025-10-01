@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Sleep;
 use InvalidArgumentException;
 
 /**
@@ -191,7 +192,7 @@ final class OpenAILogoService
 
                 // Retry on transient errors
                 if ($this->shouldRetry($response->status()) && $attemptCount < self::MAX_RETRY_ATTEMPTS) {
-                    sleep(2 ** $attemptCount); // Exponential backoff
+                    Sleep::for(2 ** $attemptCount)->seconds(); // Exponential backoff
 
                     continue;
                 }
@@ -206,7 +207,7 @@ final class OpenAILogoService
                 ]);
 
                 if ($attemptCount < self::MAX_RETRY_ATTEMPTS) {
-                    sleep(2 ** $attemptCount);
+                    Sleep::for(2 ** $attemptCount)->seconds();
 
                     continue;
                 }

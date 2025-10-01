@@ -1,0 +1,245 @@
+====================================================================================================
+DETAILED TEST ANALYSIS
+====================================================================================================
+
+Total Tests Profiled: 594
+  - Slow (>500ms): 14 (2.4%)
+  - Okay (200-500ms): 29 (4.9%)
+  - Fast (<200ms): 551 (92.8%)
+
+Unit Tests: 116
+Feature Tests: 478
+
+====================================================================================================
+SLOW TESTS (>500ms) - PRIORITY FOR OPTIMIZATION
+====================================================================================================
+
+⚠️   2250ms | Feature | AIEdgeCasesTest
+    → ai generation timeout scenarios
+
+⚠️    900ms | Unit    | Tests\Unit\Services\ExportServiceTest
+    → ExportService → it handles concurrent export requests safely
+
+⚠️    810ms | Feature | Tests\Feature\Auth\PasswordResetTest
+    → password can be reset with valid token
+
+⚠️    770ms | Unit    | Tests\Unit\Services\ShareServiceTest
+    → ShareService → it creates a password-protected share with hashed pa
+
+⚠️    770ms | Unit    | Tests\Unit\Services\ShareServiceTest
+    → ShareService → it validates share access with proper authentication
+
+⚠️    770ms | Feature | Tests\Feature\Http\Controllers\ShareControllerTest
+    → ShareController → it creates a password-protected share via API
+
+⚠️    760ms | Unit    | Tests\Unit\Models\ShareTest
+    → Share Model → it validates password for protected shares
+
+⚠️    680ms | Feature | Tests\Feature\AdvancedTableFeaturesTest
+    → Advanced Table Features → Performance and Edge Cases → it handles l
+
+⚠️    660ms | Feature | AIEdgeCasesTest
+    → ai generation with malformed api responses
+
+⚠️    590ms | Feature | Tests\Feature\Http\Controllers\PublicShareControllerTest
+    → PublicShareController → it authenticates password-protected shares
+
+⚠️    540ms | Feature | Tests\Feature\Auth\TwoFactorAuthenticatableTest
+    → cookie name is generated correctly
+
+⚠️    530ms | Feature | Tests\Feature\Http\Controllers\PublicShareControllerTest
+    → PublicShareController → it rejects invalid passwords
+
+⚠️    510ms | Unit    | Tests\Unit\Models\ShareTest
+    → Share Model → it handles password-protected shares with proper hash
+
+⚠️    510ms | Feature | AIEdgeCasesTest
+    → ai generation partial model failures
+
+
+====================================================================================================
+OKAY TESTS (200-500ms) - CONSIDER OPTIMIZATION
+====================================================================================================
+
+⚡   470ms | Unit    | Tests\Unit\Models\ExportTest
+    → Export Model → it creates an export with required attributes
+
+⚡   360ms | Feature | Tests\Feature\Integration\CompleteUserWorkflowTest
+    → complete user workflow works end to end
+
+⚡   350ms | Feature | Tests\Feature\Integration\AIWorkflowIntegrationTest
+    → caching for repeated requests
+
+⚡   340ms | Feature | Tests\Feature\Http\Controllers\PublicShareControllerTest
+    → PublicShareController → it shows password form for protected shares
+
+⚡   330ms | Feature | Tests\Feature\Auth\TwoFactorAuthenticationTest
+    → users can complete the two factor challenge with a valid recovery c
+
+⚡   330ms | Feature | Tests\Feature\Integration\AIWorkflowIntegrationTest
+    → model performance tracking
+
+⚡   320ms | Feature | Tests\Feature\Auth\PasswordResetTest
+    → reset password link can be requested
+
+⚡   320ms | Feature | Tests\Feature\Integration\AIWorkflowIntegrationTest
+    → multi model comparison with parallel generation
+
+⚡   310ms | Feature | Tests\Feature\Auth\RegistrationTest
+    → new users can register
+
+⚡   310ms | Feature | Tests\Feature\Auth\TwoFactorAuthenticationTest
+    → users with two factor authentication are redirected to the two fact
+
+⚡   310ms | Feature | Tests\Feature\Auth\TwoFactorAuthenticationTest
+    → users can complete the two factor challenge with a valid code
+
+⚡   310ms | Feature | Tests\Feature\Auth\TwoFactorAuthenticationTest
+    → users cannot complete the two factor challenge with an invalid code
+
+⚡   310ms | Feature | Tests\Feature\Auth\TwoFactorAuthenticationTest
+    → users cannot complete the two factor challenge with an invalid reco
+
+⚡   310ms | Feature | Tests\Feature\Auth\TwoFactorAuthenticationTest
+    → users can remember the device when completing the two factor challe
+
+⚡   300ms | Feature | Tests\Feature\Auth\AuthenticationTest
+    → users can authenticate using the login screen
+
+⚡   300ms | Feature | Tests\Feature\Auth\AuthenticationTest
+    → users can not authenticate with invalid password
+
+⚡   290ms | Feature | Tests\Feature\Auth\PasswordConfirmationTest
+    → password is not confirmed with invalid password
+
+⚡   290ms | Feature | Tests\Feature\Auth\PasswordResetTest
+    → reset password screen can be rendered
+
+⚡   280ms | Feature | Tests\Feature\Auth\PasswordConfirmationTest
+    → password can be confirmed
+
+⚡   280ms | Feature | Tests\Feature\Auth\TwoFactorAuthenticatableTest
+    → trusted device methods work correctly
+
+⚡   270ms | Feature | Tests\Feature\Http\Controllers\ExportControllerTest
+    → ExportController → it creates a PDF export via API
+
+⚡   270ms | Feature | Tests\Feature\Http\Controllers\PublicShareControllerTest
+    → PublicShareController → it prevents access to shares requiring auth
+
+⚡   250ms | Unit    | Tests\Unit\Services\ExportServiceTest
+    → ExportService → it creates a PDF export with proper formatting
+
+⚡   210ms | Unit    | Tests\Unit\Services\ExportServiceTest
+    → ExportService → it respects user export limits and rate limiting
+
+⚡   210ms | Feature | AIEdgeCasesTest
+    → ai generation with special characters and unicode
+
+⚡   210ms | Feature | AIEdgeCasesTest
+    → ai generation with invalid model names
+
+⚡   210ms | Feature | Tests\Feature\Http\Controllers\ExportControllerTest
+    → ExportController → it sets custom expiration dates
+
+⚡   200ms | Unit    | Tests\Unit\Services\ExportServiceTest
+    → ExportService → it sets appropriate expiration dates for exports
+
+⚡   200ms | Unit    | Tests\Unit\Services\ExportServiceTest
+    → ExportService → it generates appropriate filenames for different ex
+
+
+====================================================================================================
+TEST FILES RANKED BY TOTAL TIME
+====================================================================================================
+
+  5770ms total |  23 tests |  3 slow,  2 okay,  18 fast
+           → AIEdgeCasesTest
+
+  2610ms total |  16 tests |  2 slow,  2 okay,  12 fast
+           → Tests\Feature\Http\Controllers\PublicShareControllerTest
+
+  2150ms total |  14 tests |  1 slow,  4 okay,   9 fast
+           → Tests\Unit\Services\ExportServiceTest
+
+  1990ms total |  16 tests |  2 slow,  0 okay,  14 fast
+           → Tests\Unit\Services\ShareServiceTest
+
+  1990ms total |  16 tests |  1 slow,  0 okay,  15 fast
+           → Tests\Feature\AdvancedTableFeaturesTest
+
+  1920ms total |   7 tests |  0 slow,  6 okay,   1 fast
+           → Tests\Feature\Auth\TwoFactorAuthenticationTest
+
+  1800ms total |  10 tests |  0 slow,  3 okay,   7 fast
+           → Tests\Feature\Integration\AIWorkflowIntegrationTest
+
+  1630ms total |  15 tests |  2 slow,  0 okay,  13 fast
+           → Tests\Unit\Models\ShareTest
+
+  1460ms total |   4 tests |  1 slow,  2 okay,   1 fast
+           → Tests\Feature\Auth\PasswordResetTest
+
+  1190ms total |  15 tests |  1 slow,  0 okay,  14 fast
+           → Tests\Feature\Http\Controllers\ShareControllerTest
+
+  1090ms total |  19 tests |  0 slow,  2 okay,  17 fast
+           → Tests\Feature\Http\Controllers\ExportControllerTest
+
+  1030ms total |  10 tests |  1 slow,  1 okay,   8 fast
+           → Tests\Feature\Auth\TwoFactorAuthenticatableTest
+
+  1030ms total |   7 tests |  0 slow,  1 okay,   6 fast
+           → Tests\Feature\Integration\CompleteUserWorkflowTest
+
+   980ms total |  19 tests |  0 slow,  0 okay,  19 fast
+           → Tests\Feature\Accessibility\SessionSidebarAccessibilityTest
+
+   960ms total |  37 tests |  0 slow,  0 okay,  37 fast
+           → Tests\Feature\FluxProComponentMigrationTest
+
+   920ms total |  17 tests |  0 slow,  1 okay,  16 fast
+           → Tests\Unit\Models\ExportTest
+
+   810ms total |  26 tests |  0 slow,  0 okay,  26 fast
+           → Tests\Feature\Api\AIGenerationApiTest
+
+   690ms total |   4 tests |  0 slow,  2 okay,   2 fast
+           → Tests\Feature\Auth\AuthenticationTest
+
+   690ms total |  23 tests |  0 slow,  0 okay,  23 fast
+           → Tests\Feature\ErrorHandlingTest
+
+   620ms total |  12 tests |  0 slow,  0 okay,  12 fast
+           → Tests\Feature\EnhancedNotificationsSimpleTest
+
+   610ms total |   3 tests |  0 slow,  2 okay,   1 fast
+           → Tests\Feature\Auth\PasswordConfirmationTest
+
+   570ms total |  27 tests |  0 slow,  0 okay,  27 fast
+           → Tests\Unit\ThemeAccessibilityTest
+
+   560ms total |  19 tests |  0 slow,  0 okay,  19 fast
+           → Tests\Feature\Api\LogoErrorHandlingTest
+
+   550ms total |  20 tests |  0 slow,  0 okay,  20 fast
+           → Tests\Feature\Api\LogoGenerationApiTest
+
+   510ms total |  16 tests |  0 slow,  0 okay,  16 fast
+           → Tests\Feature\Api\LogoDownloadApiTest
+
+   480ms total |  21 tests |  0 slow,  0 okay,  21 fast
+           → Tests\Feature\Components\IconComponentTest
+
+   420ms total |  12 tests |  0 slow,  0 okay,  12 fast
+           → Tests\Feature\DashboardLivewireTest
+
+   420ms total |  14 tests |  0 slow,  0 okay,  14 fast
+           → Tests\Feature\Feature\Models\ProjectImageTest
+
+   380ms total |  10 tests |  0 slow,  0 okay,  10 fast
+           → Tests\Feature\ImageUploadControllerTest
+
+   360ms total |   2 tests |  0 slow,  1 okay,   1 fast
+           → Tests\Feature\Auth\RegistrationTest
+

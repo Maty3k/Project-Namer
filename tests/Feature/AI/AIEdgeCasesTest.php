@@ -26,6 +26,9 @@ class AIEdgeCasesTest extends TestCase
 
         $this->user = User::factory()->create();
         $this->project = Project::factory()->create(['user_id' => $this->user->id]);
+
+        // Prevent any actual HTTP requests - all tests should use Http::fake()
+        Http::preventStrayRequests();
     }
 
     public function test_ai_generation_with_malformed_api_responses(): void
@@ -142,13 +145,10 @@ class AIEdgeCasesTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        // Mock API with timeout
+        // Mock API with timeout - return 504 Gateway Timeout directly
+        // No need to actually sleep - the error code is sufficient for testing timeout handling
         Http::fake([
-            'api.openai.com/*' => function () {
-                sleep(2); // Simulate timeout
-
-                return Http::response(null, 504);
-            },
+            'api.openai.com/*' => Http::response(null, 504),
         ]);
 
         $component = Livewire::test('name-generator-dashboard')

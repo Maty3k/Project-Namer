@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Models\GenerationCache;
 use Exception;
+use Illuminate\Support\Sleep;
 use InvalidArgumentException;
 use Prism\Prism\Enums\Provider;
 use Prism\Prism\Prism;
@@ -179,7 +180,7 @@ final class PrismAIService
 
                 // Wait before retry (except on last attempt)
                 if ($attempt < self::MAX_RETRIES) {
-                    sleep(self::RETRY_DELAY_SECONDS * $attempt); // Exponential backoff
+                    Sleep::for(self::RETRY_DELAY_SECONDS * $attempt)->seconds(); // Exponential backoff
                 }
             }
         }
