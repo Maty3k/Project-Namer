@@ -27,9 +27,9 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 2.4 Update accent color system to use three-variable approach
   - [x] 2.5 Modify CSS generation method to output FluxUI-compliant CSS
   - [x] 2.6 Update accessibility calculation for new color system
-  - [ ] 2.7 Update predefined themes to use FluxUI standard variables
+  - [x] 2.7 Update predefined themes to use FluxUI standard variables
   - [x] 2.8 Update theme import/export to work with new variable structure
-  - [ ] 2.9 Update theme customizer Blade template UI for new options
+  - [x] 2.9 Update theme customizer Blade template UI for new options
   - [ ] 2.10 Verify all tests pass
 
 - [ ] 3. Core Component Templates Migration (High Priority)

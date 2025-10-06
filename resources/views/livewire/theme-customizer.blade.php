@@ -16,17 +16,17 @@
 
     <!-- Seasonal Recommendation -->
     @if($recommendedSeasonalTheme)
-        <flux:card class="cursor-pointer hover:shadow-lg transition-all duration-200 relative z-10" 
-                   style="background-color: {{ $primaryColor }}10; border-color: {{ $primaryColor }}40;"
+        <flux:card class="cursor-pointer hover:shadow-lg transition-all duration-200 relative z-10"
+                   style="background-color: {{ $accentColor }}10; border-color: {{ $accentColor }}40;"
                    wire:click="applySeasonalRecommendation">
             <div class="p-6">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-4">
                         <div class="flex-shrink-0">
                             <div class="flex h-12 w-16 overflow-hidden rounded-lg shadow-md">
-                                <div class="w-1/2" style="background-color: {{ $recommendedSeasonalTheme['primary_color'] }}"></div>
-                                <div class="w-1/4" style="background-color: {{ $recommendedSeasonalTheme['accent_color'] }}"></div>
-                                <div class="w-1/4" style="background-color: {{ $recommendedSeasonalTheme['background_color'] }}"></div>
+                                <div class="w-1/2" style="background-color: {{ $recommendedSeasonalTheme['accent_color'] }}"></div>
+                                <div class="w-1/4" style="background-color: {{ $recommendedSeasonalTheme['accent_content_color'] ?? $recommendedSeasonalTheme['accent_color'] }}"></div>
+                                <div class="w-1/4" style="background-color: {{ $recommendedSeasonalTheme['accent_foreground_color'] ?? '#ffffff' }}"></div>
                             </div>
                         </div>
                         <div>
@@ -80,15 +80,15 @@
                 <div wire:click="applyPreset('{{ $theme['name'] }}')"
                      class="group cursor-pointer rounded-lg border-2 p-4 transition-all duration-300 transform hover:scale-105 hover:shadow-lg
                             {{ $themeName === $theme['name'] ? 'scale-105 shadow-lg' : '' }}"
-                     style="border-color: {{ $themeName === $theme['name'] ? $primaryColor : '#d1d5db' }}; 
-                            {{ $themeName === $theme['name'] ? 'box-shadow: 0 0 0 3px ' . $primaryColor . '20;' : '' }}
-                            hover:border-color: {{ $primaryColor }}80;">
+                     style="border-color: {{ $themeName === $theme['name'] ? $accentColor : '#d1d5db' }};
+                            {{ $themeName === $theme['name'] ? 'box-shadow: 0 0 0 3px ' . $accentColor . '20;' : '' }}
+                            hover:border-color: {{ $accentColor }}80;">
                     <div class="space-y-3">
                         <!-- Clean Theme Preview -->
                         <div class="flex h-12 overflow-hidden rounded border border-gray-200 dark:border-gray-600">
-                            <div class="w-1/2" style="background-color: {{ $theme['primary_color'] }}"></div>
-                            <div class="w-1/4" style="background-color: {{ $theme['accent_color'] }}"></div>
-                            <div class="w-1/4" style="background-color: {{ $theme['background_color'] }}"></div>
+                            <div class="w-1/2" style="background-color: {{ $theme['accent_color'] }}"></div>
+                            <div class="w-1/4" style="background-color: {{ $theme['accent_content_color'] ?? $theme['accent_color'] }}"></div>
+                            <div class="w-1/4" style="background-color: {{ $theme['accent_foreground_color'] ?? '#ffffff' }}"></div>
                         </div>
                         
                         <!-- Theme Info -->
@@ -99,8 +99,8 @@
                                         @case('summer')
                                             <span class="text-yellow-500 animate-pulse">☀️</span>
                                             @break
-                                        @case('winter') 
-                                            <span class="animate-pulse" style="color: {{ $primaryColor }};">❄️</span>
+                                        @case('winter')
+                                            <span class="animate-pulse" style="color: {{ $accentColor }};">❄️</span>
                                             @break
                                         @case('halloween')
                                             <span class="text-orange-500">🎃</span>
@@ -130,75 +130,78 @@
     <!-- Custom Color Controls -->
     <div class="space-y-6 relative z-10">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            Custom Colors
+            FluxUI Theme Colors
         </h3>
-        
+
         <div class="grid grid-cols-1 gap-6
                     sm:grid-cols-2
-                    lg:grid-cols-4">
-            <!-- Primary Color -->
-            <div class="space-y-2">
-                <flux:field>
-                    <flux:label>Primary Color</flux:label>
-                    <div class="flex space-x-2">
-                        <flux:input wire:model.live="primaryColor" 
-                                  type="color" 
-                                  class="w-16 h-10 rounded cursor-pointer" />
-                        <flux:input wire:model.live="primaryColor" 
-                                  placeholder="#3b82f6" 
-                                  class="flex-1" />
-                    </div>
-                    <flux:error name="primaryColor" />
-                </flux:field>
-            </div>
-
+                    lg:grid-cols-3">
             <!-- Accent Color -->
             <div class="space-y-2">
                 <flux:field>
                     <flux:label>Accent Color</flux:label>
                     <div class="flex space-x-2">
-                        <flux:input wire:model.live="accentColor" 
-                                  type="color" 
+                        <flux:input wire:model.live="accentColor"
+                                  type="color"
                                   class="w-16 h-10 rounded cursor-pointer" />
-                        <flux:input wire:model.live="accentColor" 
-                                  placeholder="#10b981" 
+                        <flux:input wire:model.live="accentColor"
+                                  placeholder="#3b82f6"
                                   class="flex-1" />
                     </div>
+                    <flux:description>Main interactive color (auto-calculates content color)</flux:description>
                     <flux:error name="accentColor" />
                 </flux:field>
             </div>
 
-            <!-- Background Color -->
+            <!-- Accent Content Color -->
             <div class="space-y-2">
                 <flux:field>
-                    <flux:label>Background Color</flux:label>
+                    <flux:label>Accent Content Color</flux:label>
                     <div class="flex space-x-2">
-                        <flux:input wire:model.live="backgroundColor" 
-                                  type="color" 
+                        <flux:input wire:model.live="accentContentColor"
+                                  type="color"
                                   class="w-16 h-10 rounded cursor-pointer" />
-                        <flux:input wire:model.live="backgroundColor" 
-                                  placeholder="#ffffff" 
+                        <flux:input wire:model.live="accentContentColor"
+                                  placeholder="#2563eb"
                                   class="flex-1" />
                     </div>
-                    <flux:error name="backgroundColor" />
+                    <flux:description>Text/icon color for accent backgrounds</flux:description>
+                    <flux:error name="accentContentColor" />
                 </flux:field>
             </div>
 
-            <!-- Text Color -->
+            <!-- Accent Foreground Color -->
             <div class="space-y-2">
                 <flux:field>
-                    <flux:label>Text Color</flux:label>
+                    <flux:label>Accent Foreground Color</flux:label>
                     <div class="flex space-x-2">
-                        <flux:input wire:model.live="textColor" 
-                                  type="color" 
+                        <flux:input wire:model.live="accentForegroundColor"
+                                  type="color"
                                   class="w-16 h-10 rounded cursor-pointer" />
-                        <flux:input wire:model.live="textColor" 
-                                  placeholder="#111827" 
+                        <flux:input wire:model.live="accentForegroundColor"
+                                  placeholder="#ffffff"
                                   class="flex-1" />
                     </div>
-                    <flux:error name="textColor" />
+                    <flux:description>Foreground color on accent elements</flux:description>
+                    <flux:error name="accentForegroundColor" />
                 </flux:field>
             </div>
+        </div>
+
+        <!-- Base Color Shade Selector -->
+        <div class="space-y-2">
+            <flux:field>
+                <flux:label>Base Color Shade</flux:label>
+                <flux:select wire:model.live="baseColorShade">
+                    <option value="zinc">Zinc (Default)</option>
+                    <option value="slate">Slate</option>
+                    <option value="neutral">Neutral</option>
+                    <option value="gray">Gray</option>
+                    <option value="stone">Stone</option>
+                </flux:select>
+                <flux:description>Remaps zinc shades to another neutral palette</flux:description>
+                <flux:error name="baseColorShade" />
+            </flux:field>
         </div>
 
         <!-- Theme Name and Options -->
@@ -206,7 +209,7 @@
                     sm:grid-cols-2">
             <flux:field>
                 <flux:label>Theme Name</flux:label>
-                <flux:input wire:model.live="themeName" 
+                <flux:input wire:model.live="themeName"
                           placeholder="My Custom Theme" />
                 <flux:error name="themeName" />
             </flux:field>
@@ -254,10 +257,10 @@
 
             @if(count($accessibilityFeedback['suggestions']) > 0)
                 <div class="space-y-2 mt-3">
-                    <h4 class="text-sm font-medium" style="color: {{ $primaryColor }}AA;">
+                    <h4 class="text-sm font-medium" style="color: {{ $accentColor }}AA;">
                         Suggestions:
                     </h4>
-                    <ul class="text-sm list-disc list-inside space-y-1" style="color: {{ $primaryColor }}CC;">
+                    <ul class="text-sm list-disc list-inside space-y-1" style="color: {{ $accentColor }}CC;">
                         @foreach($accessibilityFeedback['suggestions'] as $suggestion)
                             <li>{{ $suggestion }}</li>
                         @endforeach
@@ -272,25 +275,24 @@
         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Live Preview
         </h3>
-        
-        <div class="rounded-lg border p-6 space-y-4 {{ $isDarkMode ? 'border-gray-600 dark:border-gray-600' : 'border-gray-300' }}"
-             style="background-color: {{ $backgroundColor }}; color: {{ $textColor }};">
+
+        <div class="rounded-lg border p-6 space-y-4 {{ $isDarkMode ? 'border-gray-600 dark:border-gray-600 bg-gray-900 text-white' : 'border-gray-300 bg-white text-gray-900' }}">
             <div class="space-y-3">
-                <flux:button style="background-color: {{ $primaryColor }}; color: {{ $this->getContrastingColor($primaryColor) }};">
-                    Primary Button
-                </flux:button>
-                
-                <flux:button style="background-color: {{ $accentColor }}; color: {{ $this->getContrastingColor($accentColor) }};">
+                <flux:button style="background-color: {{ $accentColor }}; color: {{ $accentForegroundColor }};">
                     Accent Button
                 </flux:button>
+
+                <flux:button style="background-color: {{ $accentContentColor ?? $accentColor }}; color: {{ $accentForegroundColor }};">
+                    Accent Content Button
+                </flux:button>
             </div>
-            
+
             <div class="border-t pt-4" style="border-color: {{ $isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}">
-                <h4 class="font-semibold mb-2" style="color: {{ $textColor }};">
+                <h4 class="font-semibold mb-2">
                     {{ $themeName }} Theme
                 </h4>
                 <p class="text-sm opacity-90">
-                    This is sample text showing how your chosen colors work together.
+                    This is sample text showing how your chosen FluxUI accent colors work together.
                     @if($isDarkMode)
                         Dark mode is enabled for better visibility in low-light environments.
                     @else
@@ -298,7 +300,7 @@
                     @endif
                 </p>
                 <p class="text-xs mt-2 opacity-75">
-                    Background: {{ $backgroundColor }} | Text: {{ $textColor }} | Primary: {{ $primaryColor }}
+                    Accent: {{ $accentColor }} | Content: {{ $accentContentColor ?? 'Auto' }} | Foreground: {{ $accentForegroundColor }} | Base: {{ $baseColorShade }}
                 </p>
             </div>
         </div>
@@ -345,12 +347,12 @@
     </div>
 
     <!-- Loading States -->
-    <div wire:loading.flex 
+    <div wire:loading.flex
          wire:target="applyTheme,applyPreset,importTheme"
          class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
         <div class="bg-white dark:bg-gray-800 rounded-lg p-8 text-center shadow-2xl border border-gray-200 dark:border-gray-600">
             <div class="text-6xl mb-4 animate-bounce">🎨</div>
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 mx-auto mb-4" style="border-color: {{ $primaryColor }};"></div>
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 mx-auto mb-4" style="border-color: {{ $accentColor }};"></div>
             <p class="text-gray-600 dark:text-gray-300 font-medium">Applying your magical theme...</p>
             <div class="flex justify-center gap-2 mt-4">
                 <span class="animate-bounce text-2xl" style="animation-delay: 0s;">✨</span>
@@ -395,28 +397,36 @@
             Livewire.on('theme-updated', () => {
                 requestAnimationFrame(() => {
                     try {
-                        // Get current theme CSS from component
-                        const primaryColor = @this.primaryColor;
+                        // Get current theme CSS from component (FluxUI variables)
                         const accentColor = @this.accentColor;
-                        const backgroundColor = @this.backgroundColor;
-                        const textColor = @this.textColor;
-                        
-                        // Apply CSS custom properties in real-time
-                        const css = `:root {
-                            --color-primary: ${primaryColor};
+                        const accentContentColor = @this.accentContentColor || accentColor;
+                        const accentForegroundColor = @this.accentForegroundColor;
+                        const baseColorShade = @this.baseColorShade;
+
+                        // Apply CSS custom properties in real-time (FluxUI format)
+                        const css = `@theme {
                             --color-accent: ${accentColor};
-                            --color-background: ${backgroundColor};
-                            --color-text: ${textColor};
+                            --color-accent-content: ${accentContentColor};
+                            --color-accent-foreground: ${accentForegroundColor};
+                        }
+                        @layer theme {
+                            .dark {
+                                --color-accent: ${accentColor};
+                                --color-accent-content: ${accentContentColor};
+                                --color-accent-foreground: ${accentForegroundColor};
+                            }
                         }`;
-                        
+
                         // Remove existing theme styles
                         const existingStyle = document.getElementById('live-theme-styles');
                         if (existingStyle) {
                             existingStyle.remove();
                         }
-                        
+
                         // Create subtle tinted background for whole UI
-                        const tintedBg = blendColors(backgroundColor, primaryColor, 0.02); // 2% blend
+                        const isDarkMode = @this.isDarkMode;
+                        const baseBackground = isDarkMode ? '#111827' : '#ffffff';
+                        const tintedBg = blendColors(baseBackground, accentColor, 0.02); // 2% blend
                         
                         // Add new theme styles to document head
                         const style = document.createElement('style');
@@ -473,17 +483,16 @@
                         
                         // Apply theme immediately to body for global changes with smooth transitions
                         const root = document.documentElement;
-                        root.style.setProperty('--color-primary', primaryColor);
                         root.style.setProperty('--color-accent', accentColor);
-                        root.style.setProperty('--color-background', backgroundColor);
-                        root.style.setProperty('--color-text', textColor);
-                        
+                        root.style.setProperty('--color-accent-content', accentContentColor);
+                        root.style.setProperty('--color-accent-foreground', accentForegroundColor);
+
                         // Dispatch global theme-applied event
                         Livewire.dispatch('theme-applied', {
-                            primaryColor: primaryColor,
                             accentColor: accentColor,
-                            backgroundColor: backgroundColor,
-                            textColor: textColor,
+                            accentContentColor: accentContentColor,
+                            accentForegroundColor: accentForegroundColor,
+                            baseColorShade: baseColorShade,
                             isDarkMode: @this.isDarkMode
                         });
                         
@@ -522,40 +531,43 @@
                     themedElements.forEach(element => {
                         element.style.transform = 'scale(1.02)';
                         element.style.transition = 'all 1s cubic-bezier(0.4, 0, 0.2, 1)';
-                        
+
                         // Reset after animation
                         setTimeout(() => {
                             element.style.transform = 'scale(1)';
                         }, 500);
                     });
                 };
-                
-                // Apply theme colors to themed elements
+
+                // Apply theme colors to themed elements (FluxUI accent colors)
                 const applyThemeColors = () => {
+                    const baseBackground = data.isDarkMode ? '#111827' : '#ffffff';
+                    const baseText = data.isDarkMode ? '#f9fafb' : '#1f2937';
+
                     // Update sidebar
                     const sidebar = document.querySelector('.themed-sidebar');
                     if (sidebar) {
-                        sidebar.style.backgroundColor = data.backgroundColor;
-                        sidebar.style.borderColor = `${data.primaryColor}50`;
-                        sidebar.style.color = data.textColor;
+                        sidebar.style.backgroundColor = baseBackground;
+                        sidebar.style.borderColor = `${data.accentColor}50`;
+                        sidebar.style.color = baseText;
                         sidebar.style.transition = 'all 1s ease-in-out';
                     }
-                    
+
                     // Update create project box
                     const createBox = document.querySelector('.themed-create-box');
                     if (createBox) {
-                        createBox.style.backgroundColor = data.backgroundColor;
-                        createBox.style.boxShadow = `0 10px 25px ${data.primaryColor}20`;
-                        createBox.style.color = data.textColor;
+                        createBox.style.backgroundColor = baseBackground;
+                        createBox.style.boxShadow = `0 10px 25px ${data.accentColor}20`;
+                        createBox.style.color = baseText;
                         createBox.style.transition = 'all 1s ease-in-out';
                     }
-                    
+
                     // Update header
                     const header = document.querySelector('header');
                     if (header) {
-                        header.style.backgroundColor = data.backgroundColor;
-                        header.style.borderColor = `${data.primaryColor}40`;
-                        header.style.color = data.textColor;
+                        header.style.backgroundColor = baseBackground;
+                        header.style.borderColor = `${data.accentColor}40`;
+                        header.style.color = baseText;
                         header.style.transition = 'all 1s ease-in-out';
                     }
                 };
@@ -568,13 +580,13 @@
                     // Apply consistent sidebar colors in dark mode
                     const sidebarElements = document.querySelectorAll('[class*="bg-slate-900"]');
                     sidebarElements.forEach(element => {
-                        element.style.backgroundColor = data.backgroundColor;
+                        element.style.backgroundColor = '#111827';
                         element.style.transition = 'background-color 1s ease-in-out';
                     });
-                    
+
                     const borderElements = document.querySelectorAll('[class*="border-slate-"]');
                     borderElements.forEach(element => {
-                        element.style.borderColor = data.primaryColor + '44';
+                        element.style.borderColor = data.accentColor + '44';
                         element.style.transition = 'border-color 1s ease-in-out';
                     });
                     
@@ -648,31 +660,31 @@
             function showThemedNotification(data) {
                 const notification = document.createElement('div');
                 notification.className = 'fixed top-4 right-4 z-50 p-4 rounded-lg shadow-xl transform transition-all duration-1000';
-                notification.style.backgroundColor = data.primaryColor;
-                notification.style.color = 'white';
+                notification.style.backgroundColor = data.accentColor;
+                notification.style.color = data.accentForegroundColor;
                 notification.style.fontWeight = 'bold';
                 notification.style.transform = 'translateX(100%) scale(0.8)';
                 notification.style.opacity = '0';
-                
+
                 notification.innerHTML = `
                     <div class="flex items-center space-x-2">
                         <span class="text-2xl animate-pulse">🎨</span>
                         <span>Theme Applied!</span>
                     </div>
                 `;
-                
+
                 document.body.appendChild(notification);
-                
+
                 // Animate in
                 requestAnimationFrame(() => {
                     notification.style.transform = 'translateX(0) scale(1)';
                     notification.style.opacity = '1';
-                    
+
                     // Animate out after 2 seconds
                     setTimeout(() => {
                         notification.style.transform = 'translateX(100%) scale(0.8)';
                         notification.style.opacity = '0';
-                        
+
                         // Remove after animation
                         setTimeout(() => {
                             notification.remove();
