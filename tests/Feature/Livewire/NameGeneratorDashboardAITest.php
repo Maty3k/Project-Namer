@@ -8,8 +8,10 @@ use App\Models\AIModelPerformance;
 use App\Models\User;
 use App\Models\UserAIPreferences;
 use App\Services\AI\AIGenerationService;
-use Livewire\Livewire;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Sleep;
+use Livewire\Livewire;
 use Prism\Prism\Prism;
 use Prism\Prism\Testing\TextResponseFake;
 
@@ -20,9 +22,21 @@ beforeEach(function (): void {
     // Clear cache to avoid test pollution
     Cache::flush();
 
+    // Fake sleep to speed up tests with retry logic
+    Sleep::fake();
+
     // Mock Prism AI responses to return immediately
     Prism::fake([
         TextResponseFake::make()->withText("1. TechNova\n2. InnovateLabs\n3. FutureSync\n4. QuantumLeap\n5. NextGenTech\n6. SmartFlow\n7. DataPulse\n8. CloudNine\n9. ByteForge\n10. CodeCraft"),
+    ]);
+
+    // Mock HTTP requests for domain checking to avoid slow external API calls
+    Http::fake([
+        '*' => Http::response([
+            'available' => true,
+            'domain' => 'example.com',
+            'status' => 'available',
+        ], 200),
     ]);
 });
 
