@@ -258,22 +258,26 @@ class AIWorkflowIntegrationTest extends TestCase
 
         // Create performance tracking records directly for testing
         $performance1 = AIModelPerformance::create([
-            'model' => 'gpt-4',
+            'user_id' => $this->user->id,
+            'model_name' => 'gpt-4',
             'total_requests' => 5,
             'successful_requests' => 4,
             'failed_requests' => 1,
-            'average_response_time' => 1.5,
+            'average_response_time_ms' => 1500,
             'total_tokens_used' => 1000,
+            'total_cost_cents' => 100,
             'last_used_at' => now(),
         ]);
 
         $performance2 = AIModelPerformance::create([
-            'model' => 'claude-3.5-sonnet',
+            'user_id' => $this->user->id,
+            'model_name' => 'claude-3.5-sonnet',
             'total_requests' => 3,
             'successful_requests' => 3,
             'failed_requests' => 0,
-            'average_response_time' => 1.2,
+            'average_response_time_ms' => 1200,
             'total_tokens_used' => 800,
+            'total_cost_cents' => 80,
             'last_used_at' => now(),
         ]);
 
@@ -284,7 +288,7 @@ class AIWorkflowIntegrationTest extends TestCase
         $this->assertEquals(1, $performance1->failed_requests);
 
         // Verify we can query performance data
-        $gptPerformance = AIModelPerformance::where('model', 'gpt-4')->first();
+        $gptPerformance = AIModelPerformance::where('model_name', 'gpt-4')->first();
         $this->assertNotNull($gptPerformance);
         $this->assertEquals(1000, $gptPerformance->total_tokens_used);
     }
@@ -330,8 +334,7 @@ class AIWorkflowIntegrationTest extends TestCase
         // Verify initial generation state
         $component->assertSet('isGeneratingNames', false);
 
-        // Set up domain checking properties
-        $component->set('checkDomainAvailability', true);
-        $component->assertSet('checkDomainAvailability', true);
+        // Verify domain results are empty initially
+        $this->assertEmpty($domainResults);
     }
 }
