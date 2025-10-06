@@ -15,7 +15,6 @@ use Prism\Prism\Testing\TextResponseFake;
  * @group slow
  * @group ai
  */
-
 beforeEach(function (): void {
     $this->user = User::factory()->create();
     $this->actingAs($this->user);
