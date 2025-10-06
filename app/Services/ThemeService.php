@@ -131,12 +131,10 @@ final class ThemeService
             [
                 'name' => 'dark',
                 'display_name' => 'Dark Mode',
-                'primary_color' => '#6366f1',
-                'accent_color' => '#8b5cf6',
-                'background_color' => '#111827',
-                'text_color' => '#f9fafb',
-                'text_primary_color' => '#f9fafb',
-                'text_secondary_color' => '#d1d5db',
+                'accent_color' => '#6366f1',
+                'accent_content_color' => '#4f46e5',
+                'accent_foreground_color' => '#ffffff',
+                'base_color_shade' => 'zinc',
                 'theme_name' => 'dark',
                 'is_dark_mode' => true,
                 'preview_url' => '/images/theme-previews/dark.png',
@@ -145,12 +143,10 @@ final class ThemeService
             [
                 'name' => 'ocean',
                 'display_name' => 'Ocean Breeze',
-                'primary_color' => '#0284c7',
-                'accent_color' => '#0891b2',
-                'background_color' => '#f0f9ff',
-                'text_color' => '#0c4a6e',
-                'text_primary_color' => '#0c4a6e',
-                'text_secondary_color' => '#075985',
+                'accent_color' => '#0284c7',
+                'accent_content_color' => '#0369a1',
+                'accent_foreground_color' => '#ffffff',
+                'base_color_shade' => 'zinc',
                 'theme_name' => 'ocean',
                 'is_dark_mode' => false,
                 'preview_url' => '/images/theme-previews/ocean.png',
@@ -159,12 +155,10 @@ final class ThemeService
             [
                 'name' => 'sunset',
                 'display_name' => 'Warm Sunset',
-                'primary_color' => '#d97706',
-                'accent_color' => '#dc2626',
-                'background_color' => '#fffbeb',
-                'text_color' => '#92400e',
-                'text_primary_color' => '#92400e',
-                'text_secondary_color' => '#a16207',
+                'accent_color' => '#d97706',
+                'accent_content_color' => '#b45309',
+                'accent_foreground_color' => '#ffffff',
+                'base_color_shade' => 'zinc',
                 'theme_name' => 'sunset',
                 'is_dark_mode' => false,
                 'preview_url' => '/images/theme-previews/sunset.png',
@@ -173,12 +167,10 @@ final class ThemeService
             [
                 'name' => 'forest',
                 'display_name' => 'Forest Green',
-                'primary_color' => '#059669',
-                'accent_color' => '#4d7c0f',
-                'background_color' => '#f0fdf4',
-                'text_color' => '#14532d',
-                'text_primary_color' => '#14532d',
-                'text_secondary_color' => '#166534',
+                'accent_color' => '#059669',
+                'accent_content_color' => '#047857',
+                'accent_foreground_color' => '#ffffff',
+                'base_color_shade' => 'zinc',
                 'theme_name' => 'forest',
                 'is_dark_mode' => false,
                 'preview_url' => '/images/theme-previews/forest.png',
@@ -187,12 +179,10 @@ final class ThemeService
             [
                 'name' => 'cosmic-violet',
                 'display_name' => 'Cosmic Violet',
-                'primary_color' => '#a855f7',
-                'accent_color' => '#c084fc',
-                'background_color' => '#0c0a09',
-                'text_color' => '#f3e8ff',
-                'text_primary_color' => '#f3e8ff',
-                'text_secondary_color' => '#ddd6fe',
+                'accent_color' => '#a855f7',
+                'accent_content_color' => '#9333ea',
+                'accent_foreground_color' => '#ffffff',
+                'base_color_shade' => 'zinc',
                 'theme_name' => 'cosmic-violet',
                 'is_dark_mode' => true,
                 'preview_url' => '/images/theme-previews/cosmic-violet.png',
@@ -201,12 +191,10 @@ final class ThemeService
             [
                 'name' => 'coral-reef',
                 'display_name' => 'Coral Reef',
-                'primary_color' => '#ea580c',
-                'accent_color' => '#0891b2',
-                'background_color' => '#fefcfb',
-                'text_color' => '#9a3412',
-                'text_primary_color' => '#9a3412',
-                'text_secondary_color' => '#c2410c',
+                'accent_color' => '#ea580c',
+                'accent_content_color' => '#c2410c',
+                'accent_foreground_color' => '#ffffff',
+                'base_color_shade' => 'zinc',
                 'theme_name' => 'coral-reef',
                 'is_dark_mode' => false,
                 'preview_url' => '/images/theme-previews/coral-reef.png',
@@ -215,12 +203,10 @@ final class ThemeService
             [
                 'name' => 'midnight-teal',
                 'display_name' => 'Midnight Teal',
-                'primary_color' => '#0891b2',
-                'accent_color' => '#22d3ee',
-                'background_color' => '#0f172a',
-                'text_color' => '#e0f2fe',
-                'text_primary_color' => '#e0f2fe',
-                'text_secondary_color' => '#bae6fd',
+                'accent_color' => '#0891b2',
+                'accent_content_color' => '#0e7490',
+                'accent_foreground_color' => '#ffffff',
+                'base_color_shade' => 'zinc',
                 'theme_name' => 'midnight-teal',
                 'is_dark_mode' => true,
                 'preview_url' => '/images/theme-previews/midnight-teal.png',
@@ -230,12 +216,10 @@ final class ThemeService
             [
                 'name' => 'summer',
                 'display_name' => 'Summer Coral',
-                'primary_color' => '#dc2626',
-                'accent_color' => '#0891b2',
-                'background_color' => '#fff5f5',
-                'text_color' => '#2d3748',
-                'text_primary_color' => '#2d3748',
-                'text_secondary_color' => '#4a5568',
+                'accent_color' => '#dc2626',
+                'accent_content_color' => '#b91c1c',
+                'accent_foreground_color' => '#ffffff',
+                'base_color_shade' => 'zinc',
                 'theme_name' => 'summer',
                 'is_dark_mode' => false,
                 'preview_url' => '/images/theme-previews/summer.png',
@@ -245,12 +229,10 @@ final class ThemeService
             [
                 'name' => 'winter',
                 'display_name' => 'Winter Frost',
-                'primary_color' => '#4a90e2',
-                'accent_color' => '#1e40af',
-                'background_color' => '#f8fafc',
-                'text_color' => '#1a202c',
-                'text_primary_color' => '#1a202c',
-                'text_secondary_color' => '#2d3748',
+                'accent_color' => '#4a90e2',
+                'accent_content_color' => '#2563eb',
+                'accent_foreground_color' => '#ffffff',
+                'base_color_shade' => 'slate',
                 'theme_name' => 'winter',
                 'is_dark_mode' => false,
                 'preview_url' => '/images/theme-previews/winter.png',
@@ -260,12 +242,10 @@ final class ThemeService
             [
                 'name' => 'halloween',
                 'display_name' => 'Halloween Night',
-                'primary_color' => '#ff8c00',
-                'accent_color' => '#f97316',
-                'background_color' => '#2d1b69',
-                'text_color' => '#f7fafc',
-                'text_primary_color' => '#f7fafc',
-                'text_secondary_color' => '#e2e8f0',
+                'accent_color' => '#ff8c00',
+                'accent_content_color' => '#ea580c',
+                'accent_foreground_color' => '#ffffff',
+                'base_color_shade' => 'zinc',
                 'theme_name' => 'halloween',
                 'is_dark_mode' => true,
                 'preview_url' => '/images/theme-previews/halloween.png',
@@ -275,12 +255,10 @@ final class ThemeService
             [
                 'name' => 'spring',
                 'display_name' => 'Spring Bloom',
-                'primary_color' => '#059669',
-                'accent_color' => '#be185d',
-                'background_color' => '#f0fff4',
-                'text_color' => '#2d3748',
-                'text_primary_color' => '#2d3748',
-                'text_secondary_color' => '#4a5568',
+                'accent_color' => '#059669',
+                'accent_content_color' => '#047857',
+                'accent_foreground_color' => '#ffffff',
+                'base_color_shade' => 'zinc',
                 'theme_name' => 'spring',
                 'is_dark_mode' => false,
                 'preview_url' => '/images/theme-previews/spring.png',
@@ -290,12 +268,10 @@ final class ThemeService
             [
                 'name' => 'autumn',
                 'display_name' => 'Autumn Harvest',
-                'primary_color' => '#b45309',
-                'accent_color' => '#c53030',
-                'background_color' => '#fffaf0',
-                'text_color' => '#744210',
-                'text_primary_color' => '#744210',
-                'text_secondary_color' => '#92400e',
+                'accent_color' => '#b45309',
+                'accent_content_color' => '#92400e',
+                'accent_foreground_color' => '#ffffff',
+                'base_color_shade' => 'zinc',
                 'theme_name' => 'autumn',
                 'is_dark_mode' => false,
                 'preview_url' => '/images/theme-previews/autumn.png',
@@ -306,12 +282,10 @@ final class ThemeService
             [
                 'name' => 'neon-cyber',
                 'display_name' => 'Neon Cyber',
-                'primary_color' => '#00ff88',
-                'accent_color' => '#ff0080',
-                'background_color' => '#0a0a0a',
-                'text_color' => '#ffffff',
-                'text_primary_color' => '#ffffff',
-                'text_secondary_color' => '#e0e0e0',
+                'accent_color' => '#00ff88',
+                'accent_content_color' => '#00cc6a',
+                'accent_foreground_color' => '#000000',
+                'base_color_shade' => 'zinc',
                 'theme_name' => 'neon-cyber',
                 'is_dark_mode' => true,
                 'preview_url' => '/images/theme-previews/neon-cyber.png',
@@ -320,12 +294,10 @@ final class ThemeService
             [
                 'name' => 'electric-blue',
                 'display_name' => 'Electric Blue',
-                'primary_color' => '#0099ff',
-                'accent_color' => '#00ddff',
-                'background_color' => '#001122',
-                'text_color' => '#ffffff',
-                'text_primary_color' => '#ffffff',
-                'text_secondary_color' => '#f0f9ff',
+                'accent_color' => '#0099ff',
+                'accent_content_color' => '#0284c7',
+                'accent_foreground_color' => '#ffffff',
+                'base_color_shade' => 'zinc',
                 'theme_name' => 'electric-blue',
                 'is_dark_mode' => true,
                 'preview_url' => '/images/theme-previews/electric-blue.png',
@@ -334,12 +306,10 @@ final class ThemeService
             [
                 'name' => 'hot-pink',
                 'display_name' => 'Hot Pink',
-                'primary_color' => '#e11d48',
-                'accent_color' => '#ec4899',
-                'background_color' => '#fdf2f8',
-                'text_color' => '#831843',
-                'text_primary_color' => '#831843',
-                'text_secondary_color' => '#9d174d',
+                'accent_color' => '#e11d48',
+                'accent_content_color' => '#be123c',
+                'accent_foreground_color' => '#ffffff',
+                'base_color_shade' => 'zinc',
                 'theme_name' => 'hot-pink',
                 'is_dark_mode' => false,
                 'preview_url' => '/images/theme-previews/hot-pink.png',
@@ -348,12 +318,10 @@ final class ThemeService
             [
                 'name' => 'lava-red',
                 'display_name' => 'Lava Red',
-                'primary_color' => '#dc2626',
-                'accent_color' => '#f97316',
-                'background_color' => '#1c1917',
-                'text_color' => '#fef2f2',
-                'text_primary_color' => '#fef2f2',
-                'text_secondary_color' => '#fecaca',
+                'accent_color' => '#dc2626',
+                'accent_content_color' => '#b91c1c',
+                'accent_foreground_color' => '#ffffff',
+                'base_color_shade' => 'stone',
                 'theme_name' => 'lava-red',
                 'is_dark_mode' => true,
                 'preview_url' => '/images/theme-previews/lava-red.png',
@@ -362,12 +330,10 @@ final class ThemeService
             [
                 'name' => 'lime-punch',
                 'display_name' => 'Lime Punch',
-                'primary_color' => '#4d7c0f',
                 'accent_color' => '#4d7c0f',
-                'background_color' => '#f7fee7',
-                'text_color' => '#365314',
-                'text_primary_color' => '#365314',
-                'text_secondary_color' => '#4d7c0f',
+                'accent_content_color' => '#3f6212',
+                'accent_foreground_color' => '#ffffff',
+                'base_color_shade' => 'zinc',
                 'theme_name' => 'lime-punch',
                 'is_dark_mode' => false,
                 'preview_url' => '/images/theme-previews/lime-punch.png',
@@ -376,12 +342,10 @@ final class ThemeService
             [
                 'name' => 'gold-rush',
                 'display_name' => 'Gold Rush',
-                'primary_color' => '#eab308',
-                'accent_color' => '#f59e0b',
-                'background_color' => '#451a03',
-                'text_color' => '#fef3c7',
-                'text_primary_color' => '#fef3c7',
-                'text_secondary_color' => '#fde68a',
+                'accent_color' => '#eab308',
+                'accent_content_color' => '#ca8a04',
+                'accent_foreground_color' => '#000000',
+                'base_color_shade' => 'zinc',
                 'theme_name' => 'gold-rush',
                 'is_dark_mode' => true,
                 'preview_url' => '/images/theme-previews/gold-rush.png',
@@ -390,12 +354,10 @@ final class ThemeService
             [
                 'name' => 'matrix-green',
                 'display_name' => 'Matrix Green',
-                'primary_color' => '#22c55e',
-                'accent_color' => '#16a34a',
-                'background_color' => '#000000',
-                'text_color' => '#ffffff',
-                'text_primary_color' => '#ffffff',
-                'text_secondary_color' => '#dcfce7',
+                'accent_color' => '#22c55e',
+                'accent_content_color' => '#16a34a',
+                'accent_foreground_color' => '#ffffff',
+                'base_color_shade' => 'zinc',
                 'theme_name' => 'matrix-green',
                 'is_dark_mode' => true,
                 'preview_url' => '/images/theme-previews/matrix-green.png',
@@ -405,7 +367,7 @@ final class ThemeService
     }
 
     /**
-     * Get themes filtered by category with improved contrast.
+     * Get themes filtered by category.
      *
      * @return list<array<string, mixed>>
      */
@@ -413,49 +375,11 @@ final class ThemeService
     {
         $themes = $this->getPredefinedThemes();
 
-        // Ensure all themes have good text visibility
-        $themes = array_map(fn ($theme) => $this->ensureThemeVisibility($theme), $themes);
-
         if ($category === 'all') {
             return $themes;
         }
 
         return array_filter($themes, fn ($theme) => ($theme['category'] ?? 'standard') === $category);
-    }
-
-    /**
-     * Ensure theme has proper text visibility and contrast.
-     *
-     * @param  array<string, mixed>  $theme
-     * @return array<string, mixed>
-     */
-    protected function ensureThemeVisibility(array $theme): array
-    {
-        $backgroundColor = $theme['background_color'] ?? '#ffffff';
-        $textColor = $theme['text_color'] ?? '#111827';
-
-        // Calculate contrast ratio
-        $contrastRatio = $this->calculateContrastRatio($textColor, $backgroundColor);
-
-        // If contrast is poor, auto-adjust text color
-        if ($contrastRatio < 4.5) {
-            // Determine if background is light or dark
-            $backgroundLuminance = $this->calculateLuminance($this->hexToRgb($backgroundColor));
-
-            if ($backgroundLuminance > 0.5) {
-                // Light background - use dark text
-                $theme['text_color'] = '#111827';
-                $theme['text_primary_color'] = '#111827';
-                $theme['text_secondary_color'] = '#4b5563';
-            } else {
-                // Dark background - use light text
-                $theme['text_color'] = '#ffffff';
-                $theme['text_primary_color'] = '#ffffff';
-                $theme['text_secondary_color'] = '#e5e7eb';
-            }
-        }
-
-        return $theme;
     }
 
     /**
