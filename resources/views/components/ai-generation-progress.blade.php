@@ -11,14 +11,14 @@
 <div {{ $attributes->merge(['class' => 'space-y-4']) }}>
     @if($isGenerating)
         {{-- Main Progress Bar --}}
-        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 sm:p-6 ai-progress-container">
+        <div class="bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 p-4 sm:p-6 ai-progress-container">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                    <flux:icon.cpu-chip class="size-5 text-gray-600 dark:text-gray-400" />
+                <h3 class="text-lg font-semibold text-zinc-900 dark:text-white flex items-center gap-2">
+                    <flux:icon.cpu-chip class="size-5 text-zinc-600 dark:text-zinc-400" />
                     AI Generation in Progress
                 </h3>
                 @if($estimatedTimeRemaining)
-                    <span class="text-sm text-gray-500 dark:text-gray-400">
+                    <span class="text-sm text-zinc-500 dark:text-zinc-400">
                         Est. {{ $estimatedTimeRemaining }}s remaining
                     </span>
                 @endif
@@ -27,16 +27,16 @@
             {{-- Overall Progress --}}
             <div class="space-y-2 mb-6">
                 <div class="flex justify-between items-center">
-                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
                         {{ $currentStep ?: 'Initializing...' }}
                     </span>
-                    <span class="text-sm text-gray-500 dark:text-gray-400">
+                    <span class="text-sm text-zinc-500 dark:text-zinc-400">
                         {{ $progressPercentage }}%
                     </span>
                 </div>
-                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
-                    <div 
-                        class="bg-gray-600 h-3 rounded-full transition-all duration-500 ease-out"
+                <div class="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-3">
+                    <div
+                        class="bg-zinc-600 h-3 rounded-full transition-all duration-500 ease-out"
                         style="width: {{ $progressPercentage }}%"
                     >
                         <div class="h-full bg-white/20 rounded-full animate-pulse"></div>
@@ -62,7 +62,7 @@
             {{-- Model Progress --}}
             @if(count($selectedModels) > 1 && !empty($modelProgress))
                 <div class="space-y-3">
-                    <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">Model Progress</h4>
+                    <h4 class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Model Progress</h4>
                     <div class="space-y-3 md:space-y-3 ai-progress-models">
                         @foreach($selectedModels as $model)
                             @php
@@ -70,35 +70,35 @@
                                 $status = $progress['status'];
                                 $modelProgressPercentage = $progress['progress'];
                             @endphp
-                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg gap-3 ai-progress-model-item touch-action-manipulation">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-zinc-50 dark:bg-zinc-700 rounded-lg gap-3 ai-progress-model-item touch-action-manipulation">
                                 <div class="flex items-center gap-3 flex-1">
                                     <div class="flex-shrink-0">
                                     @if($status === 'processing')
-                                        <flux:icon.arrow-path class="size-4 text-gray-600 dark:text-gray-400 animate-spin" />
+                                        <flux:icon.arrow-path class="size-4 text-zinc-600 dark:text-zinc-400 animate-spin" />
                                     @elseif($status === 'completed')
                                         <flux:icon.check-circle class="size-4 text-green-500" />
                                     @elseif($status === 'failed')
                                         <flux:icon.exclamation-triangle class="size-4 text-red-500" />
                                     @else
-                                        <flux:icon.clock class="size-4 text-gray-400" />
+                                        <flux:icon.clock class="size-4 text-zinc-400" />
                                     @endif
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                    <p class="text-sm font-medium text-zinc-900 dark:text-white truncate">
                                         {{ ucwords(str_replace(['-', '_'], ' ', $model)) }}
                                     </p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    <p class="text-xs text-zinc-500 dark:text-zinc-400">
                                         {{ ucfirst($status) }}
                                     </p>
                                 </div>
                                 <div class="flex items-center gap-2 flex-shrink-0 min-w-0">
-                                    <div class="w-16 sm:w-20 bg-gray-200 dark:bg-gray-600 rounded-full h-2 ai-progress-bar">
-                                        <div 
-                                            class="h-2 rounded-full transition-all duration-300 {{ $status === 'completed' ? 'bg-green-500' : ($status === 'failed' ? 'bg-red-500' : 'bg-gray-500') }}"
+                                    <div class="w-16 sm:w-20 bg-zinc-200 dark:bg-zinc-600 rounded-full h-2 ai-progress-bar">
+                                        <div
+                                            class="h-2 rounded-full transition-all duration-300 {{ $status === 'completed' ? 'bg-green-500' : ($status === 'failed' ? 'bg-red-500' : 'bg-zinc-500') }}"
                                             style="width: {{ $modelProgressPercentage }}%"
                                         ></div>
                                     </div>
-                                    <span class="text-xs text-gray-500 w-8 text-right tabular-nums ai-progress-text">
+                                    <span class="text-xs text-zinc-500 w-8 text-right tabular-nums ai-progress-text">
                                         {{ $modelProgressPercentage }}%
                                     </span>
                                 </div>
@@ -109,13 +109,13 @@
             @endif
 
             {{-- Generation Steps Indicator --}}
-            <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div class="mt-6 pt-4 border-t border-zinc-200 dark:border-zinc-700">
                 <div class="space-y-4">
                     <div class="flex items-center justify-between text-sm">
-                        <span class="font-medium text-gray-700 dark:text-gray-300">Generation Pipeline</span>
-                        <span class="text-xs text-gray-500 dark:text-gray-400">{{ count($selectedModels) }} model{{ count($selectedModels) !== 1 ? 's' : '' }}</span>
+                        <span class="font-medium text-zinc-700 dark:text-zinc-300">Generation Pipeline</span>
+                        <span class="text-xs text-zinc-500 dark:text-zinc-400">{{ count($selectedModels) }} model{{ count($selectedModels) !== 1 ? 's' : '' }}</span>
                     </div>
-                    
+
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                         @php
                             $steps = [
@@ -126,32 +126,32 @@
                             ];
                         @endphp
                         @foreach($steps as $step)
-                            <div class="text-center p-3 rounded-lg {{ $progressPercentage >= $step['threshold'] ? 'bg-green-50 dark:bg-green-900/20' : ($progressPercentage >= ($step['threshold'] - 10) ? 'bg-gray-50 dark:bg-gray-900/20' : 'bg-gray-50 dark:bg-gray-800') }}">
+                            <div class="text-center p-3 rounded-lg {{ $progressPercentage >= $step['threshold'] ? 'bg-green-50 dark:bg-green-900/20' : ($progressPercentage >= ($step['threshold'] - 10) ? 'bg-zinc-50 dark:bg-zinc-900/20' : 'bg-zinc-50 dark:bg-zinc-800') }}">
                                 <div class="flex justify-center mb-2">
                                     @if($progressPercentage >= $step['threshold'])
                                         <flux:icon.check class="size-5 text-green-500" />
                                     @elseif($progressPercentage >= ($step['threshold'] - 10))
-                                        <flux:icon.arrow-path class="size-5 text-gray-600 dark:text-gray-400 animate-spin" />
+                                        <flux:icon.arrow-path class="size-5 text-zinc-600 dark:text-zinc-400 animate-spin" />
                                     @else
                                         @switch($step['icon'])
                                             @case('play')
-                                                <flux:icon.play class="size-5 text-gray-400" />
+                                                <flux:icon.play class="size-5 text-zinc-400" />
                                                 @break
                                             @case('cpu-chip')
-                                                <flux:icon.cpu-chip class="size-5 text-gray-400" />
+                                                <flux:icon.cpu-chip class="size-5 text-zinc-400" />
                                                 @break
                                             @case('sparkles')
-                                                <flux:icon.sparkles class="size-5 text-gray-400" />
+                                                <flux:icon.sparkles class="size-5 text-zinc-400" />
                                                 @break
                                             @default
-                                                <flux:icon.check class="size-5 text-gray-400" />
+                                                <flux:icon.check class="size-5 text-zinc-400" />
                                         @endswitch
                                     @endif
                                 </div>
-                                <p class="text-xs font-medium {{ $progressPercentage >= $step['threshold'] ? 'text-green-700 dark:text-green-300' : ($progressPercentage >= ($step['threshold'] - 10) ? 'text-gray-700 dark:text-gray-300' : 'text-gray-600 dark:text-gray-400') }}">
+                                <p class="text-xs font-medium {{ $progressPercentage >= $step['threshold'] ? 'text-green-700 dark:text-green-300' : ($progressPercentage >= ($step['threshold'] - 10) ? 'text-zinc-700 dark:text-zinc-300' : 'text-zinc-600 dark:text-zinc-400') }}">
                                     {{ $step['name'] }}
                                 </p>
-                                <p class="text-xs {{ $progressPercentage >= $step['threshold'] ? 'text-green-600 dark:text-green-400' : ($progressPercentage >= ($step['threshold'] - 10) ? 'text-gray-600 dark:text-gray-400' : 'text-gray-500 dark:text-gray-500') }}">
+                                <p class="text-xs {{ $progressPercentage >= $step['threshold'] ? 'text-green-600 dark:text-green-400' : ($progressPercentage >= ($step['threshold'] - 10) ? 'text-zinc-600 dark:text-zinc-400' : 'text-zinc-500 dark:text-zinc-500') }}">
                                     {{ $step['desc'] }}
                                 </p>
                             </div>
@@ -163,23 +163,23 @@
 
         {{-- Performance Metrics --}}
         @if($this->showPerformanceMetrics ?? false)
-            <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 text-sm">
+            <div class="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-4 text-sm">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div class="text-center">
-                        <p class="font-medium text-gray-900 dark:text-white">{{ count($selectedModels) }}</p>
-                        <p class="text-gray-500 dark:text-gray-400">Models</p>
+                        <p class="font-medium text-zinc-900 dark:text-white">{{ count($selectedModels) }}</p>
+                        <p class="text-zinc-500 dark:text-zinc-400">Models</p>
                     </div>
                     <div class="text-center">
-                        <p class="font-medium text-gray-900 dark:text-white">{{ $deepThinking ? 'Enhanced' : 'Standard' }}</p>
-                        <p class="text-gray-500 dark:text-gray-400">Mode</p>
+                        <p class="font-medium text-zinc-900 dark:text-white">{{ $deepThinking ? 'Enhanced' : 'Standard' }}</p>
+                        <p class="text-zinc-500 dark:text-zinc-400">Mode</p>
                     </div>
                     <div class="text-center">
-                        <p class="font-medium text-gray-900 dark:text-white" id="generation-timer">00:00</p>
-                        <p class="text-gray-500 dark:text-gray-400">Elapsed</p>
+                        <p class="font-medium text-zinc-900 dark:text-white" id="generation-timer">00:00</p>
+                        <p class="text-zinc-500 dark:text-zinc-400">Elapsed</p>
                     </div>
                     <div class="text-center">
-                        <p class="font-medium text-gray-900 dark:text-white">~{{ 10 * count($selectedModels) }}</p>
-                        <p class="text-gray-500 dark:text-gray-400">Names</p>
+                        <p class="font-medium text-zinc-900 dark:text-white">~{{ 10 * count($selectedModels) }}</p>
+                        <p class="text-zinc-500 dark:text-zinc-400">Names</p>
                     </div>
                 </div>
             </div>

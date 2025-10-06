@@ -6,10 +6,10 @@ $domain = $dataArray['domain'] ?? 'Unknown';
 <div class="space-y-6">
     {{-- Domain Header --}}
     <div class="text-center">
-        <h4 class="text-xl font-bold text-gray-900 dark:text-gray-100">
+        <h4 class="text-xl font-bold text-zinc-900 dark:text-zinc-100">
             {{ $domain }}
         </h4>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+        <p class="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
             Domain Information & Pricing
         </p>
     </div>
@@ -38,22 +38,22 @@ $domain = $dataArray['domain'] ?? 'Unknown';
 
     {{-- Pricing Information --}}
     @if(($dataArray['status'] ?? 'unknown') === 'available')
-        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-            <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Pricing Information</h5>
+        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-4">
+            <h5 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">Pricing Information</h5>
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <span class="text-xs text-gray-600 dark:text-gray-400">Registration Price</span>
-                    <p class="text-lg font-bold text-gray-900 dark:text-gray-100">{{ $dataArray['price'] ?? 'N/A' }}</p>
+                    <span class="text-xs text-zinc-600 dark:text-zinc-400">Registration Price</span>
+                    <p class="text-lg font-bold text-zinc-900 dark:text-zinc-100">{{ $dataArray['price'] ?? 'N/A' }}</p>
                 </div>
                 <div>
-                    <span class="text-xs text-gray-600 dark:text-gray-400">Renewal Price</span>
-                    <p class="text-lg font-bold text-gray-900 dark:text-gray-100">{{ $dataArray['renewal_price'] ?? 'N/A' }}</p>
+                    <span class="text-xs text-zinc-600 dark:text-zinc-400">Renewal Price</span>
+                    <p class="text-lg font-bold text-zinc-900 dark:text-zinc-100">{{ $dataArray['renewal_price'] ?? 'N/A' }}</p>
                 </div>
             </div>
             @if(isset($dataArray['registrar']))
-                <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                    <span class="text-xs text-gray-600 dark:text-gray-400">Recommended Registrar</span>
-                    <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $dataArray['registrar'] }}</p>
+                <div class="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-700">
+                    <span class="text-xs text-zinc-600 dark:text-zinc-400">Recommended Registrar</span>
+                    <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100">{{ $dataArray['registrar'] }}</p>
                 </div>
             @endif
         </div>
@@ -62,10 +62,10 @@ $domain = $dataArray['domain'] ?? 'Unknown';
     {{-- Related Domains --}}
     @if(!empty($dataArray['related_domains']))
         <div>
-            <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Related Domains</h5>
+            <h5 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">Related Domains</h5>
             <div class="space-y-2">
                 @foreach($dataArray['related_domains'] as $domain => $status)
-                    <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded">
+                    <div class="flex items-center justify-between p-2 bg-zinc-50 dark:bg-zinc-800 rounded">
                         <span class="text-sm font-medium">{{ $domain }}</span>
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                             {{ $status === 'available' ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' }}">
@@ -78,9 +78,9 @@ $domain = $dataArray['domain'] ?? 'Unknown';
     @endif
 
     {{-- Features & Benefits --}}
-    <div class="bg-primary-50 dark:bg-primary-900 rounded-lg p-4">
-        <h5 class="text-sm font-medium text-primary-800 dark:text-blue-200 mb-2">What's Included</h5>
-        <ul class="text-xs text-primary-700 dark:text-primary-300 space-y-1">
+    <div class="bg-accent/20 dark:bg-accent rounded-lg p-4">
+        <h5 class="text-sm font-medium text-accent dark:text-accent mb-2">What's Included</h5>
+        <ul class="text-xs text-accent dark:text-accent space-y-1">
             <li class="flex items-center">
                 <svg class="w-3 h-3 mr-2" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>

@@ -5,10 +5,10 @@
     <div class="flex items-center justify-around py-2 px-4 max-w-md mx-auto">
         
         {{-- Generate Names Action --}}
-        <a href="{{ route('dashboard') }}" 
+        <a href="{{ route('dashboard') }}"
            wire:navigate
            class="flex flex-col items-center justify-center touch-target btn-modern focus-modern transition-all duration-300
-                  {{ request()->routeIs('dashboard') ? 'text-accent' : 'text-gray-600 dark:text-gray-400' }}"
+                  {{ request()->routeIs('dashboard') ? 'text-accent' : 'text-zinc-600 dark:text-zinc-400' }}"
            aria-label="Generate Names">
             <div class="w-6 h-6 mb-1 flex items-center justify-center">
                 @if(request()->routeIs('dashboard'))
@@ -27,7 +27,7 @@
         {{-- History Action --}}
         <button type="button"
                 onclick="document.querySelector('[wire\\:click=\"toggleHistory\"]')?.click()"
-                class="flex flex-col items-center justify-center touch-target btn-modern focus-modern transition-all duration-300 text-gray-600 dark:text-gray-400 hover:text-accent"
+                class="flex flex-col items-center justify-center touch-target btn-modern focus-modern transition-all duration-300 text-zinc-600 dark:text-zinc-400 hover:text-accent"
                 aria-label="View History">
             <div class="w-6 h-6 mb-1 flex items-center justify-center">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,10 +38,10 @@
         </button>
 
         {{-- Logo Gallery Action --}}
-        <a href="{{ route('logos.index') }}" 
+        <a href="{{ route('logos.index') }}"
            wire:navigate
-           class="flex flex-col items-center justify-center touch-target btn-modern focus-modern transition-all duration-300 
-                  {{ request()->routeIs('logos.*') ? 'text-accent' : 'text-gray-600 dark:text-gray-400' }}"
+           class="flex flex-col items-center justify-center touch-target btn-modern focus-modern transition-all duration-300
+                  {{ request()->routeIs('logos.*') ? 'text-accent' : 'text-zinc-600 dark:text-zinc-400' }}"
            aria-label="Logo Gallery">
             <div class="w-6 h-6 mb-1 flex items-center justify-center">
                 @if(request()->routeIs('logo-gallery.*'))
@@ -60,7 +60,7 @@
         {{-- Share/Export Action --}}
         <button type="button"
                 onclick="document.querySelector('[x-data]')?.dispatchEvent(new CustomEvent('open-share-modal'))"
-                class="flex flex-col items-center justify-center touch-target btn-modern focus-modern transition-all duration-300 text-gray-600 dark:text-gray-400 hover:text-accent"
+                class="flex flex-col items-center justify-center touch-target btn-modern focus-modern transition-all duration-300 text-zinc-600 dark:text-zinc-400 hover:text-accent"
                 aria-label="Share Results">
             <div class="w-6 h-6 mb-1 flex items-center justify-center">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,10 +71,10 @@
         </button>
         
         {{-- Settings Action --}}
-        <a href="{{ route('settings.profile') }}" 
+        <a href="{{ route('settings.profile') }}"
            wire:navigate
            class="flex flex-col items-center justify-center touch-target btn-modern focus-modern transition-all duration-300
-                  {{ request()->routeIs('settings.*') ? 'text-accent' : 'text-gray-600 dark:text-gray-400' }}"
+                  {{ request()->routeIs('settings.*') ? 'text-accent' : 'text-zinc-600 dark:text-zinc-400' }}"
            aria-label="Settings">
             <div class="w-6 h-6 mb-1 flex items-center justify-center">
                 @if(request()->routeIs('settings.*'))

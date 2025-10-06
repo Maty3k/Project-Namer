@@ -79,12 +79,12 @@ new class extends Component {
                 x-transition:leave-end="opacity-0"
                 x-init="setTimeout(() => show = false, {{ $toast['duration'] }})"
                 @auto-remove-toast.window="if ($event.detail.id === '{{ $toast['id'] }}') setTimeout(() => { $wire.call('removeToast', '{{ $toast['id'] }}') }, $event.detail.duration)"
-                class="relative w-full max-w-sm mx-auto bg-white rounded-lg shadow-lg overflow-hidden
+                class="relative w-full max-w-sm mx-auto bg-white dark:bg-zinc-800 rounded-lg shadow-lg overflow-hidden
                     @if($toast['type'] === 'success') border-l-4 border-green-500 @endif
                     @if($toast['type'] === 'error') border-l-4 border-red-500 @endif
                     @if($toast['type'] === 'warning') border-l-4 border-yellow-500 @endif
-                    @if($toast['type'] === 'info') border-l-4 border-primary-500 @endif">
-                
+                    @if($toast['type'] === 'info') border-l-4 border-accent @endif">
+
                 <div class="p-4">
                     <div class="flex items-start">
                         <!-- Toast Icon -->
@@ -99,40 +99,40 @@ new class extends Component {
                                 <x-app-icon name="info" size="lg" variant="info" aria-label="Information" />
                             @endif
                         </div>
-                        
+
                         <!-- Toast Content -->
                         <div class="flex-grow">
-                            <p class="text-sm font-medium text-gray-900">
+                            <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100">
                                 {{ $toast['message'] }}
                             </p>
-                            
+
                             @if($toast['timestamp'])
-                                <p class="text-xs text-gray-500 mt-1">
+                                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
                                     {{ \Carbon\Carbon::parse($toast['timestamp'])->format('g:i A') }}
                                 </p>
                             @endif
                         </div>
-                        
+
                         <!-- Close Button -->
                         <div class="flex-shrink-0 ml-3">
-                            <button 
+                            <button
                                 wire:click="removeToast('{{ $toast['id'] }}')"
-                                class="inline-flex text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                class="inline-flex text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent">
                                 <span class="sr-only">Close</span>
                                 <x-app-icon name="close" size="sm" />
                             </button>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Progress bar for auto-dismiss -->
-                <div class="h-1 bg-gray-200">
-                    <div 
+                <div class="h-1 bg-zinc-200 dark:bg-zinc-700">
+                    <div
                         class="h-full
                             @if($toast['type'] === 'success') bg-green-500 @endif
                             @if($toast['type'] === 'error') bg-red-500 @endif
                             @if($toast['type'] === 'warning') bg-yellow-500 @endif
-                            @if($toast['type'] === 'info') bg-primary-500 @endif"
+                            @if($toast['type'] === 'info') bg-accent @endif"
                         x-data="{ width: 100 }"
                         x-init="
                             const interval = setInterval(() => {
@@ -149,9 +149,9 @@ new class extends Component {
         <!-- Clear All Button (when multiple toasts) -->
         @if(count($toasts) > 1)
             <div class="text-right">
-                <button 
+                <button
                     wire:click="clearAllToasts"
-                    class="text-xs text-gray-500 hover:text-gray-700 underline">
+                    class="text-xs text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300 underline">
                     Clear all notifications
                 </button>
             </div>
@@ -168,7 +168,7 @@ new class extends Component {
             <button onclick="Livewire.dispatch('show-toast', { message: 'Warning! High system load detected.', type: 'warning', duration: 6000 })"
                     class="px-3 py-1 bg-yellow-500 text-white text-xs rounded">Test Warning</button>
             <button onclick="Livewire.dispatch('show-toast', { message: 'Info: Checking logo status...', type: 'info', duration: 5000 })"
-                    class="px-3 py-1 bg-primary-500 text-white text-xs rounded">Test Info</button>
+                    class="px-3 py-1 bg-accent text-white text-xs rounded">Test Info</button>
         </div>
     @endif
 </div>

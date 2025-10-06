@@ -17,25 +17,25 @@
     @vite(['resources/css/app.css'])
 </head>
 
-<body class="h-full bg-gray-50 dark:bg-gray-900">
+<body class="h-full bg-zinc-50 dark:bg-zinc-900">
     <div class="min-h-full">
         <!-- Header -->
-        <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        <header class="bg-white dark:bg-zinc-800 shadow-sm border-b border-zinc-200 dark:border-zinc-700">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="flex h-16 items-center justify-between">
                     <div class="flex items-center gap-4">
-                        <flux:heading size="lg" class="text-gray-900 dark:text-gray-100">
+                        <flux:heading size="lg" class="text-zinc-900 dark:text-zinc-100">
                             {{ $moodBoard->name }}
                         </flux:heading>
                         
                         @if($moodBoard->description)
-                            <span class="text-gray-500 dark:text-gray-400 text-sm">
+                            <span class="text-zinc-500 dark:text-zinc-400 text-sm">
                                 {{ $moodBoard->description }}
                             </span>
                         @endif
                     </div>
                     
-                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                    <div class="text-sm text-zinc-500 dark:text-zinc-400">
                         Created by {{ $moodBoard->user->name }}
                     </div>
                 </div>
@@ -94,14 +94,14 @@
         </main>
 
         <!-- Footer -->
-        <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-4">
+        <footer class="bg-white dark:bg-zinc-800 border-t border-zinc-200 dark:border-zinc-700 py-4">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between">
-                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                    <div class="text-sm text-zinc-500 dark:text-zinc-400">
                         Created {{ $moodBoard->created_at->format('M j, Y') }}
                     </div>
                     
-                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                    <div class="text-sm text-zinc-500 dark:text-zinc-400">
                         {{ $moodBoard->projectImages->count() }} image{{ $moodBoard->projectImages->count() !== 1 ? 's' : '' }}
                     </div>
                 </div>

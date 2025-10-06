@@ -32,41 +32,41 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 2.9 Update theme customizer Blade template UI for new options
   - [x] 2.10 Verify all tests pass (deprecated tests skipped, will be updated in later tasks)
 
-- [ ] 3. Core Component Templates Migration (High Priority)
-  - [ ] 3.1 Write tests for visual appearance of core components
-  - [ ] 3.2 Update app-layout.blade.php (main layout template)
-  - [ ] 3.3 Update mobile-user-menu.blade.php and desktop-user-menu.blade.php
-  - [ ] 3.4 Update session-skeleton.blade.php
-  - [ ] 3.5 Update ai-generation-progress.blade.php
-  - [ ] 3.6 Update mobile-bottom-bar.blade.php and sidebar-bottom-menu.blade.php
-  - [ ] 3.7 Test all core components render correctly in light and dark modes
-  - [ ] 3.8 Verify all tests pass
+- [x] 3. Core Component Templates Migration (High Priority)
+  - [x] 3.1 Write tests for visual appearance of core components
+  - [x] 3.2 Update app-layout.blade.php (main layout template)
+  - [x] 3.3 Update mobile-user-menu.blade.php and desktop-user-menu.blade.php
+  - [x] 3.4 Update session-skeleton.blade.php
+  - [x] 3.5 Update ai-generation-progress.blade.php
+  - [x] 3.6 Update mobile-bottom-bar.blade.php and sidebar-bottom-menu.blade.php
+  - [x] 3.7 Test all core components render correctly in light and dark modes
+  - [x] 3.8 Verify all tests pass
 
-- [ ] 4. Feature Component Templates Migration
-  - [ ] 4.1 Write tests for feature component appearance
-  - [ ] 4.2 Update theme-customizer.blade.php template
-  - [ ] 4.3 Update theme-quick-toggle.blade.php
-  - [ ] 4.4 Update logo-generation-progress.blade.php
-  - [ ] 4.5 Update logo-gallery-skeleton.blade.php
-  - [ ] 4.6 Test all feature components with accent colors
-  - [ ] 4.7 Verify all tests pass
+- [x] 4. Feature Component Templates Migration
+  - [x] 4.1 Write tests for feature component appearance
+  - [x] 4.2 Update theme-customizer.blade.php template
+  - [x] 4.3 Update theme-quick-toggle.blade.php
+  - [x] 4.4 Update logo-generation-progress.blade.php
+  - [x] 4.5 Update logo-gallery-skeleton.blade.php
+  - [x] 4.6 Test all feature components with accent colors
+  - [x] 4.7 Verify all tests pass
 
-- [ ] 5. Livewire Component Templates Migration
-  - [ ] 5.1 Write tests for Livewire component color consistency
-  - [ ] 5.2 Search for all Livewire component Blade files with color classes
-  - [ ] 5.3 Update each Livewire component template systematically
-  - [ ] 5.4 Remove any inline style color overrides
-  - [ ] 5.5 Test interactive states (hover, focus, active) for all components
-  - [ ] 5.6 Verify all tests pass
+- [x] 5. Livewire Component Templates Migration
+  - [x] 5.1 Write tests for Livewire component color consistency
+  - [x] 5.2 Search for all Livewire component Blade files with color classes
+  - [x] 5.3 Update each Livewire component template systematically
+  - [x] 5.4 Remove any inline style color overrides
+  - [x] 5.5 Test interactive states (hover, focus, active) for all components
+  - [x] 5.6 Verify all tests pass
 
-- [ ] 6. Validation and Quality Assurance
-  - [ ] 6.1 Write comprehensive visual regression tests
-  - [ ] 6.2 Search entire codebase for remaining hardcoded color classes (bg-blue-*, text-gray-*, etc.)
-  - [ ] 6.3 Search for any remaining custom color variable references
-  - [ ] 6.4 Verify no custom theme CSS classes are used in templates
-  - [ ] 6.5 Test theme switching between all predefined themes
-  - [ ] 6.6 Test custom theme creation with various combinations
-  - [ ] 6.7 Test light/dark mode transitions for all themes
-  - [ ] 6.8 Run accessibility audit on all major pages
-  - [ ] 6.9 Verify WCAG AA compliance for all color combinations
-  - [ ] 6.10 Run full test suite and ensure 100% pass rate
+- [x] 6. Validation and Quality Assurance
+  - [x] 6.1 Write comprehensive visual regression tests
+  - [x] 6.2 Search entire codebase for remaining hardcoded color classes (bg-blue-*, text-gray-*, etc.)
+  - [x] 6.3 Search for any remaining custom color variable references
+  - [x] 6.4 Verify no custom theme CSS classes are used in templates
+  - [x] 6.5 Test theme switching between all predefined themes
+  - [x] 6.6 Test custom theme creation with various combinations
+  - [x] 6.7 Test light/dark mode transitions for all themes
+  - [x] 6.8 Run accessibility audit on all major pages
+  - [x] 6.9 Verify WCAG AA compliance for all color combinations
+  - [x] 6.10 Run full test suite and ensure 100% pass rate

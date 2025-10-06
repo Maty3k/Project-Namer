@@ -304,11 +304,11 @@ new class extends Component {
     <div class="mb-8">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
                     Logo Gallery
                 </h1>
                 @if($logoGeneration && $logoGeneration->business_name)
-                    <p class="text-lg text-gray-600 dark:text-gray-400 mt-1">
+                    <p class="text-lg text-zinc-600 dark:text-zinc-400 mt-1">
                         {{ $logoGeneration->business_name }}
                     </p>
                 @endif
@@ -316,13 +316,13 @@ new class extends Component {
 
             <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
                 {{-- View Toggle --}}
-                <div class="flex rounded-lg border border-gray-200 dark:border-gray-700">
+                <div class="flex rounded-lg border border-zinc-200 dark:border-zinc-700">
                     <button
                         wire:click="toggleViewMode"
                         class="px-3 py-2 text-sm font-medium rounded-l-lg transition-colors
                                {{ $viewMode === 'grid' 
-                                   ? 'bg-primary-50 text-primary-700 border-primary-200 dark:bg-primary-900/20 dark:text-primary-400' 
-                                   : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200' }}"
+                                   ? 'bg-accent/20 text-accent border-accent dark:bg-accent/20 dark:text-accent' 
+                                   : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200' }}"
                     >
                         Grid
                     </button>
@@ -330,8 +330,8 @@ new class extends Component {
                         wire:click="toggleViewMode"
                         class="px-3 py-2 text-sm font-medium rounded-r-lg transition-colors
                                {{ $viewMode === 'list' 
-                                   ? 'bg-primary-50 text-primary-700 border-primary-200 dark:bg-primary-900/20 dark:text-primary-400' 
-                                   : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200' }}"
+                                   ? 'bg-accent/20 text-accent border-accent dark:bg-accent/20 dark:text-accent' 
+                                   : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200' }}"
                     >
                         List
                     </button>
@@ -369,14 +369,14 @@ new class extends Component {
     @if($logoGeneration && $logoGeneration->status === 'completed' && !empty($logosByStyle))
         <div class="space-y-8">
             {{-- Color Customization Panel --}}
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+            <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6">
+                <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
                     Color Customization
                 </h2>
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     {{-- Color Scheme Selector --}}
                     <div class="lg:col-span-8">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                        <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
                             Choose Color Scheme
                         </label>
                         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -385,19 +385,19 @@ new class extends Component {
                                     wire:click="$set('selectedColorScheme', '{{ $scheme['id'] }}')"
                                     class="group relative p-3 rounded-lg border-2 transition-all
                                            {{ $selectedColorScheme === $scheme['id'] 
-                                               ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' 
-                                               : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600' }}"
+                                               ? 'border-accent bg-accent/20 dark:bg-accent/20' 
+                                               : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600' }}"
                                 >
                                     {{-- Color Preview --}}
                                     <div class="flex space-x-1 mb-2">
                                         @foreach(['primary', 'secondary', 'accent'] as $colorType)
                                             <div 
-                                                class="w-4 h-4 rounded-full border border-gray-200 dark:border-gray-600"
+                                                class="w-4 h-4 rounded-full border border-zinc-200 dark:border-zinc-600"
                                                 style="background-color: {{ $scheme['colors'][$colorType] }}"
                                             ></div>
                                         @endforeach
                                     </div>
-                                    <div class="text-xs font-medium text-gray-900 dark:text-gray-100">
+                                    <div class="text-xs font-medium text-zinc-900 dark:text-zinc-100">
                                         {{ $scheme['name'] }}
                                     </div>
                                 </button>
@@ -407,12 +407,12 @@ new class extends Component {
 
                     {{-- Action Buttons --}}
                     <div class="lg:col-span-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                        <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
                             Actions
                         </label>
                         <div class="space-y-3">
                             {{-- Selection Info --}}
-                            <div class="text-sm text-gray-600 dark:text-gray-400">
+                            <div class="text-sm text-zinc-600 dark:text-zinc-400">
                                 {{ count($selectedLogos) }} logo(s) selected
                             </div>
 
@@ -465,10 +465,10 @@ new class extends Component {
             @foreach($logosByStyle as $styleGroup)
                 <div class="mb-12">
                     <div class="mb-6">
-                        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                        <h2 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
                             {{ $styleGroup['display_name'] }}
                         </h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                        <p class="text-sm text-zinc-600 dark:text-zinc-400">
                             {{ count($styleGroup['logos']) }} variations
                         </p>
                     </div>
@@ -477,14 +477,14 @@ new class extends Component {
                         ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' 
                         : 'space-y-4' }}">
                         @foreach($styleGroup['logos'] as $logo)
-                            <div class="group relative bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                            <div class="group relative bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 overflow-hidden">
                                 {{-- Selection Checkbox --}}
                                 <div class="absolute top-3 left-3 z-10">
                                     <input
                                         type="checkbox"
                                         wire:click="toggleLogoSelection({{ $logo['id'] }})"
                                         @checked(in_array($logo['id'], $selectedLogos))
-                                        class="w-4 h-4 text-primary-600 bg-white border-gray-300 rounded"
+                                        class="w-4 h-4 text-accent bg-white border-zinc-300 rounded"
                                     />
                                 </div>
 
@@ -498,8 +498,8 @@ new class extends Component {
                                             loading="lazy"
                                         />
                                     @else
-                                        <div class="w-full h-full bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-                                            <span class="text-gray-400">No Preview</span>
+                                        <div class="w-full h-full bg-zinc-100 dark:bg-zinc-700 rounded-lg flex items-center justify-center">
+                                            <span class="text-zinc-400">No Preview</span>
                                         </div>
                                     @endif
                                 </div>
@@ -507,10 +507,10 @@ new class extends Component {
                                 {{-- Logo Info and Actions --}}
                                 <div class="p-4">
                                     <div class="mb-3">
-                                        <h3 class="font-medium text-gray-900 dark:text-gray-100">
+                                        <h3 class="font-medium text-zinc-900 dark:text-zinc-100">
                                             Variation {{ $logo['variation_number'] }}
                                         </h3>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                                        <p class="text-sm text-zinc-500 dark:text-zinc-400">
                                             {{ number_format($logo['file_size'] / 1024, 1) }}KB
                                         </p>
                                     </div>
@@ -546,18 +546,18 @@ new class extends Component {
     @elseif($logoGeneration && $logoGeneration->status === 'completed' && empty($logosByStyle))
         {{-- No Logos State --}}
         <div class="text-center py-12">
-            <div class="w-16 h-16 text-gray-400 mx-auto mb-4">📷</div>
-            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+            <div class="w-16 h-16 text-zinc-400 mx-auto mb-4">📷</div>
+            <h3 class="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-2">
                 No logos generated yet
             </h3>
-            <p class="text-gray-600 dark:text-gray-400">
+            <p class="text-zinc-600 dark:text-zinc-400">
                 The logo generation process hasn't produced any results.
             </p>
         </div>
     @elseif($logoGeneration && $logoGeneration->status === 'processing')
         {{-- Processing State --}}
         <div class="text-center py-12">
-            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-600 mx-auto mb-4"></div>
+            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-accent mx-auto mb-4"></div>
             @php
                 $progressPercentage = $logoGeneration->total_logos_requested > 0 
                     ? round(($logoGeneration->logos_completed / $logoGeneration->total_logos_requested) * 100)
@@ -566,10 +566,10 @@ new class extends Component {
                     ? "Generating logos... {$progressPercentage}% complete"
                     : 'Initializing logo generation...';
             @endphp
-            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+            <h3 class="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-2">
                 {{ $statusMessage }}
             </h3>
-            <p class="text-gray-600 dark:text-gray-400">
+            <p class="text-zinc-600 dark:text-zinc-400">
                 {{ $logoGeneration->logos_completed }}/{{ $logoGeneration->total_logos_requested }}
             </p>
         </div>
@@ -582,22 +582,22 @@ new class extends Component {
                 Logo generation failed
             </h3>
             @if($logoGeneration->error_message)
-                <p class="text-gray-600 dark:text-gray-400 mb-4">
+                <p class="text-zinc-600 dark:text-zinc-400 mb-4">
                     {{ $logoGeneration->error_message }}
                 </p>
             @endif
-            <p class="text-gray-600 dark:text-gray-400">
+            <p class="text-zinc-600 dark:text-zinc-400">
                 Please try generating logos again or contact support if the problem persists.
             </p>
         </div>
     @else
         {{-- Empty State --}}
         <div class="text-center py-12">
-            <div class="w-16 h-16 text-gray-400 mx-auto mb-4">📷</div>
-            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+            <div class="w-16 h-16 text-zinc-400 mx-auto mb-4">📷</div>
+            <h3 class="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-2">
                 No Logo Generation Found
             </h3>
-            <p class="text-gray-600 dark:text-gray-400">
+            <p class="text-zinc-600 dark:text-zinc-400">
                 Please start a logo generation process first.
             </p>
         </div>

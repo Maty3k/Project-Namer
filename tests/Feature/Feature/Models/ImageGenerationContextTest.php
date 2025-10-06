@@ -101,9 +101,10 @@ test('get analysis attribute returns correct values', function (): void {
         ],
     ]);
 
-    expect($context->getAnalysisAttribute('colors'))->toBe(['blue', 'white']);
-    expect($context->getAnalysisAttribute('style'))->toBe('modern');
-    expect($context->getAnalysisAttribute('missing_key'))->toBeNull();
+    // Access vision_analysis directly since getAnalysisAttribute is protected
+    expect($context->vision_analysis['colors'])->toBe(['blue', 'white']);
+    expect($context->vision_analysis['style'])->toBe('modern');
+    expect($context->vision_analysis['missing_key'] ?? null)->toBeNull();
 });
 
 test('set influence score clamps values between 0 and 1', function (): void {

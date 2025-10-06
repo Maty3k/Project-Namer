@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 use App\Models\User;
-use Illuminate\Support\Sleep;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Sleep;
 use Livewire\Volt\Volt;
 use Prism\Prism\Prism;
 use Prism\Prism\Testing\TextResponseFake;

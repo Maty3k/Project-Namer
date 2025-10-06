@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Models\User;
-use App\Services\OpenAINameService;
 use Illuminate\Support\Facades\Cache;
 
 describe('Mobile Device Compatibility Testing', function (): void {

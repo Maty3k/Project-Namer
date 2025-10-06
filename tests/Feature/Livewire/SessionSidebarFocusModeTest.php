@@ -200,7 +200,8 @@ describe('SessionSidebar Focus Mode Functionality', function (): void {
         it('includes hover effects for toggle buttons', function (): void {
             $component = Livewire::test(SessionSidebar::class);
 
-            $component->assertSeeHtml('hover:bg-gray-100 dark:hover:bg-gray-800');
+            // FluxUI uses zinc instead of gray
+            $component->assertSeeHtml('hover:bg-zinc-100 dark:hover:bg-zinc-800');
         });
 
         it('includes proper z-index for floating button', function (): void {

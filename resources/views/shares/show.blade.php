@@ -2,7 +2,7 @@
     title="Shared Content" 
     :metadata="$metadata">
 
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+<div class="min-h-screen bg-zinc-50 dark:bg-zinc-900">
     <div class="container mx-auto px-4 py-6
                 sm:px-6 sm:py-8
                 lg:px-8 lg:py-12">
@@ -14,13 +14,13 @@
                             sm:flex-row sm:items-start sm:justify-between">
                     <div class="flex-1">
                         @if($share->title && ($share->settings['show_title'] ?? true))
-                            <flux:heading size="xl" class="mb-2 text-gray-900 dark:text-gray-100">
+                            <flux:heading size="xl" class="mb-2 text-zinc-900 dark:text-zinc-100">
                                 {{ $share->title }}
                             </flux:heading>
                         @endif
                         
                         @if($share->description && ($share->settings['show_description'] ?? true))
-                            <flux:text class="text-gray-600 dark:text-gray-400 mb-4">
+                            <flux:text class="text-zinc-600 dark:text-zinc-400 mb-4">
                                 {{ $share->description }}
                             </flux:text>
                         @endif
@@ -75,12 +75,12 @@
             <flux:card class="overflow-hidden">
                 @if($shareable['type'] === 'logo_generation')
                     <div class="space-y-6">
-                        <flux:heading size="lg" class="text-gray-900 dark:text-gray-100">
+                        <flux:heading size="lg" class="text-zinc-900 dark:text-zinc-100">
                             Logo Designs for {{ $shareable['business_name'] ?? 'Business' }}
                         </flux:heading>
                         
                         @if($shareable['business_description'])
-                            <flux:text class="text-gray-600 dark:text-gray-400">
+                            <flux:text class="text-zinc-600 dark:text-zinc-400">
                                 {{ $shareable['business_description'] }}
                             </flux:text>
                         @endif
@@ -94,7 +94,7 @@
                                         <flux:card class="h-full hover:shadow-lg transition-shadow duration-200">
                                             <!-- Logo Preview -->
                                             @if($logo['preview_url'])
-                                                <div class="aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden mb-4">
+                                                <div class="aspect-square bg-zinc-100 dark:bg-zinc-800 rounded-lg overflow-hidden mb-4">
                                                     <img 
                                                         src="{{ $logo['preview_url'] }}" 
                                                         alt="{{ $logo['style'] }} logo design"
@@ -121,7 +121,7 @@
                                                                     <a 
                                                                         href="{{ $variant['download_url'] }}"
                                                                         download
-                                                                        class="w-8 h-8 rounded-full border-2 border-gray-300 dark:border-gray-600 hover:border-primary-500 transition-colors relative overflow-hidden"
+                                                                        class="w-8 h-8 rounded-full border-2 border-zinc-300 dark:border-zinc-600 hover:border-accent transition-colors relative overflow-hidden"
                                                                     >
                                                                         <img 
                                                                             src="{{ $variant['preview_url'] }}"
@@ -146,7 +146,7 @@
                                                         Download Original
                                                     </flux:button>
                                                 @else
-                                                    <flux:text size="sm" class="text-center text-gray-500 dark:text-gray-400">
+                                                    <flux:text size="sm" class="text-center text-zinc-500 dark:text-zinc-400">
                                                         Downloads disabled by owner
                                                     </flux:text>
                                                 @endif
@@ -180,7 +180,7 @@
             <!-- Social Sharing Section -->
             <flux:card class="mt-6">
                 <div class="text-center space-y-4">
-                    <flux:heading size="sm" class="text-gray-900 dark:text-gray-100">
+                    <flux:heading size="sm" class="text-zinc-900 dark:text-zinc-100">
                         Share this page
                     </flux:heading>
                     
@@ -229,7 +229,7 @@
 
             <!-- Share Footer -->
             <div class="mt-8 text-center">
-                <flux:text size="sm" class="text-gray-500 dark:text-gray-400">
+                <flux:text size="sm" class="text-zinc-500 dark:text-zinc-400">
                     Want to create your own AI-powered designs?
                 </flux:text>
                 <flux:button

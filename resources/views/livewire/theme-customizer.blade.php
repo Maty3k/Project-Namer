@@ -4,14 +4,14 @@
     <!-- Theme Customizer Header -->
     <div class="flex items-center justify-between relative z-10">
         <div>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <h2 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
                 Theme Customizer
             </h2>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
+            <p class="text-sm text-zinc-600 dark:text-zinc-400">
                 Customize your application theme and colors
             </p>
         </div>
-        
+
     </div>
 
     <!-- Seasonal Recommendation -->
@@ -30,10 +30,10 @@
                             </div>
                         </div>
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                            <h3 class="text-lg font-semibold text-zinc-900 dark:text-white">
                                 Recommended: {{ $recommendedSeasonalTheme['display_name'] }}
                             </h3>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                            <p class="text-sm text-zinc-600 dark:text-zinc-400">
                                 Perfect for {{ ucfirst($recommendedSeasonalTheme['season'] ?? 'this time of year') }}
                             </p>
                         </div>
@@ -47,7 +47,7 @@
     <!-- Theme Categories -->
     <div class="space-y-4 relative z-10">
         <div class="flex items-center justify-between">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
                 Predefined Themes
             </h3>
             
@@ -85,12 +85,12 @@
                             hover:border-color: {{ $accentColor }}80;">
                     <div class="space-y-3">
                         <!-- Clean Theme Preview -->
-                        <div class="flex h-12 overflow-hidden rounded border border-gray-200 dark:border-gray-600">
+                        <div class="flex h-12 overflow-hidden rounded border border-zinc-200 dark:border-zinc-600">
                             <div class="w-1/2" style="background-color: {{ $theme['accent_color'] }}"></div>
                             <div class="w-1/4" style="background-color: {{ $theme['accent_content_color'] ?? $theme['accent_color'] }}"></div>
                             <div class="w-1/4" style="background-color: {{ $theme['accent_foreground_color'] ?? '#ffffff' }}"></div>
                         </div>
-                        
+
                         <!-- Theme Info -->
                         <div class="text-center">
                             <div class="flex items-center justify-center space-x-1 mb-1">
@@ -113,11 +113,11 @@
                                             @break
                                     @endswitch
                                 @endif
-                                <h4 class="font-medium text-gray-900 dark:text-gray-100 group-hover:font-bold transition-all duration-300">
+                                <h4 class="font-medium text-zinc-900 dark:text-zinc-100 group-hover:font-bold transition-all duration-300">
                                     {{ $theme['display_name'] }}
                                 </h4>
                             </div>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors duration-300">
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors duration-300">
                                 {{ $theme['is_dark_mode'] ? 'Dark Mode' : 'Light Mode' }}
                             </p>
                         </div>
@@ -129,7 +129,7 @@
 
     <!-- Custom Color Controls -->
     <div class="space-y-6 relative z-10">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
             FluxUI Theme Colors
         </h3>
 
@@ -225,7 +225,7 @@
 
     <!-- Accessibility Feedback -->
     <div class="space-y-4 relative z-10">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
             Accessibility Analysis
         </h3>
         
@@ -272,11 +272,11 @@
 
     <!-- Live Preview -->
     <div class="space-y-4 relative z-10">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
             Live Preview
         </h3>
 
-        <div class="rounded-lg border p-6 space-y-4 {{ $isDarkMode ? 'border-gray-600 dark:border-gray-600 bg-gray-900 text-white' : 'border-gray-300 bg-white text-gray-900' }}">
+        <div class="rounded-lg border p-6 space-y-4 {{ $isDarkMode ? 'border-zinc-600 dark:border-zinc-600 bg-zinc-900 text-white' : 'border-zinc-300 bg-white text-zinc-900' }}">
             <div class="space-y-3">
                 <flux:button style="background-color: {{ $accentColor }}; color: {{ $accentForegroundColor }};">
                     Accent Button
@@ -308,12 +308,12 @@
 
     <!-- CSS Output -->
     <div class="space-y-4 relative z-10">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
             Generated CSS
         </h3>
-        
-        <div class="rounded-lg {{ $isDarkMode ? 'bg-gray-900 border border-gray-700' : 'bg-gray-100' }} p-4">
-            <pre class="text-sm {{ $isDarkMode ? 'text-gray-300' : 'text-gray-800' }} overflow-x-auto font-mono">{{ $this->generatedCss }}</pre>
+
+        <div class="rounded-lg {{ $isDarkMode ? 'bg-zinc-900 border border-zinc-700' : 'bg-zinc-100' }} p-4">
+            <pre class="text-sm {{ $isDarkMode ? 'text-zinc-300' : 'text-zinc-800' }} overflow-x-auto font-mono">{{ $this->generatedCss }}</pre>
         </div>
     </div>
 
@@ -350,10 +350,10 @@
     <div wire:loading.flex
          wire:target="applyTheme,applyPreset,importTheme"
          class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-8 text-center shadow-2xl border border-gray-200 dark:border-gray-600">
+        <div class="bg-white dark:bg-zinc-800 rounded-lg p-8 text-center shadow-2xl border border-zinc-200 dark:border-zinc-600">
             <div class="text-6xl mb-4 animate-bounce">🎨</div>
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 mx-auto mb-4" style="border-color: {{ $accentColor }};"></div>
-            <p class="text-gray-600 dark:text-gray-300 font-medium">Applying your magical theme...</p>
+            <p class="text-zinc-600 dark:text-zinc-300 font-medium">Applying your magical theme...</p>
             <div class="flex justify-center gap-2 mt-4">
                 <span class="animate-bounce text-2xl" style="animation-delay: 0s;">✨</span>
                 <span class="animate-bounce text-2xl" style="animation-delay: 0.2s;">🌈</span>

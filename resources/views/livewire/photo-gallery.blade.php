@@ -6,13 +6,13 @@
      @keydown.arrow-right.window="nextImage()">
 
     <!-- Gallery Header -->
-    <div class="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-4">
+    <div class="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-700 p-4 mb-4">
         <div class="flex flex-col space-y-3
                     sm:flex-row sm:space-y-0 sm:items-center sm:justify-between">
             
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+            <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">
                 Photo Gallery
-                <span class="text-sm font-normal text-gray-500 dark:text-gray-400 ml-2">
+                <span class="text-sm font-normal text-zinc-500 dark:text-zinc-400 ml-2">
                     ({{ $images->total() }} {{ Str::plural('photo', $images->total()) }})
                 </span>
             </h2>
@@ -26,7 +26,7 @@
     </div>
 
     <!-- Photo Grid (Phone Gallery Style) -->
-    <div class="bg-white dark:bg-gray-900 rounded-lg overflow-hidden">
+    <div class="bg-white dark:bg-zinc-900 rounded-lg overflow-hidden">
         @if($images->count() > 0)
             <!-- Grid View -->
             <div class="grid grid-cols-3 gap-0.5
@@ -92,11 +92,11 @@
         @else
             <!-- Empty State -->
             <div class="flex flex-col items-center justify-center py-12">
-                <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-16 h-16 text-zinc-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                 </svg>
-                <p class="text-gray-500 dark:text-gray-400">No photos yet</p>
-                <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">Upload your first photo to get started</p>
+                <p class="text-zinc-500 dark:text-zinc-400">No photos yet</p>
+                <p class="text-sm text-zinc-400 dark:text-zinc-500 mt-1">Upload your first photo to get started</p>
             </div>
         @endif
     </div>
@@ -174,11 +174,11 @@
             <template x-if="currentImage">
                 <div class="text-white">
                     <h3 class="text-lg font-medium" x-text="currentImage.title || currentImage.filename"></h3>
-                    <p class="text-sm text-gray-300 mt-1">
+                    <p class="text-sm text-zinc-300 mt-1">
                         <span x-text="currentImage.size"></span> • 
                         <span x-text="currentImage.date"></span>
                     </p>
-                    <p class="text-sm text-gray-400 mt-2" x-text="currentImage.description"></p>
+                    <p class="text-sm text-zinc-400 mt-2" x-text="currentImage.description"></p>
                 </div>
             </template>
         </div>
@@ -186,14 +186,14 @@
 
     <!-- Bulk Actions Bar -->
     @if($showBulkActions)
-        <div class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 p-4 z-40">
+        <div class="fixed bottom-0 left-0 right-0 bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-700 p-4 z-40">
             <div class="max-w-7xl mx-auto flex items-center justify-between">
-                <span class="text-sm text-gray-600 dark:text-gray-400">
+                <span class="text-sm text-zinc-600 dark:text-zinc-400">
                     {{ count($selectedImages) }} {{ Str::plural('photo', count($selectedImages)) }} selected
                 </span>
                 <div class="flex items-center space-x-2">
                     <button wire:click="clearSelection()" 
-                            class="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+                            class="px-3 py-1.5 text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                         Cancel
                     </button>
                     <button wire:click="$set('bulkAction', 'delete')" 

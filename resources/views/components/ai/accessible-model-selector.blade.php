@@ -10,11 +10,11 @@
 @endphp
 
 <div class="ai-model-selector" role="group" aria-labelledby="model-selector-label">
-    <h3 id="model-selector-label" class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+    <h3 id="model-selector-label" class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
         Choose AI Model
     </h3>
     
-    <p class="text-sm text-gray-600 dark:text-gray-400 mb-6" id="model-selector-description">
+    <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-6" id="model-selector-description">
         {{ $accessibilityService->generateKeyboardInstructions('model_selection') }}
     </p>
     
@@ -52,23 +52,23 @@
                     <div class="flex items-center space-x-2">
                         <div class="flex-shrink-0">
                             @if($isSelected)
-                                <div class="w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center" 
+                                <div class="w-5 h-5 bg-accent rounded-full flex items-center justify-center" 
                                      aria-hidden="true">
                                     <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                     </svg>
                                 </div>
                             @else
-                                <div class="w-5 h-5 border-2 border-gray-300 dark:border-gray-600 rounded-full" 
+                                <div class="w-5 h-5 border-2 border-zinc-300 dark:border-zinc-600 rounded-full" 
                                      aria-hidden="true"></div>
                             @endif
                         </div>
                         
                         <div>
-                            <h4 class="font-semibold text-gray-900 dark:text-white">
+                            <h4 class="font-semibold text-zinc-900 dark:text-white">
                                 {{ $model['name'] }}
                             </h4>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 capitalize">
+                            <p class="text-sm text-zinc-500 dark:text-zinc-400 capitalize">
                                 by {{ $model['provider'] }}
                             </p>
                         </div>
@@ -80,10 +80,10 @@
                             $status = $model['status'] ?? 'available';
                             $statusClass = match($status) {
                                 'available' => 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100',
-                                'disabled' => 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100',
+                                'disabled' => 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-100',
                                 'maintenance' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100',
                                 'missing_api_key' => 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100',
-                                default => 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100',
+                                default => 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-100',
                             };
                             $statusText = match($status) {
                                 'available' => 'Available',
@@ -102,12 +102,12 @@
                 </div>
                 
                 <!-- Model Description -->
-                <p class="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                <p class="text-sm text-zinc-600 dark:text-zinc-300 mb-3">
                     {{ $model['description'] ?? 'No description available.' }}
                 </p>
                 
                 <!-- Model Details -->
-                <div class="grid grid-cols-2 gap-2 text-xs text-gray-500 dark:text-gray-400">
+                <div class="grid grid-cols-2 gap-2 text-xs text-zinc-500 dark:text-zinc-400">
                     @if(isset($model['max_tokens']))
                         <div class="flex justify-between">
                             <span>Max tokens:</span>

@@ -46,11 +46,12 @@ describe('Responsive Design Cross-Device Testing', function (): void {
         it('uses proper responsive text scaling', function (): void {
             $response = $this->get(route('dashboard'));
 
+            // FluxUI uses zinc for neutral text colors
             $response->assertSuccessful()
                 ->assertSee('text-sm') // Small text
                 ->assertSee('text-3xl') // Heading text (my dashboard uses text-3xl)
                 ->assertSee('font-bold') // Typography weights
-                ->assertSee('text-gray-'); // Color variations
+                ->assertSee('text-zinc-'); // Color variations (FluxUI standard)
         });
     });
 
@@ -314,9 +315,9 @@ describe('Responsive Design Cross-Device Testing', function (): void {
 
             $html = $component->html();
 
-            // Color contrast compliance
-            expect($html)->toContain('text-gray-') // Gray text variants
-                ->toContain('dark:text-gray-') // Dark mode text
+            // Color contrast compliance - FluxUI uses zinc instead of gray
+            expect($html)->toContain('text-zinc-') // Zinc text variants (FluxUI standard)
+                ->toContain('dark:text-zinc-') // Dark mode text
                 ->toContain('border-') // Border variants
                 ->toContain('transition-'); // Smooth state changes
         });

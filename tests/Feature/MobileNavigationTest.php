@@ -73,9 +73,10 @@ describe('Mobile Navigation System', function (): void {
             // Test that dashboard structure is present
             $response = $this->get(route('dashboard'));
 
+            // FluxUI uses zinc for neutral colors, slate for dark backgrounds
             $response->assertStatus(200)
                 ->assertSeeHtml('bg-white')
-                ->assertSeeHtml('dark:bg-gray-900');
+                ->assertSeeHtml('dark:bg-slate-900');
         });
 
         it('handles navigation transitions smoothly', function (): void {

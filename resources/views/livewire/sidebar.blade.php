@@ -7,14 +7,14 @@
                 border-color: {{ $userTheme->primary_color }}50;
                 color: {{ $userTheme->text_color }};"
      @else
-         class="bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-700"
+         class="bg-zinc-50 dark:bg-slate-900 border-zinc-200 dark:border-slate-700"
      @endif>
     <!-- Sidebar Header -->
-    <div class="p-4 border-b {{ $userTheme ? 'border-current border-opacity-20' : 'border-gray-200 dark:border-slate-600' }} transition-all duration-300 ease-out">
+    <div class="p-4 border-b {{ $userTheme ? 'border-current border-opacity-20' : 'border-zinc-200 dark:border-slate-600' }} transition-all duration-300 ease-out">
         <div class="flex items-center transition-all duration-300 ease-out {{ $collapsed ? 'justify-center' : 'justify-between' }}">
             <div class="overflow-hidden transition-all duration-500 ease-out {{ $collapsed ? 'max-w-0 opacity-0' : 'max-w-full opacity-100' }}">
                 @if(!$collapsed)
-                    <h2 class="text-lg {{ $userTheme ? 'theme-text-primary' : 'text-gray-900 dark:text-white font-semibold' }} whitespace-nowrap transition-opacity duration-300 ease-out">Projects</h2>
+                    <h2 class="text-lg {{ $userTheme ? 'theme-text-primary' : 'text-zinc-900 dark:text-white font-semibold' }} whitespace-nowrap transition-opacity duration-300 ease-out">Projects</h2>
                 @endif
             </div>
             <flux:button
@@ -35,7 +35,7 @@
 
         <div class="overflow-hidden transition-all duration-500 ease-out {{ $collapsed ? 'max-h-0 opacity-0 mt-0' : ($this->projectCount > 0 ? 'max-h-20 opacity-100 mt-1' : 'max-h-0 opacity-0 mt-0') }}">
             @if(!$collapsed && $this->projectCount > 0)
-                <p class="text-sm {{ $userTheme ? 'theme-text-muted' : 'text-gray-500 dark:text-gray-400' }} transition-opacity duration-300 ease-out delay-150">{{ $this->projectCount }} projects</p>
+                <p class="text-sm {{ $userTheme ? 'theme-text-muted' : 'text-zinc-500 dark:text-zinc-400' }} transition-opacity duration-300 ease-out delay-150">{{ $this->projectCount }} projects</p>
             @endif
         </div>
     </div>
@@ -56,7 +56,7 @@
 
     <!-- Bulk Delete Controls -->
     @if(!$this->projects->isEmpty() && !$collapsed)
-        <div class="px-4 pb-4 border-b {{ $userTheme ? 'border-current border-opacity-20' : 'border-gray-200 dark:border-slate-600' }}">
+        <div class="px-4 pb-4 border-b {{ $userTheme ? 'border-current border-opacity-20' : 'border-zinc-200 dark:border-slate-600' }}">
             @if($bulkDeleteMode)
                 <div class="space-y-2">
                     <div class="flex gap-2">
@@ -120,13 +120,13 @@
             <div class="overflow-hidden transition-all duration-500 ease-out {{ $collapsed ? 'max-h-0 opacity-0' : 'max-h-full opacity-100' }}">
                 @if(!$collapsed)
                     <div class="p-4 text-center transition-all duration-300 ease-out delay-200">
-                        <div class="text-gray-400 dark:text-gray-500 mb-2 transition-all duration-300 ease-out">
+                        <div class="text-zinc-400 dark:text-zinc-500 mb-2 transition-all duration-300 ease-out">
                             <svg class="w-12 h-12 mx-auto transition-transform duration-300 ease-out" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                             </svg>
                         </div>
-                        <p class="text-sm {{ $userTheme ? 'theme-text-secondary' : 'text-gray-500 dark:text-gray-400' }} mb-1 transition-opacity duration-300 ease-out">No projects yet</p>
-                        <p class="text-xs {{ $userTheme ? 'theme-text-muted' : 'text-gray-400 dark:text-gray-500' }} transition-opacity duration-300 ease-out delay-75">Create your first project</p>
+                        <p class="text-sm {{ $userTheme ? 'theme-text-secondary' : 'text-zinc-500 dark:text-zinc-400' }} mb-1 transition-opacity duration-300 ease-out">No projects yet</p>
+                        <p class="text-xs {{ $userTheme ? 'theme-text-muted' : 'text-zinc-400 dark:text-zinc-500' }} transition-opacity duration-300 ease-out delay-75">Create your first project</p>
                     </div>
                 @endif
             </div>
@@ -138,9 +138,9 @@
                         wire:click="{{ $bulkDeleteMode ? '' : 'selectProject(\'' . $project->uuid . '\')' }}"
                         class="group {{ $bulkDeleteMode ? 'cursor-default' : 'cursor-pointer' }} rounded-lg transition-all duration-300 ease-out {{ $collapsed ? 'p-2' : 'p-3' }}
                         {{ !$bulkDeleteMode && $userTheme ? ($this->isActiveProject($project) ? 'theme-interactive' : 'theme-hover') : '' }}
-                        {{ !$bulkDeleteMode && !$userTheme ? 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm transform hover:scale-[1.02]' : '' }}
-                        {{ $bulkDeleteMode && in_array($project->uuid, $selectedProjects) ? 'bg-blue-50 dark:bg-blue-900/30 shadow-md ring-2 ring-blue-500 dark:ring-blue-400' : '' }}
-                        {{ $bulkDeleteMode && !in_array($project->uuid, $selectedProjects) ? 'hover:bg-gray-50 dark:hover:bg-gray-800/50' : '' }}"
+                        {{ !$bulkDeleteMode && !$userTheme ? 'hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:shadow-sm transform hover:scale-[1.02]' : '' }}
+                        {{ $bulkDeleteMode && in_array($project->uuid, $selectedProjects) ? 'bg-blue-50 dark:bg-accent/30 shadow-md ring-2 ring-blue-500 dark:ring-blue-400' : '' }}
+                        {{ $bulkDeleteMode && !in_array($project->uuid, $selectedProjects) ? 'hover:bg-zinc-50 dark:hover:bg-zinc-800/50' : '' }}"
                         @if(!$bulkDeleteMode && $this->isActiveProject($project))
                             @if($userTheme)
                                 style="background: {{ $userTheme->primary_color }}15; border-left: 4px solid {{ $userTheme->primary_color }}; box-shadow: 0 1px 3px rgba(0,0,0,0.1);"
@@ -168,7 +168,7 @@
                                     </svg>
                                 @else
                                     <!-- Regular project icon -->
-                                    <svg class="w-6 h-6 {{ $userTheme ? 'theme-icon' : ($this->isActiveProject($project) ? '' : 'text-gray-600 dark:text-gray-400') }}" 
+                                    <svg class="w-6 h-6 {{ $userTheme ? 'theme-icon' : ($this->isActiveProject($project) ? '' : 'text-zinc-600 dark:text-zinc-400') }}" 
                                          @if(!$userTheme && $this->isActiveProject($project)) style="color: {{ ($userTheme?->primary_color ?? '#3B82F6') }};" @endif
                                          fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
@@ -187,12 +187,12 @@
                                                     type="checkbox"
                                                     wire:click.stop="toggleProjectSelection('{{ $project->uuid }}')"
                                                     @checked(in_array($project->uuid, $selectedProjects))
-                                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer transition-all duration-200"
+                                                    class="w-4 h-4 text-accent bg-zinc-100 border-zinc-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600 cursor-pointer transition-all duration-200"
                                                 />
                                             </div>
                                         @endif
                                         <div class="flex-1 min-w-0 transition-all duration-300 ease-out delay-150">
-                                            <h3 class="text-sm {{ $userTheme ? 'theme-text-primary' : 'text-gray-900 dark:text-white font-medium' }} truncate transition-opacity duration-300 ease-out">
+                                            <h3 class="text-sm {{ $userTheme ? 'theme-text-primary' : 'text-zinc-900 dark:text-white font-medium' }} truncate transition-opacity duration-300 ease-out">
                                                 {{ $this->truncateName($project->name, 22) }}
                                             </h3>
                                     
@@ -202,16 +202,16 @@
                                                         ✓ {{ $this->truncateName($project->selectedName->name, 18) }}
                                                     </span>
                                                 </div>
-                                                <p class="text-xs {{ $userTheme ? 'theme-text-muted' : 'text-gray-400 dark:text-gray-500' }} mt-1 truncate transition-opacity duration-300 ease-out delay-250">
+                                                <p class="text-xs {{ $userTheme ? 'theme-text-muted' : 'text-zinc-400 dark:text-zinc-500' }} mt-1 truncate transition-opacity duration-300 ease-out delay-250">
                                                     {{ $this->truncateName($project->description, 25) }}
                                                 </p>
                                             @else
-                                                <p class="text-xs {{ $userTheme ? 'theme-text-muted' : 'text-gray-500 dark:text-gray-400' }} mt-1 truncate transition-opacity duration-300 ease-out delay-200">
+                                                <p class="text-xs {{ $userTheme ? 'theme-text-muted' : 'text-zinc-500 dark:text-zinc-400' }} mt-1 truncate transition-opacity duration-300 ease-out delay-200">
                                                     {{ $this->truncateName($project->description, 35) }}
                                                 </p>
                                             @endif
 
-                                            <p class="text-xs {{ $userTheme ? 'theme-text-muted' : 'text-gray-400 dark:text-gray-500' }} mt-1 transition-opacity duration-300 ease-out delay-300">
+                                            <p class="text-xs {{ $userTheme ? 'theme-text-muted' : 'text-zinc-400 dark:text-zinc-500' }} mt-1 transition-opacity duration-300 ease-out delay-300">
                                                 {{ $project->updated_at->format('M j') }}
                                             </p>
                                         </div>
@@ -251,8 +251,8 @@
     <!-- Sidebar Footer (if expanded) -->
     <div class="overflow-hidden transition-all duration-500 ease-out {{ $collapsed ? 'max-h-0 opacity-0' : 'max-h-20 opacity-100' }}">
         @if(!$collapsed)
-            <div class="p-4 border-t {{ $userTheme ? 'border-current border-opacity-20' : 'border-gray-200 dark:border-slate-600' }} transition-all duration-300 ease-out">
-                <div class="text-xs {{ $userTheme ? 'theme-text-muted' : 'text-gray-400 dark:text-gray-500' }} text-center transition-opacity duration-300 ease-out delay-200">
+            <div class="p-4 border-t {{ $userTheme ? 'border-current border-opacity-20' : 'border-zinc-200 dark:border-slate-600' }} transition-all duration-300 ease-out">
+                <div class="text-xs {{ $userTheme ? 'theme-text-muted' : 'text-zinc-400 dark:text-zinc-500' }} text-center transition-opacity duration-300 ease-out delay-200">
                     Project Workflow UI
                 </div>
             </div>
@@ -265,7 +265,7 @@
             <div class="space-y-6">
                 <div>
                     <flux:heading size="lg">Delete Project</flux:heading>
-                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
                         Are you sure you want to delete this project? This action cannot be undone.
                     </p>
                     
@@ -274,9 +274,9 @@
                             $project = $this->projects->firstWhere('uuid', $projectToDelete);
                         @endphp
                         @if($project)
-                            <div class="mt-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <div class="mt-3 p-3 bg-zinc-50 dark:bg-zinc-800 rounded-lg">
                                 <p class="font-medium text-sm">{{ $project->name }}</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $project->description }}</p>
+                                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{{ $project->description }}</p>
                             </div>
                         @endif
                     @endif
@@ -305,10 +305,10 @@
         <flux:modal wire:model="showBulkDeleteConfirmation">
             <div class="space-y-4">
                 <div>
-                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    <h2 class="text-lg font-semibold text-zinc-900 dark:text-white mb-2">
                         Delete Multiple Projects?
                     </h2>
-                    <p class="text-gray-600 dark:text-gray-400">
+                    <p class="text-zinc-600 dark:text-zinc-400">
                         Are you sure you want to delete {{ count($selectedProjects) }} {{ count($selectedProjects) === 1 ? 'project' : 'projects' }}?
                         This action cannot be undone.
                     </p>

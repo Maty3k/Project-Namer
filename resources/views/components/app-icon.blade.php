@@ -80,8 +80,8 @@
         'success' => 'text-green-600 dark:text-green-400',
         'error' => 'text-red-600 dark:text-red-400', 
         'warning' => 'text-yellow-600 dark:text-yellow-400',
-        'info' => 'text-gray-600 dark:text-gray-400',
-        'muted' => 'text-gray-400 dark:text-gray-500',
+        'info' => 'text-zinc-600 dark:text-zinc-400',
+        'muted' => 'text-zinc-400 dark:text-zinc-500',
     ];
     
     // Build classes

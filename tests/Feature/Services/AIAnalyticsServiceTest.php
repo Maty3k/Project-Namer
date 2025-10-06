@@ -20,6 +20,11 @@ beforeEach(function (): void {
     Cache::flush();
 });
 
+afterEach(function (): void {
+    // Clear cache after each test to prevent pollution
+    Cache::flush();
+});
+
 describe('AIAnalyticsService', function (): void {
     it('can get user analytics overview', function (): void {
         // Create test data
@@ -260,12 +265,15 @@ describe('AIAnalyticsService', function (): void {
             'project_id' => $testProject->id,
             'models_requested' => ['gpt-4'],
             'status' => 'completed',
-            'created_at' => now()->subDays(1),
+            'created_at' => now(), // Created now to ensure it's within current week
         ]);
 
         // Verify the generations were created with correct timestamps
         expect($oldGeneration->created_at)->toBeLessThan(now()->subWeeks(2));
-        expect($recentGeneration->created_at)->toBeGreaterThan(now()->subDays(2));
+        expect($recentGeneration->created_at)->toBeGreaterThanOrEqual(now()->startOfWeek());
+
+        // Clear cache to ensure fresh analytics calculation
+        Cache::flush();
 
         // Test different periods
         $weekAnalytics = $this->service->getUserAnalytics($testUser, 'week');

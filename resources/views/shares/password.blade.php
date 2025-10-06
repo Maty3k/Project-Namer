@@ -1,6 +1,6 @@
 <x-layouts.guest title="Password Required" :metadata="$metadata ?? []">
 
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4 py-8">
+<div class="min-h-screen bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center px-4 py-8">
     <div class="w-full max-w-md">
         <flux:card class="relative overflow-hidden">
             <!-- Background Pattern -->
@@ -12,15 +12,15 @@
             <div class="relative z-10">
                 <!-- Icon and Header -->
                 <div class="text-center mb-6">
-                    <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-500 rounded-full mb-4">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-accent rounded-full mb-4">
                         <flux:icon name="lock-closed" class="w-8 h-8 text-white" />
                     </div>
                     
-                    <flux:heading size="lg" class="text-gray-900 dark:text-gray-100 mb-2">
+                    <flux:heading size="lg" class="text-zinc-900 dark:text-zinc-100 mb-2">
                         Password Required
                     </flux:heading>
                     
-                    <flux:text class="text-gray-600 dark:text-gray-400">
+                    <flux:text class="text-zinc-600 dark:text-zinc-400">
                         This share is password protected. Please enter the password to continue.
                     </flux:text>
                 </div>
@@ -58,8 +58,8 @@
                 </form>
                 
                 <!-- Help Text -->
-                <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                    <flux:text size="sm" class="text-center text-gray-500 dark:text-gray-400">
+                <div class="mt-6 pt-6 border-t border-zinc-200 dark:border-zinc-700">
+                    <flux:text size="sm" class="text-center text-zinc-500 dark:text-zinc-400">
                         Don't have the password?
                     </flux:text>
                     <div class="mt-2 text-center">
@@ -81,13 +81,13 @@
             <flux:card class="mt-4">
                 <div class="text-center">
                     @if($share->title && ($share->settings['show_title'] ?? true))
-                        <flux:heading size="sm" class="text-gray-900 dark:text-gray-100 mb-1">
+                        <flux:heading size="sm" class="text-zinc-900 dark:text-zinc-100 mb-1">
                             {{ $share->title }}
                         </flux:heading>
                     @endif
                     
                     @if($share->description && ($share->settings['show_description'] ?? true))
-                        <flux:text size="sm" class="text-gray-600 dark:text-gray-400">
+                        <flux:text size="sm" class="text-zinc-600 dark:text-zinc-400">
                             {{ Str::limit($share->description, 150) }}
                         </flux:text>
                     @endif

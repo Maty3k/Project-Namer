@@ -6,7 +6,7 @@
                     wire:model="name"
                     wire:keydown.enter="save"
                     wire:keydown.escape="cancel"
-                    class="text-2xl sm:text-3xl font-bold bg-transparent border-0 border-b-2 border-primary-500 focus:ring-0 focus:border-primary-600"
+                    class="text-2xl sm:text-3xl font-bold bg-transparent border-0 border-b-2 border-accent focus:ring-0 focus:border-accent"
                     placeholder="Project name"
                     autofocus
                 />
@@ -17,7 +17,7 @@
                 <button
                     wire:click="save"
                     type="button"
-                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-accent hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
                     wire:loading.attr="disabled"
                 >
                     <span wire:loading.remove wire:target="save" class="flex items-center gap-1.5">
@@ -38,7 +38,7 @@
                 <button
                     wire:click="cancel"
                     type="button"
-                    class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                    class="inline-flex items-center px-3 py-2 border border-zinc-300 text-sm leading-4 font-medium rounded-md text-zinc-700 bg-white hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                 >
                     <div class="flex items-center gap-1.5">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -51,14 +51,14 @@
         </div>
     @else
         <div class="group flex items-center gap-3">
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white flex-1">
+            <h1 class="text-3xl font-bold text-zinc-900 dark:text-white flex-1">
                 {{ $project->name }}
             </h1>
 
             <button
                 wire:click="startEdit"
                 type="button"
-                class="opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center px-2 py-1 border border-transparent text-sm font-medium rounded-md text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                class="opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center px-2 py-1 border border-transparent text-sm font-medium rounded-md text-zinc-600 hover:text-zinc-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
             >
                 Edit
             </button>

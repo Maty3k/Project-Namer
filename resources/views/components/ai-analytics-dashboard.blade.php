@@ -6,18 +6,18 @@
 
 <div {{ $attributes->merge(['class' => 'space-y-6']) }}>
     {{-- Analytics Header --}}
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+    <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-6">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                <h2 class="text-2xl font-bold text-zinc-900 dark:text-white">
                     {{ $isAdmin ? 'System AI Analytics' : 'Your AI Usage Analytics' }}
                 </h2>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                <p class="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
                     Insights and performance metrics for AI name generation
                 </p>
             </div>
             <div class="flex items-center gap-2">
-                <select wire:model.live="period" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                <select wire:model.live="period" class="border border-zinc-300 rounded-lg px-3 py-2 text-sm">
                     <option value="day">Today</option>
                     <option value="week">This Week</option>
                     <option value="month">This Month</option>
@@ -34,18 +34,18 @@
     {{-- Overview Stats Cards --}}
     @if(isset($analytics['overview']))
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-6 border border-primary-200 dark:border-primary-700">
+            <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-6 border border-accent dark:border-accent">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-primary-600 dark:text-primary-400">Total Generations</p>
-                        <p class="text-3xl font-bold text-primary-900 dark:text-primary-100 mt-1">
+                        <p class="text-sm font-medium text-accent dark:text-accent">Total Generations</p>
+                        <p class="text-3xl font-bold text-accent dark:text-accent mt-1">
                             {{ number_format($analytics['overview']['total_generations'] ?? 0) }}
                         </p>
                     </div>
-                    <flux:icon.cpu-chip class="size-8 text-primary-500" />
+                    <flux:icon.cpu-chip class="size-8 text-accent" />
                 </div>
                 @if(isset($analytics['overview']['average_names_per_generation']))
-                    <p class="text-xs text-primary-700 dark:text-primary-300 mt-2">
+                    <p class="text-xs text-accent dark:text-accent mt-2">
                         {{ round($analytics['overview']['average_names_per_generation'], 1) }} names per generation
                     </p>
                 @endif
@@ -115,9 +115,9 @@
 
     {{-- Model Usage Analysis --}}
     @if(isset($analytics['model_usage']))
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                <flux:icon.cpu-chip class="size-5 text-primary-500" />
+        <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-6">
+            <h3 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4 flex items-center gap-2">
+                <flux:icon.cpu-chip class="size-5 text-accent" />
                 AI Model Usage Analysis
             </h3>
 
@@ -125,7 +125,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {{-- Usage Distribution --}}
                     <div>
-                        <h4 class="text-md font-medium text-gray-700 dark:text-gray-300 mb-3">Usage Distribution</h4>
+                        <h4 class="text-md font-medium text-zinc-700 dark:text-zinc-300 mb-3">Usage Distribution</h4>
                         <div class="space-y-3">
                             @php
                                 $modelNames = [
@@ -144,14 +144,14 @@
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-3">
                                         <div class="w-4 h-4 rounded bg-blue-{{ 400 + (array_search($modelId, array_keys($analytics['model_usage']['model_usage_counts'])) * 100) }}"></div>
-                                        <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $modelName }}</span>
+                                        <span class="text-sm font-medium text-zinc-900 dark:text-white">{{ $modelName }}</span>
                                     </div>
                                     <div class="text-right">
-                                        <span class="text-sm font-bold text-gray-900 dark:text-white">{{ $count }}</span>
-                                        <span class="text-xs text-gray-500 ml-2">{{ round($percentage, 1) }}%</span>
+                                        <span class="text-sm font-bold text-zinc-900 dark:text-white">{{ $count }}</span>
+                                        <span class="text-xs text-zinc-500 ml-2">{{ round($percentage, 1) }}%</span>
                                     </div>
                                 </div>
-                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                <div class="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
                                     <div class="bg-blue-{{ 400 + (array_search($modelId, array_keys($analytics['model_usage']['model_usage_counts'])) * 100) }} h-2 rounded-full transition-all duration-500" 
                                          style="width: {{ $percentage }}%"></div>
                                 </div>
@@ -161,15 +161,15 @@
 
                     {{-- Performance Metrics --}}
                     <div>
-                        <h4 class="text-md font-medium text-gray-700 dark:text-gray-300 mb-3">Model Performance</h4>
+                        <h4 class="text-md font-medium text-zinc-700 dark:text-zinc-300 mb-3">Model Performance</h4>
                         <div class="space-y-4">
                             @foreach($analytics['model_usage']['model_performance'] as $modelId => $performance)
                                 @php
                                     $modelName = $modelNames[$modelId] ?? ucfirst(str_replace('-', ' ', $modelId));
                                 @endphp
-                                <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                                <div class="bg-zinc-50 dark:bg-zinc-700 rounded-lg p-4">
                                     <div class="flex items-center justify-between mb-2">
-                                        <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $modelName }}</span>
+                                        <span class="text-sm font-medium text-zinc-900 dark:text-white">{{ $modelName }}</span>
                                         <div class="flex items-center gap-2">
                                             @if($performance['success_rate'] >= 95)
                                                 <flux:icon.check-circle class="size-4 text-green-500" />
@@ -185,15 +185,15 @@
                                     </div>
                                     <div class="grid grid-cols-3 gap-2 text-xs">
                                         <div>
-                                            <span class="text-gray-500">Response</span>
+                                            <span class="text-zinc-500">Response</span>
                                             <div class="font-medium">{{ round($performance['average_response_time'] / 1000, 1) }}s</div>
                                         </div>
                                         <div>
-                                            <span class="text-gray-500">Cost</span>
+                                            <span class="text-zinc-500">Cost</span>
                                             <div class="font-medium">${{ number_format($performance['total_cost'] / 100, 2) }}</div>
                                         </div>
                                         <div>
-                                            <span class="text-gray-500">Rating</span>
+                                            <span class="text-zinc-500">Rating</span>
                                             <div class="font-medium">{{ round($performance['average_rating'], 1) }}/5</div>
                                         </div>
                                     </div>
@@ -203,7 +203,7 @@
                     </div>
                 </div>
             @else
-                <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+                <div class="text-center py-8 text-zinc-500 dark:text-zinc-400">
                     <flux:icon.chart-bar class="size-12 mx-auto mb-4 opacity-50" />
                     <p>No model usage data available for this period.</p>
                 </div>
@@ -213,10 +213,10 @@
 
     {{-- Generation Trends Chart --}}
     @if(isset($analytics['generation_trends']['daily_trends']))
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-6">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                    <flux:icon.chart-bar class="size-5 text-primary-500" />
+                <h3 class="text-lg font-semibold text-zinc-900 dark:text-white flex items-center gap-2">
+                    <flux:icon.chart-bar class="size-5 text-accent" />
                     Generation Trends
                 </h3>
                 @if(isset($analytics['generation_trends']['growth_rate']))
@@ -228,30 +228,30 @@
                             <flux:icon.arrow-trending-down class="size-4 text-red-500" />
                             <span class="text-sm font-medium text-red-600">{{ number_format($analytics['generation_trends']['growth_rate'], 1) }}%</span>
                         @else
-                            <flux:icon.minus class="size-4 text-gray-500" />
-                            <span class="text-sm font-medium text-gray-500">0%</span>
+                            <flux:icon.minus class="size-4 text-zinc-500" />
+                            <span class="text-sm font-medium text-zinc-500">0%</span>
                         @endif
                     </div>
                 @endif
             </div>
 
-            <div class="h-64 flex items-end justify-between gap-1 bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+            <div class="h-64 flex items-end justify-between gap-1 bg-zinc-50 dark:bg-zinc-700 rounded-lg p-4">
                 @foreach($analytics['generation_trends']['daily_trends'] as $day)
                     @php
                         $maxGenerations = max(array_column($analytics['generation_trends']['daily_trends'], 'generations'));
                         $height = $maxGenerations > 0 ? ($day['generations'] / $maxGenerations) * 100 : 0;
                     @endphp
                     <div class="flex flex-col items-center group relative flex-1">
-                        <div class="bg-primary-500 hover:bg-primary-600 transition-colors rounded-t w-full transition-all duration-300"
+                        <div class="bg-accent hover:bg-accent transition-colors rounded-t w-full transition-all duration-300"
                              style="height: {{ $height }}%"
                              title="{{ $day['generations'] }} generations on {{ $day['date'] }}">
                         </div>
-                        <span class="text-xs text-gray-500 mt-2 transform -rotate-45 origin-left">
+                        <span class="text-xs text-zinc-500 mt-2 transform -rotate-45 origin-left">
                             {{ date('M j', strtotime($day['date'])) }}
                         </span>
                         
                         {{-- Tooltip --}}
-                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-zinc-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                             {{ $day['generations'] }} generations<br>
                             {{ round($day['average_names'], 1) }} avg names
                         </div>
@@ -260,7 +260,7 @@
             </div>
 
             @if(isset($analytics['generation_trends']['peak_usage_day']))
-                <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                <div class="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
                     Peak usage: {{ $analytics['generation_trends']['peak_usage_day'] }}
                     @if(isset($analytics['generation_trends']['usage_consistency']))
                         • Consistency score: {{ round($analytics['generation_trends']['usage_consistency'], 1) }}%
@@ -272,8 +272,8 @@
 
     {{-- Cost Analysis --}}
     @if(isset($analytics['cost_analysis']))
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+        <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-6">
+            <h3 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4 flex items-center gap-2">
                 <flux:icon.currency-dollar class="size-5 text-green-500" />
                 Cost Analysis
             </h3>
@@ -292,7 +292,7 @@
                 </div>
 
                 <div class="col-span-2">
-                    <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Cost by Model</div>
+                    <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">Cost by Model</div>
                     @if(isset($analytics['cost_analysis']['cost_by_model']) && !empty($analytics['cost_analysis']['cost_by_model']))
                         <div class="space-y-2">
                             @foreach($analytics['cost_analysis']['cost_by_model'] as $model => $cost)
@@ -302,16 +302,16 @@
                                                  ($cost / $analytics['cost_analysis']['total_cost_cents']) * 100 : 0;
                                 @endphp
                                 <div class="flex items-center justify-between">
-                                    <span class="text-sm text-gray-700 dark:text-gray-300">{{ $modelName }}</span>
+                                    <span class="text-sm text-zinc-700 dark:text-zinc-300">{{ $modelName }}</span>
                                     <div class="text-right">
                                         <span class="text-sm font-medium">${{ number_format($cost / 100, 2) }}</span>
-                                        <span class="text-xs text-gray-500 ml-2">{{ round($percentage, 1) }}%</span>
+                                        <span class="text-xs text-zinc-500 ml-2">{{ round($percentage, 1) }}%</span>
                                     </div>
                                 </div>
                             @endforeach
                         </div>
                     @else
-                        <p class="text-sm text-gray-500 dark:text-gray-400">No cost data available.</p>
+                        <p class="text-sm text-zinc-500 dark:text-zinc-400">No cost data available.</p>
                     @endif
                 </div>
             </div>
@@ -320,16 +320,16 @@
 
     {{-- Real-time Metrics (Admin Only) --}}
     @if($isAdmin && isset($analytics['realtime_metrics']))
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                <flux:icon.signal class="size-5 text-primary-500" />
+        <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-6">
+            <h3 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4 flex items-center gap-2">
+                <flux:icon.signal class="size-5 text-accent" />
                 Real-time System Metrics
             </h3>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-4">
-                    <div class="text-sm font-medium text-primary-600 dark:text-primary-400">Active Generations</div>
-                    <div class="text-2xl font-bold text-primary-900 dark:text-primary-100">
+                <div class="bg-accent/20 dark:bg-accent/20 rounded-lg p-4">
+                    <div class="text-sm font-medium text-accent dark:text-accent">Active Generations</div>
+                    <div class="text-2xl font-bold text-accent dark:text-accent">
                         {{ $analytics['realtime_metrics']['active_generations'] ?? 0 }}
                     </div>
                 </div>
@@ -359,7 +359,7 @@
             {{-- Model Status Indicators --}}
             @if(isset($analytics['realtime_metrics']['models_status']))
                 <div class="mt-6">
-                    <h4 class="text-md font-medium text-gray-700 dark:text-gray-300 mb-3">Model Status</h4>
+                    <h4 class="text-md font-medium text-zinc-700 dark:text-zinc-300 mb-3">Model Status</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                         @foreach($analytics['realtime_metrics']['models_status'] as $modelId => $status)
                             @php

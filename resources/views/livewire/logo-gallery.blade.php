@@ -1,12 +1,12 @@
 <div class="max-w-7xl mx-auto w-full space-y-6">
     @if($this->logoGeneration)
         {{-- Breadcrumb Navigation --}}
-        <nav class="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-            <a href="{{ route('logos.index') }}" wire:navigate class="hover:text-gray-900 dark:hover:text-white transition-colors">
+        <nav class="flex items-center space-x-2 text-sm text-zinc-600 dark:text-zinc-400">
+            <a href="{{ route('logos.index') }}" wire:navigate class="hover:text-zinc-900 dark:hover:text-white transition-colors">
                 Logo Gallery
             </a>
             <flux:icon.chevron-right class="size-4" />
-            <span class="text-gray-900 dark:text-white font-medium">{{ $this->logoGeneration->business_name }}</span>
+            <span class="text-zinc-900 dark:text-white font-medium">{{ $this->logoGeneration->business_name }}</span>
         </nav>
 
         {{-- Header with Progress --}}
@@ -26,10 +26,10 @@
                 
                 {{-- Title Section --}}
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <h2 class="text-2xl font-bold text-zinc-900 dark:text-white">
                         {{ $this->logoGeneration->business_name }}
                     </h2>
-                    <p class="text-gray-600 dark:text-gray-300">
+                    <p class="text-zinc-600 dark:text-zinc-300">
                         Logo Gallery • Created {{ $this->logoGeneration->created_at->format('M j, Y') }}
                     </p>
                 </div>
@@ -38,7 +38,7 @@
             {{-- Status and Actions --}}
             <div class="flex flex-wrap items-center gap-3">
                 @if($this->logoGeneration->status === 'processing')
-                    <div class="flex items-center gap-2 text-primary-600 dark:text-primary-400">
+                    <div class="flex items-center gap-2 text-accent dark:text-accent">
                         <flux:icon.arrow-path class="size-4 animate-spin" />
                         <span class="text-sm font-medium">Processing...</span>
                     </div>
@@ -61,7 +61,7 @@
                 
                 {{-- Quick Stats Summary --}}
                 @if($this->logoGeneration->status === 'completed')
-                    <div class="hidden md:flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 border-l border-gray-200 dark:border-gray-700 pl-4">
+                    <div class="hidden md:flex items-center gap-4 text-sm text-zinc-600 dark:text-zinc-400 border-l border-zinc-200 dark:border-zinc-700 pl-4">
                         <div class="flex items-center gap-1">
                             <flux:icon.photo class="size-4" />
                             <span>{{ $this->logoGeneration->generatedLogos->count() }} Generated</span>
@@ -115,22 +115,22 @@
             <flux:card class="p-6">
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
-                        <h3 class="font-medium text-gray-900 dark:text-white">
+                        <h3 class="font-medium text-zinc-900 dark:text-white">
                             Generation Progress
                         </h3>
-                        <span class="text-sm text-gray-600 dark:text-gray-400">
+                        <span class="text-sm text-zinc-600 dark:text-zinc-400">
                             {{ $this->progress['completed'] }}/{{ $this->progress['total'] }} logos
                         </span>
                     </div>
                     
-                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                    <div class="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-3">
                         <div 
-                            class="bg-primary-600 h-3 rounded-full transition-all duration-500 ease-out"
+                            class="bg-accent h-3 rounded-full transition-all duration-500 ease-out"
                             style="width: {{ $this->progress['percentage'] }}%"
                         ></div>
                     </div>
                     
-                    <p class="text-sm text-gray-600 dark:text-gray-400 text-center">
+                    <p class="text-sm text-zinc-600 dark:text-zinc-400 text-center">
                         {{ $this->progress['percentage'] }}% complete
                         @if($this->logoGeneration->status === 'processing')
                             • This may take a few minutes
@@ -145,10 +145,10 @@
             <div class="space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h3 class="font-semibold text-gray-900 dark:text-white">
+                        <h3 class="font-semibold text-zinc-900 dark:text-white">
                             Upload Your Own Logos
                         </h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                        <p class="text-sm text-zinc-600 dark:text-zinc-300">
                             Upload PNG, JPG, or SVG logo files (max 5MB each)
                         </p>
                     </div>
@@ -188,8 +188,8 @@
                     "
                     class="relative border-2 border-dashed rounded-lg p-8 text-center transition-all duration-300 ease-in-out transform"
                     :class="{
-                        'border-primary-500 bg-primary-50 dark:bg-primary-900/20 scale-105 shadow-lg': draggedOver,
-                        'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800/50': !draggedOver && !isUploading,
+                        'border-accent bg-accent/20 dark:bg-accent/20 scale-105 shadow-lg': draggedOver,
+                        'border-zinc-300 dark:border-zinc-600 hover:border-zinc-400 dark:hover:border-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-800/50': !draggedOver && !isUploading,
                         'border-green-500 bg-green-50 dark:bg-green-900/20': isUploading && uploadProgress === 100,
                         'border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20': isUploading && uploadProgress < 100
                     }"
@@ -198,32 +198,32 @@
                         <div 
                             class="mx-auto size-12 transition-all duration-200"
                             :class="{
-                                'text-primary-500 animate-bounce': draggedOver,
-                                'text-gray-400 dark:text-gray-500': !draggedOver
+                                'text-accent animate-bounce': draggedOver,
+                                'text-zinc-400 dark:text-zinc-500': !draggedOver
                             }"
                         >
                             <flux:icon.cloud-arrow-up class="size-full" />
                         </div>
                         
                         <div class="space-y-2">
-                            <p class="text-lg font-medium text-gray-900 dark:text-white transition-colors duration-200">
+                            <p class="text-lg font-medium text-zinc-900 dark:text-white transition-colors duration-200">
                                 <span x-show="!draggedOver">Drop logo files here</span>
                                 <span x-show="draggedOver && dragFileCount > 0" x-text="dragFeedback"></span>
                                 <span x-show="draggedOver && dragFileCount === 0">Drop files to upload</span>
                             </p>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                            <p class="text-sm text-zinc-600 dark:text-zinc-400">
                                 <span x-show="!draggedOver">or click to browse your computer</span>
-                                <span x-show="draggedOver" class="text-primary-600 dark:text-primary-400 font-medium">Release to start upload</span>
+                                <span x-show="draggedOver" class="text-accent dark:text-accent font-medium">Release to start upload</span>
                             </p>
                         </div>
 
-                        <div class="flex flex-wrap justify-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                            <span class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">PNG</span>
-                            <span class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">JPG</span>
-                            <span class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">SVG</span>
-                            <span class="text-gray-400">•</span>
+                        <div class="flex flex-wrap justify-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
+                            <span class="bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded">PNG</span>
+                            <span class="bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded">JPG</span>
+                            <span class="bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded">SVG</span>
+                            <span class="text-zinc-400">•</span>
                             <span>Max 5MB each</span>
-                            <span class="text-gray-400">•</span>
+                            <span class="text-zinc-400">•</span>
                             <span>Min 100x100px</span>
                         </div>
 
@@ -239,23 +239,23 @@
 
                     {{-- Upload Progress --}}
                     <div x-show="isUploading" class="space-y-4">
-                        <flux:icon.arrow-path class="mx-auto size-12 animate-spin text-primary-500" />
+                        <flux:icon.arrow-path class="mx-auto size-12 animate-spin text-accent" />
                         
                         <div class="space-y-2">
-                            <p class="text-lg font-medium text-gray-900 dark:text-white">
+                            <p class="text-lg font-medium text-zinc-900 dark:text-white">
                                 <span x-show="uploadProgress < 100">Uploading logos...</span>
                                 <span x-show="uploadProgress === 100">Upload complete!</span>
                             </p>
                             
                             {{-- Progress Bar --}}
-                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                            <div class="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-3 overflow-hidden">
                                 <div 
-                                    class="bg-primary-600 h-3 rounded-full transition-all duration-300 ease-out"
+                                    class="bg-accent h-3 rounded-full transition-all duration-300 ease-out"
                                     :style="{ width: uploadProgress + '%' }"
                                 ></div>
                             </div>
                             
-                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                            <p class="text-sm text-zinc-600 dark:text-zinc-400">
                                 <span x-text="uploadProgress"></span>% complete
                             </p>
                         </div>
@@ -265,7 +265,7 @@
                 {{-- Upload Button --}}
                 @if(count($uploadedFiles) > 0 && !$isUploading)
                     <div class="flex justify-between items-center">
-                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                        <p class="text-sm text-zinc-600 dark:text-zinc-300">
                             {{ count($uploadedFiles) }} file(s) selected
                         </p>
                         
@@ -293,26 +293,26 @@
                 {{-- File Previews --}}
                 @if(count($filePreviews) > 0 && !$isUploading)
                     <div class="mt-6">
-                        <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-3">
+                        <h4 class="text-sm font-medium text-zinc-900 dark:text-white mb-3">
                             File Previews ({{ count($filePreviews) }} files)
                         </h4>
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                             @foreach($filePreviews as $index => $preview)
-                                <div class="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                <div class="flex items-center space-x-3 p-3 bg-zinc-50 dark:bg-zinc-800 rounded-lg">
                                     <div class="flex-shrink-0">
-                                        <div class="w-10 h-10 bg-primary-100 dark:bg-primary-900 rounded-lg flex items-center justify-center">
+                                        <div class="w-10 h-10 bg-accent dark:bg-accent rounded-lg flex items-center justify-center">
                                             @if(str_starts_with($preview['type'], 'image/'))
-                                                <flux:icon.photo class="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                                                <flux:icon.photo class="w-5 h-5 text-accent dark:text-accent" />
                                             @else
-                                                <flux:icon.document class="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                                                <flux:icon.document class="w-5 h-5 text-accent dark:text-accent" />
                                             @endif
                                         </div>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                        <p class="text-sm font-medium text-zinc-900 dark:text-white truncate">
                                             {{ $preview['name'] }}
                                         </p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                        <p class="text-xs text-zinc-500 dark:text-zinc-400">
                                             {{ strtoupper($preview['extension']) }} • {{ number_format($preview['size'] / 1024, 1) }} KB
                                         </p>
                                     </div>
@@ -363,10 +363,10 @@
                 <div class="space-y-4">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div>
-                            <h3 class="font-semibold text-gray-900 dark:text-white">
+                            <h3 class="font-semibold text-zinc-900 dark:text-white">
                                 Color Customization
                             </h3>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">
+                            <p class="text-sm text-zinc-600 dark:text-zinc-300">
                                 Select logos and apply different color schemes
                             </p>
                         </div>
@@ -406,19 +406,19 @@
                                         />
                                         <label 
                                             for="scheme-{{ $schemeId }}" 
-                                            class="flex flex-col items-center p-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:border-gray-300 dark:hover:border-gray-600 peer-checked:border-primary-500 dark:peer-checked:border-blue-400 peer-checked:bg-primary-50 dark:peer-checked:bg-primary-900/20 transition-all"
+                                            class="flex flex-col items-center p-3 border-2 border-zinc-200 dark:border-zinc-700 rounded-lg cursor-pointer hover:border-zinc-300 dark:hover:border-zinc-600 peer-checked:border-accent dark:peer-checked:border-accent peer-checked:bg-accent/20 dark:peer-checked:bg-accent/20 transition-all"
                                         >
                                             {{-- Color Palette Preview --}}
                                             <div class="flex gap-1 mb-2">
-                                                <div class="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600" style="background-color: {{ $scheme['colors']['primary'] }}"></div>
-                                                <div class="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600" style="background-color: {{ $scheme['colors']['secondary'] }}"></div>
-                                                <div class="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600" style="background-color: {{ $scheme['colors']['accent'] }}"></div>
+                                                <div class="w-4 h-4 rounded-full border border-zinc-300 dark:border-zinc-600" style="background-color: {{ $scheme['colors']['primary'] }}"></div>
+                                                <div class="w-4 h-4 rounded-full border border-zinc-300 dark:border-zinc-600" style="background-color: {{ $scheme['colors']['secondary'] }}"></div>
+                                                <div class="w-4 h-4 rounded-full border border-zinc-300 dark:border-zinc-600" style="background-color: {{ $scheme['colors']['accent'] }}"></div>
                                             </div>
                                             
-                                            <span class="text-xs font-medium text-center text-gray-900 dark:text-white">
+                                            <span class="text-xs font-medium text-center text-zinc-900 dark:text-white">
                                                 {{ $scheme['name'] }}
                                             </span>
-                                            <span class="text-xs text-gray-600 dark:text-gray-400 text-center">
+                                            <span class="text-xs text-zinc-600 dark:text-zinc-400 text-center">
                                                 {{ Str::limit($scheme['description'], 30) }}
                                             </span>
                                         </label>
@@ -523,9 +523,9 @@
                         <div class="space-y-4">
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center gap-4">
-                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                    <h3 class="text-lg font-semibold text-zinc-900 dark:text-white">
                                         Uploaded Logos
-                                        <span class="text-sm font-normal text-gray-600 dark:text-gray-400">
+                                        <span class="text-sm font-normal text-zinc-600 dark:text-zinc-400">
                                             ({{ $this->filteredUploadedLogos->count() }} 
                                             @if($this->filteredUploadedLogos->count() !== $this->uploadedLogos->count())
                                                 of {{ $this->uploadedLogos->count() }}
@@ -589,11 +589,11 @@
                                                    wire:model.live="selectedUploadedLogos" 
                                                    value="{{ $uploadedLogo->id }}" 
                                                    wire:click.stop="toggleUploadedLogoSelection({{ $uploadedLogo->id }})"
-                                                   class="w-4 h-4 text-primary-600 bg-white border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                                   class="w-4 h-4 text-accent bg-white border-zinc-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600">
                                         </div>
                                         
                                         {{-- Logo Card --}}
-                                        <div class="aspect-square bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-800/50 transition-all duration-300 ease-out cursor-pointer transform hover:scale-105 hover:-translate-y-1 focus-within:ring-2 focus-within:ring-blue-500/50" 
+                                        <div class="aspect-square bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg p-4 hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-800/50 transition-all duration-300 ease-out cursor-pointer transform hover:scale-105 hover:-translate-y-1 focus-within:ring-2 focus-within:ring-blue-500/50" 
                                              wire:click="showLogoDetail({{ $uploadedLogo->id }}, 'uploaded')">
                                             {{-- Logo Image --}}
                                             <div class="w-full h-full flex items-center justify-center">
@@ -605,8 +605,8 @@
                                                         loading="lazy"
                                                     >
                                                 @else
-                                                    <div class="w-full h-full bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center">
-                                                        <flux:icon.photo class="size-8 text-gray-400" />
+                                                    <div class="w-full h-full bg-zinc-100 dark:bg-zinc-700 rounded flex items-center justify-center">
+                                                        <flux:icon.photo class="size-8 text-zinc-400" />
                                                     </div>
                                                 @endif
                                             </div>
@@ -637,10 +637,10 @@
                                         
                                         {{-- Logo Info --}}
                                         <div class="mt-2 text-center">
-                                            <p class="text-xs text-gray-600 dark:text-gray-400 truncate" title="{{ $uploadedLogo->original_name }}">
+                                            <p class="text-xs text-zinc-600 dark:text-zinc-400 truncate" title="{{ $uploadedLogo->original_name }}">
                                                 {{ $uploadedLogo->getDisplayName() }}
                                             </p>
-                                            <p class="text-xs text-gray-500 dark:text-gray-500">
+                                            <p class="text-xs text-zinc-500 dark:text-zinc-500">
                                                 {{ $uploadedLogo->getFormattedFileSize() }}
                                             </p>
                                         </div>
@@ -655,9 +655,9 @@
                         @foreach($this->filteredLogosByStyle as $styleGroup)
                         <div class="space-y-4">
                             <div class="flex justify-between items-center">
-                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                <h3 class="text-lg font-semibold text-zinc-900 dark:text-white">
                                     {{ $styleGroup['display_name'] }} Style
-                                    <span class="text-sm font-normal text-gray-600 dark:text-gray-400">
+                                    <span class="text-sm font-normal text-zinc-600 dark:text-zinc-400">
                                         ({{ $styleGroup['logos']->count() }} logos)
                                     </span>
                                 </h3>
@@ -670,7 +670,7 @@
                                 @foreach($styleGroup['logos'] as $logo)
                                     <div class="relative group">
                                         {{-- Logo Card --}}
-                                        <div class="aspect-square bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-lg transition-all duration-200 cursor-pointer @if(in_array($logo->id, $selectedLogos)) ring-2 ring-blue-500 ring-offset-2 dark:ring-offset-gray-900 @endif" 
+                                        <div class="aspect-square bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg p-4 hover:shadow-lg transition-all duration-200 cursor-pointer @if(in_array($logo->id, $selectedLogos)) ring-2 ring-blue-500 ring-offset-2 dark:ring-offset-gray-900 @endif" 
                                              wire:click="showLogoDetail({{ $logo->id }}, 'generated')">
                                             {{-- Selection Checkbox --}}
                                             @if($this->logoGeneration->status === 'completed')
@@ -679,7 +679,7 @@
                                                         type="checkbox" 
                                                         wire:click.stop="toggleLogoSelection({{ $logo->id }})"
                                                         @if(in_array($logo->id, $selectedLogos)) checked @endif
-                                                        class="w-4 h-4 text-primary-600 bg-white border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                        class="w-4 h-4 text-accent bg-white border-zinc-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600"
                                                     >
                                                 </div>
                                             @endif
@@ -694,8 +694,8 @@
                                                         loading="lazy"
                                                     >
                                                 @else
-                                                    <div class="w-full h-full bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center">
-                                                        <flux:icon.photo class="size-8 text-gray-400" />
+                                                    <div class="w-full h-full bg-zinc-100 dark:bg-zinc-700 rounded flex items-center justify-center">
+                                                        <flux:icon.photo class="size-8 text-zinc-400" />
                                                     </div>
                                                 @endif
                                             </div>
@@ -752,10 +752,10 @@
                 <flux:card>
                     <div class="overflow-x-auto">
                         <table class="w-full">
-                            <thead class="bg-gray-50 dark:bg-gray-800">
+                            <thead class="bg-zinc-50 dark:bg-zinc-800">
                                 <tr>
                                     @if($this->logoGeneration->status === 'completed')
-                                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        <th class="px-6 py-4 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                                             <input 
                                                 type="checkbox" 
                                                 class="rounded"
@@ -764,16 +764,16 @@
                                             >
                                         </th>
                                     @endif
-                                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    <th class="px-6 py-4 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                                         Preview
                                     </th>
-                                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    <th class="px-6 py-4 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                                         Style
                                     </th>
-                                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    <th class="px-6 py-4 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                                         Details
                                     </th>
-                                    <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    <th class="px-6 py-4 text-right text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                                         Actions
                                     </th>
                                 </tr>
@@ -782,7 +782,7 @@
                                 {{-- Uploaded Logos --}}
                                 @if($filterType === 'all' || $filterType === 'uploaded')
                                     @foreach($this->filteredUploadedLogos as $uploadedLogo)
-                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer" 
+                                    <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer" 
                                         wire:click="showLogoDetail({{ $uploadedLogo->id }}, 'uploaded')">
                                         @if($this->logoGeneration->status === 'completed')
                                             <td class="px-6 py-4">
@@ -792,12 +792,12 @@
                                                     wire:model.live="selectedUploadedLogos" 
                                                     value="{{ $uploadedLogo->id }}" 
                                                     wire:click.stop="toggleUploadedLogoSelection({{ $uploadedLogo->id }})"
-                                                    class="w-4 h-4 text-primary-600 bg-white border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                                    class="w-4 h-4 text-accent bg-white border-zinc-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600">
                                             </td>
                                         @endif
                                         
                                         <td class="px-6 py-4">
-                                            <div class="w-16 h-16 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded p-2 flex items-center justify-center">
+                                            <div class="w-16 h-16 bg-white dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded p-2 flex items-center justify-center">
                                                 @if($uploadedLogo->fileExists())
                                                     <img 
                                                         src="{{ $uploadedLogo->getFileUrl() }}" 
@@ -806,7 +806,7 @@
                                                         loading="lazy"
                                                     >
                                                 @else
-                                                    <flux:icon.photo class="size-6 text-gray-400" />
+                                                    <flux:icon.photo class="size-6 text-zinc-400" />
                                                 @endif
                                             </div>
                                         </td>
@@ -819,10 +819,10 @@
                                         
                                         <td class="px-6 py-4">
                                             <div class="space-y-1">
-                                                <p class="text-sm font-medium text-gray-900 dark:text-white truncate" title="{{ $uploadedLogo->original_name }}">
+                                                <p class="text-sm font-medium text-zinc-900 dark:text-white truncate" title="{{ $uploadedLogo->original_name }}">
                                                     {{ $uploadedLogo->getDisplayName() }}
                                                 </p>
-                                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                <p class="text-xs text-zinc-500 dark:text-zinc-400">
                                                     {{ $uploadedLogo->getFormattedFileSize() }}
                                                     @if($uploadedLogo->image_width && $uploadedLogo->image_height)
                                                         • {{ $uploadedLogo->image_width }}x{{ $uploadedLogo->image_height }}px
@@ -857,7 +857,7 @@
                                 {{-- Generated Logos --}}
                                 @if($filterType === 'all' || $filterType === 'generated')
                                     @foreach($this->filteredGeneratedLogos as $logo)
-                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer @if(in_array($logo->id, $selectedLogos)) bg-primary-50 dark:bg-primary-900/20 @endif" 
+                                    <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer @if(in_array($logo->id, $selectedLogos)) bg-accent/20 dark:bg-accent/20 @endif" 
                                         wire:click="showLogoDetail({{ $logo->id }}, 'generated')">
                                         @if($this->logoGeneration->status === 'completed')
                                             <td class="px-6 py-4">
@@ -871,7 +871,7 @@
                                         @endif
                                         
                                         <td class="px-6 py-4">
-                                            <div class="w-16 h-16 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded p-2 flex items-center justify-center">
+                                            <div class="w-16 h-16 bg-white dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded p-2 flex items-center justify-center">
                                                 @if(Storage::disk('public')->exists($logo->original_file_path))
                                                     <img 
                                                         src="{{ Storage::disk('public')->url($logo->original_file_path) }}" 
@@ -880,7 +880,7 @@
                                                         loading="lazy"
                                                     >
                                                 @else
-                                                    <flux:icon.photo class="size-6 text-gray-400" />
+                                                    <flux:icon.photo class="size-6 text-zinc-400" />
                                                 @endif
                                             </div>
                                         </td>
@@ -895,14 +895,14 @@
                                             @if($logo->colorVariants->isNotEmpty())
                                                 <div class="flex flex-wrap gap-1">
                                                     @foreach($logo->colorVariants as $variant)
-                                                        <div class="flex items-center gap-1 text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                                                        <div class="flex items-center gap-1 text-xs bg-zinc-100 dark:bg-zinc-700 px-2 py-1 rounded">
                                                             <div class="w-3 h-3 rounded-full" style="background-color: {{ $this->colorSchemes[$variant->color_scheme]['colors']['primary'] ?? '#000' }}"></div>
                                                             {{ ucwords(str_replace('_', ' ', $variant->color_scheme)) }}
                                                         </div>
                                                     @endforeach
                                                 </div>
                                             @else
-                                                <span class="text-sm text-gray-500 dark:text-gray-400">Original only</span>
+                                                <span class="text-sm text-zinc-500 dark:text-zinc-400">Original only</span>
                                             @endif
                                         </td>
                                         
@@ -943,11 +943,11 @@
         @elseif($this->logoGeneration->status === 'completed' && $this->uploadedLogos->isEmpty())
             {{-- No Logos Available --}}
             <flux:card class="p-12 text-center">
-                <flux:icon.photo class="size-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                <flux:icon.photo class="size-16 text-zinc-300 dark:text-zinc-600 mx-auto mb-4" />
+                <h3 class="text-lg font-medium text-zinc-900 dark:text-white mb-2">
                     No logos available
                 </h3>
-                <p class="text-gray-600 dark:text-gray-400">
+                <p class="text-zinc-600 dark:text-zinc-400">
                     No logos have been generated or uploaded yet.
                 </p>
             </flux:card>
@@ -957,10 +957,10 @@
         @if($this->logoGeneration->status === 'failed')
             <flux:card class="p-8 text-center">
                 <flux:icon.exclamation-triangle class="size-16 text-red-400 mx-auto mb-4" />
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                <h3 class="text-lg font-medium text-zinc-900 dark:text-white mb-2">
                     Logo generation failed
                 </h3>
-                <p class="text-gray-600 dark:text-gray-400 mb-4">
+                <p class="text-zinc-600 dark:text-zinc-400 mb-4">
                     {{ $this->logoGeneration->error_message ?? 'An error occurred during logo generation.' }}
                 </p>
                 <flux:button variant="outline" wire:click="loadLogoGeneration">
@@ -973,10 +973,10 @@
         {{-- Logo Generation Not Found --}}
         <flux:card class="p-12 text-center">
             <flux:icon.exclamation-triangle class="size-16 text-yellow-400 mx-auto mb-4" />
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
+            <h3 class="text-lg font-medium text-zinc-900 dark:text-white mb-2">
                 Logo generation not found
             </h3>
-            <p class="text-gray-600 dark:text-gray-400">
+            <p class="text-zinc-600 dark:text-zinc-400">
                 The requested logo generation could not be found or has been deleted.
             </p>
         </flux:card>
@@ -996,7 +996,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {{-- Logo Preview --}}
                     <div class="space-y-4">
-                        <div class="aspect-square bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 flex items-center justify-center">
+                        <div class="aspect-square bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg p-6 flex items-center justify-center">
                             @if($detailLogoType === 'generated')
                                 <img 
                                     src="{{ Storage::disk('public')->url($this->detailLogo->original_file_path) }}" 
@@ -1015,10 +1015,10 @@
                         {{-- Color Variants for Generated Logos --}}
                         @if($detailLogoType === 'generated' && $this->detailLogo->colorVariants->isNotEmpty())
                             <div class="space-y-2">
-                                <h4 class="font-medium text-gray-900 dark:text-white text-sm">Color Variants</h4>
+                                <h4 class="font-medium text-zinc-900 dark:text-white text-sm">Color Variants</h4>
                                 <div class="flex flex-wrap gap-2">
                                     @foreach($this->detailLogo->colorVariants as $variant)
-                                        <div class="relative group cursor-pointer border border-gray-200 dark:border-gray-700 rounded p-2 hover:border-gray-300 dark:hover:border-gray-600">
+                                        <div class="relative group cursor-pointer border border-zinc-200 dark:border-zinc-700 rounded p-2 hover:border-zinc-300 dark:hover:border-zinc-600">
                                             <img 
                                                 src="{{ Storage::disk('public')->url($variant->file_path) }}" 
                                                 alt="Color Variant" 
@@ -1035,18 +1035,18 @@
                     <div class="space-y-6">
                         <div class="space-y-4">
                             <div>
-                                <h4 class="font-medium text-gray-900 dark:text-white text-sm mb-1">Name</h4>
+                                <h4 class="font-medium text-zinc-900 dark:text-white text-sm mb-1">Name</h4>
                                 @if($detailLogoType === 'generated')
-                                    <p class="text-gray-700 dark:text-gray-300">Generated Logo - {{ ucfirst($this->detailLogo->style) }} Style</p>
+                                    <p class="text-zinc-700 dark:text-zinc-300">Generated Logo - {{ ucfirst($this->detailLogo->style) }} Style</p>
                                 @elseif($detailLogoType === 'uploaded')
-                                    <p class="text-gray-700 dark:text-gray-300">{{ $this->detailLogo->display_name }}</p>
+                                    <p class="text-zinc-700 dark:text-zinc-300">{{ $this->detailLogo->display_name }}</p>
                                 @endif
                             </div>
 
                             @if($detailLogoType === 'uploaded')
                                 <div>
-                                    <h4 class="font-medium text-gray-900 dark:text-white text-sm mb-1">File Information</h4>
-                                    <div class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                                    <h4 class="font-medium text-zinc-900 dark:text-white text-sm mb-1">File Information</h4>
+                                    <div class="text-sm text-zinc-600 dark:text-zinc-400 space-y-1">
                                         <div>Size: {{ $this->detailLogo->getFormattedFileSize() }}</div>
                                         <div>Type: {{ strtoupper($this->detailLogo->getFileExtension()) }}</div>
                                         @if($this->detailLogo->image_width && $this->detailLogo->image_height)
@@ -1059,15 +1059,15 @@
 
                             @if($detailLogoType === 'generated' && $this->detailLogo->description)
                                 <div>
-                                    <h4 class="font-medium text-gray-900 dark:text-white text-sm mb-1">Description</h4>
-                                    <p class="text-gray-700 dark:text-gray-300 text-sm">{{ $this->detailLogo->description }}</p>
+                                    <h4 class="font-medium text-zinc-900 dark:text-white text-sm mb-1">Description</h4>
+                                    <p class="text-zinc-700 dark:text-zinc-300 text-sm">{{ $this->detailLogo->description }}</p>
                                 </div>
                             @endif
                         </div>
 
                         {{-- Download Options --}}
                         <div class="space-y-3">
-                            <h4 class="font-medium text-gray-900 dark:text-white text-sm">Download Options</h4>
+                            <h4 class="font-medium text-zinc-900 dark:text-white text-sm">Download Options</h4>
                             
                             @if($detailLogoType === 'generated')
                                 <div class="grid grid-cols-2 gap-2">
@@ -1092,7 +1092,7 @@
                                 {{-- Color Variant Downloads --}}
                                 @if($this->detailLogo->colorVariants->isNotEmpty())
                                     <div class="space-y-2">
-                                        <p class="text-xs font-medium text-gray-600 dark:text-gray-400">Color Variants</p>
+                                        <p class="text-xs font-medium text-zinc-600 dark:text-zinc-400">Color Variants</p>
                                         <div class="space-y-1">
                                             @foreach($this->detailLogo->colorVariants as $variant)
                                                 <flux:button 

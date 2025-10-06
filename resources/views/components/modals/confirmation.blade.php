@@ -15,25 +15,25 @@
                 </svg>
             @endif
         </div>
-        <h4 class="mt-3 text-lg font-medium text-gray-900 dark:text-gray-100">
+        <h4 class="mt-3 text-lg font-medium text-zinc-900 dark:text-zinc-100">
             {{ $data['title'] ?? 'Confirm Action' }}
         </h4>
-        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+        <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
             {{ $data['message'] ?? 'Are you sure you want to proceed with this action?' }}
         </p>
     </div>
 
     {{-- Additional Details --}}
     @if(!empty($data['details']))
-        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-            <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-4">
+            <h5 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                 {{ $data['detailsTitle'] ?? 'Details' }}
             </h5>
             @if(is_array($data['details']))
-                <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                <ul class="text-sm text-zinc-600 dark:text-zinc-400 space-y-1">
                     @foreach($data['details'] as $detail)
                         <li class="flex items-center">
-                            <svg class="w-3 h-3 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-3 h-3 mr-2 text-zinc-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
                             {{ $detail }}
@@ -41,7 +41,7 @@
                     @endforeach
                 </ul>
             @else
-                <p class="text-sm text-gray-600 dark:text-gray-400">
+                <p class="text-sm text-zinc-600 dark:text-zinc-400">
                     {{ $data['details'] }}
                 </p>
             @endif
@@ -102,9 +102,9 @@
 
     {{-- Keyboard Shortcuts Hint --}}
     <div class="text-center">
-        <p class="text-xs text-gray-500 dark:text-gray-400">
-            Press <kbd class="px-1 py-0.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Enter</kbd> 
-            to confirm or <kbd class="px-1 py-0.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Esc</kbd> 
+        <p class="text-xs text-zinc-500 dark:text-zinc-400">
+            Press <kbd class="px-1 py-0.5 text-xs font-semibold text-zinc-800 bg-zinc-100 border border-zinc-200 rounded dark:bg-zinc-700 dark:text-zinc-200 dark:border-zinc-600">Enter</kbd> 
+            to confirm or <kbd class="px-1 py-0.5 text-xs font-semibold text-zinc-800 bg-zinc-100 border border-zinc-200 rounded dark:bg-zinc-700 dark:text-zinc-200 dark:border-zinc-600">Esc</kbd> 
             to cancel
         </p>
     </div>

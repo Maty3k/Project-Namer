@@ -17,10 +17,10 @@
             <div class="max-w-4xl mx-auto w-full space-y-8">
                 {{-- Header --}}
                 <div class="text-center space-y-4">
-                    <h1 class="text-4xl font-bold text-gray-900 dark:text-white">
+                    <h1 class="text-4xl font-bold text-zinc-900 dark:text-white">
                         AI-Powered Business Name Generator
                     </h1>
-                    <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                    <p class="text-lg text-zinc-600 dark:text-zinc-300 max-w-2xl mx-auto">
                         Ready to generate unique business names with AI assistance.
                     </p>
                 </div>
@@ -41,7 +41,7 @@
                                 class="resize-none"
                                 maxlength="2000"
                             />
-                            <div class="flex justify-between items-center text-sm text-gray-500">
+                            <div class="flex justify-between items-center text-sm text-zinc-500">
                                 <flux:error name="businessIdea" />
                                 <span>{{ strlen($businessIdea) }}/2000 characters</span>
                             </div>
@@ -63,11 +63,11 @@
                             {{-- Deep Thinking Mode --}}
                             <div class="space-y-3">
                                 <flux:label class="text-base font-medium">Processing Mode</flux:label>
-                                <div class="flex items-start space-x-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                                    <input type="checkbox" wire:model.live="deepThinking" class="h-4 w-4 border-gray-300 rounded mt-1" />
+                                <div class="flex items-start space-x-3 p-4 bg-zinc-50 dark:bg-zinc-800 rounded-lg">
+                                    <input type="checkbox" wire:model.live="deepThinking" class="h-4 w-4 border-zinc-300 rounded mt-1" />
                                     <div>
-                                        <div class="font-medium text-sm text-gray-900 dark:text-white">Deep Thinking Mode</div>
-                                        <div class="text-sm text-gray-600 dark:text-gray-300">
+                                        <div class="font-medium text-sm text-zinc-900 dark:text-white">Deep Thinking Mode</div>
+                                        <div class="text-sm text-zinc-600 dark:text-zinc-300">
                                             Enhanced processing for higher quality results (takes longer)
                                         </div>
                                     </div>
@@ -80,7 +80,7 @@
                             {{-- Enable AI Generation Toggle --}}
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
-                                    <input type="checkbox" wire:model.live="useAIGeneration" id="use-ai-generation" class="h-4 w-4 border-gray-300 rounded" />
+                                    <input type="checkbox" wire:model.live="useAIGeneration" id="use-ai-generation" class="h-4 w-4 border-zinc-300 rounded" />
                                     <flux:label for="use-ai-generation" class="text-base font-medium">
                                         <span class="flex items-center gap-2">
                                             <flux:icon.sparkles class="size-4 text-purple-600" />
@@ -100,8 +100,8 @@
 
                                     {{-- Model Comparison Toggle --}}
                                     <div class="flex items-center space-x-3 mb-3">
-                                        <input type="checkbox" wire:model.live="enableModelComparison" id="model-comparison" class="h-4 w-4 border-gray-300 rounded" />
-                                        <flux:label for="model-comparison" class="text-sm text-gray-600 dark:text-gray-300">
+                                        <input type="checkbox" wire:model.live="enableModelComparison" id="model-comparison" class="h-4 w-4 border-zinc-300 rounded" />
+                                        <flux:label for="model-comparison" class="text-sm text-zinc-600 dark:text-zinc-300">
                                             Model Comparison (Generate with multiple models)
                                         </flux:label>
                                     </div>
@@ -109,15 +109,15 @@
                                     {{-- Model Selection Grid --}}
                                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                                         @foreach($availableAIModels as $model)
-                                            <label class="relative flex items-center p-3 sm:p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 min-h-[60px] {{ in_array($model['id'], $selectedAIModels) ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 shadow-md' : 'border-gray-200 dark:border-gray-700' }}">
+                                            <label class="relative flex items-center p-3 sm:p-4 border-2 rounded-xl cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all duration-200 min-h-[60px] {{ in_array($model['id'], $selectedAIModels) ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 shadow-md' : 'border-zinc-200 dark:border-zinc-700' }}">
                                                 <input type="checkbox"
                                                     wire:model.live="selectedAIModels"
                                                     value="{{ $model['id'] }}"
                                                     class="sr-only"
                                                 />
                                                 <div class="flex-1 min-w-0">
-                                                    <div class="font-semibold text-sm truncate text-gray-900 dark:text-white">{{ $model['name'] }}</div>
-                                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">{{ $model['provider'] }}</div>
+                                                    <div class="font-semibold text-sm truncate text-zinc-900 dark:text-white">{{ $model['name'] }}</div>
+                                                    <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-1 truncate">{{ $model['provider'] }}</div>
                                                 </div>
                                                 <div class="flex-shrink-0 ml-2">
                                                     @if($modelAvailability[$model['id']] ?? false)
@@ -131,7 +131,7 @@
                                     </div>
 
                                     @if(count($selectedAIModels) > 1 && $enableModelComparison)
-                                        <div class="text-sm text-blue-600">
+                                        <div class="text-sm text-accent">
                                             <flux:icon.information-circle class="size-4 inline" />
                                             Compare {{ count($selectedAIModels) }} Models - Results will be shown in separate tabs
                                         </div>
@@ -191,11 +191,11 @@
         @if($showResults)
             <flux:tab.panel name="results" class="flex-1">
                 <div class="max-w-6xl mx-auto w-full space-y-6">
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <h2 class="text-2xl font-bold text-zinc-900 dark:text-white">
                         Generated Names
                     </h2>
-                    <div class="rounded-lg p-6 bg-gray-50 dark:bg-gray-800">
-                        <p class="text-gray-700 dark:text-gray-300">
+                    <div class="rounded-lg p-6 bg-zinc-50 dark:bg-zinc-800">
+                        <p class="text-zinc-700 dark:text-zinc-300">
                             Your generated business names will appear here.
                         </p>
                     </div>
