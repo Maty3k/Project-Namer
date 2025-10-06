@@ -13,7 +13,6 @@ use Livewire\Livewire;
  *
  * @deprecated Will be removed after complete migration to FluxUI theming
  */
-
 test('light themes have dark text for readability', function (): void {
     test()->markTestSkipped('Skipping during FluxUI migration - FluxUI uses zinc shades for text/background');
 

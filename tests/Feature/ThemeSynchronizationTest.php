@@ -13,7 +13,6 @@ use Livewire\Livewire;
  *
  * @deprecated Will be updated after complete migration to FluxUI theming
  */
-
 it('synchronizes theme settings between User and UserThemePreference models when applying theme', function (): void {
     test()->markTestSkipped('Skipping during FluxUI migration - needs update for new property structure');
 
