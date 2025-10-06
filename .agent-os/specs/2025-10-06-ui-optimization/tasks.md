@@ -8,14 +8,14 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
 ## Tasks
 
 - [ ] 1. Loading Skeleton Components
-  - [ ] 1.1 Write tests for skeleton components (visibility, structure, animations)
-  - [ ] 1.2 Create reusable skeleton Blade components (name-card, logo-card, session-list, project-card)
-  - [ ] 1.3 Implement skeleton loading in ProjectPage for name suggestions
+  - [x] 1.1 Write tests for skeleton components (visibility, structure, animations)
+  - [x] 1.2 Create reusable skeleton Blade components (name-card, logo-card, session-list, project-card)
+  - [x] 1.3 Implement skeleton loading in ProjectPage for name suggestions
   - [ ] 1.4 Implement skeleton loading in Dashboard for project cards
   - [ ] 1.5 Implement skeleton loading in SessionSidebar for session items
   - [ ] 1.6 Implement skeleton loading in LogoGallery for logo cards
   - [ ] 1.7 Add skeleton loading to AI generation progress displays
-  - [ ] 1.8 Verify all tests pass
+  - [x] 1.8 Verify all tests pass
 
 - [ ] 2. Lazy Loading Implementation
   - [ ] 2.1 Write tests for lazy loading behavior (images, components, deferred data)

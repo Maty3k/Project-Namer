@@ -50,9 +50,19 @@
         </flux:card>
 
         <!-- Logo Generations Grid -->
-        @if($logoGenerations->count() > 0)
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-                @foreach($logoGenerations as $generation)
+
+        <!-- Skeleton Loading State -->
+        <div wire:loading wire:target="search,statusFilter,clearFilters" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+            @for($i = 0; $i < 8; $i++)
+                <x-skeleton-logo-card />
+            @endfor
+        </div>
+
+        <!-- Actual Content -->
+        <div wire:loading.remove wire:target="search,statusFilter,clearFilters">
+            @if($logoGenerations->count() > 0)
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+                    @foreach($logoGenerations as $generation)
                     <flux:card class="hover:shadow-lg transition-shadow duration-200">
                         <div class="p-6">
                             <!-- Generation Info -->
@@ -164,6 +174,7 @@
                     </div>
                 </div>
             </flux:card>
-        @endif
+            @endif
+        </div>
     </div>
 </div>
