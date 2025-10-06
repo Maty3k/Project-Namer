@@ -8,10 +8,25 @@ use App\Models\AIModelPerformance;
 use App\Models\User;
 use App\Models\UserAIPreferences;
 use Livewire\Livewire;
+use Prism\Prism\Prism;
+use Prism\Prism\Testing\TextResponseFake;
+
+/**
+ * @group slow
+ * @group ai
+ */
 
 beforeEach(function (): void {
     $this->user = User::factory()->create();
     $this->actingAs($this->user);
+
+    // Mock AI responses for testing - these are integration tests so they will be slower
+    // Use --exclude-group=slow to skip these during rapid development
+    Prism::fake([
+        TextResponseFake::make()->withText("1. TechNova\n2. InnovateLabs\n3. FutureSync\n4. QuantumLeap\n5. NextGenTech\n6. SmartFlow\n7. DataPulse\n8. CloudNine\n9. ByteForge\n10. CodeCraft"),
+        TextResponseFake::make()->withText("1. BrandFlow\n2. MarketPulse\n3. VisionHub\n4. CoreBrand\n5. TrustMark\n6. BrandSphere\n7. ImpactWave\n8. SignalBrand\n9. BeaconMark\n10. RadiantBrand"),
+        TextResponseFake::make()->withText("1. DataStream\n2. CloudPeak\n3. TechWave\n4. CodeHub\n5. DevSphere\n6. BitForge\n7. LogicFlow\n8. CoreStack\n9. SyncLabs\n10. NetPulse"),
+    ]);
 });
 
 test('Dashboard displays AI generation controls', function (): void {
