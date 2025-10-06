@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Models\LogoGeneration;
 use App\Models\Project;
 use App\Models\ProjectImage;
 use App\Models\User;
