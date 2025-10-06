@@ -19,6 +19,10 @@ use Prism\Prism\Prism;
 use Prism\Prism\Testing\TextResponseFake;
 use Tests\TestCase;
 
+/**
+ * @group integration
+ * @group slow
+ */
 class AIWorkflowIntegrationTest extends TestCase
 {
     use RefreshDatabase;
