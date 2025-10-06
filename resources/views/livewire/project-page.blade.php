@@ -264,58 +264,6 @@
                                 <flux:error name="selectedAIModels" />
                             </flux:field>
 
-                            <!-- Smart Model Recommendations -->
-                            @php
-                                $recommendations = $this->getModelRecommendations();
-                            @endphp
-                            @if($recommendations['based_on_generations'] > 0)
-                                <div class="bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-700 rounded-lg p-4">
-                                    <div class="flex items-center justify-between mb-3">
-                                        <div class="flex items-center gap-2">
-                                            <flux:icon name="sparkles" class="w-5 h-5 text-primary-600 dark:text-primary-400" />
-                                            <h4 class="font-medium text-primary-900 dark:text-primary-100">Smart Recommendations</h4>
-                                        </div>
-                                        <span class="text-xs text-primary-600 dark:text-primary-400">
-                                            Based on {{ $recommendations['based_on_generations'] }} generations
-                                        </span>
-                                    </div>
-                                    
-                                    <p class="text-sm text-primary-800 dark:text-blue-200 mb-3">
-                                        We recommend these models based on your usage patterns and satisfaction:
-                                    </p>
-                                    
-                                    <div class="flex flex-wrap gap-2 mb-3">
-                                        @foreach($recommendations['recommended_models'] as $index => $modelId)
-                                            @php
-                                                $modelNames = [
-                                                    'gpt-4' => 'GPT-4',
-                                                    'claude-3.5-sonnet' => 'Claude 3.5',
-                                                    'gemini-1.5-pro' => 'Gemini Pro',
-                                                    'grok-beta' => 'Grok'
-                                                ];
-                                                $score = $recommendations['model_scores'][$modelId] ?? 0;
-                                            @endphp
-                                            <div class="flex items-center gap-2 bg-white dark:bg-primary-800 px-3 py-1 rounded-full border border-primary-300 dark:border-primary-600">
-                                                <span class="text-sm font-medium text-primary-900 dark:text-primary-100">
-                                                    {{ $modelNames[$modelId] ?? ucfirst($modelId) }}
-                                                </span>
-                                                <span class="text-xs bg-primary-600 text-white px-2 py-0.5 rounded-full">
-                                                    {{ round($score) }}%
-                                                </span>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                    
-                                    <flux:button
-                                        wire:click="applySmartModelSelection"
-                                        variant="filled"
-                                        size="sm"
-                                        class="bg-primary-600 hover:bg-primary-700 text-white"
-                                    >
-                                        Apply Smart Selection
-                                    </flux:button>
-                                </div>
-                            @endif
 
                             <!-- Generation Mode -->
                             <flux:field>
