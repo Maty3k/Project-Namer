@@ -59,16 +59,16 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 5.8 Respect prefers-reduced-motion media query
   - [x] 5.9 Verify all tests pass
 
-- [ ] 6. Database Query Optimization
-  - [ ] 6.1 Write tests for query performance and N+1 prevention
-  - [ ] 6.2 Create database migration for missing indexes
-  - [ ] 6.3 Add eager loading to ProjectPage queries
-  - [ ] 6.4 Add eager loading to Dashboard queries
-  - [ ] 6.5 Add eager loading to SessionSidebar queries
-  - [ ] 6.6 Optimize logo gallery queries with chunking
-  - [ ] 6.7 Add query monitoring in tests to detect N+1
-  - [ ] 6.8 Verify query counts meet targets (dashboard <15, project <20)
-  - [ ] 6.9 Verify all tests pass
+- [x] 6. Database Query Optimization
+  - [x] 6.1 Write tests for query performance and N+1 prevention
+  - [x] 6.2 Create database migration for missing indexes
+  - [x] 6.3 Add eager loading to ProjectPage queries
+  - [x] 6.4 Add eager loading to Dashboard queries
+  - [x] 6.5 Add eager loading to SessionSidebar queries
+  - [x] 6.6 Optimize logo gallery queries with chunking
+  - [x] 6.7 Add query monitoring in tests to detect N+1
+  - [x] 6.8 Verify query counts meet targets (dashboard <15, project <20)
+  - [x] 6.9 Verify all tests pass
 
 - [ ] 7. Error State Improvements
   - [ ] 7.1 Write tests for error messages and retry functionality
