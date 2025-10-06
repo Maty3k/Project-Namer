@@ -23,7 +23,7 @@
         
         <!-- Drag and Drop Upload Area -->
         <div class="upload-zone relative border-2 border-dashed rounded-lg p-8 transition-all duration-200
-                    {{ count($images) > 0 ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-300 dark:border-primary-600' : 'bg-gray-50 dark:bg-gray-800' }}"
+                    {{ count($images) > 0 ? 'bg-accent/20 dark:bg-accent/20 border-accent dark:border-accent' : 'bg-zinc-50 dark:bg-zinc-800' }}"
              x-data="imageDropzone()"
              x-init="init()"
              @drop="handleDrop($event)"
@@ -32,8 +32,8 @@
              @dragleave="handleDragLeave($event)"
              @click="!isDialogOpen && !isDragging && openFileDialog()"
              :class="{
-                 'border-primary-400 dark:border-primary-500 bg-primary-100 dark:bg-primary-900/40 scale-[1.02] cursor-copy': isDragging,
-                 'border-gray-300 dark:border-gray-600 hover:border-primary-400 dark:hover:border-primary-500 cursor-pointer': !isDragging
+                 'border-accent dark:border-accent bg-accent dark:bg-accent/40 scale-[1.02] cursor-copy': isDragging,
+                 'border-zinc-300 dark:border-zinc-600 hover:border-accent dark:hover:border-accent cursor-pointer': !isDragging
              }">
             
             <input type="file"
@@ -46,41 +46,41 @@
             <div class="text-center">
                 @if(count($images) > 0)
                     <flux:icon.photo
-                        class="mx-auto h-12 w-12 text-primary-500 dark:text-primary-400" />
-                    <p class="mt-2 text-sm font-medium text-primary-600 dark:text-primary-400">
+                        class="mx-auto h-12 w-12 text-accent dark:text-accent" />
+                    <p class="mt-2 text-sm font-medium text-accent dark:text-accent">
                         {{ count($images) }} {{ Str::plural('image', count($images)) }} selected
                     </p>
-                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400"
+                    <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400"
                        x-show="!isDragging">
                         Click to add more or drag additional files here
                     </p>
-                    <p class="mt-1 text-xs text-primary-600 dark:text-primary-400 font-medium"
+                    <p class="mt-1 text-xs text-accent dark:text-accent font-medium"
                        x-show="isDragging"
                        style="display: none;">
                         Drop files to add them to your selection
                     </p>
                 @else
                     <flux:icon.cloud-arrow-up
-                        class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500"
+                        class="mx-auto h-12 w-12 text-zinc-400 dark:text-zinc-500"
                         x-show="!isDragging" />
                     <flux:icon.photo
-                        class="mx-auto h-12 w-12 text-primary-500 dark:text-primary-400 animate-bounce"
+                        class="mx-auto h-12 w-12 text-accent dark:text-accent animate-bounce"
                         x-show="isDragging"
                         style="display: none;" />
-                    <p class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100"
+                    <p class="mt-2 text-sm font-medium text-zinc-900 dark:text-zinc-100"
                        x-show="!isDragging">
                         Drag and drop images here, or click to browse
                     </p>
-                    <p class="mt-2 text-sm font-medium text-primary-600 dark:text-primary-400"
+                    <p class="mt-2 text-sm font-medium text-accent dark:text-accent"
                        x-show="isDragging"
                        style="display: none;">
                         Drop your images here!
                     </p>
-                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400"
+                    <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400"
                        x-show="!isDragging">
                         JPEG, PNG, WebP, GIF up to 50MB each
                     </p>
-                    <p class="mt-1 text-xs text-primary-500 dark:text-primary-400"
+                    <p class="mt-1 text-xs text-accent dark:text-accent"
                        x-show="isDragging"
                        style="display: none;">
                         Multiple files supported
@@ -102,8 +102,8 @@
                         md:grid-cols-4
                         lg:grid-cols-6">
                 @foreach($images as $index => $image)
-                    <div class="relative group bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm
-                                border border-gray-200 dark:border-gray-700
+                    <div class="relative group bg-white dark:bg-zinc-800 rounded-lg overflow-hidden shadow-sm
+                                border border-zinc-200 dark:border-gray-700
                                 hover:shadow-md transition-shadow duration-200">
                         
                         @if($image->temporaryUrl())
@@ -111,16 +111,16 @@
                                  alt="Preview"
                                  class="w-full h-24 object-cover" />
                         @else
-                            <div class="w-full h-24 bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                                <flux:icon.photo class="h-6 w-6 text-gray-400" />
+                            <div class="w-full h-24 bg-zinc-100 dark:bg-zinc-700 flex items-center justify-center">
+                                <flux:icon.photo class="h-6 w-6 text-zinc-400" />
                             </div>
                         @endif
                         
                         <div class="p-2">
-                            <p class="text-xs text-gray-600 dark:text-gray-400 truncate">
+                            <p class="text-xs text-zinc-600 dark:text-zinc-400 truncate">
                                 {{ $image->getClientOriginalName() }}
                             </p>
-                            <p class="text-xs text-gray-500 dark:text-gray-500">
+                            <p class="text-xs text-zinc-500 dark:text-zinc-500">
                                 {{ round($image->getSize() / 1024 / 1024, 2) }} MB
                             </p>
                         </div>

@@ -6,10 +6,10 @@
         <div class="flex flex-col gap-4
                     sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <flux:heading size="lg" class="text-gray-900 dark:text-gray-100">
+                <flux:heading size="lg" class="text-zinc-900 dark:text-zinc-100">
                     My Shares
                 </flux:heading>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                <p class="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
                     Manage your shared logo designs and view analytics
                 </p>
             </div>
@@ -52,18 +52,18 @@
     @if (count($sharesData['data']) > 0)
         <div class="space-y-4">
             @foreach ($sharesData['data'] as $share)
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6">
                     <div class="flex flex-col gap-4
                                 lg:flex-row lg:items-center lg:justify-between">
                         <div class="flex-1">
                             <div class="flex items-start gap-3">
                                 <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-900 dark:text-gray-100">
+                                    <h3 class="font-semibold text-zinc-900 dark:text-zinc-100">
                                         {{ $share->title ?: 'Untitled Share' }}
                                     </h3>
                                     
                                     @if ($share->description)
-                                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                        <p class="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
                                             {{ Str::limit($share->description, 120) }}
                                         </p>
                                     @endif
@@ -83,11 +83,11 @@
                                             {{ $share->is_active ? 'Active' : 'Inactive' }}
                                         </flux:badge>
                                         
-                                        <span class="text-xs text-gray-500 dark:text-gray-400">
+                                        <span class="text-xs text-zinc-500 dark:text-zinc-400">
                                             {{ $share->view_count }} views
                                         </span>
                                         
-                                        <span class="text-xs text-gray-500 dark:text-gray-400">
+                                        <span class="text-xs text-zinc-500 dark:text-zinc-400">
                                             Created {{ $share->created_at->diffForHumans() }}
                                         </span>
                                         
@@ -147,13 +147,13 @@
         @endif
     @else
         <div class="text-center py-12">
-            <div class="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-                <flux:icon name="share" class="w-8 h-8 text-gray-400" />
+            <div class="mx-auto w-24 h-24 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-4">
+                <flux:icon name="share" class="w-8 h-8 text-zinc-400" />
             </div>
-            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+            <h3 class="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-2">
                 No shares found
             </h3>
-            <p class="text-gray-600 dark:text-gray-400 mb-4">
+            <p class="text-zinc-600 dark:text-zinc-400 mb-4">
                 @if ($search || $filterType || $filterActive !== '')
                     No shares match your current filters.
                 @else
@@ -249,7 +249,7 @@
                             class="w-full"
                         />
                         <flux:error name="expiresAt" />
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        <p class="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
                             Leave blank for permanent share
                         </p>
                     </flux:field>

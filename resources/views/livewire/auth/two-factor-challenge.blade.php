@@ -4,7 +4,7 @@
             <x-app-logo-icon class="w-20 h-20" />
         </x-slot>
 
-        <div class="mb-4 text-sm text-gray-600">
+        <div class="mb-4 text-sm text-zinc-600">
             @if ($showingRecoveryCodeForm)
                 {{ __('Please confirm access to your account by entering one of your emergency recovery codes.') }}
             @else
@@ -25,15 +25,15 @@
 
             @if (config('settings.two_factor_trust') !== null)
                 <div class="mt-4 flex items-center">
-                    <input wire:model="rememberDevice" id="remember_device" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
-                    <label for="remember_device" class="ml-2 block text-sm text-gray-600">
+                    <input wire:model="rememberDevice" id="remember_device" type="checkbox" class="rounded border-zinc-300 text-indigo-600 shadow-sm focus:ring-accent">
+                    <label for="remember_device" class="ml-2 block text-sm text-zinc-600">
                         {{ __('Trust this device for :days days', ['days' => config('settings.two_factor_trust')]) }}
                     </label>
                 </div>
             @endif
 
             <div class="flex items-center justify-end mt-4">
-                <button type="button" class="text-sm text-gray-600 hover:text-gray-900 underline cursor-pointer" wire:click="toggleRecoveryCodeForm">
+                <button type="button" class="text-sm text-zinc-600 hover:text-zinc-900 underline cursor-pointer" wire:click="toggleRecoveryCodeForm">
                     @if ($showingRecoveryCodeForm)
                         {{ __('Use an authentication code') }}
                     @else

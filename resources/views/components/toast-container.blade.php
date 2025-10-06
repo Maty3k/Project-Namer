@@ -41,7 +41,7 @@
                             </svg>
                         </template>
                         <template x-if="toast.type === 'info'">
-                            <svg class="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <svg class="w-5 h-5 text-zinc-600 dark:text-zinc-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
                             </svg>
                         </template>
@@ -54,7 +54,7 @@
                         
                         {{-- Progress bar for timed toasts --}}
                         <div x-show="toast.progress !== undefined" class="mt-2">
-                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                            <div class="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-1.5">
                                 <div class="h-1.5 rounded-full transition-all duration-300" 
                                      :class="getProgressClasses(toast.type)"
                                      :style="'width: ' + toast.progress + '%'"></div>
@@ -190,7 +190,7 @@ function toastContainer() {
                 success: 'bg-green-50 dark:bg-green-900/20',
                 error: 'bg-red-50 dark:bg-red-900/20',
                 warning: 'bg-amber-50 dark:bg-amber-900/20',
-                info: 'bg-gray-50 dark:bg-gray-900/20'
+                info: 'bg-zinc-50 dark:bg-zinc-900/20'
             };
             return classes[type] || classes.info;
         },
@@ -200,7 +200,7 @@ function toastContainer() {
                 success: 'text-green-800 dark:text-green-200',
                 error: 'text-red-800 dark:text-red-200',
                 warning: 'text-amber-800 dark:text-amber-200',
-                info: 'text-gray-800 dark:text-gray-200'
+                info: 'text-zinc-800 dark:text-zinc-200'
             };
             return classes[type] || classes.info;
         },
@@ -210,7 +210,7 @@ function toastContainer() {
                 success: 'bg-green-500',
                 error: 'bg-red-500',
                 warning: 'bg-amber-500',
-                info: 'bg-gray-500'
+                info: 'bg-zinc-500'
             };
             return classes[type] || classes.info;
         },
@@ -220,7 +220,7 @@ function toastContainer() {
                 success: 'bg-green-100 text-green-800 hover:bg-green-200 focus:ring-green-500 dark:bg-green-800 dark:text-green-100 dark:hover:bg-green-700',
                 error: 'bg-red-100 text-red-800 hover:bg-red-200 focus:ring-red-500 dark:bg-red-800 dark:text-red-100 dark:hover:bg-red-700',
                 warning: 'bg-amber-100 text-amber-800 hover:bg-amber-200 focus:ring-amber-500 dark:bg-amber-800 dark:text-amber-100 dark:hover:bg-amber-700',
-                info: 'bg-gray-100 text-gray-800 hover:bg-gray-200 focus:ring-gray-500 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700'
+                info: 'bg-zinc-100 text-zinc-800 hover:bg-zinc-200 focus:ring-gray-500 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700'
             };
             return classes[type] || classes.info;
         },
@@ -230,7 +230,7 @@ function toastContainer() {
                 success: 'text-green-500 hover:text-green-600 focus:ring-green-500',
                 error: 'text-red-500 hover:text-red-600 focus:ring-red-500',
                 warning: 'text-amber-500 hover:text-amber-600 focus:ring-amber-500',
-                info: 'text-gray-500 hover:text-gray-600 focus:ring-gray-500'
+                info: 'text-zinc-500 hover:text-zinc-600 focus:ring-gray-500'
             };
             return classes[type] || classes.info;
         }

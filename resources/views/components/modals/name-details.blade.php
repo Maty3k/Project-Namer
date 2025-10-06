@@ -6,24 +6,24 @@ $name = $dataArray['name'] ?? 'Unknown';
 <div class="space-y-6">
     {{-- Business Name Header --}}
     <div class="text-center">
-        <h4 class="text-xl font-bold text-gray-900 dark:text-gray-100">
+        <h4 class="text-xl font-bold text-zinc-900 dark:text-zinc-100">
             {{ $name }}
         </h4>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+        <p class="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
             {{ $dataArray['length'] ?? strlen($name) }} characters
         </p>
     </div>
 
     {{-- Brandability Score --}}
     @if(isset($dataArray['brandability_score']))
-        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-4">
             <div class="flex items-center justify-between mb-2">
-                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Brandability Score</span>
+                <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Brandability Score</span>
                 <span class="text-lg font-bold {{ $dataArray['brandability_score'] >= 80 ? 'text-green-600' : ($dataArray['brandability_score'] >= 60 ? 'text-yellow-600' : 'text-red-600') }}">
                     {{ $dataArray['brandability_score'] }}/100
                 </span>
             </div>
-            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+            <div class="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
                 <div class="bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 h-2 rounded-full" 
                      style="width: {{ $dataArray['brandability_score'] }}%"></div>
             </div>
@@ -33,10 +33,10 @@ $name = $dataArray['name'] ?? 'Unknown';
     {{-- Domain Availability --}}
     @if(!empty($dataArray['domains']))
         <div>
-            <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Domain Availability</h5>
+            <h5 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">Domain Availability</h5>
             <div class="space-y-2">
                 @foreach($dataArray['domains'] as $domain => $info)
-                    <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded">
+                    <div class="flex items-center justify-between p-2 bg-zinc-50 dark:bg-zinc-800 rounded">
                         <span class="text-sm font-medium">{{ $domain }}</span>
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                             {{ ($info['available'] ?? false) ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' }}">
@@ -51,10 +51,10 @@ $name = $dataArray['name'] ?? 'Unknown';
     {{-- Alternative Names --}}
     @if(!empty($dataArray['alternatives']))
         <div>
-            <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Alternative Suggestions</h5>
+            <h5 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">Alternative Suggestions</h5>
             <div class="flex flex-wrap gap-2">
                 @foreach($dataArray['alternatives'] as $alternative)
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-100">
                         {{ $alternative }}
                     </span>
                 @endforeach
@@ -64,7 +64,7 @@ $name = $dataArray['name'] ?? 'Unknown';
 
     {{-- Trademark Status --}}
     @if(isset($dataArray['trademark_status']))
-        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-4">
             <div class="flex items-center">
                 <svg class="w-5 h-5 {{ $dataArray['trademark_status'] === 'clear' ? 'text-green-600' : 'text-yellow-600' }} mr-2" 
                      fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -73,8 +73,8 @@ $name = $dataArray['name'] ?? 'Unknown';
                     </path>
                 </svg>
                 <div>
-                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Trademark Status</span>
-                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                    <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Trademark Status</span>
+                    <p class="text-xs text-zinc-600 dark:text-zinc-400 mt-1">
                         {{ $dataArray['trademark_status'] === 'clear' ? 'No obvious trademark conflicts found' : 'Potential trademark conflicts detected' }}
                     </p>
                 </div>

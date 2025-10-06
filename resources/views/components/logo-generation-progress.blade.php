@@ -37,15 +37,15 @@ $statusMessages = [
 $currentMessage = $statusMessages[$logoGeneration->status] ?? 'Processing...';
 @endphp
 
-<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden"
+<div class="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 overflow-hidden"
      {{ $attributes->merge(['class' => $compact ? 'p-3' : 'p-6']) }}>
-    
+
     {{-- Header --}}
     <div class="flex items-center justify-between mb-4">
         <div class="flex items-center">
             @if($logoGeneration->status === 'processing')
                 <div class="flex-shrink-0 mr-3">
-                    <svg class="w-5 h-5 text-primary-600 dark:text-primary-400 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 text-accent dark:text-accent animate-spin" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
@@ -64,24 +64,24 @@ $currentMessage = $statusMessages[$logoGeneration->status] ?? 'Processing...';
                 </div>
             @else
                 <div class="flex-shrink-0 mr-3">
-                    <flux:icon.clock class="w-5 h-5 text-gray-400" />
+                    <flux:icon.clock class="w-5 h-5 text-zinc-400" />
                 </div>
             @endif
-            
+
             <div>
-                <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <h3 class="text-sm font-medium text-zinc-900 dark:text-zinc-100">
                     {{ $currentMessage }}
                 </h3>
                 @if($timeMessage && !$compact)
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
                         {{ $timeMessage }}
                     </p>
                 @endif
             </div>
         </div>
-        
+
         @if($showDetails && !$compact)
-            <div class="text-sm text-gray-500 dark:text-gray-400">
+            <div class="text-sm text-zinc-500 dark:text-zinc-400">
                 {{ $logoGeneration->logos_completed }}/{{ $logoGeneration->total_logos_requested }}
             </div>
         @endif
@@ -92,49 +92,49 @@ $currentMessage = $statusMessages[$logoGeneration->status] ?? 'Processing...';
         <div class="flex mb-2 items-center justify-between">
             <div>
                 <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full
-                           {{ $logoGeneration->status === 'completed' 
+                           {{ $logoGeneration->status === 'completed'
                                ? 'text-green-600 bg-green-200 dark:bg-green-900 dark:text-green-400'
-                               : ($logoGeneration->status === 'failed' 
+                               : ($logoGeneration->status === 'failed'
                                    ? 'text-red-600 bg-red-200 dark:bg-red-900 dark:text-red-400'
                                    : ($logoGeneration->status === 'partial'
                                        ? 'text-amber-600 bg-amber-200 dark:bg-amber-900 dark:text-amber-400'
-                                       : 'text-primary-600 bg-blue-200 dark:bg-primary-900 dark:text-primary-400')) }}">
+                                       : 'text-accent bg-accent/20 dark:bg-accent/20 dark:text-accent')) }}">
                     {{ $progressPercentage }}%
                 </span>
             </div>
             @if($estimatedTimeRemaining && $estimatedTimeRemaining > 0 && $compact)
                 <div class="text-right">
-                    <span class="text-xs text-gray-500 dark:text-gray-400">
+                    <span class="text-xs text-zinc-500 dark:text-zinc-400">
                         {{ $timeMessage }}
                     </span>
                 </div>
             @endif
         </div>
-        
-        <div class="overflow-hidden h-2 mb-4 text-xs flex rounded 
-                    {{ $logoGeneration->status === 'completed' 
+
+        <div class="overflow-hidden h-2 mb-4 text-xs flex rounded
+                    {{ $logoGeneration->status === 'completed'
                         ? 'bg-green-200 dark:bg-green-900'
                         : ($logoGeneration->status === 'failed'
                             ? 'bg-red-200 dark:bg-red-900'
                             : ($logoGeneration->status === 'partial'
                                 ? 'bg-amber-200 dark:bg-amber-900'
-                                : 'bg-blue-200 dark:bg-primary-900')) }}">
+                                : 'bg-accent/20 dark:bg-accent/20')) }}">
             <div style="width: {{ $progressPercentage }}%"
                  class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center transition-all duration-500 ease-out
-                        {{ $logoGeneration->status === 'completed' 
+                        {{ $logoGeneration->status === 'completed'
                             ? 'bg-green-500 dark:bg-green-400'
                             : ($logoGeneration->status === 'failed'
                                 ? 'bg-red-500 dark:bg-red-400'
                                 : ($logoGeneration->status === 'partial'
                                     ? 'bg-amber-500 dark:bg-amber-400'
-                                    : 'bg-primary-500 dark:bg-blue-400')) }}">
+                                    : 'bg-accent dark:bg-accent')) }}">
             </div>
         </div>
     </div>
     
     {{-- Detailed Status Information --}}
     @if($showDetails && !$compact)
-        <div class="mt-4 text-xs text-gray-500 dark:text-gray-400 space-y-1">
+        <div class="mt-4 text-xs text-zinc-500 dark:text-zinc-400 space-y-1">
             <div class="flex justify-between">
                 <span>Business Name:</span>
                 <span class="font-medium">{{ $logoGeneration->business_name }}</span>
@@ -202,8 +202,8 @@ $currentMessage = $statusMessages[$logoGeneration->status] ?? 'Processing...';
     {{-- Auto-refresh indicator for processing status --}}
     @if($logoGeneration->status === 'processing')
         <div class="mt-3 flex items-center justify-center">
-            <div class="flex items-center text-xs text-gray-400 dark:text-gray-500">
-                <div class="w-2 h-2 bg-blue-400 rounded-full animate-ping mr-2"></div>
+            <div class="flex items-center text-xs text-zinc-400 dark:text-zinc-500">
+                <div class="w-2 h-2 bg-accent rounded-full animate-ping mr-2"></div>
                 Auto-refreshing every 5 seconds
             </div>
         </div>

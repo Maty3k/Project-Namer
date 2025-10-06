@@ -1,13 +1,13 @@
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+<div class="min-h-screen bg-zinc-50 dark:bg-zinc-900">
     <!-- Header -->
-    <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <div class="bg-white dark:bg-zinc-800 border-b border-zinc-200 dark:border-zinc-700">
         <div class="px-4 py-3 sm:px-6">
             <div class="flex flex-col gap-4
                         sm:flex-row sm:items-center sm:justify-between">
                 <!-- Title and Mood Board Selector -->
                 <div class="flex flex-col gap-2
                             sm:flex-row sm:items-center sm:gap-4">
-                    <flux:heading size="lg" class="text-gray-900 dark:text-gray-100">
+                    <flux:heading size="lg" class="text-zinc-900 dark:text-zinc-100">
                         Mood Board Canvas
                     </flux:heading>
 
@@ -57,7 +57,7 @@
 
             <!-- Canvas Settings (when mood board is active) -->
             @if($activeMoodBoard && $isEditMode)
-                <div class="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div class="mt-4 p-4 bg-zinc-50 dark:bg-zinc-700 rounded-lg">
                     <div class="grid grid-cols-1 gap-4
                                 sm:grid-cols-2 
                                 lg:grid-cols-4">
@@ -67,7 +67,7 @@
                             <input type="color"
                                    wire:model.live="layoutConfig.background_color"
                                    wire:change="updateCanvas"
-                                   class="w-full h-10 rounded border border-gray-300 dark:border-gray-600">
+                                   class="w-full h-10 rounded border border-zinc-300 dark:border-zinc-600">
                         </flux:field>
 
                         <!-- Grid Size -->
@@ -107,10 +107,10 @@
     <div class="flex flex-col h-[calc(100vh-120px)]
                 lg:flex-row">
         <!-- Sidebar with Available Images -->
-        <div class="w-full border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-y-auto
+        <div class="w-full border-r border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 overflow-y-auto
                     lg:w-80">
             <div class="p-4">
-                <flux:heading size="md" class="mb-4 text-gray-900 dark:text-gray-100">
+                <flux:heading size="md" class="mb-4 text-zinc-900 dark:text-zinc-100">
                     Available Images
                 </flux:heading>
 
@@ -127,8 +127,8 @@
                                      }
                                  }"
                                  @dragstart="dragStart($event)"
-                                 class="group relative aspect-square bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden cursor-move border-2 border-transparent transition-all duration-200
-                                        hover:border-primary-300 dark:hover:border-primary-600
+                                 class="group relative aspect-square bg-zinc-100 dark:bg-zinc-700 rounded-lg overflow-hidden cursor-move border-2 border-transparent transition-all duration-200
+                                        hover:border-accent dark:hover:border-accent
                                         hover:shadow-lg">
                                 
                                 @if($image->thumbnail_path)
@@ -138,7 +138,7 @@
                                 @else
                                     <div class="w-full h-full flex items-center justify-center">
                                         <flux:icon name="photo" 
-                                                 class="w-8 h-8 text-gray-400 dark:text-gray-500" />
+                                                 class="w-8 h-8 text-zinc-400 dark:text-zinc-500" />
                                     </div>
                                 @endif
 
@@ -155,9 +155,9 @@
 
                                 <!-- Add to Canvas Button -->
                                 <button wire:click="addImageToCanvas('{{ $image->uuid }}')"
-                                        class="absolute top-2 right-2 p-1 bg-primary-600 text-white rounded-full opacity-0 transition-all duration-200
+                                        class="absolute top-2 right-2 p-1 bg-accent text-white rounded-full opacity-0 transition-all duration-200
                                                group-hover:opacity-100
-                                               hover:bg-primary-700">
+                                               hover:bg-accent">
                                     <flux:icon name="plus" class="w-4 h-4" />
                                 </button>
                             </div>
@@ -165,8 +165,8 @@
                     </div>
                 @else
                     <div class="text-center py-8">
-                        <flux:icon name="photo" class="mx-auto w-12 h-12 text-gray-400 dark:text-gray-500 mb-4" />
-                        <p class="text-gray-500 dark:text-gray-400 mb-4">
+                        <flux:icon name="photo" class="mx-auto w-12 h-12 text-zinc-400 dark:text-zinc-500 mb-4" />
+                        <p class="text-zinc-500 dark:text-zinc-400 mb-4">
                             No images available for mood boards yet.
                         </p>
                         <flux:button variant="primary" size="sm">
@@ -276,8 +276,8 @@
                                      alt="{{ $image->title ?? $image->original_filename }}"
                                      class="w-full h-full object-cover rounded-lg shadow-lg">
                             @else
-                                <div class="w-full h-full bg-gray-200 dark:bg-gray-600 rounded-lg shadow-lg flex items-center justify-center">
-                                    <flux:icon name="photo" class="w-8 h-8 text-gray-400" />
+                                <div class="w-full h-full bg-zinc-200 dark:bg-zinc-600 rounded-lg shadow-lg flex items-center justify-center">
+                                    <flux:icon name="photo" class="w-8 h-8 text-zinc-400" />
                                 </div>
                             @endif
 
@@ -292,19 +292,19 @@
                                 </div>
 
                                 <!-- Resize Handles -->
-                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-primary-600 rounded-tl cursor-se-resize opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-accent rounded-tl cursor-se-resize opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             @endif
                         </div>
                     @endforeach
 
                     <!-- Drop Zone Indicator -->
-                    <div class="absolute inset-0 border-2 border-dashed border-blue-400 dark:border-primary-500 bg-primary-50 dark:bg-primary-900/20 rounded-lg opacity-0 transition-opacity duration-200 pointer-events-none"
+                    <div class="absolute inset-0 border-2 border-dashed border-accent dark:border-accent bg-accent/20 dark:bg-accent/20 rounded-lg opacity-0 transition-opacity duration-200 pointer-events-none"
                          x-show="false"
                          x-transition>
                         <div class="flex items-center justify-center h-full">
                             <div class="text-center">
-                                <flux:icon name="cloud-arrow-down" class="mx-auto w-12 h-12 text-primary-400 dark:text-primary-500 mb-2" />
-                                <p class="text-primary-600 dark:text-primary-400 font-medium">
+                                <flux:icon name="cloud-arrow-down" class="mx-auto w-12 h-12 text-accent dark:text-accent mb-2" />
+                                <p class="text-accent dark:text-accent font-medium">
                                     Drop image here to add to mood board
                                 </p>
                             </div>
@@ -315,11 +315,11 @@
                 <!-- Empty State -->
                 <div class="flex items-center justify-center h-full">
                     <div class="text-center max-w-md mx-auto p-8">
-                        <flux:icon name="squares-plus" class="mx-auto w-16 h-16 text-gray-400 dark:text-gray-500 mb-4" />
-                        <flux:heading size="lg" class="text-gray-900 dark:text-gray-100 mb-2">
+                        <flux:icon name="squares-plus" class="mx-auto w-16 h-16 text-zinc-400 dark:text-zinc-500 mb-4" />
+                        <flux:heading size="lg" class="text-zinc-900 dark:text-zinc-100 mb-2">
                             Create Your First Mood Board
                         </flux:heading>
-                        <p class="text-gray-600 dark:text-gray-400 mb-6">
+                        <p class="text-zinc-600 dark:text-zinc-400 mb-6">
                             Mood boards help you organize and visualize your project's aesthetic direction. 
                             Start by creating a new mood board or selecting an existing one.
                         </p>
@@ -416,7 +416,7 @@
                               min="60"
                               max="100"
                               class="w-full" />
-                    <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    <div class="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
                         Current: {{ $exportOptions['quality'] }}%
                     </div>
                 </flux:field>
@@ -441,23 +441,23 @@
 
     <!-- Mood Board Management Sidebar -->
     @if($moodBoards->count() > 1 || ($moodBoards->count() > 0 && !$activeMoodBoard))
-        <div class="fixed bottom-4 left-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4 max-w-xs
+        <div class="fixed bottom-4 left-4 bg-white dark:bg-zinc-800 rounded-lg shadow-lg border border-zinc-200 dark:border-zinc-700 p-4 max-w-xs
                     lg:relative lg:bottom-auto lg:left-auto lg:shadow-none lg:border-0 lg:bg-transparent lg:dark:bg-transparent lg:p-0">
-            <flux:heading size="md" class="mb-3 text-gray-900 dark:text-gray-100">
+            <flux:heading size="md" class="mb-3 text-zinc-900 dark:text-zinc-100">
                 Your Mood Boards
             </flux:heading>
 
             <div class="space-y-2 max-h-64 overflow-y-auto">
                 @foreach($moodBoards as $board)
-                    <div class="flex items-center justify-between p-2 rounded border border-gray-200 dark:border-gray-600 {{ $activeMoodBoard && $activeMoodBoard->id === $board->id ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-300 dark:border-primary-600' : 'bg-white dark:bg-gray-700' }}">
+                    <div class="flex items-center justify-between p-2 rounded border border-zinc-200 dark:border-zinc-600 {{ $activeMoodBoard && $activeMoodBoard->id === $board->id ? 'bg-accent/20 dark:bg-accent/20 border-accent dark:border-accent' : 'bg-white dark:bg-zinc-700' }}">
                         <div class="flex-1 min-w-0">
                             <button wire:click="loadMoodBoard('{{ $board->uuid }}')"
                                     class="text-left w-full">
-                                <p class="font-medium text-sm text-gray-900 dark:text-gray-100 truncate">
+                                <p class="font-medium text-sm text-zinc-900 dark:text-zinc-100 truncate">
                                     {{ $board->name }}
                                 </p>
                                 @if($board->description)
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                    <p class="text-xs text-zinc-500 dark:text-zinc-400 truncate">
                                         {{ $board->description }}
                                     </p>
                                 @endif

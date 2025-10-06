@@ -1,13 +1,13 @@
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-6">
+<div class="min-h-screen bg-zinc-50 dark:bg-zinc-900 py-6">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="mb-8">
             <div class="flex justify-between items-center">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+                    <h1 class="text-3xl font-bold text-zinc-900 dark:text-white">
                         AI Configuration Dashboard
                     </h1>
-                    <p class="mt-2 text-gray-600 dark:text-gray-400">
+                    <p class="mt-2 text-zinc-600 dark:text-zinc-400">
                         Manage AI model availability, settings, and system configuration
                     </p>
                 </div>
@@ -34,31 +34,31 @@
 
         <!-- System Health Overview -->
         <div class="mb-8">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6">
+                <h2 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
                     System Health Status
                 </h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div class="text-center">
-                        <div class="text-2xl font-bold text-gray-900 dark:text-white">
+                        <div class="text-2xl font-bold text-zinc-900 dark:text-white">
                             {{ $configHealth['total_models'] ?? 0 }}
                         </div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400">Total Models</div>
+                        <div class="text-sm text-zinc-500 dark:text-zinc-400">Total Models</div>
                     </div>
                     
                     <div class="text-center">
                         <div class="text-2xl font-bold text-green-600 dark:text-green-400">
                             {{ $configHealth['enabled_models'] ?? 0 }}
                         </div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400">Enabled Models</div>
+                        <div class="text-sm text-zinc-500 dark:text-zinc-400">Enabled Models</div>
                     </div>
                     
                     <div class="text-center">
                         <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
                             {{ $configHealth['maintenance_models'] ?? 0 }}
                         </div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400">In Maintenance</div>
+                        <div class="text-sm text-zinc-500 dark:text-zinc-400">In Maintenance</div>
                     </div>
                     
                     <div class="text-center">
@@ -88,9 +88,9 @@
 
         <!-- System Settings Card -->
         <div class="mb-8">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">
                         System Settings
                     </h2>
                     
@@ -113,22 +113,22 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400">Hourly Limit</div>
-                        <div class="text-lg font-semibold text-gray-900 dark:text-white">
+                        <div class="text-sm text-zinc-500 dark:text-zinc-400">Hourly Limit</div>
+                        <div class="text-lg font-semibold text-zinc-900 dark:text-white">
                             {{ $systemSettings['max_generations_per_user_per_hour'] ?? 'N/A' }}
                         </div>
                     </div>
                     
                     <div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400">Daily Limit</div>
-                        <div class="text-lg font-semibold text-gray-900 dark:text-white">
+                        <div class="text-sm text-zinc-500 dark:text-zinc-400">Daily Limit</div>
+                        <div class="text-lg font-semibold text-zinc-900 dark:text-white">
                             {{ $systemSettings['max_generations_per_user_per_day'] ?? 'N/A' }}
                         </div>
                     </div>
                     
                     <div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400">Cache TTL</div>
-                        <div class="text-lg font-semibold text-gray-900 dark:text-white">
+                        <div class="text-sm text-zinc-500 dark:text-zinc-400">Cache TTL</div>
+                        <div class="text-lg font-semibold text-zinc-900 dark:text-white">
                             {{ $systemSettings['cache_ttl_minutes'] ?? 'N/A' }}m
                         </div>
                     </div>
@@ -153,54 +153,54 @@
         </div>
 
         <!-- AI Models Table -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+        <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700">
+            <div class="p-6 border-b border-zinc-200 dark:border-zinc-700">
+                <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">
                     AI Models Configuration
                 </h2>
             </div>
             
             <div class="overflow-x-auto">
                 <table class="w-full">
-                    <thead class="bg-gray-50 dark:bg-gray-700">
+                    <thead class="bg-zinc-50 dark:bg-zinc-700">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                                 Model
                             </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                                 Provider
                             </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                                 Status
                             </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                                 Cost/1K
                             </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                                 Rate Limit
                             </th>
-                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-center text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                                 Actions
                             </th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse($models as $modelId => $model)
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700">
                                 <td class="px-6 py-4">
                                     <div class="flex items-center">
                                         <div>
-                                            <div class="text-sm font-medium text-gray-900 dark:text-white">
+                                            <div class="text-sm font-medium text-zinc-900 dark:text-white">
                                                 {{ $model['name'] }}
                                             </div>
-                                            <div class="text-sm text-gray-500 dark:text-gray-400">
+                                            <div class="text-sm text-zinc-500 dark:text-zinc-400">
                                                 {{ $model['model_id'] }}
                                             </div>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="text-sm text-gray-900 dark:text-white capitalize">
+                                    <div class="text-sm text-zinc-900 dark:text-white capitalize">
                                         {{ $model['provider'] }}
                                     </div>
                                 </td>
@@ -217,12 +217,12 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="text-sm text-gray-900 dark:text-white">
+                                    <div class="text-sm text-zinc-900 dark:text-white">
                                         ${{ number_format($model['cost_per_1k_tokens'] ?? 0, 4) }}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="text-sm text-gray-900 dark:text-white">
+                                    <div class="text-sm text-zinc-900 dark:text-white">
                                         {{ $model['rate_limit_per_minute'] ?? 'N/A' }}/min
                                     </div>
                                 </td>
@@ -253,7 +253,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                <td colspan="6" class="px-6 py-4 text-center text-zinc-500 dark:text-zinc-400">
                                     No AI models configured
                                 </td>
                             </tr>
@@ -264,12 +264,12 @@
         </div>
 
         <!-- Danger Zone -->
-        <div class="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-red-200 dark:border-red-700">
+        <div class="mt-8 bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-red-200 dark:border-red-700">
             <div class="p-6">
                 <h2 class="text-lg font-semibold text-red-600 dark:text-red-400 mb-4">
                     Danger Zone
                 </h2>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
                     These actions will reset all configuration to defaults and cannot be undone.
                 </p>
                 
@@ -287,7 +287,7 @@
     <!-- Model Edit Modal -->
     <flux:modal name="model-edit" :show="$showModelEditModal" wire:model="showModelEditModal">
         <div class="p-6">
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <h2 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
                 Edit Model Configuration
             </h2>
 
@@ -372,7 +372,7 @@
     <!-- System Settings Modal -->
     <flux:modal name="system-settings" :show="$showSystemSettingsModal" wire:model="showSystemSettingsModal">
         <div class="p-6">
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <h2 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
                 System Settings
             </h2>
 

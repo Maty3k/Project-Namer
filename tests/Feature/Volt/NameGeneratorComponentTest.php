@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Sleep;
 use Livewire\Volt\Volt;
 use Prism\Prism\Prism;
@@ -12,8 +14,30 @@ beforeEach(function (): void {
     $this->user = User::factory()->create();
     $this->actingAs($this->user);
 
+    // Clear cache to avoid test pollution
+    Cache::flush();
+
     // Fake sleep to speed up tests with retry logic
     Sleep::fake();
+
+    // Mock all Prism AI responses to return immediately without real API calls
+    Prism::fake([
+        TextResponseFake::make()->withText("1. TechNova\n2. InnovateLabs\n3. FutureSync\n4. QuantumLeap\n5. NextGenTech\n6. SmartFlow\n7. DataPulse\n8. CloudNine\n9. ByteForge\n10. CodeCraft"),
+    ]);
+
+    // Mock HTTP requests for domain checking to avoid slow external API calls
+    Http::fake([
+        '*' => Http::response([
+            'available' => true,
+            'domain' => 'example.com',
+            'status' => 'available',
+        ], 200),
+    ]);
+});
+
+afterEach(function (): void {
+    // Clean up cache after each test
+    Cache::flush();
 });
 
 describe('NameGeneratorComponent Core Functionality', function (): void {

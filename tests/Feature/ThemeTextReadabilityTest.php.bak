@@ -13,6 +13,7 @@ use Livewire\Livewire;
  *
  * @deprecated Will be removed after complete migration to FluxUI theming
  */
+
 test('light themes have dark text for readability', function (): void {
     test()->markTestSkipped('Skipping during FluxUI migration - FluxUI uses zinc shades for text/background');
 
@@ -44,8 +45,6 @@ test('light themes have dark text for readability', function (): void {
 });
 
 test('dark themes have light text for readability', function (): void {
-    test()->markTestSkipped('Skipping during FluxUI migration - FluxUI uses zinc shades for text/background');
-
     $user = User::factory()->create();
     $this->actingAs($user);
 
@@ -74,8 +73,6 @@ test('dark themes have light text for readability', function (): void {
 });
 
 test('text contrast meets accessibility standards', function (): void {
-    test()->markTestSkipped('Skipping during FluxUI migration - FluxUI uses zinc shades for text/background');
-
     $user = User::factory()->create();
     $this->actingAs($user);
 
@@ -99,8 +96,6 @@ test('text contrast meets accessibility standards', function (): void {
 });
 
 test('theme mode matches background luminance', function (): void {
-    test()->markTestSkipped('Skipping during FluxUI migration - FluxUI uses zinc shades for text/background');
-
     $user = User::factory()->create();
     $this->actingAs($user);
 

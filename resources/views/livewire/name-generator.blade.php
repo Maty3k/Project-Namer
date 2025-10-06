@@ -461,11 +461,11 @@ new class extends Component {
     public function getDomainStatusClass(string $status, ?bool $available): string
     {
         return match ($status) {
-            'checking' => 'text-primary-600 dark:text-primary-400',
+            'checking' => 'text-accent dark:text-accent',
             'checked' => $available ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400',
-            'ready' => 'text-blue-600 dark:text-blue-400',
+            'ready' => 'text-accent dark:text-accent',
             'error' => 'text-yellow-600 dark:text-yellow-400',
-            default => 'text-gray-600 dark:text-gray-400',
+            default => 'text-zinc-600 dark:text-zinc-400',
         };
     }
 
@@ -1871,7 +1871,7 @@ new class extends Component {
         return [
             'businessDescription' => isset($this->validationErrors['businessDescription']) 
                 ? 'border-red-500 dark:border-red-400' 
-                : 'border-gray-300 dark:border-gray-600'
+                : 'border-zinc-300 dark:border-zinc-600'
         ];
     }
     
@@ -2173,14 +2173,14 @@ new class extends Component {
                 xl:p-14" 
           aria-expanded="true">
         <div class="mb-8 slide-up">
-            <h1 class="font-bold text-gray-900 dark:text-gray-100 mb-2 tracking-tight leading-tight
+            <h1 class="font-bold text-zinc-900 dark:text-zinc-100 mb-2 tracking-tight leading-tight
                        xs:text-2xl
                        sm:text-3xl
                        md:text-4xl
                        lg:text-5xl">
                 Business Name Generator
             </h1>
-            <p class="text-gray-600 dark:text-gray-400 opacity-80 overflow-hidden max-w-prose
+            <p class="text-zinc-600 dark:text-zinc-400 opacity-80 overflow-hidden max-w-prose
                      xs:text-sm
                      sm:text-base
                      md:text-lg">
@@ -2213,7 +2213,7 @@ new class extends Component {
                             aria-required="true"
                             tabindex="0"
                             class="w-full focus-modern focus-visible ring-2 ring-transparent hover:ring-accent/20 active:ring-accent/40 focus:ring-accent outline-2 outline-transparent focus:outline-accent shadow-soft transition-all duration-300 rounded-xl gesture-hint swipe-instructions touch-instructions focus-within
-                                   {{ $fieldClasses['businessDescription'] ?? 'border-gray-300 dark:border-gray-600' }}
+                                   {{ $fieldClasses['businessDescription'] ?? 'border-zinc-300 dark:border-zinc-600' }}
                                    xs:text-sm
                                    sm:text-base" />
                         
@@ -2235,7 +2235,7 @@ new class extends Component {
                     
                     {{-- Character Count --}}
                     <div class="flex justify-between items-center mt-1">
-                        <div id="character-count" class="text-sm {{ $isNearLimit ? 'text-yellow-600 dark:text-yellow-400' : 'text-gray-500 dark:text-gray-400' }}" 
+                        <div id="character-count" class="text-sm {{ $isNearLimit ? 'text-yellow-600 dark:text-yellow-400' : 'text-zinc-500 dark:text-zinc-400' }}" 
                              aria-live="polite" 
                              aria-label="Character count"
                              data-count="{{ $characterCount }}"
@@ -2266,7 +2266,7 @@ new class extends Component {
                     </div>
                     @if(isset($this->validationHelp['businessDescription']))
                         <div id="validationHelp" 
-                             class="text-sm text-primary-600 dark:text-primary-400 mt-1 flex items-start validationHelp" 
+                             class="text-sm text-accent dark:text-accent mt-1 flex items-start validationHelp" 
                              role="status" 
                              aria-live="polite">
                             <span class="sr-only">validationHelp:</span>
@@ -2284,11 +2284,11 @@ new class extends Component {
                     @if(!empty($this->validationSuggestions['businessDescription']))
                         <div class="mt-2 validationSuggestions" id="validationSuggestions" role="region" aria-labelledby="suggestions-heading" data-suggestions="{{ json_encode($this->validationSuggestions) }}">
                             <span class="sr-only">validationSuggestions:</span>
-                            <div id="suggestions-heading" class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">💡 Suggestions to improve your description:</div>
+                            <div id="suggestions-heading" class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">💡 Suggestions to improve your description:</div>
                             @foreach($this->validationSuggestions['businessDescription'] as $suggestion)
                                 <button type="button" 
                                         wire:click="$set('businessDescription', '{{ addslashes($suggestion) }}')"
-                                        class="inline-block text-sm text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 active:text-primary-900 dark:active:text-blue-100 mr-4 mb-1 underline touch-target focus-indicator gesture-hint"
+                                        class="inline-block text-sm text-accent dark:text-accent hover:text-accent dark:hover:text-accent active:text-accent dark:active:text-accent mr-4 mb-1 underline touch-target focus-indicator gesture-hint"
                                         aria-label="Apply suggestion: {{ $suggestion }}"
                                         tabindex="0">
                                     "{{ $suggestion }}"
@@ -2308,7 +2308,7 @@ new class extends Component {
                             wire:model.live="mode" 
                             wire:change="validateField('mode')"
                             class="w-full focus-modern shadow-soft transition-all duration-300 rounded-xl
-                                   {{ $fieldClasses['mode'] ?? 'border-gray-300 dark:border-gray-600' }}
+                                   {{ $fieldClasses['mode'] ?? 'border-zinc-300 dark:border-zinc-600' }}
                                    xs:text-sm
                                    sm:text-base">
                             @foreach($modes as $value => $label)
@@ -2360,7 +2360,7 @@ new class extends Component {
                         {{-- Model Selection Grid --}}
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             @foreach($availableAIModels as $model)
-                                <label class="relative flex items-center p-3 border-2 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 {{ in_array($model['id'], $selectedAIModels) ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 shadow-md' : 'border-gray-200 dark:border-gray-700' }}">
+                                <label class="relative flex items-center p-3 border-2 rounded-xl cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all duration-200 {{ in_array($model['id'], $selectedAIModels) ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 shadow-md' : 'border-zinc-200 dark:border-zinc-700' }}">
                                     <input type="checkbox"
                                         wire:model.live="selectedAIModels"
                                         value="{{ $model['id'] }}"
@@ -2370,8 +2370,8 @@ new class extends Component {
                                         @endif
                                     />
                                     <div class="flex-1 min-w-0">
-                                        <div class="font-semibold text-sm text-gray-900 dark:text-white">{{ $model['name'] }}</div>
-                                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ $model['provider'] }}</div>
+                                        <div class="font-semibold text-sm text-zinc-900 dark:text-white">{{ $model['name'] }}</div>
+                                        <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $model['provider'] }}</div>
                                     </div>
                                     @if(in_array($model['id'], $selectedAIModels))
                                         <svg class="w-5 h-5 text-purple-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
@@ -2383,7 +2383,7 @@ new class extends Component {
                         </div>
 
                         @if(count($selectedAIModels) > 1 && $enableModelComparison)
-                            <div class="text-sm text-blue-600 dark:text-blue-400">
+                            <div class="text-sm text-accent dark:text-accent">
                                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
@@ -2545,7 +2545,7 @@ new class extends Component {
 
             @if($showHistory)
                 <div 
-                    class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-3 max-h-96 overflow-y-auto"
+                    class="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-4 space-y-3 max-h-96 overflow-y-auto"
                     x-data="{ searchHistory: [] }"
                     x-init="
                         // Load search history from localStorage
@@ -2580,7 +2580,7 @@ new class extends Component {
                     ">
 
                     @if(empty($searchHistory))
-                        <div class="text-center text-gray-500 dark:text-gray-400 py-8">
+                        <div class="text-center text-zinc-500 dark:text-zinc-400 py-8">
                             <svg class="w-12 h-12 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
@@ -2588,19 +2588,19 @@ new class extends Component {
                             <p class="text-sm mt-1">Generated names will appear here for easy access</p>
                         </div>
                     @else
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+                        <h3 class="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-4">
                             Recent Searches ({{ count($searchHistory) }})
                         </h3>
                         
                         @foreach($searchHistory as $entry)
-                            <div class="bg-white dark:bg-gray-700 rounded-md p-4 border border-gray-200 dark:border-gray-600">
+                            <div class="bg-white dark:bg-zinc-700 rounded-md p-4 border border-zinc-200 dark:border-zinc-600">
                                 <div class="flex items-start justify-between">
                                     <div class="flex-1">
                                         <div class="flex items-center space-x-2 mb-2">
-                                            <span class="text-sm text-gray-500 dark:text-gray-400">
+                                            <span class="text-sm text-zinc-500 dark:text-zinc-400">
                                                 {{ date('M j, Y \a\t g:i A', strtotime($entry['timestamp'])) }}
                                             </span>
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-blue-200">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-accent text-accent dark:bg-accent dark:text-accent">
                                                 {{ ucfirst($entry['mode']) }}
                                             </span>
                                             @if($entry['deepThinking'])
@@ -2610,13 +2610,13 @@ new class extends Component {
                                             @endif
                                         </div>
                                         
-                                        <p class="text-sm text-gray-700 dark:text-gray-300 mb-2">
+                                        <p class="text-sm text-zinc-700 dark:text-zinc-300 mb-2">
                                             "{{ $entry['businessDescription'] }}"
                                         </p>
                                         
                                         <div class="flex flex-wrap gap-2">
                                             @foreach($entry['generatedNames'] as $name)
-                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-200">
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-zinc-100 text-zinc-800 dark:bg-zinc-600 dark:text-zinc-200">
                                                     {{ $name }}
                                                 </span>
                                             @endforeach
@@ -2642,14 +2642,14 @@ new class extends Component {
         @if(!empty($domainResults))
             <div class="mt-8">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                    <h2 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
                         Generated Names & Domain Availability
                     </h2>
                     
                     {{-- Domain Checking Progress --}}
                     @if($isCheckingDomains)
-                        <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <div class="flex items-center text-sm text-zinc-600 dark:text-zinc-400">
+                            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
@@ -2662,7 +2662,7 @@ new class extends Component {
                 <div class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
                     {{-- Sorting Controls --}}
                     <div class="flex items-center space-x-4">
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Sort by:</span>
+                        <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Sort by:</span>
                         <flux:select 
                             wire:model.live="currentSortColumn" 
                             wire:change="handleSortChange"
@@ -2680,7 +2680,7 @@ new class extends Component {
 
                     {{-- Filtering Controls --}}
                     <div class="flex items-center space-x-4">
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Filter:</span>
+                        <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Filter:</span>
                         <flux:select 
                             wire:model.live="currentFilter" 
                             wire:change="handleFilterChange"
@@ -2712,15 +2712,15 @@ new class extends Component {
                 {{-- Active Filters Display --}}
                 @if(!empty($activeFilters))
                     <div class="mb-4 flex items-center space-x-2">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">Active filters:</span>
+                        <span class="text-sm text-zinc-600 dark:text-zinc-400">Active filters:</span>
                         @foreach($activeFilters as $filterType => $filterValue)
                             <flux:badge 
                                 variant="outline" 
-                                class="active-filter bg-primary-50 text-primary-700 border-primary-200">
+                                class="active-filter bg-accent/20 text-accent border-accent">
                                 {{ $this->getFilterDisplayName($filterType, $filterValue) }}
                                 <button 
                                     wire:click="removeFilter('{{ $filterType }}')"
-                                    class="ml-1 text-primary-500 hover:text-primary-700"
+                                    class="ml-1 text-accent hover:text-accent"
                                     aria-label="Remove filter">
                                     ×
                                 </button>
@@ -2730,7 +2730,7 @@ new class extends Component {
                 @endif
 
                 {{-- Results Count --}}
-                <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+                <div class="mb-4 text-sm text-zinc-600 dark:text-zinc-400">
                     Showing {{ count($processedDomainResults ?: $domainResults) }} of {{ count($domainResults) }} results
                     @if($currentSort['column'])
                         <span class="sort-indicator sort-{{ $currentSort['direction'] }} ml-2">
@@ -2741,7 +2741,7 @@ new class extends Component {
                 </div>
 
                 {{-- Domain Results Table --}}
-                <div class="overflow-x-auto shadow-soft-lg rounded-xl border border-gray-200/50 dark:border-gray-700/50 swipe-container swipe-navigation gesture-enabled gesture-capable touch-device swipe-velocity gesture-speed swipe-threshold gesture-sensitivity swipe-direction multi-touch swipe-browse gesture-navigation swipe-compatible filter-gesture mobile-scroll-optimized memory-efficient transform3d" 
+                <div class="overflow-x-auto shadow-soft-lg rounded-xl border border-zinc-200/50 dark:border-zinc-700/50 swipe-container swipe-navigation gesture-enabled gesture-capable touch-device swipe-velocity gesture-speed swipe-threshold gesture-sensitivity swipe-direction multi-touch swipe-browse gesture-navigation swipe-compatible filter-gesture mobile-scroll-optimized memory-efficient transform3d" 
                      x-data="swipeGestures()"
                      x-on:touchstart="handleTouchStart($event)"
                      x-on:touchmove="handleTouchMove($event)" 
@@ -2767,7 +2767,7 @@ new class extends Component {
 
                     <flux:table.rows>
                         @forelse(($processedDomainResults ?: $domainResults) as $index => $result)
-                            <flux:table.row class="interactive hover:bg-gray-50/50 dark:hover:bg-gray-800/50 fade-in swipeable-row touch-enabled swipe-animation" 
+                            <flux:table.row class="interactive hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50 fade-in swipeable-row touch-enabled swipe-animation" 
                                            style="animation-delay: {{ $index * 0.1 }}s;">
                                 <flux:table.cell class="font-semibold">
                                     <div class="flex items-center justify-between">
@@ -2812,7 +2812,7 @@ new class extends Component {
                                             >
                                                 <div class="text-center">
                                                     <div class="text-lg">{{ $this->getDomainStatusIcon($domainData['status'], $domainData['available'] ?? null) }}</div>
-                                                    <div class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ $domainKey }}</div>
+                                                    <div class="text-xs text-zinc-600 dark:text-zinc-400 mt-1">{{ $domainKey }}</div>
                                                 </div>
                                             </flux:tooltip>
                                         </div>
@@ -2840,7 +2840,7 @@ new class extends Component {
                             </flux:table.row>
                         @empty
                             <flux:table.row>
-                                <flux:table.cell colspan="8" class="text-center py-8 text-gray-500 dark:text-gray-400">
+                                <flux:table.cell colspan="8" class="text-center py-8 text-zinc-500 dark:text-zinc-400">
                                     <div>
                                         <svg class="w-12 h-12 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -2856,8 +2856,8 @@ new class extends Component {
                 </div>
 
                 {{-- Domain Status Legend --}}
-                <div class="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Domain Status Legend:</h3>
+                <div class="mt-4 p-4 bg-zinc-50 dark:bg-zinc-800 rounded-lg">
+                    <h3 class="text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-2">Domain Status Legend:</h3>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div class="flex items-center space-x-2">
                             <span class="text-green-600 dark:text-green-400">✅</span>
@@ -2868,7 +2868,7 @@ new class extends Component {
                             <span>Taken</span>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <span class="text-primary-600 dark:text-primary-400">🔄</span>
+                            <span class="text-accent dark:text-accent">🔄</span>
                             <span>Checking...</span>
                         </div>
                         <div class="flex items-center space-x-2">
@@ -2892,23 +2892,23 @@ new class extends Component {
 
                 {{-- Bulk Logo Generation Section --}}
                 @if(!empty($generatedNames) && !$isCheckingDomains)
-                    <div class="mt-6 p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-200 dark:border-primary-800">
+                    <div class="mt-6 p-4 bg-accent/20 dark:bg-accent/20 rounded-lg border border-accent dark:border-accent">
                         <div class="flex items-center justify-between mb-3">
                             <div>
-                                <h3 class="text-lg font-medium text-primary-900 dark:text-primary-100">
+                                <h3 class="text-lg font-medium text-accent dark:text-accent">
                                     🎨 Generate Logos
                                 </h3>
-                                <p class="text-sm text-primary-700 dark:text-primary-300">
+                                <p class="text-sm text-accent dark:text-accent">
                                     Create AI-powered logo designs for your selected business name
                                 </p>
                             </div>
-                            <div class="text-right text-xs text-primary-600 dark:text-primary-400">
+                            <div class="text-right text-xs text-accent dark:text-accent">
                                 12 unique designs<br>
                                 4 styles × 3 variations each
                             </div>
                         </div>
                         
-                        <div class="text-sm text-primary-600 dark:text-primary-400 mb-3">
+                        <div class="text-sm text-accent dark:text-accent mb-3">
                             Click "Generate Logos" next to any business name above, or use the bulk generation below:
                         </div>
                         
@@ -2919,7 +2919,7 @@ new class extends Component {
                                     variant="filled"
                                     size="sm"
                                     :disabled="$isGeneratingLogos"
-                                    class="bg-primary-600 hover:bg-primary-700 text-white">
+                                    class="bg-accent hover:bg-accent text-white">
                                     
                                     <span wire:loading.remove wire:target="generateLogos('{{ $name }}')">
                                         Generate for {{ $name }}
@@ -2965,24 +2965,24 @@ new class extends Component {
             
             {{-- Backdrop --}}
             <div class="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+                <div class="fixed inset-0 bg-zinc-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
                 
                 {{-- Modal Content --}}
                 <span class="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
                 
-                <div class="relative inline-block transform overflow-hidden rounded-lg bg-white dark:bg-gray-900 px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 sm:align-middle"
+                <div class="relative inline-block transform overflow-hidden rounded-lg bg-white dark:bg-zinc-900 px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 sm:align-middle"
                      wire:click.stop>
                     
                     {{-- Modal Header --}}
                     <div class="flex items-center justify-between mb-4">
-                        <h3 id="modal-title" class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                        <h3 id="modal-title" class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
                             {{ $this->getModalTitle() }}
                         </h3>
                         <flux:button
                             wire:click="closeModal"
                             variant="ghost"
                             size="sm"
-                            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                            class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
                             id="modal-close-button">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>

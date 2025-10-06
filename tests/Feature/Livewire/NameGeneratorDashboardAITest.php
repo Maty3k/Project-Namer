@@ -7,12 +7,55 @@ use App\Models\AIGeneration;
 use App\Models\AIModelPerformance;
 use App\Models\User;
 use App\Models\UserAIPreferences;
+use App\Services\AI\AIGenerationService;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Sleep;
 use Livewire\Livewire;
+use Prism\Prism\Prism;
+use Prism\Prism\Testing\TextResponseFake;
 
 beforeEach(function (): void {
     $this->user = User::factory()->create();
     $this->actingAs($this->user);
+
+    // Clear cache to avoid test pollution
+    Cache::flush();
+
+    // Fake sleep to speed up tests with retry logic
+    Sleep::fake();
+
+    // Mock Prism AI responses to return immediately
+    Prism::fake([
+        TextResponseFake::make()->withText("1. TechNova\n2. InnovateLabs\n3. FutureSync\n4. QuantumLeap\n5. NextGenTech\n6. SmartFlow\n7. DataPulse\n8. CloudNine\n9. ByteForge\n10. CodeCraft"),
+    ]);
+
+    // Mock HTTP requests for domain checking to avoid slow external API calls
+    Http::fake([
+        '*' => Http::response([
+            'available' => true,
+            'domain' => 'example.com',
+            'status' => 'available',
+        ], 200),
+    ]);
 });
+
+afterEach(function (): void {
+    // Clean up cache after each test
+    Cache::flush();
+});
+
+// Helper function to mock successful AI generation
+function mockSuccessfulAIGeneration(): void
+{
+    test()->mock(AIGenerationService::class, function ($mock): void {
+        $mock->shouldReceive('generateWithModels')
+            ->andReturn([
+                'gpt-4' => ['TechNova', 'InnovateLabs', 'FutureSync'],
+                'claude-3.5-sonnet' => ['CloudGenius', 'DataFlow', 'SmartCore'],
+            ]);
+    });
+}
 
 test('Dashboard displays AI generation controls', function (): void {
     Livewire::test(NameGeneratorDashboard::class)
@@ -90,8 +133,8 @@ test('Dashboard can toggle deep thinking mode', function (): void {
 });
 
 test('Dashboard generates names with AI when enabled', function (): void {
-    // This test is focused on the AI integration workflow, so we'll just verify it doesn't crash
-    // The actual name generation is mocked at a lower level
+    mockSuccessfulAIGeneration();
+
     $component = Livewire::test(NameGeneratorDashboard::class)
         ->set('businessIdea', 'A tech startup for AI development')
         ->set('useAIGeneration', true)
@@ -101,24 +144,29 @@ test('Dashboard generates names with AI when enabled', function (): void {
         ->call('generateNamesWithAI')
         ->assertSet('isGeneratingNames', false);
 
-    // Just verify the structure is correct
-    expect($component->get('aiModelResults'))->toBeArray();
+    // Verify AI generation completed successfully
+    $aiModelResults = $component->get('aiModelResults');
+    expect($aiModelResults)->toBeArray();
+    expect($aiModelResults)->toHaveKeys(['gpt-4', 'claude-3.5-sonnet']);
 });
 
 test('Dashboard creates AIGeneration record when using AI', function (): void {
-    // Test that the AI generation process creates appropriate database records
+    mockSuccessfulAIGeneration();
+
     expect(AIGeneration::count())->toBe(0);
 
-    $component = Livewire::test(NameGeneratorDashboard::class)
+    Livewire::test(NameGeneratorDashboard::class)
         ->set('businessIdea', 'A tech startup')
         ->set('useAIGeneration', true)
         ->set('selectedAIModels', ['gpt-4'])
         ->call('generateNamesWithAI');
 
-    // The AI generation should attempt to create a record (may fail due to mocking)
-    // At minimum, verify the component handled the call without crashing
-    expect($component->get('isGeneratingNames'))->toBe(false);
-    expect($component->get('aiModelResults'))->toBeArray();
+    // Verify AIGeneration record was created
+    expect(AIGeneration::count())->toBeGreaterThan(0);
+
+    $generation = AIGeneration::latest()->first();
+    expect($generation->user_id)->toBe($this->user->id);
+    expect($generation->models_requested)->toContain('gpt-4');
 });
 
 test('Dashboard shows real-time AI generation progress', function (): void {
@@ -135,29 +183,43 @@ test('Dashboard shows real-time AI generation progress', function (): void {
 });
 
 test('Dashboard handles AI service failures gracefully', function (): void {
-    // Test that AI generation handles errors without crashing
+    // Mock AI service to throw an exception
+    $this->mock(AIGenerationService::class, function ($mock): void {
+        $mock->shouldReceive('generateWithModels')
+            ->andThrow(new Exception('Rate limit exceeded. Please try again later.'));
+    });
+
     $component = Livewire::test(NameGeneratorDashboard::class)
         ->set('businessIdea', 'A tech startup')
         ->set('useAIGeneration', true)
         ->set('selectedAIModels', ['gpt-4'])
         ->call('generateNamesWithAI');
 
-    // Should complete without crashing, may have an error message
+    // Should handle error gracefully
     expect($component->get('isGeneratingNames'))->toBe(false);
-    expect($component->get('aiModelResults'))->toBeArray();
+    expect($component->get('errorMessage'))->not->toBeNull();
 });
 
 test('Dashboard falls back to standard generation on AI failure', function (): void {
-    // Test that the component handles AI failures gracefully
+    // Mock AI service to throw a non-rate-limit exception (triggers fallback)
+    $this->mock(AIGenerationService::class, function ($mock): void {
+        $mock->shouldReceive('generateWithModels')
+            ->andThrow(new Exception('API service unavailable'));
+    });
+
     $component = Livewire::test(NameGeneratorDashboard::class)
         ->set('businessIdea', 'A tech startup')
         ->set('useAIGeneration', true)
         ->set('selectedAIModels', ['gpt-4'])
         ->call('generateNamesWithAI');
 
-    // Should complete without crashing
+    // Should fall back to creative generation
     expect($component->get('isGeneratingNames'))->toBe(false);
-    expect($component->get('aiModelResults'))->toBeArray();
+
+    // Either has names from fallback or an error message
+    $hasNames = count($component->get('generatedNames')) > 0;
+    $hasError = $component->get('errorMessage') !== null;
+    expect($hasNames || $hasError)->toBeTrue();
 });
 
 test('Dashboard updates AI model performance metrics', function (): void {
@@ -213,7 +275,8 @@ test('Dashboard loads user AI preferences on mount', function (): void {
 });
 
 test('Dashboard displays model comparison results in tabs', function (): void {
-    // Test that AI model comparison completes without crashing
+    mockSuccessfulAIGeneration();
+
     $component = Livewire::test(NameGeneratorDashboard::class)
         ->set('businessIdea', 'A tech startup')
         ->set('useAIGeneration', true)
@@ -221,14 +284,16 @@ test('Dashboard displays model comparison results in tabs', function (): void {
         ->set('selectedAIModels', ['gpt-4', 'claude-3.5-sonnet'])
         ->call('generateNamesWithAI');
 
-    // Verify the component handled model comparison without crashing
+    // Verify model comparison completed successfully
     expect($component->get('isGeneratingNames'))->toBe(false);
-    expect($component->get('aiModelResults'))->toBeArray();
 
-    // Verify model comparison setting is still active
-    expect($component->get('enableModelComparison'))->toBe(true);
-    expect($component->get('selectedAIModels'))->toContain('gpt-4');
-    expect($component->get('selectedAIModels'))->toContain('claude-3.5-sonnet');
+    $aiModelResults = $component->get('aiModelResults');
+    expect($aiModelResults)->toBeArray();
+    expect($aiModelResults)->toHaveKeys(['gpt-4', 'claude-3.5-sonnet']);
+
+    // Verify active model tab was initialized
+    $activeModelTab = $component->get('activeModelTab');
+    expect($activeModelTab)->toBeIn(['gpt-4', 'claude-3.5-sonnet']);
 });
 
 test('Dashboard can cancel AI generation in progress', function (): void {
@@ -264,22 +329,25 @@ test('Dashboard enforces AI generation rate limits', function (): void {
 });
 
 test('Dashboard tracks AI generation costs', function (): void {
-    // Test that AI generation process completes and would track costs in real usage
-    $component = Livewire::test(NameGeneratorDashboard::class)
+    mockSuccessfulAIGeneration();
+
+    Livewire::test(NameGeneratorDashboard::class)
         ->set('businessIdea', 'A tech startup')
         ->set('useAIGeneration', true)
         ->set('selectedAIModels', ['gpt-4'])
         ->call('generateNamesWithAI');
 
-    // Verify the component handled the generation without crashing
-    expect($component->get('isGeneratingNames'))->toBe(false);
-    expect($component->get('aiModelResults'))->toBeArray();
-
-    // In real usage, cost tracking would be handled by the actual AI service
-    // This test verifies the UI can handle cost tracking functionality without errors
+    // Verify cost tracking in AIGeneration record
     $generation = AIGeneration::latest()->first();
-    if ($generation) {
-        // If a generation record was created, verify it has the cost tracking structure
-        expect($generation)->toHaveKeys(['total_cost_cents', 'total_tokens_used']);
+    expect($generation)->not->toBeNull();
+    expect($generation)->toHaveKeys(['total_cost_cents', 'total_tokens_used']);
+
+    // Verify model performance was updated
+    $performance = AIModelPerformance::where('user_id', $this->user->id)
+        ->where('model_name', 'gpt-4')
+        ->first();
+
+    if ($performance) {
+        expect($performance->total_requests)->toBeGreaterThan(0);
     }
 });

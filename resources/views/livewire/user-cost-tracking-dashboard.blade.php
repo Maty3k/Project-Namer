@@ -3,10 +3,10 @@
     <div class="mb-6">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                <h1 class="text-2xl font-bold text-zinc-900 dark:text-white">
                     Usage & Cost Tracking
                 </h1>
-                <p class="mt-1 text-gray-600 dark:text-gray-400">
+                <p class="mt-1 text-zinc-600 dark:text-zinc-400">
                     Monitor your AI generation usage, costs, and remaining limits
                 </p>
             </div>
@@ -41,9 +41,9 @@
     <!-- Usage Limits Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <!-- Hourly Limits -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+                <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">
                     Hourly Usage
                 </h2>
                 <div class="text-2xl font-bold {{ ($usageLimits['hourly']['exceeded'] ?? false) ? 'text-red-500' : 'text-green-500' }}">
@@ -52,11 +52,11 @@
             </div>
             
             <div class="mb-3">
-                <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-1">
+                <div class="flex justify-between text-sm text-zinc-600 dark:text-zinc-400 mb-1">
                     <span>Usage Progress</span>
                     <span>{{ round($usageLimits['hourly']['percentage'] ?? 0, 1) }}%</span>
                 </div>
-                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div class="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
                     <div 
                         class="h-2 rounded-full transition-all duration-300 {{ $this->getUsagePercentageClass($usageLimits['hourly']['percentage'] ?? 0) }}"
                         style="width: {{ min(100, $usageLimits['hourly']['percentage'] ?? 0) }}%">
@@ -64,7 +64,7 @@
                 </div>
             </div>
             
-            <div class="text-sm text-gray-600 dark:text-gray-400">
+            <div class="text-sm text-zinc-600 dark:text-zinc-400">
                 {{ $usageLimits['hourly']['remaining'] ?? 0 }} requests remaining this hour
             </div>
             
@@ -81,9 +81,9 @@
         </div>
         
         <!-- Daily Limits -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+                <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">
                     Daily Usage
                 </h2>
                 <div class="text-2xl font-bold {{ ($usageLimits['daily']['exceeded'] ?? false) ? 'text-red-500' : 'text-green-500' }}">
@@ -92,11 +92,11 @@
             </div>
             
             <div class="mb-3">
-                <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-1">
+                <div class="flex justify-between text-sm text-zinc-600 dark:text-zinc-400 mb-1">
                     <span>Usage Progress</span>
                     <span>{{ round($usageLimits['daily']['percentage'] ?? 0, 1) }}%</span>
                 </div>
-                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div class="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
                     <div 
                         class="h-2 rounded-full transition-all duration-300 {{ $this->getUsagePercentageClass($usageLimits['daily']['percentage'] ?? 0) }}"
                         style="width: {{ min(100, $usageLimits['daily']['percentage'] ?? 0) }}%">
@@ -104,7 +104,7 @@
                 </div>
             </div>
             
-            <div class="text-sm text-gray-600 dark:text-gray-400">
+            <div class="text-sm text-zinc-600 dark:text-zinc-400">
                 {{ $usageLimits['daily']['remaining'] ?? 0 }} requests remaining today
             </div>
             
@@ -123,56 +123,56 @@
 
     <!-- Statistics Overview -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6">
             <div class="flex items-center">
                 <div class="flex-shrink-0">
-                    <flux:icon.chart-bar class="h-8 w-8 text-primary-500" />
+                    <flux:icon.chart-bar class="h-8 w-8 text-accent" />
                 </div>
                 <div class="ml-4">
-                    <div class="text-sm text-gray-500 dark:text-gray-400">Total Requests</div>
-                    <div class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <div class="text-sm text-zinc-500 dark:text-zinc-400">Total Requests</div>
+                    <div class="text-2xl font-bold text-zinc-900 dark:text-white">
                         {{ number_format($usageStats['total_requests'] ?? 0) }}
                     </div>
                 </div>
             </div>
         </div>
         
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6">
             <div class="flex items-center">
                 <div class="flex-shrink-0">
                     <flux:icon.currency-dollar class="h-8 w-8 text-green-500" />
                 </div>
                 <div class="ml-4">
-                    <div class="text-sm text-gray-500 dark:text-gray-400">Total Cost</div>
-                    <div class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <div class="text-sm text-zinc-500 dark:text-zinc-400">Total Cost</div>
+                    <div class="text-2xl font-bold text-zinc-900 dark:text-white">
                         ${{ number_format($usageStats['total_cost'] ?? 0, 4) }}
                     </div>
                 </div>
             </div>
         </div>
         
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6">
             <div class="flex items-center">
                 <div class="flex-shrink-0">
                     <flux:icon.check-circle class="h-8 w-8 text-emerald-500" />
                 </div>
                 <div class="ml-4">
-                    <div class="text-sm text-gray-500 dark:text-gray-400">Success Rate</div>
-                    <div class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <div class="text-sm text-zinc-500 dark:text-zinc-400">Success Rate</div>
+                    <div class="text-2xl font-bold text-zinc-900 dark:text-white">
                         {{ round($usageStats['success_rate'] ?? 0, 1) }}%
                     </div>
                 </div>
             </div>
         </div>
         
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6">
             <div class="flex items-center">
                 <div class="flex-shrink-0">
                     <flux:icon.clock class="h-8 w-8 text-purple-500" />
                 </div>
                 <div class="ml-4">
-                    <div class="text-sm text-gray-500 dark:text-gray-400">Avg Response</div>
-                    <div class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <div class="text-sm text-zinc-500 dark:text-zinc-400">Avg Response</div>
+                    <div class="text-2xl font-bold text-zinc-900 dark:text-white">
                         {{ round($usageStats['average_response_time'] ?? 0, 2) }}s
                     </div>
                 </div>
@@ -182,28 +182,28 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Model Usage Breakdown -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6">
+            <h2 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
                 Model Usage Breakdown
             </h2>
             
             @if(!empty($usageStats['model_breakdown']))
                 <div class="space-y-4">
                     @foreach($usageStats['model_breakdown'] as $modelId => $stats)
-                        <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <div class="flex items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-700 rounded-lg">
                             <div>
-                                <div class="font-medium text-gray-900 dark:text-white">
+                                <div class="font-medium text-zinc-900 dark:text-white">
                                     {{ ucfirst(str_replace(['-', '_'], ' ', $modelId)) }}
                                 </div>
-                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                <div class="text-sm text-zinc-500 dark:text-zinc-400">
                                     {{ number_format($stats['requests']) }} requests • {{ number_format($stats['tokens']) }} tokens
                                 </div>
                             </div>
                             <div class="text-right">
-                                <div class="font-semibold text-gray-900 dark:text-white">
+                                <div class="font-semibold text-zinc-900 dark:text-white">
                                     ${{ number_format($stats['cost'], 4) }}
                                 </div>
-                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                <div class="text-sm text-zinc-500 dark:text-zinc-400">
                                     ${{ number_format($stats['cost'] / max($stats['requests'], 1), 4) }}/req
                                 </div>
                             </div>
@@ -211,7 +211,7 @@
                     @endforeach
                 </div>
             @else
-                <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+                <div class="text-center py-8 text-zinc-500 dark:text-zinc-400">
                     <flux:icon.chart-pie class="h-12 w-12 mx-auto mb-4 opacity-50" />
                     <p>No usage data for the selected period</p>
                 </div>
@@ -219,8 +219,8 @@
         </div>
 
         <!-- Usage Insights -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6">
+            <h2 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
                 Usage Insights
             </h2>
             
@@ -228,14 +228,14 @@
                 <!-- Most Used Model -->
                 @php $mostUsedModel = $this->getMostUsedModel(); @endphp
                 @if($mostUsedModel)
-                    <div class="p-4 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-lg">
+                    <div class="p-4 bg-accent/20 dark:bg-accent/20 border border-accent dark:border-accent rounded-lg">
                         <div class="flex items-center">
-                            <flux:icon.star class="h-5 w-5 text-primary-500 mr-3" />
+                            <flux:icon.star class="h-5 w-5 text-accent mr-3" />
                             <div>
-                                <div class="font-medium text-primary-900 dark:text-primary-100">
+                                <div class="font-medium text-accent dark:text-accent">
                                     Most Used Model
                                 </div>
-                                <div class="text-sm text-primary-700 dark:text-primary-300">
+                                <div class="text-sm text-accent dark:text-accent">
                                     {{ ucfirst(str_replace(['-', '_'], ' ', $mostUsedModel['id'])) }} with {{ $mostUsedModel['requests'] }} requests
                                 </div>
                             </div>
@@ -289,14 +289,14 @@
                 </div>
 
                 @if(($usageStats['total_requests'] ?? 0) === 0)
-                    <div class="p-4 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg">
+                    <div class="p-4 bg-zinc-50 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg">
                         <div class="flex items-center">
-                            <flux:icon.information-circle class="h-5 w-5 text-gray-500 mr-3" />
+                            <flux:icon.information-circle class="h-5 w-5 text-zinc-500 mr-3" />
                             <div>
-                                <div class="font-medium text-gray-900 dark:text-white">
+                                <div class="font-medium text-zinc-900 dark:text-white">
                                     No Usage Data
                                 </div>
-                                <div class="text-sm text-gray-600 dark:text-gray-400">
+                                <div class="text-sm text-zinc-600 dark:text-zinc-400">
                                     No AI requests made in the selected time period
                                 </div>
                             </div>
@@ -309,9 +309,9 @@
 
     @if($loading)
         <div class="fixed inset-0 bg-black bg-opacity-25 flex items-center justify-center z-50">
-            <div class="bg-white dark:bg-gray-800 rounded-lg p-6 flex items-center space-x-3">
-                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-500"></div>
-                <span class="text-gray-900 dark:text-white">Loading usage data...</span>
+            <div class="bg-white dark:bg-zinc-800 rounded-lg p-6 flex items-center space-x-3">
+                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-accent"></div>
+                <span class="text-zinc-900 dark:text-white">Loading usage data...</span>
             </div>
         </div>
     @endif

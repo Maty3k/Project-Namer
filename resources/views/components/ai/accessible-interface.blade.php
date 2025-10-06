@@ -18,7 +18,7 @@
     $skipLinkList = $accessibilityService->generateSkipLinks($allSkipLinks);
 @endphp
 
-<div class="ai-interface min-h-screen bg-gray-50 dark:bg-gray-900" role="application" aria-label="{{ $title }}">
+<div class="ai-interface min-h-screen bg-zinc-50 dark:bg-zinc-900" role="application" aria-label="{{ $title }}">
     <!-- Skip Links for Keyboard Navigation -->
     <div class="sr-only" id="skip-links">
         @foreach($skipLinkList as $link)
@@ -33,15 +33,15 @@
     <div aria-live="assertive" aria-atomic="true" class="sr-only" id="ai-alerts"></div>
     
     <!-- Main Application Header -->
-    <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+    <header class="bg-white dark:bg-zinc-800 shadow-sm border-b border-zinc-200 dark:border-zinc-700">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div>
-                    <h1 class="text-xl font-semibold text-gray-900 dark:text-white" id="app-title">
+                    <h1 class="text-xl font-semibold text-zinc-900 dark:text-white" id="app-title">
                         {{ $title }}
                     </h1>
                     @if($description)
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1" id="app-description">
+                        <p class="text-sm text-zinc-600 dark:text-zinc-400 mt-1" id="app-description">
                             {{ $description }}
                         </p>
                     @endif
@@ -52,7 +52,7 @@
                     <!-- High Contrast Toggle -->
                     <button 
                         type="button"
-                        class="ai-accessibility-toggle p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="ai-accessibility-toggle p-2 rounded-md text-zinc-500 hover:text-zinc-700 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         onclick="toggleHighContrast()"
                         aria-label="Toggle high contrast mode"
                         title="Toggle high contrast mode">
@@ -62,10 +62,10 @@
                     </button>
                     
                     <!-- Font Size Controls -->
-                    <div class="flex items-center space-x-1 border-l border-gray-200 dark:border-gray-700 pl-3">
+                    <div class="flex items-center space-x-1 border-l border-zinc-200 dark:border-zinc-700 pl-3">
                         <button 
                             type="button"
-                            class="ai-font-size-btn p-1 rounded text-xs font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700"
+                            class="ai-font-size-btn p-1 rounded text-xs font-medium text-zinc-500 hover:text-zinc-700 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-zinc-700"
                             onclick="decreaseFontSize()"
                             aria-label="Decrease font size"
                             title="Decrease font size">
@@ -73,7 +73,7 @@
                         </button>
                         <button 
                             type="button"
-                            class="ai-font-size-btn p-1 rounded text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700"
+                            class="ai-font-size-btn p-1 rounded text-sm font-medium text-zinc-500 hover:text-zinc-700 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-zinc-700"
                             onclick="resetFontSize()"
                             aria-label="Reset font size to default"
                             title="Reset font size">
@@ -81,7 +81,7 @@
                         </button>
                         <button 
                             type="button"
-                            class="ai-font-size-btn p-1 rounded text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700"
+                            class="ai-font-size-btn p-1 rounded text-base font-medium text-zinc-500 hover:text-zinc-700 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-zinc-700"
                             onclick="increaseFontSize()"
                             aria-label="Increase font size"
                             title="Increase font size">
@@ -101,14 +101,14 @@
     <!-- Keyboard Navigation Help -->
     <div id="keyboard-help-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50" role="dialog" aria-modal="true" aria-labelledby="keyboard-help-title">
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6">
+            <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-xl max-w-md w-full p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h2 id="keyboard-help-title" class="text-lg font-semibold text-gray-900 dark:text-white">
+                    <h2 id="keyboard-help-title" class="text-lg font-semibold text-zinc-900 dark:text-white">
                         Keyboard Navigation Help
                     </h2>
                     <button 
                         type="button"
-                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                        class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
                         onclick="hideKeyboardHelp()"
                         aria-label="Close help dialog">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -117,29 +117,29 @@
                     </button>
                 </div>
                 
-                <div class="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                <div class="space-y-3 text-sm text-zinc-700 dark:text-zinc-300">
                     <div>
-                        <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono">Tab</kbd>
+                        <kbd class="px-2 py-1 bg-zinc-100 dark:bg-zinc-700 rounded text-xs font-mono">Tab</kbd>
                         <span class="ml-2">Navigate between interactive elements</span>
                     </div>
                     <div>
-                        <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono">Shift+Tab</kbd>
+                        <kbd class="px-2 py-1 bg-zinc-100 dark:bg-zinc-700 rounded text-xs font-mono">Shift+Tab</kbd>
                         <span class="ml-2">Navigate backwards</span>
                     </div>
                     <div>
-                        <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono">Enter/Space</kbd>
+                        <kbd class="px-2 py-1 bg-zinc-100 dark:bg-zinc-700 rounded text-xs font-mono">Enter/Space</kbd>
                         <span class="ml-2">Activate buttons and select options</span>
                     </div>
                     <div>
-                        <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono">Arrow Keys</kbd>
+                        <kbd class="px-2 py-1 bg-zinc-100 dark:bg-zinc-700 rounded text-xs font-mono">Arrow Keys</kbd>
                         <span class="ml-2">Navigate within groups (model selection, results)</span>
                     </div>
                     <div>
-                        <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono">Escape</kbd>
+                        <kbd class="px-2 py-1 bg-zinc-100 dark:bg-zinc-700 rounded text-xs font-mono">Escape</kbd>
                         <span class="ml-2">Close dialogs or return to previous context</span>
                     </div>
                     <div>
-                        <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono">?</kbd>
+                        <kbd class="px-2 py-1 bg-zinc-100 dark:bg-zinc-700 rounded text-xs font-mono">?</kbd>
                         <span class="ml-2">Show this help dialog</span>
                     </div>
                 </div>
@@ -303,11 +303,11 @@ window.aiAccessibility = {
     background-color: #ffffff !important;
 }
 
-.ai-high-contrast .bg-gray-50 {
+.ai-high-contrast .bg-zinc-50 {
     background-color: #f8f9fa !important;
 }
 
-.ai-high-contrast .text-gray-900 {
+.ai-high-contrast .text-zinc-900 {
     color: #000000 !important;
 }
 

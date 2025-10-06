@@ -158,18 +158,18 @@ new class extends Component {
                         <flux:label>Export Format</flux:label>
                         <div class="grid grid-cols-1 gap-3 mt-2">
                             @foreach(['pdf' => 'PDF Document', 'csv' => 'CSV Spreadsheet', 'json' => 'JSON Data'] as $format => $label)
-                                <label class="flex items-start p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 {{ $exportType === $format ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' : 'border-gray-200 dark:border-gray-700' }}">
+                                <label class="flex items-start p-4 border rounded-lg cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800 {{ $exportType === $format ? 'border-accent bg-accent/20 dark:bg-accent/20' : 'border-zinc-200 dark:border-zinc-700' }}">
                                     <input 
                                         type="radio" 
                                         wire:model.live="exportType" 
                                         value="{{ $format }}"
-                                        class="mt-1 text-primary-600"
+                                        class="mt-1 text-accent"
                                     >
                                     <div class="ml-3 flex-1">
-                                        <div class="font-medium text-gray-900 dark:text-white">
+                                        <div class="font-medium text-zinc-900 dark:text-white">
                                             {{ $label }}
                                         </div>
-                                        <div class="text-sm text-gray-600 dark:text-gray-400">
+                                        <div class="text-sm text-zinc-600 dark:text-zinc-400">
                                             {{ $this->getFormatDescriptions()[$format] }}
                                         </div>
                                     </div>
@@ -246,7 +246,7 @@ new class extends Component {
             </div>
 
             <!-- Modal Actions -->
-            <div class="flex flex-col gap-3 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 sm:flex-row sm:justify-end">
+            <div class="flex flex-col gap-3 mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-700 sm:flex-row sm:justify-end">
                 <flux:button 
                     variant="ghost" 
                     wire:click="closeModal" 

@@ -28,48 +28,48 @@
             [class*="text-blue"],
             [class*="bg-blue"], 
             [class*="border-blue"],
-            .text-primary-600,
-            .text-primary-800,
-            .dark .text-blue-200,
-            .dark .text-blue-100,
-            .dark .text-blue-400,
-            .bg-blue-200,
-            .bg-blue-400,
+            .text-accent,
+            .text-accent,
+            .dark .text-accent,
+            .dark .text-accent,
+            .dark .text-accent,
+            .bg-accent,
+            .bg-accent,
             .bg-blue-50,
-            .border-blue-400,
-            .hover\\:border-blue-400:hover,
-            .peer-checked\\:border-blue-400 {
+            .border-accent,
+            .hover\\:border-accent:hover,
+            .peer-checked\\:border-accent {
                 --tw-text-opacity: 1 !important;
                 color: {{ $userTheme->primary_color }} !important;
             }
             
             [class*="bg-blue"],
-            .bg-blue-200,
-            .bg-blue-400,
+            .bg-accent,
+            .bg-accent,
             .bg-blue-50,
-            .bg-primary-100,
-            .bg-primary-50 {
+            .bg-accent,
+            .bg-accent/20 {
                 background-color: {{ $userTheme->primary_color }}33 !important;
             }
             
             [class*="border-blue"],
-            .border-blue-400,
-            .hover\\:border-blue-400:hover,
-            .peer-checked\\:border-blue-400,
-            .border-primary-500 {
+            .border-accent,
+            .hover\\:border-accent:hover,
+            .peer-checked\\:border-accent,
+            .border-accent {
                 border-color: {{ $userTheme->primary_color }} !important;
             }
             
             /* Override specific blue shades */
-            .bg-blue-400,
-            .bg-primary-600,
-            .dark .bg-blue-400 {
+            .bg-accent,
+            .bg-accent,
+            .dark .bg-accent {
                 background-color: {{ $userTheme->primary_color }} !important;
             }
             
             /* Override animate-ping blue elements */
-            .animate-ping.bg-blue-400,
-            .animate-pulse.bg-blue-400 {
+            .animate-ping.bg-accent,
+            .animate-pulse.bg-accent {
                 background-color: {{ $userTheme->primary_color }} !important;
             }
             
@@ -92,7 +92,7 @@
                 background-color: inherit !important;
             }
             .themed-sidebar [class*="bg-slate-"],
-            .themed-sidebar [class*="bg-gray-900"],
+            .themed-sidebar [class*="bg-zinc-900"],
             .themed-sidebar [class*="bg-black"] {
                 background-color: transparent !important;
             }
@@ -106,7 +106,7 @@
             }
             
             /* Override any dark text in dark mode */
-            [class*="text-gray-900"], [class*="text-gray-800"], [class*="text-gray-700"],
+            [class*="text-zinc-900"], [class*="text-zinc-800"], [class*="text-zinc-700"],
             [class*="text-black"], [class*="text-slate-900"], [class*="text-slate-800"] {
                 color: {{ $userTheme->text_color }} !important;
             }
@@ -117,7 +117,7 @@
             }
             
             /* Override any light text in light mode */
-            [class*="text-white"], [class*="text-gray-100"], [class*="text-gray-200"],
+            [class*="text-white"], [class*="text-zinc-100"], [class*="text-zinc-200"],
             [class*="text-slate-100"], [class*="text-slate-200"] {
                 color: {{ $userTheme->text_color }} !important;
             }
@@ -193,7 +193,7 @@
             }
             /* Prevent any dark classes from affecting light mode sidebar */
             .themed-sidebar [class*="bg-slate-900"],
-            .themed-sidebar [class*="bg-gray-900"],
+            .themed-sidebar [class*="bg-zinc-900"],
             .themed-sidebar [class*="bg-black"] {
                 background-color: transparent !important;
             }

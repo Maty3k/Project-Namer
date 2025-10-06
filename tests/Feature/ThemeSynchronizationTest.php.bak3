@@ -13,6 +13,7 @@ use Livewire\Livewire;
  *
  * @deprecated Will be updated after complete migration to FluxUI theming
  */
+
 it('synchronizes theme settings between User and UserThemePreference models when applying theme', function (): void {
     test()->markTestSkipped('Skipping during FluxUI migration - needs update for new property structure');
 
@@ -49,8 +50,6 @@ it('synchronizes theme settings between User and UserThemePreference models when
 });
 
 it('synchronizes theme settings when toggling dark mode', function (): void {
-    test()->markTestSkipped('Skipping during FluxUI migration - needs update for new property structure');
-
     $user = User::factory()->create([
         'current_theme' => 'light-theme',
         'prefers_dark_mode' => false,
@@ -85,8 +84,6 @@ it('synchronizes theme settings when toggling dark mode', function (): void {
 });
 
 it('initializes from User model when no UserThemePreference exists', function (): void {
-    test()->markTestSkipped('Skipping during FluxUI migration - needs update for new property structure');
-
     $user = User::factory()->create([
         'current_theme' => 'dark-corporate',
         'prefers_dark_mode' => true,
@@ -104,8 +101,6 @@ it('initializes from User model when no UserThemePreference exists', function ()
 });
 
 it('prioritizes UserThemePreference over User model when both exist', function (): void {
-    test()->markTestSkipped('Skipping during FluxUI migration - needs update for new property structure');
-
     $user = User::factory()->create([
         'current_theme' => 'user-model-theme',
         'prefers_dark_mode' => false,
@@ -134,8 +129,6 @@ it('prioritizes UserThemePreference over User model when both exist', function (
 });
 
 it('applies preset theme and syncs both models', function (): void {
-    test()->markTestSkipped('Skipping during FluxUI migration - needs update for new property structure');
-
     $user = User::factory()->create([
         'current_theme' => 'default',
         'prefers_dark_mode' => false,

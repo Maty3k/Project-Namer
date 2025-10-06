@@ -166,7 +166,7 @@
             >
                 <!-- Success Toast -->
                 <div x-show="notification.type === 'success'" 
-                     class="bg-white dark:bg-gray-800 border-l-4 border-green-400 rounded-lg shadow-lg p-4">
+                     class="bg-white dark:bg-zinc-800 border-l-4 border-green-400 rounded-lg shadow-lg p-4">
                     <div class="flex items-start">
                         <div class="flex-shrink-0">
                             <template x-if="notification.icon === 'check-circle'">
@@ -180,8 +180,8 @@
                             </template>
                         </div>
                         <div class="ml-3 flex-1">
-                            <p class="text-sm font-medium text-gray-900 dark:text-white" x-text="notification.title"></p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1" x-text="notification.message"></p>
+                            <p class="text-sm font-medium text-zinc-900 dark:text-white" x-text="notification.title"></p>
+                            <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1" x-text="notification.message"></p>
                             
                             <!-- Actions -->
                             <template x-if="notification.actions && notification.actions.length > 0">
@@ -208,7 +208,7 @@
                                 variant="ghost" 
                                 size="xs"
                                 @click="removeNotification(notification.id)"
-                                class="text-gray-400 hover:text-gray-500"
+                                class="text-zinc-400 hover:text-zinc-500"
                             >
                                 <flux:icon.x-mark class="size-4" />
                             </flux:button>
@@ -218,7 +218,7 @@
 
                 <!-- Error Toast -->
                 <div x-show="notification.type === 'error'" 
-                     class="bg-white dark:bg-gray-800 border-l-4 border-red-400 rounded-lg shadow-lg p-4">
+                     class="bg-white dark:bg-zinc-800 border-l-4 border-red-400 rounded-lg shadow-lg p-4">
                     <div class="flex items-start">
                         <div class="flex-shrink-0">
                             <template x-if="notification.icon === 'exclamation-triangle'">
@@ -232,8 +232,8 @@
                             </template>
                         </div>
                         <div class="ml-3 flex-1">
-                            <p class="text-sm font-medium text-gray-900 dark:text-white" x-text="notification.title"></p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1" x-text="notification.message"></p>
+                            <p class="text-sm font-medium text-zinc-900 dark:text-white" x-text="notification.title"></p>
+                            <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1" x-text="notification.message"></p>
                             
                             <!-- Actions -->
                             <template x-if="notification.actions && notification.actions.length > 0">
@@ -260,7 +260,7 @@
                                 variant="ghost" 
                                 size="xs"
                                 @click="removeNotification(notification.id)"
-                                class="text-gray-400 hover:text-gray-500"
+                                class="text-zinc-400 hover:text-zinc-500"
                             >
                                 <flux:icon.x-mark class="size-4" />
                             </flux:button>
@@ -270,7 +270,7 @@
 
                 <!-- Warning Toast -->
                 <div x-show="notification.type === 'warning'" 
-                     class="bg-white dark:bg-gray-800 border-l-4 border-yellow-400 rounded-lg shadow-lg p-4">
+                     class="bg-white dark:bg-zinc-800 border-l-4 border-yellow-400 rounded-lg shadow-lg p-4">
                     <div class="flex items-start">
                         <div class="flex-shrink-0">
                             <template x-if="notification.icon === 'exclamation-triangle'">
@@ -290,8 +290,8 @@
                             </template>
                         </div>
                         <div class="ml-3 flex-1">
-                            <p class="text-sm font-medium text-gray-900 dark:text-white" x-text="notification.title"></p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1" x-text="notification.message"></p>
+                            <p class="text-sm font-medium text-zinc-900 dark:text-white" x-text="notification.title"></p>
+                            <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1" x-text="notification.message"></p>
                             
                             <!-- Actions -->
                             <template x-if="notification.actions && notification.actions.length > 0">
@@ -320,7 +320,7 @@
                                 variant="ghost" 
                                 size="xs"
                                 @click="removeNotification(notification.id)"
-                                class="text-gray-400 hover:text-gray-500"
+                                class="text-zinc-400 hover:text-zinc-500"
                             >
                                 <flux:icon.x-mark class="size-4" />
                             </flux:button>
@@ -330,35 +330,35 @@
 
                 <!-- Info Toast -->
                 <div x-show="notification.type === 'info'" 
-                     class="bg-white dark:bg-gray-800 border-l-4 border-gray-400 rounded-lg shadow-lg p-4">
+                     class="bg-white dark:bg-zinc-800 border-l-4 border-zinc-400 rounded-lg shadow-lg p-4">
                     <div class="flex items-start">
                         <div class="flex-shrink-0">
                             <template x-if="notification.icon === 'information-circle'">
-                                <flux:icon.information-circle class="size-6 text-gray-600 dark:text-gray-400" />
+                                <flux:icon.information-circle class="size-6 text-zinc-600 dark:text-zinc-400" />
                             </template>
                             <template x-if="notification.icon === 'cpu-chip'">
-                                <flux:icon.cpu-chip class="size-6 text-gray-600 dark:text-gray-400" />
+                                <flux:icon.cpu-chip class="size-6 text-zinc-600 dark:text-zinc-400" />
                             </template>
                             <template x-if="notification.icon === 'arrow-path'">
-                                <flux:icon.arrow-path class="size-6 text-gray-600 dark:text-gray-400 animate-spin" />
+                                <flux:icon.arrow-path class="size-6 text-zinc-600 dark:text-zinc-400 animate-spin" />
                             </template>
                             <template x-if="notification.icon === 'sparkles'">
-                                <flux:icon.sparkles class="size-6 text-gray-600 dark:text-gray-400 animate-pulse" />
+                                <flux:icon.sparkles class="size-6 text-zinc-600 dark:text-zinc-400 animate-pulse" />
                             </template>
                             <template x-if="!notification.icon || !['information-circle', 'cpu-chip', 'arrow-path', 'sparkles'].includes(notification.icon)">
-                                <flux:icon.information-circle class="size-6 text-gray-600 dark:text-gray-400" />
+                                <flux:icon.information-circle class="size-6 text-zinc-600 dark:text-zinc-400" />
                             </template>
                         </div>
                         <div class="ml-3 flex-1">
-                            <p class="text-sm font-medium text-gray-900 dark:text-white" x-text="notification.title"></p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1" x-text="notification.message"></p>
+                            <p class="text-sm font-medium text-zinc-900 dark:text-white" x-text="notification.title"></p>
+                            <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1" x-text="notification.message"></p>
                         </div>
                         <div class="ml-4 flex-shrink-0">
                             <flux:button 
                                 variant="ghost" 
                                 size="xs"
                                 @click="removeNotification(notification.id)"
-                                class="text-gray-400 hover:text-gray-500"
+                                class="text-zinc-400 hover:text-zinc-500"
                             >
                                 <flux:icon.x-mark class="size-4" />
                             </flux:button>

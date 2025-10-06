@@ -8,13 +8,13 @@
                     box-shadow: 0 10px 25px {{ $userTheme->primary_color }}20;
                     color: {{ $userTheme->text_color }};"
          @else
-             class="bg-white dark:bg-gray-900"
+             class="bg-white dark:bg-zinc-900"
          @endif>
         <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold {{ $userTheme ? '' : 'text-gray-900 dark:text-white' }} mb-2">
+            <h1 class="text-3xl font-bold {{ $userTheme ? '' : 'text-zinc-900 dark:text-white' }} mb-2">
                 Create New Project
             </h1>
-            <p class="{{ $userTheme ? 'opacity-80' : 'text-gray-600 dark:text-gray-400' }}">
+            <p class="{{ $userTheme ? 'opacity-80' : 'text-zinc-600 dark:text-zinc-400' }}">
                 Describe your business idea to get started with name generation
             </p>
         </div>
@@ -39,7 +39,7 @@
             </div>
 
             <div class="flex justify-between items-center">
-                <div class="text-sm {{ $userTheme ? 'opacity-70' : 'text-gray-500 dark:text-gray-400' }}">
+                <div class="text-sm {{ $userTheme ? 'opacity-70' : 'text-zinc-500 dark:text-zinc-400' }}">
                     Your project will be saved automatically
                 </div>
                 <flux:button 

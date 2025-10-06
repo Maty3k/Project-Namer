@@ -155,7 +155,7 @@ describe('Icon Component', function (): void {
             'success' => 'text-green-600',
             'error' => 'text-red-600',
             'warning' => 'text-yellow-600',
-            'info' => 'text-gray-600',
+            'info' => 'text-zinc-600', // FluxUI uses zinc instead of gray
         ];
 
         foreach ($variants as $variant) {

@@ -3,10 +3,10 @@
     <div class="flex flex-col space-y-4
                 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-2xl font-bold text-zinc-900 dark:text-white">
                 AI Configuration Manager
             </h1>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
                 Manage AI models, system settings, and monitor performance
             </p>
         </div>
@@ -32,8 +32,8 @@
 
     <!-- Loading State -->
     <div wire:loading.delay wire:target="loadConfiguration" class="flex justify-center py-8">
-        <div class="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-            <div class="animate-spin w-5 h-5 border-2 border-primary-600 border-t-transparent rounded-full"></div>
+        <div class="flex items-center space-x-2 text-zinc-600 dark:text-zinc-400">
+            <div class="animate-spin w-5 h-5 border-2 border-accent border-t-transparent rounded-full"></div>
             <span>Loading configuration...</span>
         </div>
     </div>
@@ -41,30 +41,30 @@
     <!-- Main Content -->
     <div wire:loading.remove wire:target="loadConfiguration">
         <!-- Tab Navigation -->
-        <div class="border-b border-gray-200 dark:border-gray-700">
+        <div class="border-b border-zinc-200 dark:border-zinc-700">
             <nav class="flex space-x-8" aria-label="Tabs">
                 <button
                     wire:click="setActiveTab('models')"
                     class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors
                            {{ $activeTab === 'models' 
-                              ? 'border-primary-500 text-primary-600 dark:text-primary-400' 
-                              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300' }}">
+                              ? 'border-accent text-accent dark:text-accent' 
+                              : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300 dark:text-zinc-400 dark:hover:text-zinc-300' }}">
                     AI Models
                 </button>
                 <button
                     wire:click="setActiveTab('system')"
                     class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors
                            {{ $activeTab === 'system' 
-                              ? 'border-primary-500 text-primary-600 dark:text-primary-400' 
-                              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300' }}">
+                              ? 'border-accent text-accent dark:text-accent' 
+                              : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300 dark:text-zinc-400 dark:hover:text-zinc-300' }}">
                     System Settings
                 </button>
                 <button
                     wire:click="setActiveTab('performance')"
                     class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors
                            {{ $activeTab === 'performance' 
-                              ? 'border-primary-500 text-primary-600 dark:text-primary-400' 
-                              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300' }}">
+                              ? 'border-accent text-accent dark:text-accent' 
+                              : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300 dark:text-zinc-400 dark:hover:text-zinc-300' }}">
                     Performance
                 </button>
             </nav>
@@ -79,7 +79,7 @@
                         <!-- Edit Model Form -->
                         <flux:card>
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                <h3 class="text-lg font-semibold text-zinc-900 dark:text-white">
                                     Edit Model: {{ $models[$editingModel]['name'] ?? 'Unknown' }}
                                 </h3>
                                 <flux:button
@@ -189,7 +189,7 @@
                                             sm:flex-row sm:items-start sm:justify-between sm:space-y-0">
                                     <div class="flex-1">
                                         <div class="flex items-center space-x-3 mb-2">
-                                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                            <h3 class="text-lg font-semibold text-zinc-900 dark:text-white">
                                                 {{ $model['name'] }}
                                             </h3>
                                             <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $this->getModelStatusClass($model['status']) }}">
@@ -202,27 +202,27 @@
                                             @endif
                                         </div>
                                         
-                                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                                        <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-3">
                                             {{ $model['description'] }}
                                         </p>
                                         
                                         <div class="grid grid-cols-2 gap-4 text-sm
                                                     md:grid-cols-4">
                                             <div>
-                                                <span class="text-gray-500 dark:text-gray-400">Provider:</span>
-                                                <span class="ml-1 font-medium text-gray-900 dark:text-white capitalize">{{ $model['provider'] }}</span>
+                                                <span class="text-zinc-500 dark:text-zinc-400">Provider:</span>
+                                                <span class="ml-1 font-medium text-zinc-900 dark:text-white capitalize">{{ $model['provider'] }}</span>
                                             </div>
                                             <div>
-                                                <span class="text-gray-500 dark:text-gray-400">Max Tokens:</span>
-                                                <span class="ml-1 font-medium text-gray-900 dark:text-white">{{ $model['max_tokens'] }}</span>
+                                                <span class="text-zinc-500 dark:text-zinc-400">Max Tokens:</span>
+                                                <span class="ml-1 font-medium text-zinc-900 dark:text-white">{{ $model['max_tokens'] }}</span>
                                             </div>
                                             <div>
-                                                <span class="text-gray-500 dark:text-gray-400">Temperature:</span>
-                                                <span class="ml-1 font-medium text-gray-900 dark:text-white">{{ $model['temperature'] }}</span>
+                                                <span class="text-zinc-500 dark:text-zinc-400">Temperature:</span>
+                                                <span class="ml-1 font-medium text-zinc-900 dark:text-white">{{ $model['temperature'] }}</span>
                                             </div>
                                             <div>
-                                                <span class="text-gray-500 dark:text-gray-400">Cost:</span>
-                                                <span class="ml-1 font-medium text-gray-900 dark:text-white">${{ $model['cost_per_1k_tokens'] }}/1k</span>
+                                                <span class="text-zinc-500 dark:text-zinc-400">Cost:</span>
+                                                <span class="ml-1 font-medium text-zinc-900 dark:text-white">${{ $model['cost_per_1k_tokens'] }}/1k</span>
                                             </div>
                                         </div>
                                     </div>
@@ -252,7 +252,7 @@
                             </flux:card>
                         @empty
                             <flux:card class="text-center py-8">
-                                <p class="text-gray-500 dark:text-gray-400">No AI models configured</p>
+                                <p class="text-zinc-500 dark:text-zinc-400">No AI models configured</p>
                             </flux:card>
                         @endforelse
                     </div>
@@ -262,35 +262,35 @@
                 <!-- System Settings Tab -->
                 <div class="space-y-6">
                     <flux:card>
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        <h3 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
                             General Settings
                         </h3>
                         
                         <div class="space-y-4">
-                            <div class="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center justify-between py-3 border-b border-zinc-200 dark:border-zinc-700">
                                 <div>
-                                    <h4 class="font-medium text-gray-900 dark:text-white">Maintenance Mode</h4>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">Temporarily disable AI generation system</p>
+                                    <h4 class="font-medium text-zinc-900 dark:text-white">Maintenance Mode</h4>
+                                    <p class="text-sm text-zinc-500 dark:text-zinc-400">Temporarily disable AI generation system</p>
                                 </div>
                                 <flux:checkbox 
                                     :checked="$systemSettings['maintenance_mode'] ?? false"
                                     wire:change="updateSystemSetting('maintenance_mode', $event.target.checked)" />
                             </div>
                             
-                            <div class="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center justify-between py-3 border-b border-zinc-200 dark:border-zinc-700">
                                 <div>
-                                    <h4 class="font-medium text-gray-900 dark:text-white">Enable Analytics</h4>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">Track usage and performance metrics</p>
+                                    <h4 class="font-medium text-zinc-900 dark:text-white">Enable Analytics</h4>
+                                    <p class="text-sm text-zinc-500 dark:text-zinc-400">Track usage and performance metrics</p>
                                 </div>
                                 <flux:checkbox 
                                     :checked="$systemSettings['enable_analytics'] ?? false"
                                     wire:change="updateSystemSetting('enable_analytics', $event.target.checked)" />
                             </div>
                             
-                            <div class="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center justify-between py-3 border-b border-zinc-200 dark:border-zinc-700">
                                 <div>
-                                    <h4 class="font-medium text-gray-900 dark:text-white">Enable Cost Tracking</h4>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">Monitor API usage costs</p>
+                                    <h4 class="font-medium text-zinc-900 dark:text-white">Enable Cost Tracking</h4>
+                                    <p class="text-sm text-zinc-500 dark:text-zinc-400">Monitor API usage costs</p>
                                 </div>
                                 <flux:checkbox 
                                     :checked="$systemSettings['enable_cost_tracking'] ?? false"
@@ -299,8 +299,8 @@
                             
                             <div class="flex items-center justify-between py-3">
                                 <div>
-                                    <h4 class="font-medium text-gray-900 dark:text-white">Admin Notifications</h4>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">Receive system alerts and updates</p>
+                                    <h4 class="font-medium text-zinc-900 dark:text-white">Admin Notifications</h4>
+                                    <p class="text-sm text-zinc-500 dark:text-zinc-400">Receive system alerts and updates</p>
                                 </div>
                                 <flux:checkbox 
                                     :checked="$systemSettings['admin_notifications'] ?? false"
@@ -310,7 +310,7 @@
                     </flux:card>
                     
                     <flux:card>
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        <h3 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
                             Usage Limits
                         </h3>
                         
@@ -368,7 +368,7 @@
                             @if($model)
                                 <flux:card>
                                     <div class="flex items-center justify-between mb-4">
-                                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                        <h3 class="text-lg font-semibold text-zinc-900 dark:text-white">
                                             {{ $model['name'] }}
                                         </h3>
                                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $this->getModelStatusClass($model['status']) }}">
@@ -378,36 +378,36 @@
                                     
                                     <div class="grid grid-cols-2 gap-4
                                                 md:grid-cols-5">
-                                        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
-                                            <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Response Time</div>
-                                            <div class="text-lg font-semibold text-gray-900 dark:text-white">
+                                        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-3">
+                                            <div class="text-xs text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Response Time</div>
+                                            <div class="text-lg font-semibold text-zinc-900 dark:text-white">
                                                 {{ $this->formatResponseTime($metrics['average_response_time'] ?? 0) }}
                                             </div>
                                         </div>
                                         
-                                        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
-                                            <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Success Rate</div>
+                                        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-3">
+                                            <div class="text-xs text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Success Rate</div>
                                             <div class="text-lg font-semibold {{ $metrics['success_rate'] >= 95 ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400' }}">
                                                 {{ $this->formatPercentage($metrics['success_rate'] ?? 0) }}
                                             </div>
                                         </div>
                                         
-                                        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
-                                            <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">24h Usage</div>
-                                            <div class="text-lg font-semibold text-gray-900 dark:text-white">
+                                        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-3">
+                                            <div class="text-xs text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">24h Usage</div>
+                                            <div class="text-lg font-semibold text-zinc-900 dark:text-white">
                                                 {{ number_format($metrics['usage_count_24h'] ?? 0) }}
                                             </div>
                                         </div>
                                         
-                                        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
-                                            <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Error Rate</div>
+                                        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-3">
+                                            <div class="text-xs text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Error Rate</div>
                                             <div class="text-lg font-semibold {{ $metrics['error_rate'] <= 5 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
                                                 {{ $this->formatPercentage($metrics['error_rate'] ?? 0) }}
                                             </div>
                                         </div>
                                         
-                                        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
-                                            <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Efficiency Score</div>
+                                        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-3">
+                                            <div class="text-xs text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Efficiency Score</div>
                                             <div class="text-lg font-semibold {{ $this->getPerformanceScoreClass($metrics['cost_efficiency'] ?? 0) }}">
                                                 {{ $this->formatPerformanceScore($metrics['cost_efficiency'] ?? 0) }}
                                             </div>
@@ -418,7 +418,7 @@
                         @endforeach
                     @else
                         <flux:card class="text-center py-8">
-                            <p class="text-gray-500 dark:text-gray-400">No performance data available</p>
+                            <p class="text-zinc-500 dark:text-zinc-400">No performance data available</p>
                             <flux:button
                                 wire:click="refreshPerformanceMetrics"
                                 variant="ghost"

@@ -230,20 +230,24 @@ final class CustomThemeAccessibilityTest extends TestCase
     public function test_css_property_generation(): void
     {
         $themeData = [
-            'primary_color' => '#3b82f6',
-            'accent_color' => '#10b981',
-            'background_color' => '#ffffff',
-            'text_color' => '#111827',
+            'accent_color' => '#3b82f6',
+            'accent_content_color' => '#2563eb',
+            'accent_foreground_color' => '#ffffff',
+            'base_color_shade' => 'zinc',
+            'is_dark_mode' => false,
         ];
 
         $css = $this->themeService->generateCssProperties($themeData);
 
-        $this->assertStringContainsString('--color-primary: #3b82f6', $css);
-        $this->assertStringContainsString('--color-accent: #10b981', $css);
-        $this->assertStringContainsString('--color-background: #ffffff', $css);
-        $this->assertStringContainsString('--color-text: #111827', $css);
-        $this->assertStringStartsWith(':root {', $css);
-        $this->assertStringEndsWith('}', $css);
+        // Check for FluxUI standard variables
+        $this->assertStringContainsString('--color-accent: #3b82f6', $css);
+        $this->assertStringContainsString('--color-accent-content: #2563eb', $css);
+        $this->assertStringContainsString('--color-accent-foreground: #ffffff', $css);
+
+        // Check for FluxUI structure
+        $this->assertStringContainsString('@theme {', $css);
+        $this->assertStringContainsString('@layer theme', $css);
+        $this->assertStringContainsString('.dark {', $css);
     }
 
     /**

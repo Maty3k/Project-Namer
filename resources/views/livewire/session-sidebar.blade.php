@@ -2,7 +2,7 @@
     $userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
 @endphp
 <aside 
-    class="h-full {{ $userTheme ? '' : 'bg-white dark:bg-slate-900' }} border-r {{ $userTheme ? '' : 'border-gray-200 dark:border-slate-700' }} flex flex-col transition-all duration-300 ease-in-out transform
+    class="h-full {{ $userTheme ? '' : 'bg-white dark:bg-slate-900' }} border-r {{ $userTheme ? '' : 'border-zinc-200 dark:border-slate-700' }} flex flex-col transition-all duration-300 ease-in-out transform
            {{ $isCollapsed ? 'w-0 opacity-0 overflow-hidden invisible -translate-x-full' : 'w-80 opacity-100 translate-x-0' }}"
     @if($userTheme)
         style="background-color: {{ $userTheme->is_dark_mode ? $userTheme->background_color : ($userTheme->surface_color ?? '#f8fafc') }};
@@ -23,16 +23,16 @@
     x-on:focus-mode-toggled="focusMode = $event.detail.enabled"
 >
     <!-- Header -->
-    <header class="p-4 border-b {{ $userTheme ? 'border-current border-opacity-20' : 'border-gray-200 dark:border-slate-600' }} flex-shrink-0">
+    <header class="p-4 border-b {{ $userTheme ? 'border-current border-opacity-20' : 'border-zinc-200 dark:border-slate-600' }} flex-shrink-0">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold {{ $userTheme ? 'theme-text-primary' : 'text-gray-900 dark:text-white' }}"
+            <h2 class="text-lg font-semibold {{ $userTheme ? 'theme-text-primary' : 'text-zinc-900 dark:text-white' }}"
                 @if($userTheme) style="color: {{ $userTheme->text_color }} !important;" @endif>Sessions</h2>
             <div class="flex items-center gap-2">
                 <!-- Starred Filter Toggle -->
                 <button
                     wire:click="toggleStarredFilter"
-                    class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150
-                           {{ $showStarredOnly ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-400' : 'text-gray-500 dark:text-gray-400' }}"
+                    class="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors duration-150
+                           {{ $showStarredOnly ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-400' : 'text-zinc-500 dark:text-zinc-400' }}"
                     title="Show starred only"
                 >
                     <x-app-icon name="star" style="solid" size="sm" />
@@ -41,7 +41,7 @@
                 <!-- Focus Mode Toggle -->
                 <button
                     wire:click="toggleFocusMode"
-                    class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150 text-gray-500 dark:text-gray-400"
+                    class="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors duration-150 text-zinc-500 dark:text-zinc-400"
                     title="Toggle focus mode (Cmd+/)"
                 >
                     <x-app-icon name="eye-slash" size="sm" />
@@ -54,7 +54,7 @@
             wire:click="createNewSession"
             @if($isCreatingSession) disabled @endif
             class="w-full {{ $userTheme ? '' : 'bg-black dark:bg-white text-white dark:text-black' }} rounded-lg px-4 py-3 
-                   {{ $userTheme ? '' : 'hover:bg-gray-800 dark:hover:bg-gray-100' }} transition-all duration-200 
+                   {{ $userTheme ? '' : 'hover:bg-zinc-800 dark:hover:bg-zinc-100' }} transition-all duration-200 
                    flex items-center justify-center gap-2 font-medium shadow-sm hover:shadow-md
                    hover:scale-[1.02] active:scale-[0.98]
                    @if($isCreatingSession) opacity-75 cursor-not-allowed @endif"
@@ -88,13 +88,13 @@
             <x-app-icon
                 name="magnifying-glass"
                 size="sm"
-                class="absolute left-3 top-2.5 text-gray-400 search-icon"
+                class="absolute left-3 top-2.5 text-zinc-400 search-icon"
             />
             
             @if($searchQuery)
                 <button
                     wire:click="clearSearch"
-                    class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 clear-search"
+                    class="absolute right-3 top-2.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 clear-search"
                     title="Clear search"
                 >
                     <x-app-icon name="x-mark" size="sm" />
@@ -142,8 +142,8 @@
         @if($isLoadingSessions)
             <!-- Loading Skeletons -->
             <div class="mb-2">
-                <div class="sticky top-0 bg-white dark:bg-gray-900 py-2 px-2 mb-2">
-                    <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16 animate-pulse"></div>
+                <div class="sticky top-0 bg-white dark:bg-zinc-900 py-2 px-2 mb-2">
+                    <div class="h-3 bg-zinc-200 dark:bg-zinc-700 rounded w-16 animate-pulse"></div>
                 </div>
                 @for($i = 0; $i < 6; $i++)
                     <x-session-skeleton />
@@ -152,17 +152,17 @@
         @elseif(empty($groupedSessions))
             <!-- Empty State -->
             <div class="flex flex-col items-center justify-center h-64 text-center px-4">
-                <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-                    <x-app-icon name="chat-bubble-left" size="lg" class="text-gray-400" />
+                <div class="w-16 h-16 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-4">
+                    <x-app-icon name="chat-bubble-left" size="lg" class="text-zinc-400" />
                 </div>
-                <p class="text-gray-500 dark:text-gray-400 mb-2">No sessions yet</p>
-                <p class="text-sm text-gray-400 dark:text-gray-500">Create your first naming session to get started</p>
+                <p class="text-zinc-500 dark:text-zinc-400 mb-2">No sessions yet</p>
+                <p class="text-sm text-zinc-400 dark:text-zinc-500">Create your first naming session to get started</p>
             </div>
         @else
             @foreach($groupedSessions as $dateGroup => $sessions)
                 <!-- Date Group Header -->
-                <div class="sticky top-0 bg-white dark:bg-gray-900 py-2 px-2 mb-2">
-                    <h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                <div class="sticky top-0 bg-white dark:bg-zinc-900 py-2 px-2 mb-2">
+                    <h3 class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
                         {{ $dateGroup }}
                     </h3>
                 </div>
@@ -186,8 +186,8 @@
                         @endif
                         
                         <div 
-                            class="p-3 rounded-lg cursor-pointer transition-all duration-150 hover:bg-gray-50 dark:hover:bg-gray-800
-                                   hover:scale-[1.02] active:scale-[0.98] border border-transparent hover:border-gray-200 dark:hover:border-gray-700
+                            class="p-3 rounded-lg cursor-pointer transition-all duration-150 hover:bg-zinc-50 dark:hover:bg-zinc-800
+                                   hover:scale-[1.02] active:scale-[0.98] border border-transparent hover:border-zinc-200 dark:hover:border-gray-700
                                    {{ $session->is_starred ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800' : '' }}"
                             wire:click="loadSession('{{ $session->id }}')"
                         >
@@ -205,7 +205,7 @@
                                             x-on:click.stop
                                         />
                                     @else
-                                        <h4 class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                        <h4 class="text-sm font-medium text-zinc-900 dark:text-white truncate">
                                             {{ $session->title }}
                                         </h4>
                                     @endif
@@ -216,13 +216,13 @@
                                     <!-- Star Button -->
                                     <button
                                         wire:click.stop="toggleStar('{{ $session->id }}')"
-                                        class="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150"
+                                        class="p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors duration-150"
                                     >
                                         <flux:icon 
                                             name="star" 
                                             size="xs"
                                             :variant="$session->is_starred ? 'solid' : 'outline'"
-                                            class="{{ $session->is_starred ? 'text-yellow-500' : 'text-gray-400 hover:text-gray-600' }}"
+                                            class="{{ $session->is_starred ? 'text-yellow-500' : 'text-zinc-400 hover:text-zinc-600' }}"
                                         />
                                     </button>
 
@@ -230,9 +230,9 @@
                                     <div class="relative">
                                         <button
                                             x-on:click.stop="showMenu = !showMenu"
-                                            class="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150"
+                                            class="p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors duration-150"
                                         >
-                                            <x-app-icon name="ellipsis-vertical" size="xs" class="text-gray-400" />
+                                            <x-app-icon name="ellipsis-vertical" size="xs" class="text-zinc-400" />
                                         </button>
 
                                         <!-- Dropdown Menu -->
@@ -244,13 +244,13 @@
                                             x-transition:leave="transition ease-in duration-100"
                                             x-transition:leave-start="opacity-100 scale-100"
                                             x-transition:leave-end="opacity-0 scale-95"
-                                            class="absolute right-0 top-8 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-20"
+                                            class="absolute right-0 top-8 w-48 bg-white dark:bg-zinc-800 rounded-lg shadow-lg border border-zinc-200 dark:border-zinc-700 py-1 z-20"
                                         >
                                             <!-- Rename -->
                                             <button
                                                 wire:click.stop="startRename('{{ $session->id }}')"
                                                 x-on:click="showMenu = false"
-                                                class="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                                                class="w-full text-left px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 flex items-center gap-2"
                                             >
                                                 <x-app-icon name="pencil" size="xs" />
                                                 Rename
@@ -260,7 +260,7 @@
                                             <button
                                                 wire:click.stop="duplicateSession('{{ $session->id }}')"
                                                 x-on:click="showMenu = false"
-                                                class="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                                                class="w-full text-left px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 flex items-center gap-2"
                                             >
                                                 <x-app-icon name="document-duplicate" size="xs" />
                                                 Duplicate
@@ -281,12 +281,12 @@
                             </div>
 
                             <!-- Session Preview -->
-                            <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-2">
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 mb-2">
                                 {{ $session->getPreviewText() }}
                             </p>
 
                             <!-- Session Metadata -->
-                            <div class="flex items-center justify-between text-xs text-gray-400 dark:text-gray-500">
+                            <div class="flex items-center justify-between text-xs text-zinc-400 dark:text-zinc-500">
                                 <span>{{ $session->created_at->diffForHumans() }}</span>
                                 <div class="flex items-center gap-1">
                                     @if($session->deep_thinking)
@@ -305,8 +305,8 @@
                 <div x-ref="loadMore" class="p-4 text-center">
                     @if($isLoadingMore)
                         <div class="flex items-center justify-center gap-2">
-                            <div class="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-gray-600"></div>
-                            <span class="text-sm text-gray-500 dark:text-gray-400">Loading more sessions...</span>
+                            <div class="animate-spin rounded-full h-4 w-4 border-2 border-zinc-300 border-t-gray-600"></div>
+                            <span class="text-sm text-zinc-500 dark:text-zinc-400">Loading more sessions...</span>
                         </div>
                     @else
                         <div class="h-4"></div> <!-- Invisible trigger area -->
@@ -322,7 +322,7 @@
     <button
         wire:click="toggleFocusMode"
         class="fixed top-4 left-4 z-50 bg-black dark:bg-white p-3 rounded-lg shadow-lg 
-               hover:bg-gray-800 dark:hover:bg-gray-100 transition-all duration-300 ease-in-out 
+               hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-all duration-300 ease-in-out 
                hover:scale-105 transform animate-slide-in-left"
         title="Show sidebar (Cmd+/)"
     >

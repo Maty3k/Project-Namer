@@ -2,15 +2,15 @@
 <div class="space-y-6">
     {{-- Header --}}
     <div class="text-center">
-        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-primary-100 dark:bg-primary-900">
-            <svg class="h-6 w-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-accent dark:bg-accent">
+            <svg class="h-6 w-6 text-accent dark:text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
             </svg>
         </div>
-        <h4 class="mt-3 text-lg font-medium text-gray-900 dark:text-gray-100">
+        <h4 class="mt-3 text-lg font-medium text-zinc-900 dark:text-zinc-100">
             Generating Logos
         </h4>
-        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+        <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
             Creating AI-powered logo designs for "{{ $data['name'] ?? 'your business' }}"
         </p>
     </div>
@@ -40,29 +40,29 @@
                         </div>
                     @elseif($step['key'] === $currentStep)
                         {{-- Current Step --}}
-                        <div class="flex items-center justify-center w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-800">
-                            <div class="w-3 h-3 bg-primary-600 dark:bg-blue-400 rounded-full animate-pulse"></div>
+                        <div class="flex items-center justify-center w-6 h-6 rounded-full bg-accent dark:bg-accent">
+                            <div class="w-3 h-3 bg-accent dark:bg-accent rounded-full animate-pulse"></div>
                         </div>
                     @else
                         {{-- Pending Step --}}
-                        <div class="flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700">
-                            <div class="w-2 h-2 bg-gray-400 rounded-full"></div>
+                        <div class="flex items-center justify-center w-6 h-6 rounded-full bg-zinc-100 dark:bg-zinc-700">
+                            <div class="w-2 h-2 bg-zinc-400 rounded-full"></div>
                         </div>
                     @endif
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium {{ in_array($step['key'], $completedSteps) ? 'text-green-600 dark:text-green-400' : ($step['key'] === $currentStep ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400') }}">
+                    <p class="text-sm font-medium {{ in_array($step['key'], $completedSteps) ? 'text-green-600 dark:text-green-400' : ($step['key'] === $currentStep ? 'text-accent dark:text-accent' : 'text-zinc-500 dark:text-zinc-400') }}">
                         {{ $step['label'] }}
                         @if($step['key'] === $currentStep)
                             <span class="inline-flex items-center ml-2">
-                                <svg class="animate-spin -ml-1 mr-1 h-3 w-3 text-primary-600 dark:text-primary-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <svg class="animate-spin -ml-1 mr-1 h-3 w-3 text-accent dark:text-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
                             </span>
                         @endif
                     </p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400">
                         {{ $step['description'] }}
                     </p>
                 </div>
@@ -71,7 +71,7 @@
     </div>
 
     {{-- Progress Bar --}}
-    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+    <div class="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
         @php
             $totalSteps = count($steps);
             $completedCount = count($completedSteps);
@@ -84,7 +84,7 @@
 
     {{-- Estimated Time --}}
     <div class="text-center">
-        <p class="text-xs text-gray-500 dark:text-gray-400">
+        <p class="text-xs text-zinc-500 dark:text-zinc-400">
             @if(isset($data['estimatedTimeRemaining']))
                 Estimated time remaining: {{ $data['estimatedTimeRemaining'] }}
             @else
@@ -94,13 +94,13 @@
     </div>
 
     {{-- Cancel Option --}}
-    <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+    <div class="pt-4 border-t border-zinc-200 dark:border-zinc-700">
         <div class="flex justify-center">
             <flux:button 
                 wire:click="cancelLogoGeneration"
                 variant="outline"
                 size="sm"
-                class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                class="text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200">
                 Cancel Generation
             </flux:button>
         </div>

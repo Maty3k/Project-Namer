@@ -3,8 +3,8 @@
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
             <div>
-                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Logo Gallery</h1>
-                <p class="text-gray-600 dark:text-gray-300 mt-2">View and manage your generated logos</p>
+                <h1 class="text-3xl font-bold text-zinc-900 dark:text-white">Logo Gallery</h1>
+                <p class="text-zinc-600 dark:text-zinc-300 mt-2">View and manage your generated logos</p>
             </div>
             
             <!-- Actions -->
@@ -57,10 +57,10 @@
                         <div class="p-6">
                             <!-- Generation Info -->
                             <div class="mb-4">
-                                <h3 class="font-semibold text-gray-900 dark:text-white text-lg mb-2 line-clamp-2">
+                                <h3 class="font-semibold text-zinc-900 dark:text-white text-lg mb-2 line-clamp-2">
                                     {{ $generation->business_name }}
                                 </h3>
-                                <p class="text-gray-600 dark:text-gray-300 text-sm line-clamp-3">
+                                <p class="text-zinc-600 dark:text-zinc-300 text-sm line-clamp-3">
                                     {{ $generation->business_description }}
                                 </p>
                             </div>
@@ -84,7 +84,7 @@
                                     <div class="grid grid-cols-2 gap-2">
                                         @foreach($generation->logos->take(4) as $logo)
                                             @if($logo->original_file_path && file_exists(storage_path('app/public/' . $logo->original_file_path)))
-                                                <div class="aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
+                                                <div class="aspect-square bg-zinc-100 dark:bg-zinc-800 rounded-lg overflow-hidden">
                                                     <img 
                                                         src="{{ asset('storage/' . $logo->original_file_path) }}" 
                                                         alt="Logo preview"
@@ -95,7 +95,7 @@
                                         @endforeach
                                     </div>
                                     @if($generation->logos->count() > 4)
-                                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 text-center">
+                                        <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-2 text-center">
                                             +{{ $generation->logos->count() - 4 }} more logos
                                         </p>
                                     @endif
@@ -103,7 +103,7 @@
                             @endif
 
                             <!-- Stats -->
-                            <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+                            <div class="mb-4 text-sm text-zinc-600 dark:text-zinc-400">
                                 <div class="flex justify-between">
                                     <span>Logos: {{ $generation->logos_completed }}/{{ $generation->total_logos_requested }}</span>
                                     <span>{{ $generation->created_at->format('M j, Y') }}</span>
@@ -127,7 +127,7 @@
                                     </flux:button>
                                 @endif
                                 
-                                <div class="text-xs text-gray-500 dark:text-gray-400">
+                                <div class="text-xs text-zinc-500 dark:text-zinc-400">
                                     ID: {{ $generation->id }}
                                 </div>
                             </div>
@@ -142,9 +142,9 @@
             <!-- Empty State -->
             <flux:card>
                 <div class="p-12 text-center">
-                    <flux:icon.photo class="size-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">No Logo Generations Found</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-6">
+                    <flux:icon.photo class="size-16 text-zinc-400 dark:text-zinc-500 mx-auto mb-4" />
+                    <h3 class="text-lg font-semibold text-zinc-900 dark:text-white mb-2">No Logo Generations Found</h3>
+                    <p class="text-zinc-600 dark:text-zinc-300 mb-6">
                         @if($search || $statusFilter)
                             No logo generations match your current filters.
                         @else

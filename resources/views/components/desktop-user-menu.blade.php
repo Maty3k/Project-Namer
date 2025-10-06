@@ -1,4 +1,7 @@
+@props(['user' => null])
+
 @php
+    $user = $user ?? auth()->user();
     $userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
 @endphp
 
@@ -6,8 +9,8 @@
     <div class="{{ $userTheme ? 'user-menu-wrapper' : '' }} transition-all duration-200 ease-out hover:scale-105 active:scale-95"
          @if($userTheme) style="color: #374151 !important;" @endif>
         <flux:profile
-                :name="auth()->user()->name"
-                :initials="auth()->user()->initials()"
+                :name="$user->name"
+                :initials="$user->initials()"
                 icon:trailing="chevrons-up-down"
                 class="transition-all duration-200 ease-out"
         />
@@ -21,13 +24,13 @@
                                     <span
                                             class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
                                     >
-                                        {{ auth()->user()->initials() }}
+                                        {{ $user->initials() }}
                                     </span>
                                 </span>
 
                     <div class="grid flex-1 text-start text-sm leading-tight">
-                        <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
-                        <span class="truncate text-xs">{{ auth()->user()->email }}</span>
+                        <span class="truncate font-semibold">{{ $user->name }}</span>
+                        <span class="truncate text-xs">{{ $user->email }}</span>
                     </div>
                 </div>
             </div>
@@ -40,7 +43,7 @@
                 :href="route('settings.profile')"
                 icon="cog"
                 wire:navigate.hover
-                class="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-sm"
+                class="cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-sm"
             >
                 {{ __('Settings') }}
             </flux:menu.item>
@@ -56,7 +59,7 @@
 
         <form method="POST" action="{{ route('logout') }}" class="w-full">
             @csrf
-            <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-sm hover:bg-red-50 dark:hover:bg-red-900/20">
+            <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-sm hover:bg-zinc-100 dark:hover:bg-zinc-800">
                 {{ __('Log Out') }}
             </flux:menu.item>
         </form>
