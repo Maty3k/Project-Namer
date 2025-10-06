@@ -145,41 +145,45 @@
                         {{-- Generate Button --}}
                         <div class="flex justify-center pt-4">
                             @if($useAIGeneration)
-                                <flux:button
-                                    type="submit"
-                                    variant="primary"
-                                    size="base"
-                                    class="px-6 sm:px-8 py-3 text-base sm:text-lg min-h-12 sm:min-h-14"
-                                    wire:loading.attr="disabled"
-                                    wire:loading.class="opacity-50"
-                                >
-                                    <div wire:loading wire:target="generateNamesWithAI" class="flex items-center">
-                                        <flux:icon.arrow-path class="size-5 animate-spin mr-2" />
-                                        AI Generating Names...
-                                    </div>
-                                    <div wire:loading.remove wire:target="generateNamesWithAI" class="flex items-center">
-                                        <flux:icon.cpu-chip class="size-5 mr-2" />
-                                        Generate with AI
-                                    </div>
-                                </flux:button>
+                                <flux:tooltip content="Generate names (⌘G)">
+                                    <flux:button
+                                        type="submit"
+                                        variant="primary"
+                                        size="base"
+                                        class="px-6 sm:px-8 py-3 text-base sm:text-lg min-h-12 sm:min-h-14"
+                                        wire:loading.attr="disabled"
+                                        wire:loading.class="opacity-50"
+                                    >
+                                        <div wire:loading wire:target="generateNamesWithAI" class="flex items-center">
+                                            <flux:icon.arrow-path class="size-5 animate-spin mr-2" />
+                                            AI Generating Names...
+                                        </div>
+                                        <div wire:loading.remove wire:target="generateNamesWithAI" class="flex items-center">
+                                            <flux:icon.cpu-chip class="size-5 mr-2" />
+                                            Generate with AI
+                                        </div>
+                                    </flux:button>
+                                </flux:tooltip>
                             @else
-                                <flux:button
-                                    type="submit"
-                                    variant="primary"
-                                    size="base"
-                                    class="px-6 sm:px-8 py-3 text-base sm:text-lg min-h-12 sm:min-h-14"
-                                    wire:loading.attr="disabled"
-                                    wire:loading.class="opacity-50"
-                                >
-                                    <div wire:loading wire:target="generateNames" class="flex items-center">
-                                        <flux:icon.arrow-path class="size-5 animate-spin mr-2" />
-                                        Generating Names...
-                                    </div>
-                                    <div wire:loading.remove wire:target="generateNames" class="flex items-center">
-                                        <flux:icon.sparkles class="size-5 mr-2" />
-                                        Generate Business Names
-                                    </div>
-                                </flux:button>
+                                <flux:tooltip content="Generate names (⌘G)">
+                                    <flux:button
+                                        type="submit"
+                                        variant="primary"
+                                        size="base"
+                                        class="px-6 sm:px-8 py-3 text-base sm:text-lg min-h-12 sm:min-h-14"
+                                        wire:loading.attr="disabled"
+                                        wire:loading.class="opacity-50"
+                                    >
+                                        <div wire:loading wire:target="generateNames" class="flex items-center">
+                                            <flux:icon.arrow-path class="size-5 animate-spin mr-2" />
+                                            Generating Names...
+                                        </div>
+                                        <div wire:loading.remove wire:target="generateNames" class="flex items-center">
+                                            <flux:icon.sparkles class="size-5 mr-2" />
+                                            Generate Business Names
+                                        </div>
+                                    </flux:button>
+                                </flux:tooltip>
                             @endif
                         </div>
                     </form>

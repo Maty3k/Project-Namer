@@ -237,6 +237,10 @@
 
     <x-mobile-user-menu/>
 
+    {{-- Keyboard Shortcuts Components --}}
+    <x-command-palette />
+    <x-keyboard-shortcuts-help />
+
     @fluxScripts(['nonce' => \Illuminate\Support\Facades\Vite::cspNonce()])
     @stack('scripts')
 </body>

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Models\User;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Sleep;
 use Livewire\Volt\Volt;
 use Prism\Prism\Prism;
@@ -14,6 +15,19 @@ beforeEach(function (): void {
 
     // Fake sleep to speed up tests with retry logic
     Sleep::fake();
+
+    // Prevent external HTTP calls for fast tests
+    Http::preventStrayRequests();
+    Http::fake([
+        '*' => Http::response(['available' => true], 200),
+    ]);
+
+    // Mock Prism AI responses for fast tests
+    Prism::fake([
+        TextResponseFake::make()->withText("1. TestName1\n2. TestName2\n3. TestName3\n4. TestName4\n5. TestName5"),
+        TextResponseFake::make()->withText("1. CreativeFlow\n2. InnovateLab\n3. BrightSpark"),
+        TextResponseFake::make()->withText("1. SynergyFlow\n2. CreativeCore"),
+    ]);
 });
 
 describe('NameGeneratorComponent Core Functionality', function (): void {

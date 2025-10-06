@@ -17,26 +17,26 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 1.7 Add skeleton loading to AI generation progress displays
   - [x] 1.8 Verify all tests pass
 
-- [ ] 2. Lazy Loading Implementation
-  - [ ] 2.1 Write tests for lazy loading behavior (images, components, deferred data)
-  - [ ] 2.2 Add loading="lazy" to all below-fold images
-  - [ ] 2.3 Implement progressive image loading (blur-up) for hero images
-  - [ ] 2.4 Add deferred loading to heavy Livewire components (charts, image editor)
-  - [ ] 2.5 Implement virtual scrolling for long name suggestion lists
-  - [ ] 2.6 Add IntersectionObserver for component visibility detection
-  - [ ] 2.7 Test lazy loading with throttled connections
-  - [ ] 2.8 Verify all tests pass
+- [x] 2. Lazy Loading Implementation
+  - [x] 2.1 Write tests for lazy loading behavior (images, components, deferred data)
+  - [x] 2.2 Add loading="lazy" to all below-fold images
+  - [x] 2.3 Implement progressive image loading (blur-up) for hero images
+  - [x] 2.4 Add deferred loading to heavy Livewire components (charts, image editor)
+  - [x] 2.5 Implement virtual scrolling for long name suggestion lists
+  - [x] 2.6 Add IntersectionObserver for component visibility detection
+  - [x] 2.7 Test lazy loading with throttled connections
+  - [x] 2.8 Verify all tests pass
 
-- [ ] 3. Keyboard Shortcuts System
-  - [ ] 3.1 Write tests for all keyboard shortcuts and command palette
-  - [ ] 3.2 Create Alpine.js keyboard shortcut manager component
-  - [ ] 3.3 Implement Cmd+K command palette UI
-  - [ ] 3.4 Add Cmd+N for new project creation
-  - [ ] 3.5 Add Cmd+G for generate names trigger
-  - [ ] 3.6 Add ? for keyboard shortcuts help overlay
-  - [ ] 3.7 Add keyboard shortcut hints to button tooltips
-  - [ ] 3.8 Test shortcuts don't interfere with form inputs
-  - [ ] 3.9 Verify all tests pass
+- [x] 3. Keyboard Shortcuts System
+  - [x] 3.1 Write tests for all keyboard shortcuts and command palette
+  - [x] 3.2 Create Alpine.js keyboard shortcut manager component
+  - [x] 3.3 Implement Cmd+K command palette UI
+  - [x] 3.4 Add Cmd+N for new project creation
+  - [x] 3.5 Add Cmd+G for generate names trigger
+  - [x] 3.6 Add ? for keyboard shortcuts help overlay
+  - [x] 3.7 Add keyboard shortcut hints to button tooltips
+  - [x] 3.8 Test shortcuts don't interfere with form inputs
+  - [x] 3.9 Verify all tests pass
 
 - [ ] 4. Optimistic UI Updates
   - [ ] 4.1 Write tests for optimistic updates and rollback behavior

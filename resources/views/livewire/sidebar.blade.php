@@ -42,16 +42,18 @@
 
     <!-- New Project Button -->
     <div class="p-4 transition-all duration-300 ease-out">
-        <flux:button wire:click="createNewProject" variant="primary" class="w-full transition-all duration-300 ease-out {{ $collapsed ? 'px-3' : 'px-4' }} relative overflow-hidden">
-            <div class="flex items-center justify-center transition-all duration-300 ease-out {{ $collapsed ? 'gap-0' : 'gap-2' }}">
-                <x-app-icon name="document-plus" size="{{ $collapsed ? 'lg' : 'md' }}" class="transition-all duration-200 ease-out flex-shrink-0" />
-                <div class="overflow-hidden transition-all duration-500 ease-out {{ $collapsed ? 'max-w-0 opacity-0 ml-0' : 'max-w-full opacity-100 ml-2' }}">
-                    @if(!$collapsed)
-                        <span class="whitespace-nowrap transition-opacity duration-300 ease-out delay-100">New Project</span>
-                    @endif
+        <flux:tooltip content="New project (⌘N)">
+            <flux:button wire:click="createNewProject" variant="primary" class="w-full transition-all duration-300 ease-out {{ $collapsed ? 'px-3' : 'px-4' }} relative overflow-hidden">
+                <div class="flex items-center justify-center transition-all duration-300 ease-out {{ $collapsed ? 'gap-0' : 'gap-2' }}">
+                    <x-app-icon name="document-plus" size="{{ $collapsed ? 'lg' : 'md' }}" class="transition-all duration-200 ease-out flex-shrink-0" />
+                    <div class="overflow-hidden transition-all duration-500 ease-out {{ $collapsed ? 'max-w-0 opacity-0 ml-0' : 'max-w-full opacity-100 ml-2' }}">
+                        @if(!$collapsed)
+                            <span class="whitespace-nowrap transition-opacity duration-300 ease-out delay-100">New Project</span>
+                        @endif
+                    </div>
                 </div>
-            </div>
-        </flux:button>
+            </flux:button>
+        </flux:tooltip>
     </div>
 
     <!-- Bulk Delete Controls -->

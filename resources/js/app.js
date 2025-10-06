@@ -1,6 +1,18 @@
 // Import performance monitoring
 import './performance-monitor.js';
 
+// Import lazy load observer
+import lazyLoadObserver from './components/lazyLoadObserver.js';
+
+// Import keyboard shortcuts
+import keyboardShortcuts from './components/keyboardShortcuts.js';
+
+// Register Alpine components
+document.addEventListener('alpine:init', () => {
+    Alpine.data('lazyLoadObserver', lazyLoadObserver);
+    Alpine.data('keyboardShortcuts', keyboardShortcuts);
+});
+
 // Suppress non-critical ResizeObserver warnings in development
 // These warnings occur during CSS animations and layout changes
 const originalConsoleError = console.error;

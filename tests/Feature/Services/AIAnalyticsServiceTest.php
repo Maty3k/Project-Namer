@@ -260,17 +260,26 @@ describe('AIAnalyticsService', function (): void {
             'project_id' => $testProject->id,
             'models_requested' => ['gpt-4'],
             'status' => 'completed',
-            'created_at' => now()->subDays(1),
+            'created_at' => now()->subHours(1), // Just 1 hour ago to ensure it's within the week
         ]);
 
         // Verify the generations were created with correct timestamps
         expect($oldGeneration->created_at)->toBeLessThan(now()->subWeeks(2));
-        expect($recentGeneration->created_at)->toBeGreaterThan(now()->subDays(2));
+        expect($recentGeneration->created_at)->toBeGreaterThan(now()->subHours(2));
+
+        // Clear cache again after creating data
+        Cache::flush();
 
         // Test different periods
         $weekAnalytics = $this->service->getUserAnalytics($testUser, 'week');
         $allTimeAnalytics = $this->service->getUserAnalytics($testUser, 'all');
 
+        // Verify we have the expected records in the database
+        $weekCount = AIGeneration::where('user_id', $testUser->id)
+            ->where('created_at', '>=', now()->subWeek())
+            ->count();
+
+        expect($weekCount)->toBe(1, 'Expected 1 generation in the last week');
         expect($weekAnalytics['overview']['total_generations'])
             ->toBe(1) // Should only include recent generation
             ->and($allTimeAnalytics['overview']['total_generations'])

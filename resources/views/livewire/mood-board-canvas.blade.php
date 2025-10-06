@@ -134,7 +134,8 @@
                                 @if($image->thumbnail_path)
                                     <img src="{{ Storage::url($image->thumbnail_path) }}"
                                          alt="{{ $image->title ?? $image->original_filename }}"
-                                         class="w-full h-full object-cover">
+                                         class="w-full h-full object-cover"
+                                         loading="lazy">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center">
                                         <flux:icon name="photo" 
@@ -274,7 +275,8 @@
                             @if($image->thumbnail_path)
                                 <img src="{{ Storage::url($image->thumbnail_path) }}"
                                      alt="{{ $image->title ?? $image->original_filename }}"
-                                     class="w-full h-full object-cover rounded-lg shadow-lg">
+                                     class="w-full h-full object-cover rounded-lg shadow-lg"
+                                     loading="lazy">
                             @else
                                 <div class="w-full h-full bg-gray-200 dark:bg-gray-600 rounded-lg shadow-lg flex items-center justify-center">
                                     <flux:icon name="photo" class="w-8 h-8 text-gray-400" />

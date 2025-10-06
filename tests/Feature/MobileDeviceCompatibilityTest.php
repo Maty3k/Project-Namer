@@ -3,11 +3,23 @@
 declare(strict_types=1);
 
 use App\Models\User;
+use Illuminate\Support\Facades\Http;
+use Prism\Prism\Prism;
+use Prism\Prism\Testing\TextResponseFake;
 
 describe('Mobile Device Compatibility Testing', function (): void {
     beforeEach(function (): void {
         $this->user = User::factory()->create();
         $this->actingAs($this->user);
+
+        // Prevent external API calls for fast tests
+        Http::preventStrayRequests();
+        Http::fake(['*' => Http::response(['data' => 'mocked'], 200)]);
+
+        // Mock Prism for AI calls
+        Prism::fake([
+            TextResponseFake::make()->withText("1. TestName\n2. AnotherName"),
+        ]);
     });
 
     describe('iOS Safari Mobile Compatibility', function (): void {
