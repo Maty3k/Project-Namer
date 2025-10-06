@@ -102,14 +102,14 @@ class AIWorkflowIntegrationTest extends TestCase
             ->assertSee('OldName');
 
         // Generate more names with context
-        $component->call('generateMoreNames', [
-            'models' => ['gpt-4', 'claude-3.5-sonnet'],
-            'mode' => 'brandable',
-        ]);
+        $component->set('useAIGeneration', true)
+            ->set('selectedAIModels', ['gpt-4', 'claude-3.5-sonnet'])
+            ->set('generationMode', 'brandable')
+            ->call('generateMoreNames');
 
-        // Verify new suggestions were added
+        // Verify new suggestions were added (3 existing + mocked AI response should return 10 names)
         $allSuggestions = NameSuggestion::where('project_id', $this->project->id)->get();
-        $this->assertGreaterThan(3, $allSuggestions->count());
+        $this->assertGreaterThanOrEqual(10, $allSuggestions->count());
 
         // Verify context awareness (new names should be different from existing)
         $newSuggestions = $allSuggestions->whereNotIn('name', $existingNames);
