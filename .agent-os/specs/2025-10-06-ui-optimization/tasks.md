@@ -48,16 +48,16 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 4.7 Test rapid consecutive optimistic operations
   - [x] 4.8 Verify all tests pass
 
-- [ ] 5. Micro-interactions & Animations
-  - [ ] 5.1 Write tests for button states and transitions
-  - [ ] 5.2 Add hover/active transitions to all buttons (scale, shadow)
-  - [ ] 5.3 Add card hover effects (shadow, border)
-  - [ ] 5.4 Implement form focus transitions
-  - [ ] 5.5 Add validation shake animation for errors
-  - [ ] 5.6 Add success glow animation for saves
-  - [ ] 5.7 Implement ripple effect for primary actions
-  - [ ] 5.8 Respect prefers-reduced-motion media query
-  - [ ] 5.9 Verify all tests pass
+- [x] 5. Micro-interactions & Animations
+  - [x] 5.1 Write tests for button states and transitions
+  - [x] 5.2 Add hover/active transitions to all buttons (scale, shadow)
+  - [x] 5.3 Add card hover effects (shadow, border)
+  - [x] 5.4 Implement form focus transitions
+  - [x] 5.5 Add validation shake animation for errors
+  - [x] 5.6 Add success glow animation for saves
+  - [x] 5.7 Implement ripple effect for primary actions
+  - [x] 5.8 Respect prefers-reduced-motion media query
+  - [x] 5.9 Verify all tests pass
 
 - [ ] 6. Database Query Optimization
   - [ ] 6.1 Write tests for query performance and N+1 prevention

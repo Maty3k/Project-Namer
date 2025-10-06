@@ -10,11 +10,15 @@ import keyboardShortcuts from './components/keyboardShortcuts.js';
 // Import optimistic UI
 import optimisticUI from './components/optimisticUI.js';
 
+// Import ripple effect
+import rippleEffect from './components/rippleEffect.js';
+
 // Register Alpine components
 document.addEventListener('alpine:init', () => {
     Alpine.data('lazyLoadObserver', lazyLoadObserver);
     Alpine.data('keyboardShortcuts', keyboardShortcuts);
     Alpine.data('optimisticUI', optimisticUI);
+    Alpine.data('rippleEffect', rippleEffect);
 });
 
 // Suppress non-critical ResizeObserver warnings in development

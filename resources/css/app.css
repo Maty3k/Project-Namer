@@ -3,6 +3,7 @@
 @import './mobile-ai-optimizations.css';
 @import './ai-accessibility-enhancements.css';
 @import './smooth-animations.css';
+@import './micro-interactions.css';
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';

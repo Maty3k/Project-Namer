@@ -1,0 +1,355 @@
+/**
+ * Micro-interactions & Animations
+ *
+ * Subtle UI animations and transitions for enhanced user experience
+ * Respects prefers-reduced-motion for accessibility
+ */
+
+/* ============================================
+   Button Transitions
+   ============================================ */
+
+/* Base button transitions */
+button,
+[type="button"],
+[type="submit"],
+.btn {
+    transition: transform 150ms ease-out,
+                box-shadow 150ms ease-out,
+                background-color 150ms ease-out,
+                border-color 150ms ease-out;
+}
+
+/* Button hover states */
+button:hover:not(:disabled),
+[type="button"]:hover:not(:disabled),
+[type="submit"]:hover:not(:disabled),
+.btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+/* Button active states */
+button:active:not(:disabled),
+[type="button"]:active:not(:disabled),
+[type="submit"]:active:not(:disabled),
+.btn:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+/* Primary button hover enhancement */
+button[class*="primary"]:hover:not(:disabled),
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+/* ============================================
+   Card Hover Effects
+   ============================================ */
+
+.card,
+[class*="card-"],
+.suggestion-card,
+.project-card {
+    transition: box-shadow 200ms ease-out,
+                border-color 200ms ease-out,
+                transform 200ms ease-out;
+}
+
+.card:hover,
+[class*="card-"]:hover,
+.suggestion-card:hover,
+.project-card:hover {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    border-color: rgb(59 130 246 / 0.5); /* blue-500 with opacity */
+    transform: translateY(-2px);
+}
+
+/* Dark mode card hover */
+.dark .card:hover,
+.dark [class*="card-"]:hover,
+.dark .suggestion-card:hover,
+.dark .project-card:hover {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+    border-color: rgb(96 165 250 / 0.5); /* blue-400 with opacity */
+}
+
+/* ============================================
+   Form Focus Transitions
+   ============================================ */
+
+input,
+textarea,
+select {
+    transition: border-color 150ms ease-out,
+                box-shadow 150ms ease-out,
+                background-color 150ms ease-out;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: rgb(59 130 246); /* blue-500 */
+    box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+    border-color: rgb(96 165 250); /* blue-400 */
+    box-shadow: 0 0 0 3px rgb(96 165 250 / 0.1);
+}
+
+/* ============================================
+   Validation Animations
+   ============================================ */
+
+/* Shake animation for errors */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+    20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+.shake,
+.error-shake,
+[data-error="true"] {
+    animation: shake 400ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+/* Error field styling */
+input.error,
+textarea.error,
+select.error,
+input:invalid:not(:focus),
+textarea:invalid:not(:focus),
+select:invalid:not(:focus) {
+    border-color: rgb(239 68 68); /* red-500 */
+    animation: shake 400ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+/* ============================================
+   Success Animations
+   ============================================ */
+
+/* Success glow animation */
+@keyframes success-glow {
+    0% { box-shadow: 0 0 0 0 rgb(34 197 94 / 0.7); }
+    50% { box-shadow: 0 0 0 10px rgb(34 197 94 / 0); }
+    100% { box-shadow: 0 0 0 0 rgb(34 197 94 / 0); }
+}
+
+.success-glow,
+[data-success="true"] {
+    animation: success-glow 600ms ease-out;
+}
+
+/* Success pulse for icons */
+@keyframes success-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.9; }
+}
+
+.success-pulse {
+    animation: success-pulse 500ms ease-out;
+}
+
+/* ============================================
+   Ripple Effect
+   ============================================ */
+
+.ripple-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    transform: scale(0);
+    animation: ripple-animation 600ms ease-out;
+    pointer-events: none;
+}
+
+@keyframes ripple-animation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Ripple for primary buttons */
+button[class*="primary"] .ripple,
+.btn-primary .ripple {
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+/* ============================================
+   Loading States
+   ============================================ */
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.loading-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Spinner animation */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+/* ============================================
+   Fade Transitions
+   ============================================ */
+
+.fade-in {
+    animation: fade-in 300ms ease-out;
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-out {
+    animation: fade-out 200ms ease-in;
+}
+
+@keyframes fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* ============================================
+   Slide Transitions
+   ============================================ */
+
+@keyframes slide-in-up {
+    from {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.slide-in-up {
+    animation: slide-in-up 300ms ease-out;
+}
+
+@keyframes slide-in-down {
+    from {
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.slide-in-down {
+    animation: slide-in-down 300ms ease-out;
+}
+
+/* ============================================
+   Scale Transitions
+   ============================================ */
+
+@keyframes scale-in {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.scale-in {
+    animation: scale-in 200ms ease-out;
+}
+
+/* ============================================
+   Accessibility: Reduced Motion
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    /* Disable specific animations */
+    .shake,
+    .error-shake,
+    .success-glow,
+    .success-pulse,
+    .ripple,
+    .loading-pulse,
+    .spin,
+    .fade-in,
+    .fade-out,
+    .slide-in-up,
+    .slide-in-down,
+    .scale-in {
+        animation: none !important;
+    }
+
+    /* Keep essential transitions but make them instant */
+    button:hover:not(:disabled),
+    [type="button"]:hover:not(:disabled),
+    [type="submit"]:hover:not(:disabled),
+    .btn:hover:not(:disabled) {
+        transform: none;
+    }
+
+    .card:hover,
+    [class*="card-"]:hover {
+        transform: none;
+    }
+}
+
+/* ============================================
+   Performance Optimizations
+   ============================================ */
+
+/* Use GPU acceleration for transforms */
+.card,
+button,
+.btn,
+input,
+textarea,
+select {
+    will-change: auto;
+}
+
+/* Only hint will-change during interactions */
+button:hover,
+.card:hover {
+    will-change: transform, box-shadow;
+}
+
+button:not(:hover),
+.card:not(:hover) {
+    will-change: auto;
+}
