@@ -7,10 +7,14 @@ import lazyLoadObserver from './components/lazyLoadObserver.js';
 // Import keyboard shortcuts
 import keyboardShortcuts from './components/keyboardShortcuts.js';
 
+// Import optimistic UI
+import optimisticUI from './components/optimisticUI.js';
+
 // Register Alpine components
 document.addEventListener('alpine:init', () => {
     Alpine.data('lazyLoadObserver', lazyLoadObserver);
     Alpine.data('keyboardShortcuts', keyboardShortcuts);
+    Alpine.data('optimisticUI', optimisticUI);
 });
 
 // Suppress non-critical ResizeObserver warnings in development

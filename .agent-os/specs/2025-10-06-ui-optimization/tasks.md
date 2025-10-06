@@ -38,15 +38,15 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 3.8 Test shortcuts don't interfere with form inputs
   - [x] 3.9 Verify all tests pass
 
-- [ ] 4. Optimistic UI Updates
-  - [ ] 4.1 Write tests for optimistic updates and rollback behavior
-  - [ ] 4.2 Implement optimistic hide/show for name suggestions
-  - [ ] 4.3 Implement optimistic star/favorite functionality
-  - [ ] 4.4 Add optimistic delete with undo toast
-  - [ ] 4.5 Implement rollback mechanism for failed server operations
-  - [ ] 4.6 Add error toast notifications on rollback
-  - [ ] 4.7 Test rapid consecutive optimistic operations
-  - [ ] 4.8 Verify all tests pass
+- [x] 4. Optimistic UI Updates
+  - [x] 4.1 Write tests for optimistic updates and rollback behavior
+  - [x] 4.2 Implement optimistic hide/show for name suggestions
+  - [x] 4.3 Implement optimistic star/favorite functionality
+  - [x] 4.4 Add optimistic delete with undo toast
+  - [x] 4.5 Implement rollback mechanism for failed server operations
+  - [x] 4.6 Add error toast notifications on rollback
+  - [x] 4.7 Test rapid consecutive optimistic operations
+  - [x] 4.8 Verify all tests pass
 
 - [ ] 5. Micro-interactions & Animations
   - [ ] 5.1 Write tests for button states and transitions
