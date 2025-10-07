@@ -10,8 +10,6 @@ use Livewire\Component;
 
 class KeyboardShortcuts extends Component
 {
-    public bool $enabled = true;
-
     /** @var array<string, mixed> */
     public array $shortcuts = [];
 
@@ -38,28 +36,8 @@ class KeyboardShortcuts extends Component
     {
         $userShortcuts = UserKeyboardShortcut::findOrCreateForUser(Auth::id());
 
-        $this->enabled = $userShortcuts->enabled;
         $this->shortcuts = $userShortcuts->getMergedShortcuts();
         $this->disabledShortcuts = $userShortcuts->disabled_shortcuts ?? [];
-    }
-
-    /**
-     * Livewire updater method called when enabled property changes.
-     */
-    public function updatedEnabled(): void
-    {
-        // Save to database
-        $userShortcuts = UserKeyboardShortcut::findOrCreateForUser(Auth::id());
-        $userShortcuts->update(['enabled' => $this->enabled]);
-
-        // Refresh shortcuts to reflect the change
-        $this->shortcuts = $userShortcuts->getMergedShortcuts();
-
-        // Dispatch Livewire event to notify JavaScript
-        $this->dispatch('shortcuts-updated');
-
-        // Show toast notification
-        $this->dispatch('toast', message: 'Keyboard shortcuts '.($this->enabled ? 'enabled' : 'disabled'));
     }
 
     /**

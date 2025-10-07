@@ -7,19 +7,6 @@
 
     <div class="max-w-4xl mx-auto">
         <div class="my-6 w-full space-y-8">
-            {{-- Global Toggle --}}
-            <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                <div class="flex-1">
-                    <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                        Enable Keyboard Shortcuts
-                    </h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        Toggle all keyboard shortcuts on or off globally
-                    </p>
-                </div>
-                <flux:switch wire:model.live="enabled" />
-            </div>
-
             {{-- Shortcuts List --}}
             <div class="space-y-4">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
@@ -28,13 +15,13 @@
 
                 @foreach($shortcuts as $action => $shortcut)
                     <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg
-                                @if(!$shortcut['enabled'] || !$enabled) opacity-50 @endif">
+                                @if(!$shortcut['enabled']) opacity-50 @endif">
                         <div class="flex-1">
                             <div class="flex items-center gap-3">
                                 <h4 class="text-sm font-medium text-gray-900 dark:text-gray-100">
                                     {{ $shortcut['description'] }}
                                 </h4>
-                                @if(!$shortcut['enabled'] || !$enabled)
+                                @if(!$shortcut['enabled'])
                                     <span class="text-xs px-2 py-0.5 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded">
                                         Disabled
                                     </span>
@@ -48,26 +35,24 @@
                         </div>
 
                         <div class="flex items-center gap-2">
-                            @if($enabled)
-                                <flux:button
-                                    size="sm"
-                                    variant="ghost"
-                                    wire:click="openEditModal('{{ $action }}')"
-                                >
-                                    Edit
-                                </flux:button>
-                                <flux:button
-                                    size="sm"
-                                    variant="ghost"
-                                    wire:click="toggleShortcut('{{ $action }}')"
-                                >
-                                    @if(in_array($action, $disabledShortcuts))
-                                        Enable
-                                    @else
-                                        Disable
-                                    @endif
-                                </flux:button>
-                            @endif
+                            <flux:button
+                                size="sm"
+                                variant="ghost"
+                                wire:click="openEditModal('{{ $action }}')"
+                            >
+                                Edit
+                            </flux:button>
+                            <flux:button
+                                size="sm"
+                                variant="ghost"
+                                wire:click="toggleShortcut('{{ $action }}')"
+                            >
+                                @if(in_array($action, $disabledShortcuts))
+                                    Enable
+                                @else
+                                    Disable
+                                @endif
+                            </flux:button>
                         </div>
                     </div>
                 @endforeach

@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property int $id
  * @property int $user_id
- * @property bool $enabled
  * @property array|null $custom_shortcuts
  * @property array|null $disabled_shortcuts
  * @property \Illuminate\Support\Carbon $created_at
@@ -23,7 +22,6 @@ final class UserKeyboardShortcut extends Model
 {
     protected $fillable = [
         'user_id',
-        'enabled',
         'custom_shortcuts',
         'disabled_shortcuts',
     ];
@@ -31,7 +29,6 @@ final class UserKeyboardShortcut extends Model
     protected function casts(): array
     {
         return [
-            'enabled' => 'boolean',
             'custom_shortcuts' => 'array',
             'disabled_shortcuts' => 'array',
         ];
@@ -119,13 +116,6 @@ final class UserKeyboardShortcut extends Model
             }
         }
 
-        // If globally disabled, disable all shortcuts
-        if (! $this->enabled) {
-            foreach ($shortcuts as $action => $config) {
-                $shortcuts[$action]['enabled'] = false;
-            }
-        }
-
         return $shortcuts;
     }
 
@@ -137,7 +127,6 @@ final class UserKeyboardShortcut extends Model
         return self::firstOrCreate(
             ['user_id' => $userId],
             [
-                'enabled' => true,
                 'custom_shortcuts' => null,
                 'disabled_shortcuts' => null,
             ]
@@ -149,10 +138,6 @@ final class UserKeyboardShortcut extends Model
      */
     public function isShortcutEnabled(string $action): bool
     {
-        if (! $this->enabled) {
-            return false;
-        }
-
         if ($this->disabled_shortcuts && in_array($action, $this->disabled_shortcuts)) {
             return false;
         }

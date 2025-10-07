@@ -17,7 +17,6 @@ test('returns user keyboard shortcuts preferences via API', function () {
         ->getJson('/api/keyboard-shortcuts')
         ->assertOk()
         ->assertJsonStructure([
-            'enabled',
             'shortcuts' => [
                 'newProject' => ['key', 'modifiers', 'description', 'enabled'],
                 'settings',
@@ -29,17 +28,16 @@ test('returns user keyboard shortcuts preferences via API', function () {
         ]);
 });
 
-test('returns correct enabled state', function () {
+test('returns shortcuts with proper structure', function () {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
-    $shortcuts->update(['enabled' => false]);
 
-    $this->actingAs($user)
+    $response = $this->actingAs($user)
         ->getJson('/api/keyboard-shortcuts')
-        ->assertOk()
-        ->assertJson([
-            'enabled' => false,
-        ]);
+        ->assertOk();
+
+    $data = $response->json();
+    expect($data)->toHaveKey('shortcuts');
 });
 
 test('returns custom shortcuts when set', function () {
@@ -94,8 +92,7 @@ test('returns default shortcuts for new user', function () {
         ->assertOk();
 
     $data = $response->json();
-    expect($data['enabled'])->toBeTrue()
-        ->and($data['shortcuts'])->toHaveKeys(['newProject', 'settings', 'themeCustomizer', 'logoGallery', 'help', 'escape'])
+    expect($data['shortcuts'])->toHaveKeys(['newProject', 'settings', 'themeCustomizer', 'logoGallery', 'help', 'escape'])
         ->and($data['shortcuts']['newProject']['key'])->toBe('n')
         ->and($data['shortcuts']['newProject']['enabled'])->toBeTrue();
 });

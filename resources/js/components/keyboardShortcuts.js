@@ -10,26 +10,14 @@ let globalShortcutsInstance = null;
 export default () => ({
     helpOverlayOpen: false,
     shortcuts: [],
-    enabled: true, // Global enabled state
 
-    async init() {
+    init() {
         // If this is the first instance, set it as the global singleton
         if (!globalShortcutsInstance) {
             globalShortcutsInstance = this;
 
-            // Load enabled state from API
-            await this.loadEnabledState();
-
             // Register keyboard event listener ONCE globally
             window.addEventListener('keydown', (e) => globalShortcutsInstance.handleKeydown(e));
-
-            // Listen for shortcuts-updated event from Livewire
-            document.addEventListener('livewire:init', () => {
-                Livewire.on('shortcuts-updated', () => {
-                    console.log('[Keyboard Shortcuts] Received shortcuts-updated event');
-                    globalShortcutsInstance.loadEnabledState();
-                });
-            });
 
             // Define available shortcuts with handlers bound to the global instance
             this.shortcuts = [
@@ -45,29 +33,8 @@ export default () => ({
             setInterval(() => {
                 if (globalShortcutsInstance) {
                     this.helpOverlayOpen = globalShortcutsInstance.helpOverlayOpen;
-                    this.enabled = globalShortcutsInstance.enabled;
                 }
             }, 50);
-        }
-    },
-
-    async loadEnabledState() {
-        try {
-            console.log('[Keyboard Shortcuts] Loading enabled state from API...');
-            const response = await fetch('/api/keyboard-shortcuts', {
-                headers: {
-                    'Accept': 'application/json',
-                },
-                credentials: 'same-origin'
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                this.enabled = data.enabled;
-                console.log('[Keyboard Shortcuts] Enabled state loaded:', this.enabled);
-            }
-        } catch (error) {
-            console.error('[Keyboard Shortcuts] Failed to load enabled state:', error);
         }
     },
 
@@ -77,14 +44,6 @@ export default () => ({
         if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable) {
             return;
         }
-
-        // Check if shortcuts are globally disabled
-        if (!this.enabled) {
-            console.log('[Keyboard Shortcuts] Shortcuts are globally disabled');
-            return;
-        }
-
-        console.log('[Keyboard Shortcuts] Key pressed:', event.key, 'Ctrl:', event.ctrlKey);
 
         // Check each shortcut
         for (const shortcut of this.shortcuts) {
@@ -107,7 +66,6 @@ export default () => ({
 
             // All required modifiers must be present, and no extra modifiers
             if (needsCtrl === hasCtrl && needsAlt === hasAlt && needsShift === hasShift) {
-                console.log('[Keyboard Shortcuts] Executing shortcut:', shortcut.action);
                 event.preventDefault();
                 shortcut.handler();
                 return;

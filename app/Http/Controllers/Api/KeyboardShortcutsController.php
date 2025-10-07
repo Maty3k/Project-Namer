@@ -19,7 +19,6 @@ class KeyboardShortcutsController extends Controller
         $userShortcuts = UserKeyboardShortcut::findOrCreateForUser(Auth::id());
 
         return response()->json([
-            'enabled' => $userShortcuts->enabled,
             'shortcuts' => $userShortcuts->getMergedShortcuts(),
         ]);
     }
