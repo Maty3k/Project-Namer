@@ -181,16 +181,16 @@
                 </div>
             @else
                 <!-- Suggestions Table -->
-                <div class="space-y-4">
+                <div class="space-y-6">
                     <!-- Skeleton Loading State -->
-                    <div wire:loading wire:target="setResultsFilter" class="space-y-4">
+                    <div wire:loading wire:target="setResultsFilter" class="space-y-6">
                         @for($i = 0; $i < 3; $i++)
                             <x-skeleton-name-card />
                         @endfor
                     </div>
 
                     <!-- Actual Suggestions -->
-                    <div wire:loading.remove wire:target="setResultsFilter">
+                    <div wire:loading.remove wire:target="setResultsFilter" class="space-y-6">
                         @foreach($this->filteredSuggestions as $suggestion)
                             @livewire('name-result-card', ['suggestion' => $suggestion], key('suggestion-'.$suggestion->id))
                         @endforeach
