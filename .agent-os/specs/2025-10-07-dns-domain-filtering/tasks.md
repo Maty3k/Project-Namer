@@ -7,11 +7,11 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
 
 ## Tasks
 
-- [ ] 1. Setup and Dependencies
-  - [ ] 1.1 Install spatie/dns package via composer
-  - [ ] 1.2 Create database migration for domain_caches table updates
-  - [ ] 1.3 Run migration and verify schema changes
-  - [ ] 1.4 Update DomainCache model with new fillable fields and casts
+- [x] 1. Setup and Dependencies
+  - [x] 1.1 Install spatie/dns package via composer
+  - [x] 1.2 Create database migration for domain_caches table updates
+  - [x] 1.3 Run migration and verify schema changes
+  - [x] 1.4 Update DomainCache model with new fillable fields and casts
 
 - [ ] 2. Create DNSLookupService
   - [ ] 2.1 Write tests for DNSLookupService class
