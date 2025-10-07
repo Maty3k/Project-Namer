@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Models\User;
 use App\Models\UserKeyboardShortcut;
 
-test('creates keyboard shortcuts for user with defaults', function () {
+test('creates keyboard shortcuts for user with defaults', function (): void {
     $user = User::factory()->create();
 
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
@@ -15,7 +15,7 @@ test('creates keyboard shortcuts for user with defaults', function () {
         ->and($shortcuts->disabled_shortcuts)->toBeNull();
 });
 
-test('returns default shortcuts configuration', function () {
+test('returns default shortcuts configuration', function (): void {
     $defaults = UserKeyboardShortcut::getDefaultShortcuts();
 
     expect($defaults)->toBeArray()
@@ -26,7 +26,7 @@ test('returns default shortcuts configuration', function () {
         ->and($defaults['newProject']['enabled'])->toBeTrue();
 });
 
-test('returns default shortcuts without customization', function () {
+test('returns default shortcuts without customization', function (): void {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
 
@@ -39,7 +39,7 @@ test('returns default shortcuts without customization', function () {
         ->and($merged)->toHaveKey('keyboardShortcuts');
 });
 
-test('disables individual shortcuts correctly', function () {
+test('disables individual shortcuts correctly', function (): void {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
 
@@ -55,18 +55,18 @@ test('disables individual shortcuts correctly', function () {
         ->and($merged['help']['enabled'])->toBeTrue();
 });
 
-test('merges shortcuts correctly', function () {
+test('merges shortcuts correctly', function (): void {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
 
     $merged = $shortcuts->getMergedShortcuts();
 
-    foreach ($merged as $action => $config) {
+    foreach ($merged as $config) {
         expect($config['enabled'])->toBeTrue();
     }
 });
 
-test('toggles shortcut on and off', function () {
+test('toggles shortcut on and off', function (): void {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
 
@@ -79,7 +79,7 @@ test('toggles shortcut on and off', function () {
     expect($shortcuts->fresh()->disabled_shortcuts)->not->toContain('newProject');
 });
 
-test('includes keyboard shortcuts shortcut in defaults', function () {
+test('includes keyboard shortcuts shortcut in defaults', function (): void {
     $defaults = UserKeyboardShortcut::getDefaultShortcuts();
 
     expect($defaults)->toHaveKey('keyboardShortcuts')
@@ -88,7 +88,7 @@ test('includes keyboard shortcuts shortcut in defaults', function () {
         ->and($defaults['keyboardShortcuts']['description'])->toBe('Keyboard shortcuts settings');
 });
 
-test('can toggle shortcuts on and off', function () {
+test('can toggle shortcuts on and off', function (): void {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
 
@@ -101,7 +101,7 @@ test('can toggle shortcuts on and off', function () {
     expect($shortcuts->fresh()->disabled_shortcuts)->not->toContain('keyboardShortcuts');
 });
 
-test('resets all shortcuts to defaults', function () {
+test('resets all shortcuts to defaults', function (): void {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
 
@@ -117,7 +117,7 @@ test('resets all shortcuts to defaults', function () {
     expect($fresh->disabled_shortcuts)->toBeNull();
 });
 
-test('checks if shortcut is enabled for user', function () {
+test('checks if shortcut is enabled for user', function (): void {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
 
@@ -132,7 +132,7 @@ test('checks if shortcut is enabled for user', function () {
     expect($shortcuts->isShortcutEnabled('newProject'))->toBeTrue();
 });
 
-test('user relationship works correctly', function () {
+test('user relationship works correctly', function (): void {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
 
@@ -140,7 +140,7 @@ test('user relationship works correctly', function () {
         ->and($shortcuts->user->id)->toBe($user->id);
 });
 
-test('user_id is unique in database', function () {
+test('user_id is unique in database', function (): void {
     $user = User::factory()->create();
 
     UserKeyboardShortcut::create([
@@ -156,7 +156,7 @@ test('user_id is unique in database', function () {
     ]);
 });
 
-test('deleting user cascades to keyboard shortcuts', function () {
+test('deleting user cascades to keyboard shortcuts', function (): void {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
 

@@ -27967,6 +27967,10 @@ namespace App\Livewire\Settings {
      */
     class Appearance extends \Livewire\Component {
             }
+    /**
+     */
+    class KeyboardShortcuts extends \Livewire\Component {
+            }
     }
 
 namespace App\Livewire\Auth {

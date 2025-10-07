@@ -84,9 +84,8 @@ class KeyboardShortcuts extends Component
             }
         }
 
-        $parts[] = strtoupper($shortcut['key']);
+        $parts[] = strtoupper((string) $shortcut['key']);
 
         return implode(' + ', $parts);
     }
-
 }

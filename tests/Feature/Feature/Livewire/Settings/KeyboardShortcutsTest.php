@@ -7,18 +7,16 @@ use App\Models\User;
 use App\Models\UserKeyboardShortcut;
 use Livewire\Livewire;
 
-test('component loads user keyboard shortcuts preferences', function () {
+test('component loads user keyboard shortcuts preferences', function (): void {
     $user = User::factory()->create();
 
     Livewire::actingAs($user)
         ->test(KeyboardShortcuts::class)
-        ->assertSet('shortcuts', function ($shortcuts) {
-            return is_array($shortcuts) && isset($shortcuts['newProject']);
-        })
+        ->assertSet('shortcuts', fn ($shortcuts) => is_array($shortcuts) && isset($shortcuts['newProject']))
         ->assertSet('disabledShortcuts', []);
 });
 
-test('component displays all default shortcuts', function () {
+test('component displays all default shortcuts', function (): void {
     $user = User::factory()->create();
 
     Livewire::actingAs($user)
@@ -31,7 +29,7 @@ test('component displays all default shortcuts', function () {
         ->assertSee('Close modals');
 });
 
-test('component displays formatted key combinations', function () {
+test('component displays formatted key combinations', function (): void {
     $user = User::factory()->create();
 
     Livewire::actingAs($user)
@@ -43,7 +41,7 @@ test('component displays formatted key combinations', function () {
         ->assertSee('H', escape: false);
 });
 
-test('can manage shortcuts', function () {
+test('can manage shortcuts', function (): void {
     $user = User::factory()->create();
 
     Livewire::actingAs($user)
@@ -53,7 +51,7 @@ test('can manage shortcuts', function () {
         });
 });
 
-test('can toggle individual shortcut', function () {
+test('can toggle individual shortcut', function (): void {
     $user = User::factory()->create();
 
     Livewire::actingAs($user)
@@ -64,7 +62,7 @@ test('can toggle individual shortcut', function () {
         ->assertDispatched('toast');
 });
 
-test('can enable previously disabled shortcut', function () {
+test('can enable previously disabled shortcut', function (): void {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
     $shortcuts->update(['disabled_shortcuts' => ['newProject']]);
@@ -76,7 +74,7 @@ test('can enable previously disabled shortcut', function () {
         ->assertSet('disabledShortcuts', []);
 });
 
-test('displays new keyboard shortcuts shortcut', function () {
+test('displays new keyboard shortcuts shortcut', function (): void {
     $user = User::factory()->create();
 
     Livewire::actingAs($user)
@@ -85,7 +83,7 @@ test('displays new keyboard shortcuts shortcut', function () {
         ->assertSee('K', escape: false);
 });
 
-test('can reset all shortcuts to defaults', function () {
+test('can reset all shortcuts to defaults', function (): void {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
     $shortcuts->update([
@@ -103,7 +101,7 @@ test('can reset all shortcuts to defaults', function () {
     expect($fresh->disabled_shortcuts)->toBeNull();
 });
 
-test('formats key combo with ctrl modifier', function () {
+test('formats key combo with ctrl modifier', function (): void {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
 
@@ -115,7 +113,7 @@ test('formats key combo with ctrl modifier', function () {
     expect($formatted)->toBe('Ctrl + N');
 });
 
-test('formats key combo for all platforms', function () {
+test('formats key combo for all platforms', function (): void {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
 
@@ -127,7 +125,7 @@ test('formats key combo for all platforms', function () {
     expect($formatted)->toContain('Ctrl');
 });
 
-test('formats key combo with ctrl and letter', function () {
+test('formats key combo with ctrl and letter', function (): void {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
 
@@ -139,7 +137,7 @@ test('formats key combo with ctrl and letter', function () {
     expect($formatted)->toBe('Ctrl + H');
 });
 
-test('displays shortcuts', function () {
+test('displays shortcuts', function (): void {
     $user = User::factory()->create();
 
     Livewire::actingAs($user)
@@ -148,7 +146,7 @@ test('displays shortcuts', function () {
         ->assertSee('Open settings');
 });
 
-test('shows disabled state for individually disabled shortcuts', function () {
+test('shows disabled state for individually disabled shortcuts', function (): void {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
     $shortcuts->update(['disabled_shortcuts' => ['newProject']]);
@@ -158,12 +156,12 @@ test('shows disabled state for individually disabled shortcuts', function () {
         ->assertSee('Disabled');
 });
 
-test('only authenticated users can access', function () {
+test('only authenticated users can access', function (): void {
     $this->get(route('settings.keyboard-shortcuts'))
         ->assertRedirect(route('login'));
 });
 
-test('authenticated users can access settings page', function () {
+test('authenticated users can access settings page', function (): void {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)
@@ -173,7 +171,7 @@ test('authenticated users can access settings page', function () {
     expect($response->content())->toContain('Keyboard Shortcuts');
 });
 
-test('displays reset confirmation', function () {
+test('displays reset confirmation', function (): void {
     $user = User::factory()->create();
 
     Livewire::actingAs($user)
@@ -181,7 +179,7 @@ test('displays reset confirmation', function () {
         ->assertSee('Are you sure you want to reset all keyboard shortcuts to defaults?');
 });
 
-test('displays help tip about pressing ctrl h', function () {
+test('displays help tip about pressing ctrl h', function (): void {
     $user = User::factory()->create();
 
     Livewire::actingAs($user)

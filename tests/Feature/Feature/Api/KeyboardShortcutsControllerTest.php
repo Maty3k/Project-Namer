@@ -5,12 +5,12 @@ declare(strict_types=1);
 use App\Models\User;
 use App\Models\UserKeyboardShortcut;
 
-test('requires authentication to access API endpoint', function () {
+test('requires authentication to access API endpoint', function (): void {
     $this->getJson('/api/keyboard-shortcuts')
         ->assertUnauthorized();
 });
 
-test('returns user keyboard shortcuts preferences via API', function () {
+test('returns user keyboard shortcuts preferences via API', function (): void {
     $user = User::factory()->create();
 
     $this->actingAs($user)
@@ -29,7 +29,7 @@ test('returns user keyboard shortcuts preferences via API', function () {
         ]);
 });
 
-test('returns shortcuts with proper structure', function () {
+test('returns shortcuts with proper structure', function (): void {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
 
@@ -41,7 +41,7 @@ test('returns shortcuts with proper structure', function () {
     expect($data)->toHaveKey('shortcuts');
 });
 
-test('returns default shortcuts structure', function () {
+test('returns default shortcuts structure', function (): void {
     $user = User::factory()->create();
     UserKeyboardShortcut::findOrCreateForUser($user->id);
 
@@ -55,7 +55,7 @@ test('returns default shortcuts structure', function () {
         ->and($data['shortcuts'])->toHaveKey('keyboardShortcuts');
 });
 
-test('returns disabled shortcuts state correctly', function () {
+test('returns disabled shortcuts state correctly', function (): void {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
     $shortcuts->update(['disabled_shortcuts' => ['newProject', 'themeCustomizer']]);
@@ -70,7 +70,7 @@ test('returns disabled shortcuts state correctly', function () {
         ->and($data['shortcuts']['logoGallery']['enabled'])->toBeTrue();
 });
 
-test('creates shortcuts record if it does not exist', function () {
+test('creates shortcuts record if it does not exist', function (): void {
     $user = User::factory()->create();
 
     expect(UserKeyboardShortcut::where('user_id', $user->id)->exists())->toBeFalse();
@@ -82,7 +82,7 @@ test('creates shortcuts record if it does not exist', function () {
     expect(UserKeyboardShortcut::where('user_id', $user->id)->exists())->toBeTrue();
 });
 
-test('returns default shortcuts for new user', function () {
+test('returns default shortcuts for new user', function (): void {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)
@@ -96,7 +96,7 @@ test('returns default shortcuts for new user', function () {
         ->and($data['shortcuts']['keyboardShortcuts']['key'])->toBe('k');
 });
 
-test('respects accept header', function () {
+test('respects accept header', function (): void {
     $user = User::factory()->create();
 
     $this->actingAs($user)

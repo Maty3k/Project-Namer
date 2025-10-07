@@ -12,10 +12,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property int $id
  * @property int $user_id
- * @property array|null $disabled_shortcuts
- * @property \Illuminate\Support\Carbon $created_at
- * @property \Illuminate\Support\Carbon $updated_at
- * @property-read User $user
+ * @property array<array-key, mixed>|null $disabled_shortcuts
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User $user
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserKeyboardShortcut newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserKeyboardShortcut newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserKeyboardShortcut query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserKeyboardShortcut whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserKeyboardShortcut whereDisabledShortcuts($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserKeyboardShortcut whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserKeyboardShortcut whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserKeyboardShortcut whereUserId($value)
+ *
+ * @mixin \Eloquent
  */
 final class UserKeyboardShortcut extends Model
 {
@@ -33,6 +44,8 @@ final class UserKeyboardShortcut extends Model
 
     /**
      * Get the user that owns the keyboard shortcuts.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {
