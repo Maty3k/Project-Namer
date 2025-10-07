@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\GenerationCache;
+
 /**
  * Fallback name generation service for when AI services are unavailable.
  * Provides creative name suggestions using pattern-based generation.
@@ -40,12 +42,18 @@ class FallbackNameService
         // Extract keywords from the idea
         $keywords = $this->extractKeywords($idea);
 
+        // Get all previously cached names to avoid duplicates
+        $cachedNames = $this->getCachedNames();
+
         // Generate names using different patterns
-        while (count($names) < $count) {
+        $attempts = 0;
+        $maxAttempts = $count * 50; // Prevent infinite loops
+        while (count($names) < $count && $attempts < $maxAttempts) {
             $name = $this->generateName($prefixes, $suffixes, $keywords, $mode);
-            if (! in_array($name, $names)) {
+            if (! in_array($name, $names) && ! in_array($name, $cachedNames)) {
                 $names[] = $name;
             }
+            $attempts++;
         }
 
         return array_slice($names, 0, $count);
@@ -127,5 +135,25 @@ class FallbackNameService
 
         // Ensure result is reasonable length
         return strlen($result) > 15 ? substr($result, 0, 12) : $result;
+    }
+
+    /**
+     * Get all previously cached names from the database.
+     *
+     * @return array<string>
+     */
+    private function getCachedNames(): array
+    {
+        $cachedNames = [];
+
+        $caches = GenerationCache::all();
+
+        foreach ($caches as $cache) {
+            if (is_array($cache->generated_names)) {
+                $cachedNames = array_merge($cachedNames, $cache->generated_names);
+            }
+        }
+
+        return array_unique($cachedNames);
     }
 }

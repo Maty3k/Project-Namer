@@ -70,23 +70,23 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 6.8 Verify query counts meet targets (dashboard <15, project <20)
   - [x] 6.9 Verify all tests pass
 
-- [ ] 7. Error State Improvements
-  - [ ] 7.1 Write tests for error messages and retry functionality
-  - [ ] 7.2 Create error message utility for user-friendly messages
-  - [ ] 7.3 Update AI service error handling with specific messages
-  - [ ] 7.4 Add retry buttons to transient error states
-  - [ ] 7.5 Implement graceful degradation for service failures
-  - [ ] 7.6 Add error codes to all error responses
-  - [ ] 7.7 Create error state Blade components for consistency
-  - [ ] 7.8 Test all error scenarios (network, validation, permissions, rate limits)
-  - [ ] 7.9 Verify all tests pass
+- [x] 7. Error State Improvements
+  - [x] 7.1 Write tests for error messages and retry functionality
+  - [x] 7.2 Create error message utility for user-friendly messages
+  - [x] 7.3 Update AI service error handling with specific messages
+  - [x] 7.4 Add retry buttons to transient error states
+  - [x] 7.5 Implement graceful degradation for service failures
+  - [x] 7.6 Add error codes to all error responses
+  - [x] 7.7 Create error state Blade components for consistency
+  - [x] 7.8 Test all error scenarios (network, validation, permissions, rate limits)
+  - [x] 7.9 Verify all tests pass
 
-- [ ] 8. Performance Testing & Validation
-  - [ ] 8.1 Run Lighthouse audits on all major pages
-  - [ ] 8.2 Measure and document page load times
-  - [ ] 8.3 Verify Time to Interactive meets targets (<2.5s)
-  - [ ] 8.4 Test with throttled 3G connection
-  - [ ] 8.5 Test with large datasets (1000+ suggestions)
-  - [ ] 8.6 Run full test suite to ensure no regressions
-  - [ ] 8.7 Create performance benchmark documentation
-  - [ ] 8.8 Verify all optimization targets met
+- [x] 8. Performance Testing & Validation
+  - [x] 8.1 Run Lighthouse audits on all major pages
+  - [x] 8.2 Measure and document page load times
+  - [x] 8.3 Verify Time to Interactive meets targets (<2.5s)
+  - [x] 8.4 Test with throttled 3G connection
+  - [x] 8.5 Test with large datasets (1000+ suggestions)
+  - [x] 8.6 Run full test suite to ensure no regressions
+  - [x] 8.7 Create performance benchmark documentation
+  - [x] 8.8 Verify all optimization targets met
