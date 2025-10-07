@@ -1,10 +1,13 @@
 // Import performance monitoring
 import './performance-monitor.js';
 
+// Import global keyboard shortcuts (runs independently of Alpine)
+import './global-keyboard-shortcuts.js';
+
 // Import lazy load observer
 import lazyLoadObserver from './components/lazyLoadObserver.js';
 
-// Import keyboard shortcuts
+// Import keyboard shortcuts component (for help overlay UI)
 import keyboardShortcuts from './components/keyboardShortcuts.js';
 
 // Import optimistic UI
