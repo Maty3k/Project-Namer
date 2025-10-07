@@ -16,12 +16,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string $domain
  * @property bool $available
- * @property bool|null $has_dns_records
- * @property string $check_method
- * @property array|null $dns_records
  * @property \Illuminate\Support\Carbon $checked_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property bool|null $has_dns_records
+ * @property string $check_method
+ * @property array<array-key, mixed>|null $dns_records
  *
  * @method static Builder<static>|DomainCache expired()
  * @method static Builder<static>|DomainCache fresh()
@@ -29,8 +29,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static Builder<static>|DomainCache newQuery()
  * @method static Builder<static>|DomainCache query()
  * @method static Builder<static>|DomainCache whereAvailable($value)
- * @method static Builder<static>|DomainCache whereCheckedAt($value)
  * @method static Builder<static>|DomainCache whereCheckMethod($value)
+ * @method static Builder<static>|DomainCache whereCheckedAt($value)
  * @method static Builder<static>|DomainCache whereCreatedAt($value)
  * @method static Builder<static>|DomainCache whereDnsRecords($value)
  * @method static Builder<static>|DomainCache whereDomain($value)

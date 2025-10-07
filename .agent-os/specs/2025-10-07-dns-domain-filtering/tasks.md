@@ -13,15 +13,15 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 1.3 Run migration and verify schema changes
   - [x] 1.4 Update DomainCache model with new fillable fields and casts
 
-- [ ] 2. Create DNSLookupService
-  - [ ] 2.1 Write tests for DNSLookupService class
-  - [ ] 2.2 Create App\Services\DNSLookupService class
-  - [ ] 2.3 Implement hasDNSRecords() method using Spatie DNS
-  - [ ] 2.4 Add DNS record type checking (A, AAAA, CNAME, MX)
-  - [ ] 2.5 Implement timeout handling (3 seconds)
-  - [ ] 2.6 Add error handling for DNS resolution failures
-  - [ ] 2.7 Add domain validation before DNS lookup
-  - [ ] 2.8 Verify all DNSLookupService tests pass
+- [x] 2. Create DNSLookupService
+  - [x] 2.1 Write tests for DNSLookupService class
+  - [x] 2.2 Create App\Services\DNSLookupService class
+  - [x] 2.3 Implement hasDNSRecords() method using Spatie DNS
+  - [x] 2.4 Add DNS record type checking (A, AAAA, CNAME, MX)
+  - [x] 2.5 Implement timeout handling (3 seconds)
+  - [x] 2.6 Add error handling for DNS resolution failures
+  - [x] 2.7 Add domain validation before DNS lookup
+  - [x] 2.8 Verify all DNSLookupService tests pass
 
 - [ ] 3. Update DomainCheckService Integration
   - [ ] 3.1 Write tests for updated DomainCheckService
