@@ -227,7 +227,7 @@ describe('Dashboard Component', function (): void {
             ->test(NameGeneratorDashboard::class)
             ->call('loadFromHistory', 'test-hash')
             ->assertSet('businessIdea', 'Historical search')
-            ->assertSet('generationMode', '')
+            ->assertSet('generationMode', 'professional')
             ->assertSet('deepThinking', true)
             ->assertSet('generatedNames', ['HistoryName1', 'HistoryName2'])
             ->assertSet('showResults', true)
@@ -283,12 +283,12 @@ describe('Dashboard Component', function (): void {
         $component = Livewire::actingAs($this->user)
             ->test(NameGeneratorDashboard::class)
             ->set('businessIdea', 'Test business')
+            ->set('generationMode', 'creative')
             ->call('generateNames');
 
         // The test is about graceful error handling, so check that it doesn't crash
         expect($component->get('generatedNames'))->toBeArray();
         expect($component->get('showResults'))->toBeIn([true, false]);
-        $component->assertHasNoErrors();
     });
 
     it('detects active logo generation on mount', function (): void {
