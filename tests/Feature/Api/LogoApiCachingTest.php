@@ -6,6 +6,10 @@ use App\Models\GeneratedLogo;
 use App\Models\LogoColorVariant;
 use App\Models\LogoGeneration;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Cache;
+
+uses(Illuminate\\Foundation\\Testing\\RefreshDatabase::class)->group("slow");
+
 
 beforeEach(function (): void {
     Cache::flush();

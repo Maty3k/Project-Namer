@@ -8,7 +8,7 @@ use App\Models\LogoGeneration;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 
-uses(RefreshDatabase::class);
+uses(RefreshDatabase::class)->group("slow");
 
 beforeEach(function (): void {
     Storage::fake('public');

@@ -6,8 +6,11 @@ use App\Models\GenerationSession;
 use App\Models\Project;
 use App\Models\User;
 use App\Models\UserAIPreferences;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Queue;
+
+uses(RefreshDatabase::class)->group('slow');
 
 beforeEach(function (): void {
     $this->user = User::factory()->create();
