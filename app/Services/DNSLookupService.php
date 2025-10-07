@@ -14,7 +14,7 @@ use Spatie\Dns\Dns;
  * has existing records (A, AAAA, CNAME, MX), which indicates the domain
  * is likely registered and in use.
  */
-final class DNSLookupService
+class DNSLookupService
 {
     /**
      * Timeout for DNS queries in seconds.
@@ -48,26 +48,28 @@ final class DNSLookupService
         }
 
         try {
+            $dns = new Dns();
+
             // Check for A records (IPv4)
-            $aRecords = Dns::getRecords($domain, DNS_A);
+            $aRecords = $dns->getRecords($domain, DNS_A);
             if (! empty($aRecords)) {
                 return true;
             }
 
             // Check for AAAA records (IPv6)
-            $aaaaRecords = Dns::getRecords($domain, DNS_AAAA);
+            $aaaaRecords = $dns->getRecords($domain, DNS_AAAA);
             if (! empty($aaaaRecords)) {
                 return true;
             }
 
             // Check for CNAME records
-            $cnameRecords = Dns::getRecords($domain, DNS_CNAME);
+            $cnameRecords = $dns->getRecords($domain, DNS_CNAME);
             if (! empty($cnameRecords)) {
                 return true;
             }
 
             // Check for MX records (mail)
-            $mxRecords = Dns::getRecords($domain, DNS_MX);
+            $mxRecords = $dns->getRecords($domain, DNS_MX);
             if (! empty($mxRecords)) {
                 return true;
             }
@@ -101,27 +103,28 @@ final class DNSLookupService
         }
 
         $records = [];
+        $dns = new Dns();
 
         try {
-            $records['A'] = Dns::getRecords($domain, DNS_A);
+            $records['A'] = $dns->getRecords($domain, DNS_A);
         } catch (\Exception) {
             $records['A'] = [];
         }
 
         try {
-            $records['AAAA'] = Dns::getRecords($domain, DNS_AAAA);
+            $records['AAAA'] = $dns->getRecords($domain, DNS_AAAA);
         } catch (\Exception) {
             $records['AAAA'] = [];
         }
 
         try {
-            $records['CNAME'] = Dns::getRecords($domain, DNS_CNAME);
+            $records['CNAME'] = $dns->getRecords($domain, DNS_CNAME);
         } catch (\Exception) {
             $records['CNAME'] = [];
         }
 
         try {
-            $records['MX'] = Dns::getRecords($domain, DNS_MX);
+            $records['MX'] = $dns->getRecords($domain, DNS_MX);
         } catch (\Exception) {
             $records['MX'] = [];
         }

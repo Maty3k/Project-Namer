@@ -23,15 +23,15 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 2.7 Add domain validation before DNS lookup
   - [x] 2.8 Verify all DNSLookupService tests pass
 
-- [ ] 3. Update DomainCheckService Integration
-  - [ ] 3.1 Write tests for updated DomainCheckService
-  - [ ] 3.2 Add DNS pre-screening to checkDomain() method
-  - [ ] 3.3 Skip API calls when DNS records exist
-  - [ ] 3.4 Update cache storage to include DNS check method
-  - [ ] 3.5 Implement different cache TTL per check method
-  - [ ] 3.6 Update checkBusinessName() to use DNS filtering
-  - [ ] 3.7 Add logging for DNS check results
-  - [ ] 3.8 Verify all DomainCheckService tests pass
+- [x] 3. Update DomainCheckService Integration
+  - [x] 3.1 Write tests for updated DomainCheckService
+  - [x] 3.2 Add DNS pre-screening to checkDomain() method
+  - [x] 3.3 Skip API calls when DNS records exist
+  - [x] 3.4 Update cache storage to include DNS check method
+  - [x] 3.5 Implement different cache TTL per check method
+  - [x] 3.6 Update checkBusinessName() to use DNS filtering
+  - [x] 3.7 Add logging for DNS check results
+  - [x] 3.8 Verify all DomainCheckService tests pass
 
 - [ ] 4. Background Job Processing
   - [ ] 4.1 Write tests for CheckDomainDNSJob
