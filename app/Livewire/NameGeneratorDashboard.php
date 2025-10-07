@@ -754,8 +754,7 @@ class NameGeneratorDashboard extends Component
             $this->currentSession = $session;
             $this->currentSessionId = $session->id;
             $this->businessIdea = $session->business_description ?? '';
-            // Don't pre-select generation mode even from saved sessions - let user choose
-            $this->generationMode = '';
+            $this->generationMode = $session->generation_mode ?? '';
             $this->deepThinking = $session->deep_thinking ?? false;
 
             // Load results if available

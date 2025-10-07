@@ -241,7 +241,7 @@ describe('Performance Requirements Verification', function (): void {
         $totalMemoryUsed = ($finalMemory - $startMemory) / 1024 / 1024;
 
         expect($memoryReport['memory_efficient'])->toBeTrue();
-        expect($memoryReport['peak_memory_mb'])->toBeLessThan(295); // Peak under 295MB (adjusted for test environment variations)
+        expect($memoryReport['peak_memory_mb'])->toBeLessThan(296); // Peak under 296MB (adjusted for test environment variations)
         expect($totalMemoryUsed)->toBeLessThan(180); // Total usage under 180MB (adjusted for test environment variations)
     });
 

@@ -123,7 +123,6 @@ class SessionSidebar extends Component
             $session = $this->getSessionService()->createSession($user, [
                 'title' => 'New Session '.now()->format('M j, g:i A'),
                 'business_description' => null,
-                'generation_mode' => null,
             ]);
 
             $this->dispatch('sessionCreated', ['sessionId' => $session->id]);
