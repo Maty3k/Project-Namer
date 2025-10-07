@@ -60,13 +60,13 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 6.5 Update tooltip text to explain DNS filtering
   - [x] 6.6 Verify UI component tests pass
 
-- [ ] 7. Cache Management Updates
-  - [ ] 7.1 Write tests for cache TTL and cleanup
-  - [ ] 7.2 Update clearExpiredCache() to handle DNS caches
-  - [ ] 7.3 Add console command for cache cleanup
-  - [ ] 7.4 Schedule cache cleanup in Laravel scheduler
+- [x] 7. Cache Management Updates
+  - [x] 7.1 Write tests for cache TTL and cleanup
+  - [x] 7.2 Update clearExpiredCache() to handle DNS caches
+  - [x] 7.3 Add console command for cache cleanup
+  - [x] 7.4 Schedule cache cleanup in Laravel scheduler
   - [ ] 7.5 Add cache statistics to dashboard (optional)
-  - [ ] 7.6 Verify cache management tests pass
+  - [x] 7.6 Verify cache management tests pass
 
 - [ ] 8. Integration Testing and Verification
   - [ ] 8.1 Write end-to-end integration tests

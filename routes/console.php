@@ -17,3 +17,10 @@ Schedule::job(new CleanupOldFilesJob(30, true))
     ->name('cleanup-old-files')
     ->withoutOverlapping()
     ->onOneServer();
+
+// Schedule domain cache cleanup
+Schedule::command('domain:clear-expired-cache')
+    ->dailyAt('03:00')
+    ->name('clear-expired-domain-cache')
+    ->withoutOverlapping()
+    ->onOneServer();
