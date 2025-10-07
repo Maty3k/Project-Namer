@@ -22,6 +22,7 @@ test('returns user keyboard shortcuts preferences via API', function () {
                 'settings',
                 'themeCustomizer',
                 'logoGallery',
+                'keyboardShortcuts',
                 'help',
                 'escape',
             ],
@@ -40,21 +41,18 @@ test('returns shortcuts with proper structure', function () {
     expect($data)->toHaveKey('shortcuts');
 });
 
-test('returns custom shortcuts when set', function () {
+test('returns default shortcuts structure', function () {
     $user = User::factory()->create();
-    $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
-    $shortcuts->updateShortcut('newProject', [
-        'key' => 'm',
-        'modifiers' => ['ctrl'],
-    ]);
+    UserKeyboardShortcut::findOrCreateForUser($user->id);
 
     $response = $this->actingAs($user)
         ->getJson('/api/keyboard-shortcuts')
         ->assertOk();
 
     $data = $response->json();
-    expect($data['shortcuts']['newProject']['key'])->toBe('m')
-        ->and($data['shortcuts']['newProject']['modifiers'])->toContain('ctrl');
+    expect($data['shortcuts']['newProject']['key'])->toBe('n')
+        ->and($data['shortcuts']['newProject']['modifiers'])->toContain('ctrl')
+        ->and($data['shortcuts'])->toHaveKey('keyboardShortcuts');
 });
 
 test('returns disabled shortcuts state correctly', function () {
@@ -92,9 +90,10 @@ test('returns default shortcuts for new user', function () {
         ->assertOk();
 
     $data = $response->json();
-    expect($data['shortcuts'])->toHaveKeys(['newProject', 'settings', 'themeCustomizer', 'logoGallery', 'help', 'escape'])
+    expect($data['shortcuts'])->toHaveKeys(['newProject', 'settings', 'themeCustomizer', 'logoGallery', 'keyboardShortcuts', 'help', 'escape'])
         ->and($data['shortcuts']['newProject']['key'])->toBe('n')
-        ->and($data['shortcuts']['newProject']['enabled'])->toBeTrue();
+        ->and($data['shortcuts']['newProject']['enabled'])->toBeTrue()
+        ->and($data['shortcuts']['keyboardShortcuts']['key'])->toBe('k');
 });
 
 test('respects accept header', function () {

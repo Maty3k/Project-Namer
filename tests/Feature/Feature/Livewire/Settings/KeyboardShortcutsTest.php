@@ -49,7 +49,7 @@ test('can manage shortcuts', function () {
     Livewire::actingAs($user)
         ->test(KeyboardShortcuts::class)
         ->assertSet('shortcuts', function ($shortcuts) {
-            return count($shortcuts) === 6; // 6 default shortcuts
+            return count($shortcuts) === 7; // 7 default shortcuts including keyboardShortcuts
         });
 });
 
@@ -76,25 +76,19 @@ test('can enable previously disabled shortcut', function () {
         ->assertSet('disabledShortcuts', []);
 });
 
-test('can reset single shortcut to default', function () {
+test('displays new keyboard shortcuts shortcut', function () {
     $user = User::factory()->create();
-    $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
-    $shortcuts->updateShortcut('newProject', ['key' => 'm', 'modifiers' => ['ctrl']]);
 
     Livewire::actingAs($user)
         ->test(KeyboardShortcuts::class)
-        ->call('resetShortcut', 'newProject')
-        ->assertDispatched('shortcuts-updated')
-        ->assertDispatched('toast');
-
-    expect($shortcuts->fresh()->custom_shortcuts)->not->toHaveKey('newProject');
+        ->assertSee('Keyboard shortcuts settings')
+        ->assertSee('K', escape: false);
 });
 
 test('can reset all shortcuts to defaults', function () {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
     $shortcuts->update([
-        'custom_shortcuts' => ['newProject' => ['key' => 'm', 'modifiers' => ['ctrl']]],
         'disabled_shortcuts' => ['themeCustomizer'],
     ]);
 
@@ -106,8 +100,7 @@ test('can reset all shortcuts to defaults', function () {
         ->assertDispatched('toast');
 
     $fresh = $shortcuts->fresh();
-    expect($fresh->custom_shortcuts)->toBeNull()
-        ->and($fresh->disabled_shortcuts)->toBeNull();
+    expect($fresh->disabled_shortcuts)->toBeNull();
 });
 
 test('formats key combo with ctrl modifier', function () {

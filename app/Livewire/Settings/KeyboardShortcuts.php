@@ -16,19 +16,6 @@ class KeyboardShortcuts extends Component
     /** @var array<int, string> */
     public array $disabledShortcuts = [];
 
-    public ?string $editingAction = null;
-
-    public string $editingKey = '';
-
-    /** @var array<string, bool> */
-    public array $editingModifiers = [
-        'cmd' => false,
-        'alt' => false,
-        'shift' => false,
-    ];
-
-    public bool $showEditModal = false;
-
     /**
      * Mount the component.
      */
@@ -54,21 +41,6 @@ class KeyboardShortcuts extends Component
 
         $this->dispatch('shortcuts-updated');
         $this->dispatch('toast', message: 'Shortcut updated');
-    }
-
-    /**
-     * Reset a shortcut to default.
-     */
-    public function resetShortcut(string $action): void
-    {
-        $userShortcuts = UserKeyboardShortcut::findOrCreateForUser(Auth::id());
-        $userShortcuts->resetShortcut($action);
-
-        // Refresh state
-        $this->shortcuts = $userShortcuts->getMergedShortcuts();
-
-        $this->dispatch('shortcuts-updated');
-        $this->dispatch('toast', message: 'Shortcut reset to default');
     }
 
     /**
@@ -117,138 +89,4 @@ class KeyboardShortcuts extends Component
         return implode(' + ', $parts);
     }
 
-    /**
-     * Open edit modal for a shortcut.
-     */
-    public function openEditModal(string $action): void
-    {
-        $this->editingAction = $action;
-        $shortcut = $this->shortcuts[$action] ?? null;
-
-        if ($shortcut) {
-            $this->editingKey = $shortcut['key'];
-            $this->editingModifiers = [
-                'cmd' => in_array('ctrl', $shortcut['modifiers']),
-                'alt' => in_array('alt', $shortcut['modifiers']),
-                'shift' => in_array('shift', $shortcut['modifiers']),
-            ];
-        }
-
-        $this->showEditModal = true;
-    }
-
-    /**
-     * Close edit modal.
-     */
-    public function closeEditModal(): void
-    {
-        $this->showEditModal = false;
-        $this->editingAction = null;
-        $this->editingKey = '';
-        $this->editingModifiers = [
-            'cmd' => false,
-            'alt' => false,
-            'shift' => false,
-        ];
-    }
-
-    /**
-     * Capture key press from input.
-     */
-    public function captureKey(string $key): void
-    {
-        // Normalize the key
-        $key = strtolower($key);
-
-        // Handle special keys
-        if ($key === 'escape') {
-            $this->editingKey = 'Escape';
-        } else {
-            $this->editingKey = $key;
-        }
-    }
-
-    /**
-     * Get preview of the key combination.
-     */
-    public function getPreviewKeyCombo(): string
-    {
-        $parts = [];
-
-        if ($this->editingModifiers['cmd']) {
-            $parts[] = 'Ctrl';
-        }
-
-        if ($this->editingModifiers['alt']) {
-            $parts[] = 'Alt';
-        }
-
-        if ($this->editingModifiers['shift']) {
-            $parts[] = 'Shift';
-        }
-
-        if ($this->editingKey) {
-            $parts[] = strtoupper($this->editingKey);
-        }
-
-        return implode(' + ', $parts);
-    }
-
-    /**
-     * Save the edited shortcut.
-     */
-    public function saveShortcut(): void
-    {
-        if (! $this->editingAction || ! $this->editingKey) {
-            return;
-        }
-
-        $modifiers = [];
-        if ($this->editingModifiers['cmd']) {
-            $modifiers[] = 'ctrl';
-        }
-
-        if ($this->editingModifiers['alt']) {
-            $modifiers[] = 'alt';
-        }
-
-        if ($this->editingModifiers['shift']) {
-            $modifiers[] = 'shift';
-        }
-
-        $userShortcuts = UserKeyboardShortcut::findOrCreateForUser(Auth::id());
-        $userShortcuts->updateShortcut($this->editingAction, [
-            'key' => $this->editingKey,
-            'modifiers' => $modifiers,
-        ]);
-
-        // Refresh state
-        $this->shortcuts = $userShortcuts->getMergedShortcuts();
-
-        $this->dispatch('shortcuts-updated');
-        $this->dispatch('toast', message: 'Shortcut updated successfully');
-
-        $this->closeEditModal();
-    }
-
-    /**
-     * Reset the currently editing shortcut to default.
-     */
-    public function resetEditingShortcut(): void
-    {
-        if (! $this->editingAction) {
-            return;
-        }
-
-        $userShortcuts = UserKeyboardShortcut::findOrCreateForUser(Auth::id());
-        $userShortcuts->resetShortcut($this->editingAction);
-
-        // Refresh state
-        $this->shortcuts = $userShortcuts->getMergedShortcuts();
-
-        $this->dispatch('shortcuts-updated');
-        $this->dispatch('toast', message: 'Shortcut reset to default');
-
-        $this->closeEditModal();
-    }
 }

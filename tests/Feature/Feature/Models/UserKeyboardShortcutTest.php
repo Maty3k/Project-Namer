@@ -26,25 +26,17 @@ test('returns default shortcuts configuration', function () {
         ->and($defaults['newProject']['enabled'])->toBeTrue();
 });
 
-test('merges default shortcuts with custom shortcuts', function () {
+test('returns default shortcuts without customization', function () {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
 
-    $shortcuts->update([
-        'custom_shortcuts' => [
-            'newProject' => [
-                'key' => 'm',
-                'modifiers' => ['ctrl'],
-            ],
-        ],
-    ]);
-
     $merged = $shortcuts->getMergedShortcuts();
 
-    expect($merged['newProject']['key'])->toBe('m')
+    expect($merged['newProject']['key'])->toBe('n')
         ->and($merged['newProject']['modifiers'])->toBe(['ctrl'])
         ->and($merged['newProject']['description'])->toBe('New project')
-        ->and($merged['newProject']['enabled'])->toBeTrue();
+        ->and($merged['newProject']['enabled'])->toBeTrue()
+        ->and($merged)->toHaveKey('keyboardShortcuts');
 });
 
 test('disables individual shortcuts correctly', function () {
@@ -87,48 +79,34 @@ test('toggles shortcut on and off', function () {
     expect($shortcuts->fresh()->disabled_shortcuts)->not->toContain('newProject');
 });
 
-test('updates custom shortcut binding', function () {
-    $user = User::factory()->create();
-    $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
+test('includes keyboard shortcuts shortcut in defaults', function () {
+    $defaults = UserKeyboardShortcut::getDefaultShortcuts();
 
-    $shortcuts->updateShortcut('newProject', [
-        'key' => 'm',
-        'modifiers' => ['ctrl'],
-    ]);
-
-    $customShortcuts = $shortcuts->fresh()->custom_shortcuts;
-    expect($customShortcuts['newProject']['key'])->toBe('m')
-        ->and($customShortcuts['newProject']['modifiers'])->toBe(['ctrl']);
+    expect($defaults)->toHaveKey('keyboardShortcuts')
+        ->and($defaults['keyboardShortcuts']['key'])->toBe('k')
+        ->and($defaults['keyboardShortcuts']['modifiers'])->toBe(['ctrl'])
+        ->and($defaults['keyboardShortcuts']['description'])->toBe('Keyboard shortcuts settings');
 });
 
-test('resets single shortcut to default', function () {
+test('can toggle shortcuts on and off', function () {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
 
-    // Add custom shortcut
-    $shortcuts->updateShortcut('newProject', [
-        'key' => 'm',
-        'modifiers' => ['ctrl'],
-    ]);
+    // Disable a shortcut
+    $shortcuts->toggleShortcut('keyboardShortcuts');
+    expect($shortcuts->fresh()->disabled_shortcuts)->toContain('keyboardShortcuts');
 
-    expect($shortcuts->fresh()->custom_shortcuts)->toHaveKey('newProject');
-
-    // Reset it
-    $shortcuts->resetShortcut('newProject');
-
-    expect($shortcuts->fresh()->custom_shortcuts)->not->toHaveKey('newProject');
+    // Enable it again
+    $shortcuts->toggleShortcut('keyboardShortcuts');
+    expect($shortcuts->fresh()->disabled_shortcuts)->not->toContain('keyboardShortcuts');
 });
 
 test('resets all shortcuts to defaults', function () {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
 
-    // Add customizations
+    // Add disabled shortcuts
     $shortcuts->update([
-        'custom_shortcuts' => [
-            'newProject' => ['key' => 'm', 'modifiers' => ['ctrl']],
-            'themeCustomizer' => ['key' => 'x', 'modifiers' => ['ctrl']],
-        ],
         'disabled_shortcuts' => ['logoGallery', 'help'],
     ]);
 
@@ -136,8 +114,7 @@ test('resets all shortcuts to defaults', function () {
     $shortcuts->resetAllShortcuts();
 
     $fresh = $shortcuts->fresh();
-    expect($fresh->custom_shortcuts)->toBeNull()
-        ->and($fresh->disabled_shortcuts)->toBeNull();
+    expect($fresh->disabled_shortcuts)->toBeNull();
 });
 
 test('checks if shortcut is enabled for user', function () {

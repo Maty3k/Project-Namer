@@ -38,13 +38,6 @@
                             <flux:button
                                 size="sm"
                                 variant="ghost"
-                                wire:click="openEditModal('{{ $action }}')"
-                            >
-                                Edit
-                            </flux:button>
-                            <flux:button
-                                size="sm"
-                                variant="ghost"
                                 wire:click="toggleShortcut('{{ $action }}')"
                             >
                                 @if(in_array($action, $disabledShortcuts))
@@ -86,63 +79,4 @@
         </div>
     </div>
 
-    {{-- Edit Shortcut Modal --}}
-    <flux:modal wire:model="showEditModal" class="max-w-md">
-        <form wire:submit="saveShortcut">
-            <div class="space-y-6">
-                <div>
-                    <flux:heading size="lg">Edit Keyboard Shortcut</flux:heading>
-                    <flux:subheading>
-                        @if($editingAction)
-                            Customize shortcut for: {{ $shortcuts[$editingAction]['description'] ?? '' }}
-                        @endif
-                    </flux:subheading>
-                </div>
-
-                <flux:separator />
-
-                <div class="space-y-4">
-                    <div>
-                        <flux:legend>Key</flux:legend>
-                        <flux:input
-                            wire:model.live="editingKey"
-                            placeholder="Press a key..."
-                            x-on:keydown.prevent="$wire.captureKey($event.key)"
-                        />
-                        <flux:description>Press the key you want to use (a-z, 0-9, or special keys)</flux:description>
-                    </div>
-
-                    <div>
-                        <flux:legend>Modifiers</flux:legend>
-                        <div class="space-y-2">
-                            <flux:checkbox wire:model.live="editingModifiers.cmd">Ctrl</flux:checkbox>
-                            <flux:checkbox wire:model.live="editingModifiers.alt">Alt</flux:checkbox>
-                            <flux:checkbox wire:model.live="editingModifiers.shift">Shift</flux:checkbox>
-                        </div>
-                    </div>
-
-                    @if($editingKey)
-                        <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded">
-                            <flux:legend>Preview</flux:legend>
-                            <div class="mt-2">
-                                <code class="text-sm px-2 py-1 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 rounded border border-gray-300 dark:border-gray-600">
-                                    {{ $this->getPreviewKeyCombo() }}
-                                </code>
-                            </div>
-                        </div>
-                    @endif
-                </div>
-
-                <flux:separator />
-
-                <div class="flex justify-between">
-                    <flux:button type="button" variant="ghost" wire:click="closeEditModal">Cancel</flux:button>
-                    <div class="flex gap-2">
-                        <flux:button type="button" variant="ghost" wire:click="resetEditingShortcut">Reset to Default</flux:button>
-                        <flux:button type="submit" variant="primary">Save</flux:button>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </flux:modal>
 </div>

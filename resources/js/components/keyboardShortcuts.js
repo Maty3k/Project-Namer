@@ -25,6 +25,7 @@ export default () => ({
                 { action: 'settings', key: 's', modifiers: ['ctrl'], description: 'Open settings', handler: () => globalShortcutsInstance.openSettings() },
                 { action: 'themeCustomizer', key: 't', modifiers: ['ctrl'], description: 'Theme customizer', handler: () => globalShortcutsInstance.themeCustomizer() },
                 { action: 'logoGallery', key: 'l', modifiers: ['ctrl'], description: 'Logo gallery', handler: () => globalShortcutsInstance.logoGallery() },
+                { action: 'keyboardShortcuts', key: 'k', modifiers: ['ctrl'], description: 'Keyboard shortcuts settings', handler: () => globalShortcutsInstance.keyboardShortcuts() },
                 { action: 'help', key: 'h', modifiers: ['ctrl'], description: 'Show keyboard shortcuts', handler: () => globalShortcutsInstance.toggleHelpOverlay() },
                 { action: 'escape', key: 'Escape', modifiers: [], description: 'Close modals', handler: () => globalShortcutsInstance.closeModals() },
             ];
@@ -87,6 +88,10 @@ export default () => ({
 
     logoGallery() {
         window.location.href = '/logos';
+    },
+
+    keyboardShortcuts() {
+        window.location.href = '/settings/keyboard-shortcuts';
     },
 
     toggleHelpOverlay() {

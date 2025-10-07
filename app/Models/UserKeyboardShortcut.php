@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property int $id
  * @property int $user_id
- * @property array|null $custom_shortcuts
  * @property array|null $disabled_shortcuts
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
@@ -22,14 +21,12 @@ final class UserKeyboardShortcut extends Model
 {
     protected $fillable = [
         'user_id',
-        'custom_shortcuts',
         'disabled_shortcuts',
     ];
 
     protected function casts(): array
     {
         return [
-            'custom_shortcuts' => 'array',
             'disabled_shortcuts' => 'array',
         ];
     }
@@ -74,6 +71,12 @@ final class UserKeyboardShortcut extends Model
                 'description' => 'Logo gallery',
                 'enabled' => true,
             ],
+            'keyboardShortcuts' => [
+                'key' => 'k',
+                'modifiers' => ['ctrl'],
+                'description' => 'Keyboard shortcuts settings',
+                'enabled' => true,
+            ],
             'help' => [
                 'key' => 'h',
                 'modifiers' => ['ctrl'],
@@ -90,22 +93,13 @@ final class UserKeyboardShortcut extends Model
     }
 
     /**
-     * Get merged shortcuts (defaults + custom + disabled).
+     * Get merged shortcuts (defaults + disabled).
      *
      * @return array<string, mixed>
      */
     public function getMergedShortcuts(): array
     {
         $shortcuts = self::getDefaultShortcuts();
-
-        // Apply custom shortcuts
-        if ($this->custom_shortcuts) {
-            foreach ($this->custom_shortcuts as $action => $binding) {
-                if (isset($shortcuts[$action])) {
-                    $shortcuts[$action] = array_merge($shortcuts[$action], $binding);
-                }
-            }
-        }
 
         // Apply disabled shortcuts
         if ($this->disabled_shortcuts) {
@@ -127,7 +121,6 @@ final class UserKeyboardShortcut extends Model
         return self::firstOrCreate(
             ['user_id' => $userId],
             [
-                'custom_shortcuts' => null,
                 'disabled_shortcuts' => null,
             ]
         );
@@ -164,36 +157,11 @@ final class UserKeyboardShortcut extends Model
     }
 
     /**
-     * Update a custom shortcut binding.
-     *
-     * @param  array<string, mixed>  $binding
-     */
-    public function updateShortcut(string $action, array $binding): void
-    {
-        $customShortcuts = $this->custom_shortcuts ?? [];
-        $customShortcuts[$action] = $binding;
-
-        $this->update(['custom_shortcuts' => $customShortcuts]);
-    }
-
-    /**
-     * Reset a shortcut to default.
-     */
-    public function resetShortcut(string $action): void
-    {
-        $customShortcuts = $this->custom_shortcuts ?? [];
-        unset($customShortcuts[$action]);
-
-        $this->update(['custom_shortcuts' => $customShortcuts]);
-    }
-
-    /**
      * Reset all shortcuts to defaults.
      */
     public function resetAllShortcuts(): void
     {
         $this->update([
-            'custom_shortcuts' => null,
             'disabled_shortcuts' => null,
         ]);
     }
