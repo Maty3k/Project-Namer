@@ -9,33 +9,45 @@ use App\Services\DNSLookupService;
 use App\Services\OpenAINameService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
 
-uses(RefreshDatabase::class);
+uses(RefreshDatabase::class)->group('slow');
 
 beforeEach(function (): void {
     $this->user = User::factory()->create();
     $this->actingAs($this->user);
+
+    // Prevent any HTTP requests
+    Http::preventStrayRequests();
+    Http::fake(['*' => Http::response([], 200)]);
+
+    // Mock services to prevent real API calls
+    $this->mock(OpenAINameService::class, function ($mock): void {
+        $mock->shouldReceive('generateNames')
+            ->andReturn(['testbusiness', 'anothername']);
+    });
+
+    $this->mock(DNSLookupService::class, function ($mock): void {
+        $mock->shouldReceive('hasDNSRecords')
+            ->andReturn(false);
+        $mock->shouldReceive('getDNSRecords')
+            ->andReturn([
+                'A' => [],
+                'AAAA' => [],
+                'CNAME' => [],
+                'MX' => [],
+            ]);
+    });
 });
 
 describe('Domain Filtering in Name Generation', function (): void {
     it('filters domains with DNS records from results', function (): void {
-        // This test verifies that the DNS filtering logic correctly marks domains
-        // The actual name generation will use fallback service, which is fine
-        // We just need to verify DNS filtering works
-
-        $this->mock(OpenAINameService::class, function ($mock): void {
-            $mock->shouldReceive('generateNames')
-                ->andReturn(['testbusiness', 'anothername']);
-        });
-
+        // Override DNS mock for this specific test
         $this->mock(DNSLookupService::class, function ($mock): void {
-            // Mock DNS responses for various domains
             $mock->shouldReceive('hasDNSRecords')->andReturnUsing(fn ($domain) =>
-                // Simulate some domains having DNS, some not
                 str_contains($domain, '.com') || str_contains($domain, '.org'));
-
             $mock->shouldReceive('getDNSRecords')->andReturn([
                 'A' => [['ip' => '192.0.2.1']],
                 'AAAA' => [],
@@ -43,6 +55,8 @@ describe('Domain Filtering in Name Generation', function (): void {
                 'MX' => [],
             ]);
         });
+
+        Queue::fake();
 
         $component = Livewire::test(NameGeneratorDashboard::class)
             ->set('businessIdea', 'A test business')
@@ -94,13 +108,11 @@ describe('Domain Filtering in Name Generation', function (): void {
 
     it('shows checking status initially before DNS results', function (): void {
         $this->mock(DNSLookupService::class, function ($mock): void {
-            $mock->shouldReceive('hasDNSRecords')->andReturn(null); // DNS check pending
+            $mock->shouldReceive('hasDNSRecords')->andReturn(null);
+            $mock->shouldReceive('getDNSRecords')->andReturn([]);
         });
 
-        $this->mock(OpenAINameService::class, function ($mock): void {
-            $mock->shouldReceive('generateNames')
-                ->andReturn(['newname']);
-        });
+        Queue::fake();
 
         $component = Livewire::test(NameGeneratorDashboard::class)
             ->set('businessIdea', 'A test business')
@@ -113,14 +125,11 @@ describe('Domain Filtering in Name Generation', function (): void {
 
     it('handles DNS check failures gracefully with unknown status', function (): void {
         $this->mock(DNSLookupService::class, function ($mock): void {
-            $mock->shouldReceive('hasDNSRecords')
-                ->andReturn(null); // DNS check failed
+            $mock->shouldReceive('hasDNSRecords')->andReturn(null);
+            $mock->shouldReceive('getDNSRecords')->andReturn([]);
         });
 
-        $this->mock(OpenAINameService::class, function ($mock): void {
-            $mock->shouldReceive('generateNames')
-                ->andReturn(['testbusiness']);
-        });
+        Queue::fake();
 
         $component = Livewire::test(NameGeneratorDashboard::class)
             ->set('businessIdea', 'A test business')
@@ -134,23 +143,16 @@ describe('Domain Filtering in Name Generation', function (): void {
     });
 
     it('updates domain status when DNS check event is received', function (): void {
-        $this->mock(DNSLookupService::class, function ($mock): void {
-            $mock->shouldReceive('hasDNSRecords')->andReturn(false);
-        });
-
-        $this->mock(OpenAINameService::class, function ($mock): void {
-            $mock->shouldReceive('generateNames')
-                ->andReturn(['mybusiness']);
-        });
+        Queue::fake();
 
         $component = Livewire::test(NameGeneratorDashboard::class)
             ->set('businessIdea', 'My business idea')
             ->set('generationMode', 'professional')
             ->call('generateNames');
 
-        // Simulate DNS check completion event
+        // Simulate DNS check completion event for the first generated name
         $component->dispatch('domain-dns-checked', [
-            'domain' => 'mybusiness.com',
+            'domain' => 'testbusiness.com',
             'available' => false,
             'has_dns_records' => true,
             'status' => 'taken',
@@ -158,22 +160,12 @@ describe('Domain Filtering in Name Generation', function (): void {
         ]);
 
         $domainResults = $component->get('domainResults');
-        expect($domainResults['mybusiness']['mybusiness.com']['available'])->toBeFalse();
-        expect($domainResults['mybusiness']['mybusiness.com']['has_dns_records'])->toBeTrue();
+        expect($domainResults['testbusiness']['testbusiness.com']['available'])->toBeFalse();
+        expect($domainResults['testbusiness']['testbusiness.com']['has_dns_records'])->toBeTrue();
     });
 
     it('shows availability status correctly across multiple TLDs', function (): void {
-        // This test verifies that DNS checking works and properly marks domains
-        // The actual implementation is already tested in DomainCheckServiceTest
-
-        $this->mock(OpenAINameService::class, function ($mock): void {
-            $mock->shouldReceive('generateNames')
-                ->andReturn(['testname']);
-        });
-
-        $this->mock(DNSLookupService::class, function ($mock): void {
-            $mock->shouldReceive('hasDNSRecords')->andReturn(false); // All available for this test
-        });
+        Queue::fake();
 
         $component = Livewire::test(NameGeneratorDashboard::class)
             ->set('businessIdea', 'Test filtering')
@@ -199,14 +191,7 @@ describe('Domain Filtering in Name Generation', function (): void {
     });
 
     it('preserves domain results across component updates', function (): void {
-        $this->mock(DNSLookupService::class, function ($mock): void {
-            $mock->shouldReceive('hasDNSRecords')->andReturn(false);
-        });
-
-        $this->mock(OpenAINameService::class, function ($mock): void {
-            $mock->shouldReceive('generateNames')
-                ->andReturn(['persistname']);
-        });
+        Queue::fake();
 
         $component = Livewire::test(NameGeneratorDashboard::class)
             ->set('businessIdea', 'Persistence test')
@@ -227,24 +212,16 @@ describe('Domain Filtering in Name Generation', function (): void {
 describe('Real-time DNS Status Updates', function (): void {
     it('updates UI when background DNS check completes', function (): void {
         Event::fake(['domain-dns-checked']);
-
-        $this->mock(DNSLookupService::class, function ($mock): void {
-            $mock->shouldReceive('hasDNSRecords')->andReturn(false);
-        });
-
-        $this->mock(OpenAINameService::class, function ($mock): void {
-            $mock->shouldReceive('generateNames')
-                ->andReturn(['realtimename']);
-        });
+        Queue::fake();
 
         $component = Livewire::test(NameGeneratorDashboard::class)
             ->set('businessIdea', 'Real-time test')
             ->set('generationMode', 'professional')
             ->call('generateNames');
 
-        // Simulate background job completion
+        // Simulate background job completion for first generated name
         $component->call('onDomainDNSChecked', [
-            'domain' => 'realtimename.com',
+            'domain' => 'testbusiness.com',
             'available' => false,
             'has_dns_records' => true,
             'status' => 'taken',
@@ -252,41 +229,34 @@ describe('Real-time DNS Status Updates', function (): void {
         ]);
 
         $domainResults = $component->get('domainResults');
-        expect($domainResults['realtimename']['realtimename.com']['updated'])->toBeTrue();
+        expect($domainResults['testbusiness']['testbusiness.com']['updated'])->toBeTrue();
     });
 
     it('handles multiple DNS check events for different domains', function (): void {
-        $this->mock(DNSLookupService::class, function ($mock): void {
-            $mock->shouldReceive('hasDNSRecords')->andReturn(false);
-        });
-
-        $this->mock(OpenAINameService::class, function ($mock): void {
-            $mock->shouldReceive('generateNames')
-                ->andReturn(['multiname']);
-        });
+        Queue::fake();
 
         $component = Livewire::test(NameGeneratorDashboard::class)
             ->set('businessIdea', 'Multi-domain test')
             ->set('generationMode', 'creative')
             ->call('generateNames');
 
-        // Simulate multiple DNS checks completing
+        // Simulate multiple DNS checks completing for first generated name
         $component->call('onDomainDNSChecked', [
-            'domain' => 'multiname.com',
+            'domain' => 'testbusiness.com',
             'available' => false,
             'has_dns_records' => true,
             'status' => 'taken',
         ]);
 
         $component->call('onDomainDNSChecked', [
-            'domain' => 'multiname.io',
+            'domain' => 'testbusiness.io',
             'available' => true,
             'has_dns_records' => false,
             'status' => 'available',
         ]);
 
         $domainResults = $component->get('domainResults');
-        expect($domainResults['multiname']['multiname.com']['available'])->toBeFalse();
-        expect($domainResults['multiname']['multiname.io']['available'])->toBeTrue();
+        expect($domainResults['testbusiness']['testbusiness.com']['available'])->toBeFalse();
+        expect($domainResults['testbusiness']['testbusiness.io']['available'])->toBeTrue();
     });
 });
