@@ -113,21 +113,21 @@ describe('Disabled Keyboard Shortcuts', function (): void {
         expect($content)->toContain('is disabled - ignoring');
     });
 
-    test('global keyboard shortcuts fetches from API on init', function (): void {
+    test('global keyboard shortcuts loads from injected data on init', function (): void {
         $globalPath = resource_path('js/global-keyboard-shortcuts.js');
         $content = file_get_contents($globalPath);
 
-        // Verify that it fetches disabled shortcuts from API
-        expect($content)->toContain('fetch(\'/api/keyboard-shortcuts\'');
-        expect($content)->toContain('fetchDisabledShortcuts()');
+        // Verify that it uses injected disabled shortcuts
+        expect($content)->toContain('window.__disabledShortcuts');
+        expect($content)->toContain('updateDisabledShortcuts()');
     });
 
     test('global keyboard shortcuts listens for updates', function (): void {
         $globalPath = resource_path('js/global-keyboard-shortcuts.js');
         $content = file_get_contents($globalPath);
 
-        // Verify that it listens for Livewire shortcuts-updated event
+        // Verify that it listens for Livewire shortcuts-updated event and fetches from API
         expect($content)->toContain('Livewire.on(\'shortcuts-updated\'');
-        expect($content)->toContain('fetchDisabledShortcuts()');
+        expect($content)->toContain('fetch(\'/api/keyboard-shortcuts\'');
     });
 });
