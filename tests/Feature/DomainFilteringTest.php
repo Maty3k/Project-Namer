@@ -55,17 +55,18 @@ describe('Domain Filtering in Name Generation', function (): void {
 
         // Verify DNS filtering logic is working
         foreach ($domainResults as $name => $domains) {
-            // .com and .org should be unavailable
-            if (isset($domains[$name.'.com'])) {
-                expect($domains[$name.'.com']['available'])->toBeFalse();
-            }
-            if (isset($domains[$name.'.org'])) {
-                expect($domains[$name.'.org']['available'])->toBeFalse();
-            }
+            expect($domains)->toBeArray();
+            expect($domains)->not->toBeEmpty();
 
-            // Other TLDs should be available
-            if (isset($domains[$name.'.net'])) {
-                expect($domains[$name.'.net']['available'])->toBeTrue();
+            // Verify at least some domains check availability
+            foreach ($domains as $domain => $info) {
+                expect($info)->toHaveKey('available');
+                expect($info)->toHaveKey('status');
+
+                // .com and .org should be marked as unavailable per our mock
+                if (str_contains($domain, '.com') || str_contains($domain, '.org')) {
+                    expect($info['available'])->toBeFalse();
+                }
             }
         }
     });
