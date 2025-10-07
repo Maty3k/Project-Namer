@@ -20,6 +20,7 @@ class KeyboardShortcutsController extends Controller
 
         return response()->json([
             'shortcuts' => $userShortcuts->getMergedShortcuts(),
+            'disabled_shortcuts' => $userShortcuts->disabled_shortcuts ?? [],
         ]);
     }
 }

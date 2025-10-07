@@ -20,6 +20,30 @@ const SHORTCUTS = [
 let disabledShortcuts = [];
 
 /**
+ * Fetch disabled shortcuts from the server
+ */
+async function fetchDisabledShortcuts() {
+    try {
+        const response = await fetch('/api/keyboard-shortcuts', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            credentials: 'same-origin',
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            disabledShortcuts = data.disabled_shortcuts || [];
+            console.log('[Global Keyboard Shortcuts] Loaded disabled shortcuts:', disabledShortcuts);
+        }
+    } catch (error) {
+        console.error('[Global Keyboard Shortcuts] Failed to fetch disabled shortcuts:', error);
+    }
+}
+
+/**
  * Initialize global keyboard shortcuts
  */
 function initGlobalKeyboardShortcuts() {
@@ -28,10 +52,15 @@ function initGlobalKeyboardShortcuts() {
     // Register global keydown listener
     window.addEventListener('keydown', handleGlobalKeydown);
 
-    // Listen for disabled shortcuts updates from Alpine components
-    window.addEventListener('update-disabled-shortcuts', (event) => {
-        disabledShortcuts = event.detail?.shortcuts || [];
-        console.log('[Global Keyboard Shortcuts] Updated disabled shortcuts:', disabledShortcuts);
+    // Fetch disabled shortcuts from server on init
+    fetchDisabledShortcuts();
+
+    // Listen for shortcuts updates from Livewire components
+    window.addEventListener('livewire:init', () => {
+        Livewire.on('shortcuts-updated', () => {
+            console.log('[Global Keyboard Shortcuts] Shortcuts updated, reloading from server');
+            fetchDisabledShortcuts();
+        });
     });
 
     console.log('[Global Keyboard Shortcuts] Global keyboard handler registered');

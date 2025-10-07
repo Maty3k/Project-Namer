@@ -20,15 +20,15 @@ describe('Keyboard Shortcut Manager', function (): void {
         $appJsPath = resource_path('js/app.js');
         $content = file_get_contents($appJsPath);
 
-        expect($content)->toContain('keyboardShortcuts');
+        expect($content)->toContain('global-keyboard-shortcuts');
     });
 
     test('keyboard shortcuts component has proper structure', function (): void {
-        $componentPath = resource_path('js/components/keyboardShortcuts.js');
-        $content = file_get_contents($componentPath);
+        $globalPath = resource_path('js/global-keyboard-shortcuts.js');
+        $content = file_get_contents($globalPath);
 
-        expect($content)->toContain('init')
-            ->and($content)->toContain('handleKeydown');
+        expect($content)->toContain('initGlobalKeyboardShortcuts')
+            ->and($content)->toContain('handleGlobalKeydown');
     });
 });
 
@@ -43,10 +43,10 @@ describe('Command Palette', function (): void {
     });
 
     test('command palette can be opened with Ctrl+P', function (): void {
-        $componentPath = resource_path('js/components/keyboardShortcuts.js');
-        $content = file_get_contents($componentPath);
+        $globalPath = resource_path('js/global-keyboard-shortcuts.js');
+        $content = file_get_contents($globalPath);
 
-        // Check that Ctrl+P is handled
+        // Check that Ctrl key handling exists
         expect($content)->toContain('ctrlKey');
     });
 
@@ -59,40 +59,40 @@ describe('Command Palette', function (): void {
 
 describe('Shortcut Actions', function (): void {
     test('Cmd+N shortcut is defined', function (): void {
-        $componentPath = resource_path('js/components/keyboardShortcuts.js');
-        $content = file_get_contents($componentPath);
+        $globalPath = resource_path('js/global-keyboard-shortcuts.js');
+        $content = file_get_contents($globalPath);
 
         // Check for new project shortcut
         expect($content)->toMatch('/[nN]/');
     });
 
     test('Ctrl+S shortcut is defined for settings', function (): void {
-        $componentPath = resource_path('js/components/keyboardShortcuts.js');
-        $content = file_get_contents($componentPath);
+        $globalPath = resource_path('js/global-keyboard-shortcuts.js');
+        $content = file_get_contents($globalPath);
 
         // Check for settings shortcut
         expect($content)->toContain("key: 's'");
     });
 
     test('Ctrl+T shortcut is defined for theme customizer', function (): void {
-        $componentPath = resource_path('js/components/keyboardShortcuts.js');
-        $content = file_get_contents($componentPath);
+        $globalPath = resource_path('js/global-keyboard-shortcuts.js');
+        $content = file_get_contents($globalPath);
 
         // Check for theme customizer shortcut
         expect($content)->toContain("key: 't'");
     });
 
     test('Ctrl+L shortcut is defined for logo gallery', function (): void {
-        $componentPath = resource_path('js/components/keyboardShortcuts.js');
-        $content = file_get_contents($componentPath);
+        $globalPath = resource_path('js/global-keyboard-shortcuts.js');
+        $content = file_get_contents($globalPath);
 
         // Check for logo gallery shortcut
         expect($content)->toContain("key: 'l'");
     });
 
     test('Ctrl+H shortcut is defined for help', function (): void {
-        $componentPath = resource_path('js/components/keyboardShortcuts.js');
-        $content = file_get_contents($componentPath);
+        $globalPath = resource_path('js/global-keyboard-shortcuts.js');
+        $content = file_get_contents($globalPath);
 
         // Check for help shortcut
         expect($content)->toContain("key: 'h'");
@@ -123,17 +123,17 @@ describe('Help Overlay', function (): void {
 
 describe('Input Field Handling', function (): void {
     test('shortcuts are disabled in input fields', function (): void {
-        $componentPath = resource_path('js/components/keyboardShortcuts.js');
-        $content = file_get_contents($componentPath);
+        $globalPath = resource_path('js/global-keyboard-shortcuts.js');
+        $content = file_get_contents($globalPath);
 
         // Check that inputs are excluded
         expect($content)->toMatch('/(input|textarea|select)/i');
     });
 
     test('shortcuts work outside of form inputs', function (): void {
-        $componentPath = resource_path('js/components/keyboardShortcuts.js');
+        $globalPath = resource_path('js/global-keyboard-shortcuts.js');
 
-        expect(file_exists($componentPath))->toBeTrue();
+        expect(file_exists($globalPath))->toBeTrue();
     });
 });
 
@@ -156,10 +156,10 @@ describe('Accessibility', function (): void {
     });
 
     test('help overlay can be dismissed with Escape', function (): void {
-        $componentPath = resource_path('js/components/keyboardShortcuts.js');
+        $globalPath = resource_path('js/global-keyboard-shortcuts.js');
 
-        if (file_exists($componentPath)) {
-            $content = file_get_contents($componentPath);
+        if (file_exists($globalPath)) {
+            $content = file_get_contents($globalPath);
             expect($content)->toContain('Escape');
         } else {
             expect(true)->toBeTrue();
