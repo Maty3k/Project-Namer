@@ -26,9 +26,12 @@ export default () => ({
             window.addEventListener('keydown', (e) => globalShortcutsInstance.handleKeydown(e));
 
             // Listen for shortcuts-updated event from Livewire
-            window.addEventListener('shortcuts-updated', () => {
-                console.log('[Keyboard Shortcuts] shortcuts-updated event received, reloading preferences...');
-                globalShortcutsInstance.loadUserPreferences();
+            // Livewire v3 dispatches events that can be listened to with Livewire.on()
+            document.addEventListener('livewire:init', () => {
+                Livewire.on('shortcuts-updated', () => {
+                    console.log('[Keyboard Shortcuts] shortcuts-updated event received, reloading preferences...');
+                    globalShortcutsInstance.loadUserPreferences();
+                });
             });
 
             // Define available shortcuts with handlers bound to the global instance
