@@ -24,6 +24,31 @@ class DNSLookupService
     private const DOMAIN_PATTERN = '/^(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.[A-Za-z0-9-]{1,63})+$/';
 
     /**
+     * DNS resolver instance.
+     */
+    private ?Dns $dns = null;
+
+    /**
+     * Set DNS resolver for testing.
+     */
+    public function setDns(Dns $dns): void
+    {
+        $this->dns = $dns;
+    }
+
+    /**
+     * Get DNS resolver instance.
+     */
+    protected function getDns(): Dns
+    {
+        if ($this->dns === null) {
+            $this->dns = new Dns;
+        }
+
+        return $this->dns;
+    }
+
+    /**
      * Check if a domain has DNS records.
      *
      * Returns true if ANY of the following record types exist:
@@ -43,7 +68,7 @@ class DNSLookupService
         }
 
         try {
-            $dns = new Dns;
+            $dns = $this->getDns();
 
             // Check for A records (IPv4)
             $aRecords = $dns->getRecords($domain, DNS_A);
@@ -98,7 +123,7 @@ class DNSLookupService
         }
 
         $records = [];
-        $dns = new Dns;
+        $dns = $this->getDns();
 
         try {
             $records['A'] = $dns->getRecords($domain, DNS_A);

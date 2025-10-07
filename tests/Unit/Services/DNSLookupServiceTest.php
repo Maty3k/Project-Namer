@@ -16,18 +16,20 @@ beforeEach(function (): void {
 describe('DNSLookupService', function (): void {
     describe('hasDNSRecords', function (): void {
         test('returns true when domain has A records', function (): void {
-            $mockDns = Mockery::mock('overload:'.Dns::class);
+            $mockDns = Mockery::mock(Dns::class);
             $mockDns->shouldReceive('getRecords')
                 ->with('example.com', DNS_A)
                 ->andReturn([['ip' => '192.0.2.1']]);
 
+            $this->service->setDns($mockDns);
+            $this->service->setDns($mockDns);
             $result = $this->service->hasDNSRecords('example.com');
 
             expect($result)->toBeTrue();
         });
 
         test('returns true when domain has AAAA records', function (): void {
-            $mockDns = Mockery::mock('overload:'.Dns::class);
+            $mockDns = Mockery::mock(Dns::class);
             $mockDns->shouldReceive('getRecords')
                 ->with('example.com', DNS_A)
                 ->andReturn([]);
@@ -35,13 +37,15 @@ describe('DNSLookupService', function (): void {
                 ->with('example.com', DNS_AAAA)
                 ->andReturn([['ipv6' => '2001:db8::1']]);
 
+            $this->service->setDns($mockDns);
+            $this->service->setDns($mockDns);
             $result = $this->service->hasDNSRecords('example.com');
 
             expect($result)->toBeTrue();
         });
 
         test('returns true when domain has CNAME records', function (): void {
-            $mockDns = Mockery::mock('overload:'.Dns::class);
+            $mockDns = Mockery::mock(Dns::class);
             $mockDns->shouldReceive('getRecords')
                 ->with('example.com', DNS_A)
                 ->andReturn([]);
@@ -52,13 +56,14 @@ describe('DNSLookupService', function (): void {
                 ->with('example.com', DNS_CNAME)
                 ->andReturn([['target' => 'otherdomain.com']]);
 
+            $this->service->setDns($mockDns);
             $result = $this->service->hasDNSRecords('example.com');
 
             expect($result)->toBeTrue();
         });
 
         test('returns true when domain has MX records', function (): void {
-            $mockDns = Mockery::mock('overload:'.Dns::class);
+            $mockDns = Mockery::mock(Dns::class);
             $mockDns->shouldReceive('getRecords')
                 ->with('example.com', DNS_A)
                 ->andReturn([]);
@@ -72,36 +77,40 @@ describe('DNSLookupService', function (): void {
                 ->with('example.com', DNS_MX)
                 ->andReturn([['target' => 'mail.example.com', 'pri' => 10]]);
 
+            $this->service->setDns($mockDns);
             $result = $this->service->hasDNSRecords('example.com');
 
             expect($result)->toBeTrue();
         });
 
         test('returns false when domain has no DNS records', function (): void {
-            $mockDns = Mockery::mock('overload:'.Dns::class);
+            $mockDns = Mockery::mock(Dns::class);
             $mockDns->shouldReceive('getRecords')
                 ->andReturn([]);
 
+            $this->service->setDns($mockDns);
             $result = $this->service->hasDNSRecords('newdomain.com');
 
             expect($result)->toBeFalse();
         });
 
         test('handles invalid domain gracefully', function (): void {
-            $mockDns = Mockery::mock('overload:'.Dns::class);
+            $mockDns = Mockery::mock(Dns::class);
             $mockDns->shouldReceive('getRecords')
                 ->andThrow(new \Exception('Invalid domain'));
 
+            $this->service->setDns($mockDns);
             $result = $this->service->hasDNSRecords('invalid..domain');
 
             expect($result)->toBeNull();
         });
 
         test('handles DNS resolution timeout', function (): void {
-            $mockDns = Mockery::mock('overload:'.Dns::class);
+            $mockDns = Mockery::mock(Dns::class);
             $mockDns->shouldReceive('getRecords')
                 ->andThrow(new \Exception('DNS query timeout'));
 
+            $this->service->setDns($mockDns);
             $result = $this->service->hasDNSRecords('timeout.com');
 
             expect($result)->toBeNull();
@@ -122,7 +131,7 @@ describe('DNSLookupService', function (): void {
         });
 
         test('returns DNS record details when requested', function (): void {
-            $mockDns = Mockery::mock('overload:'.Dns::class);
+            $mockDns = Mockery::mock(Dns::class);
             $mockDns->shouldReceive('getRecords')
                 ->with('example.com', DNS_A)
                 ->andReturn([['ip' => '192.0.2.1'], ['ip' => '192.0.2.2']]);
@@ -136,6 +145,7 @@ describe('DNSLookupService', function (): void {
                 ->with('example.com', DNS_MX)
                 ->andReturn([['target' => 'mail.example.com', 'pri' => 10]]);
 
+            $this->service->setDns($mockDns);
             $records = $this->service->getDNSRecords('example.com');
 
             expect($records)->toBeArray()
