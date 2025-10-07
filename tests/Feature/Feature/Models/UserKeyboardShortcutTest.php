@@ -11,7 +11,6 @@ test('creates keyboard shortcuts for user with defaults', function () {
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
 
     expect($shortcuts->user_id)->toBe($user->id)
-        ->and($shortcuts->enabled)->toBeTrue()
         ->and($shortcuts->custom_shortcuts)->toBeNull()
         ->and($shortcuts->disabled_shortcuts)->toBeNull();
 });
@@ -64,16 +63,14 @@ test('disables individual shortcuts correctly', function () {
         ->and($merged['help']['enabled'])->toBeTrue();
 });
 
-test('disables all shortcuts when globally disabled', function () {
+test('merges shortcuts correctly', function () {
     $user = User::factory()->create();
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
-
-    $shortcuts->update(['enabled' => false]);
 
     $merged = $shortcuts->getMergedShortcuts();
 
     foreach ($merged as $action => $config) {
-        expect($config['enabled'])->toBeFalse();
+        expect($config['enabled'])->toBeTrue();
     }
 });
 
@@ -153,9 +150,9 @@ test('checks if shortcut is enabled for user', function () {
     $shortcuts->update(['disabled_shortcuts' => ['newProject']]);
     expect($shortcuts->isShortcutEnabled('newProject'))->toBeFalse();
 
-    // Globally disable
-    $shortcuts->update(['enabled' => false, 'disabled_shortcuts' => []]);
-    expect($shortcuts->isShortcutEnabled('newProject'))->toBeFalse();
+    // Re-enable shortcut
+    $shortcuts->update(['disabled_shortcuts' => []]);
+    expect($shortcuts->isShortcutEnabled('newProject'))->toBeTrue();
 });
 
 test('user relationship works correctly', function () {
