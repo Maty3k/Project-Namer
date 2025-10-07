@@ -4,35 +4,51 @@
  * Handles global keyboard shortcuts for the application
  */
 
-// Global singleton instance
+// Global singleton instance and event listener tracking
 let globalShortcutsInstance = null;
+let globalEventListenerRegistered = false;
 
 export default () => ({
     helpOverlayOpen: false,
     shortcuts: [],
 
     init() {
-        // If this is the first instance, set it as the global singleton
-        if (!globalShortcutsInstance) {
+        console.log('[Keyboard Shortcuts] Initializing component');
+
+        // Define shortcuts for this instance
+        this.shortcuts = [
+            { action: 'newProject', key: 'n', modifiers: ['ctrl'], description: 'New project', handler: () => this.newProject() },
+            { action: 'settings', key: 's', modifiers: ['ctrl'], description: 'Open settings', handler: () => this.openSettings() },
+            { action: 'themeCustomizer', key: 't', modifiers: ['ctrl'], description: 'Theme customizer', handler: () => this.themeCustomizer() },
+            { action: 'logoGallery', key: 'l', modifiers: ['ctrl'], description: 'Logo gallery', handler: () => this.logoGallery() },
+            { action: 'keyboardShortcuts', key: 'k', modifiers: ['ctrl'], description: 'Keyboard shortcuts settings', handler: () => this.keyboardShortcuts() },
+            { action: 'help', key: 'h', modifiers: ['ctrl'], description: 'Show keyboard shortcuts', handler: () => this.toggleHelpOverlay() },
+            { action: 'escape', key: 'Escape', modifiers: [], description: 'Close modals', handler: () => this.closeModals() },
+        ];
+
+        // If this is the first instance OR if page was reloaded, set it as the global singleton
+        if (!globalShortcutsInstance || !document.body.contains(globalShortcutsInstance.$el)) {
+            console.log('[Keyboard Shortcuts] Setting up global instance');
             globalShortcutsInstance = this;
+            globalEventListenerRegistered = false; // Reset listener flag on new instance
+        }
 
-            // Register keyboard event listener ONCE globally
-            window.addEventListener('keydown', (e) => globalShortcutsInstance.handleKeydown(e));
-
-            // Define available shortcuts with handlers bound to the global instance
-            this.shortcuts = [
-                { action: 'newProject', key: 'n', modifiers: ['ctrl'], description: 'New project', handler: () => globalShortcutsInstance.newProject() },
-                { action: 'settings', key: 's', modifiers: ['ctrl'], description: 'Open settings', handler: () => globalShortcutsInstance.openSettings() },
-                { action: 'themeCustomizer', key: 't', modifiers: ['ctrl'], description: 'Theme customizer', handler: () => globalShortcutsInstance.themeCustomizer() },
-                { action: 'logoGallery', key: 'l', modifiers: ['ctrl'], description: 'Logo gallery', handler: () => globalShortcutsInstance.logoGallery() },
-                { action: 'keyboardShortcuts', key: 'k', modifiers: ['ctrl'], description: 'Keyboard shortcuts settings', handler: () => globalShortcutsInstance.keyboardShortcuts() },
-                { action: 'help', key: 'h', modifiers: ['ctrl'], description: 'Show keyboard shortcuts', handler: () => globalShortcutsInstance.toggleHelpOverlay() },
-                { action: 'escape', key: 'Escape', modifiers: [], description: 'Close modals', handler: () => globalShortcutsInstance.closeModals() },
-            ];
-        } else {
-            // For subsequent instances, sync state from the global instance
-            setInterval(() => {
+        // Register keyboard event listener ONCE globally
+        if (!globalEventListenerRegistered) {
+            console.log('[Keyboard Shortcuts] Registering global event listener');
+            window.addEventListener('keydown', (e) => {
                 if (globalShortcutsInstance) {
+                    globalShortcutsInstance.handleKeydown(e);
+                }
+            });
+            globalEventListenerRegistered = true;
+        }
+
+        // If this is not the primary instance, sync state from the global instance
+        if (globalShortcutsInstance !== this) {
+            console.log('[Keyboard Shortcuts] Secondary instance - syncing with primary');
+            setInterval(() => {
+                if (globalShortcutsInstance && globalShortcutsInstance !== this) {
                     this.helpOverlayOpen = globalShortcutsInstance.helpOverlayOpen;
                 }
             }, 50);
