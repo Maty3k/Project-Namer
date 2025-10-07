@@ -201,7 +201,7 @@
 
             <!-- Generate More Names Floating Button -->
             @if($this->suggestionCounts['total'] > 0 && !$showAIControls)
-                <div class="mt-6 flex justify-center">
+                <div class="mt-10 flex justify-center">
                     <flux:button
                         wire:click="$set('showAIControls', true)"
                         variant="primary"
