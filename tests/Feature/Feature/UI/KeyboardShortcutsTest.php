@@ -42,13 +42,12 @@ describe('Command Palette', function (): void {
         expect($content)->toBeString();
     });
 
-    test('command palette can be opened with Cmd+K', function (): void {
+    test('command palette can be opened with Ctrl+P', function (): void {
         $componentPath = resource_path('js/components/keyboardShortcuts.js');
         $content = file_get_contents($componentPath);
 
-        // Check that Cmd+K / Ctrl+K is handled
-        expect($content)->toContain('metaKey')
-            ->and($content)->toContain('ctrlKey');
+        // Check that Ctrl+P is handled
+        expect($content)->toContain('ctrlKey');
     });
 
     test('command palette blade component exists', function (): void {
@@ -67,20 +66,36 @@ describe('Shortcut Actions', function (): void {
         expect($content)->toMatch('/[nN]/');
     });
 
-    test('Cmd+G shortcut is defined', function (): void {
+    test('Ctrl+S shortcut is defined for settings', function (): void {
         $componentPath = resource_path('js/components/keyboardShortcuts.js');
         $content = file_get_contents($componentPath);
 
-        // Check for generate shortcut
-        expect($content)->toMatch('/[gG]/');
+        // Check for settings shortcut
+        expect($content)->toContain("key: 's'");
     });
 
-    test('? shortcut is defined for help', function (): void {
+    test('Ctrl+T shortcut is defined for theme customizer', function (): void {
+        $componentPath = resource_path('js/components/keyboardShortcuts.js');
+        $content = file_get_contents($componentPath);
+
+        // Check for theme customizer shortcut
+        expect($content)->toContain("key: 't'");
+    });
+
+    test('Ctrl+L shortcut is defined for logo gallery', function (): void {
+        $componentPath = resource_path('js/components/keyboardShortcuts.js');
+        $content = file_get_contents($componentPath);
+
+        // Check for logo gallery shortcut
+        expect($content)->toContain("key: 'l'");
+    });
+
+    test('Ctrl+H shortcut is defined for help', function (): void {
         $componentPath = resource_path('js/components/keyboardShortcuts.js');
         $content = file_get_contents($componentPath);
 
         // Check for help shortcut
-        expect($content)->toContain('?');
+        expect($content)->toContain("key: 'h'");
     });
 });
 
@@ -97,9 +112,9 @@ describe('Help Overlay', function (): void {
         if (file_exists($componentPath)) {
             $content = file_get_contents($componentPath);
 
-            // Check for Command symbol (⌘) or Cmd text, and Ctrl
-            expect($content)->toMatch('/(⌘|Cmd)/');
+            // Check that only Ctrl is used (no Cmd or ⌘)
             expect($content)->toContain('Ctrl');
+            expect($content)->not->toMatch('/(⌘)/');
         } else {
             expect(true)->toBeTrue(); // Pass if component doesn't exist yet
         }

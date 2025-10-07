@@ -423,7 +423,8 @@ class ProjectPage extends Component
 
         if ($preferences) {
             $this->selectedAIModels = $preferences->preferred_models ?? [];
-            $this->generationMode = $preferences->default_generation_mode ?? '';
+            // Don't pre-select generation mode - let user choose each time
+            $this->generationMode = '';
             $this->deepThinking = $preferences->default_deep_thinking ?? false;
             $this->enableModelComparison = $preferences->enable_model_comparison ?? false;
         } else {

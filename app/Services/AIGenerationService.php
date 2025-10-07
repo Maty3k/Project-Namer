@@ -99,6 +99,12 @@ final readonly class AIGenerationService
         bool $deepThinking = false,
         array $customParams = []
     ): array {
+        // Increase execution time limit for AI API calls
+        // Each model can take up to 30 seconds, so allow enough time for all models
+        $timeoutPerModel = config('ai.settings.timeout_seconds', 30);
+        $totalTimeout = (count($models) * $timeoutPerModel) + 30; // Add 30s buffer
+        set_time_limit($totalTimeout);
+
         $this->validateInput($businessIdea, $models, $mode);
 
         $startTime = microtime(true);

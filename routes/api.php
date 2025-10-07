@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AIGenerationController;
 use App\Http\Controllers\Api\ErrorExplanationController;
 use App\Http\Controllers\Api\ExportController;
 use App\Http\Controllers\Api\ImageUploadController;
+use App\Http\Controllers\Api\KeyboardShortcutsController;
 use App\Http\Controllers\Api\LogoDownloadController;
 use App\Http\Controllers\Api\LogoGenerationController;
 use App\Http\Controllers\Api\MoodBoardController;
@@ -284,6 +285,11 @@ Route::middleware('api')->group(function (): void {
     // Error explanation endpoints
     Route::get('error-explanations/{code}', [ErrorExplanationController::class, 'show'])
         ->name('api.error-explanations.show');
+
+    // Keyboard shortcuts API endpoint
+    Route::get('keyboard-shortcuts', [KeyboardShortcutsController::class, 'index'])
+        ->middleware(['auth'])
+        ->name('api.keyboard-shortcuts');
 
     // Logo styles endpoint with graceful degradation
     Route::get('logo-styles', function () {

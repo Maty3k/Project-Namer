@@ -298,7 +298,7 @@ describe('ProjectPage AI Generation', function (): void {
 
         Livewire::test(ProjectPage::class, ['uuid' => $this->project->uuid])
             ->assertSet('selectedAIModels', ['grok-beta', 'claude-3.5-sonnet'])
-            ->assertSet('generationMode', 'tech-focused')
+            ->assertSet('generationMode', '')
             ->assertSet('deepThinking', true);
     });
 

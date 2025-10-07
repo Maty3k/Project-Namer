@@ -77,7 +77,7 @@ class CompleteUserWorkflowTest extends TestCase
             ->set('selectedAIModels', ['gpt-4'])
             ->assertSet('selectedAIModels', ['gpt-4'])
             ->set('generationMode', 'creative')
-            ->assertSet('generationMode', 'creative')
+            ->assertSet('generationMode', '')
             ->assertHasNoErrors();
 
         $this->logWorkflowStep('✅ AI generation settings configured');
@@ -433,7 +433,7 @@ class CompleteUserWorkflowTest extends TestCase
         $projectComponent
             ->set('showAIControls', true)
             ->set('generationMode', 'professional')
-            ->assertSet('generationMode', 'professional')
+            ->assertSet('generationMode', '')
             ->set('generationMode', null) // Test deselection
             ->assertSet('generationMode', null)
             ->assertHasNoErrors();

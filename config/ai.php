@@ -96,7 +96,7 @@ return [
 
         // Performance settings
         'cache_ttl_minutes' => (int) env('AI_CACHE_TTL_MINUTES', 60),
-        'timeout_seconds' => (int) env('AI_TIMEOUT_SECONDS', 30),
+        'timeout_seconds' => (int) env('AI_TIMEOUT_SECONDS', 60), // Increased from 30 to 60 seconds for slower AI models
         'retry_attempts' => (int) env('AI_RETRY_ATTEMPTS', 3),
 
         // System status

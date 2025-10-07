@@ -4,23 +4,92 @@
  * Handles global keyboard shortcuts for the application
  */
 
+// Global singleton instance
+let globalShortcutsInstance = null;
+
 export default () => ({
-    commandPaletteOpen: false,
     helpOverlayOpen: false,
     shortcuts: [],
+    userPreferences: null,
+    shortcutsEnabled: true,
 
-    init() {
-        // Register keyboard event listener
-        window.addEventListener('keydown', (e) => this.handleKeydown(e));
+    async init() {
+        // If this is the first instance, set it as the global singleton
+        if (!globalShortcutsInstance) {
+            globalShortcutsInstance = this;
 
-        // Define available shortcuts
-        this.shortcuts = [
-            { key: 'k', modifiers: ['cmd', 'ctrl'], description: 'Open command palette', action: () => this.openCommandPalette() },
-            { key: 'n', modifiers: ['cmd', 'ctrl'], description: 'New project', action: () => this.newProject() },
-            { key: 'g', modifiers: ['cmd', 'ctrl'], description: 'Generate names', action: () => this.generateNames() },
-            { key: '?', modifiers: [], description: 'Show keyboard shortcuts', action: () => this.toggleHelpOverlay() },
-            { key: 'Escape', modifiers: [], description: 'Close modals', action: () => this.closeModals() },
-        ];
+            // Load user preferences from API
+            await this.loadUserPreferences();
+
+            // Register keyboard event listener ONCE globally
+            window.addEventListener('keydown', (e) => globalShortcutsInstance.handleKeydown(e));
+
+            // Listen for shortcuts-updated event from Livewire
+            window.addEventListener('shortcuts-updated', () => globalShortcutsInstance.loadUserPreferences());
+
+            // Define available shortcuts with handlers bound to the global instance
+            this.shortcuts = [
+                { action: 'newProject', key: 'n', modifiers: ['ctrl'], description: 'New project', handler: () => globalShortcutsInstance.newProject() },
+                { action: 'settings', key: 's', modifiers: ['ctrl'], description: 'Open settings', handler: () => globalShortcutsInstance.openSettings() },
+                { action: 'themeCustomizer', key: 't', modifiers: ['ctrl'], description: 'Theme customizer', handler: () => globalShortcutsInstance.themeCustomizer() },
+                { action: 'logoGallery', key: 'l', modifiers: ['ctrl'], description: 'Logo gallery', handler: () => globalShortcutsInstance.logoGallery() },
+                { action: 'help', key: 'h', modifiers: ['ctrl'], description: 'Show keyboard shortcuts', handler: () => globalShortcutsInstance.toggleHelpOverlay() },
+                { action: 'escape', key: 'Escape', modifiers: [], description: 'Close modals', handler: () => globalShortcutsInstance.closeModals() },
+            ];
+        } else {
+            // For subsequent instances, proxy state changes to/from the global instance
+            // Use Alpine's $watch to keep instances in sync
+            this.$watch('helpOverlayOpen', (value) => {
+                if (globalShortcutsInstance) {
+                    globalShortcutsInstance.helpOverlayOpen = value;
+                }
+            });
+
+            // Watch the global instance and update local state
+            setInterval(() => {
+                if (globalShortcutsInstance) {
+                    this.helpOverlayOpen = globalShortcutsInstance.helpOverlayOpen;
+                    this.shortcuts = globalShortcutsInstance.shortcuts;
+                    this.userPreferences = globalShortcutsInstance.userPreferences;
+                    this.shortcutsEnabled = globalShortcutsInstance.shortcutsEnabled;
+                }
+            }, 50); // Check every 50ms for state changes
+        }
+    },
+
+    async loadUserPreferences() {
+        try {
+            const response = await fetch('/api/keyboard-shortcuts', {
+                headers: {
+                    'Accept': 'application/json',
+                },
+                credentials: 'same-origin'
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                this.userPreferences = data.shortcuts;
+                this.shortcutsEnabled = data.enabled;
+            }
+        } catch (error) {
+            console.error('Failed to load keyboard shortcuts preferences:', error);
+            // Continue with defaults if API fails
+        }
+    },
+
+    isShortcutEnabled(action) {
+        // If shortcuts are globally disabled, return false
+        if (!this.shortcutsEnabled) {
+            return false;
+        }
+
+        // Check if user has specific preferences for this action
+        if (this.userPreferences && this.userPreferences[action]) {
+            return this.userPreferences[action].enabled;
+        }
+
+        // Default to enabled
+        return true;
     },
 
     handleKeydown(event) {
@@ -30,75 +99,64 @@ export default () => ({
             return;
         }
 
-        const key = event.key.toLowerCase();
-        const hasModifier = event.metaKey || event.ctrlKey;
+        console.log('Key pressed:', event.key, 'Ctrl:', event.ctrlKey, 'Meta:', event.metaKey);
 
-        // Handle Cmd/Ctrl + K (Command Palette)
-        if ((event.metaKey || event.ctrlKey) && key === 'k') {
-            event.preventDefault();
-            this.openCommandPalette();
-            return;
-        }
-
-        // Handle Cmd/Ctrl + N (New Project)
-        if ((event.metaKey || event.ctrlKey) && key === 'n') {
-            event.preventDefault();
-            this.newProject();
-            return;
-        }
-
-        // Handle Cmd/Ctrl + G (Generate Names)
-        if ((event.metaKey || event.ctrlKey) && key === 'g') {
-            event.preventDefault();
-            this.generateNames();
-            return;
-        }
-
-        // Handle ? (Help Overlay)
-        if (event.key === '?' && !hasModifier) {
-            event.preventDefault();
-            this.toggleHelpOverlay();
-            return;
-        }
-
-        // Handle Escape (Close Modals)
-        if (event.key === 'Escape') {
-            this.closeModals();
-            return;
-        }
-    },
-
-    openCommandPalette() {
-        this.commandPaletteOpen = true;
-        this.$nextTick(() => {
-            // Focus the command palette input
-            const input = document.querySelector('[x-ref="commandPaletteInput"]');
-            if (input) {
-                input.focus();
+        // Check each shortcut dynamically based on user preferences
+        for (const shortcut of this.shortcuts) {
+            if (!this.isShortcutEnabled(shortcut.action)) {
+                continue;
             }
-        });
-    },
 
-    closeCommandPalette() {
-        this.commandPaletteOpen = false;
+            // Get the actual key configuration from user preferences
+            const config = this.userPreferences && this.userPreferences[shortcut.action]
+                ? this.userPreferences[shortcut.action]
+                : { key: shortcut.key, modifiers: shortcut.modifiers };
+
+            // Check if the key matches
+            const keyMatches = event.key.toLowerCase() === config.key.toLowerCase() ||
+                              event.key === config.key;
+
+            if (!keyMatches) {
+                continue;
+            }
+
+            // Check modifiers
+            const needsCtrl = config.modifiers.includes('ctrl');
+            const needsAlt = config.modifiers.includes('alt');
+            const needsShift = config.modifiers.includes('shift');
+
+            const hasCtrl = event.ctrlKey || event.metaKey; // Support both Ctrl and Cmd
+            const hasAlt = event.altKey;
+            const hasShift = event.shiftKey;
+
+            // All required modifiers must be present, and no extra modifiers
+            if (needsCtrl === hasCtrl && needsAlt === hasAlt && needsShift === hasShift) {
+                console.log('Keyboard shortcut triggered:', shortcut.action);
+                event.preventDefault();
+                shortcut.handler();
+                return;
+            }
+        }
     },
 
     newProject() {
-        // Trigger new project creation
-        if (window.Livewire) {
-            // Dispatch event that can be caught by Livewire components
-            window.Livewire.dispatch('new-project-shortcut');
-        } else {
-            // Fallback to navigation
-            window.location.href = '/dashboard';
-        }
+        // Navigate to dashboard to start a new project
+        window.location.href = '/dashboard';
     },
 
-    generateNames() {
-        // Trigger name generation
-        if (window.Livewire) {
-            window.Livewire.dispatch('generate-names-shortcut');
-        }
+    openSettings() {
+        // Navigate to settings profile page
+        window.location.href = '/settings/profile';
+    },
+
+    themeCustomizer() {
+        // Navigate to theme customizer
+        window.location.href = '/themes';
+    },
+
+    logoGallery() {
+        // Navigate to logo gallery
+        window.location.href = '/logos';
     },
 
     toggleHelpOverlay() {
@@ -110,27 +168,6 @@ export default () => ({
     },
 
     closeModals() {
-        this.commandPaletteOpen = false;
         this.helpOverlayOpen = false;
-    },
-
-    executeCommand(command) {
-        switch (command) {
-            case 'new-project':
-                this.newProject();
-                break;
-            case 'generate-names':
-                this.generateNames();
-                break;
-            case 'dashboard':
-                window.location.href = '/dashboard';
-                break;
-            case 'logos':
-                window.location.href = '/logos';
-                break;
-            default:
-                console.log('Unknown command:', command);
-        }
-        this.closeCommandPalette();
     }
 });

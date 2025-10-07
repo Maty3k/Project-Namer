@@ -65,16 +65,9 @@
                         </h3>
                         <div class="space-y-2">
                             <div class="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                                <span class="text-sm text-gray-700 dark:text-gray-300">Open command palette</span>
-                                <kbd class="inline-flex items-center px-2 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 rounded">
-                                    <span class="mr-1">⌘</span>
-                                    <span>K</span>
-                                </kbd>
-                            </div>
-                            <div class="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50">
                                 <span class="text-sm text-gray-700 dark:text-gray-300">Show keyboard shortcuts</span>
                                 <kbd class="inline-flex items-center px-2 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 rounded">
-                                    ?
+                                    Ctrl+H
                                 </kbd>
                             </div>
                             <div class="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50">
@@ -89,30 +82,40 @@
                     {{-- Actions Section --}}
                     <div>
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
-                            Actions
+                            Navigation
                         </h3>
                         <div class="space-y-2">
                             <div class="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50">
                                 <span class="text-sm text-gray-700 dark:text-gray-300">Create new project</span>
                                 <kbd class="inline-flex items-center px-2 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 rounded">
-                                    <span class="mr-1">⌘</span>
-                                    <span>N</span>
+                                    Ctrl+N
                                 </kbd>
                             </div>
                             <div class="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                                <span class="text-sm text-gray-700 dark:text-gray-300">Generate names</span>
+                                <span class="text-sm text-gray-700 dark:text-gray-300">Open settings</span>
                                 <kbd class="inline-flex items-center px-2 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 rounded">
-                                    <span class="mr-1">⌘</span>
-                                    <span>G</span>
+                                    Ctrl+S
+                                </kbd>
+                            </div>
+                            <div class="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                <span class="text-sm text-gray-700 dark:text-gray-300">Theme customizer</span>
+                                <kbd class="inline-flex items-center px-2 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 rounded">
+                                    Ctrl+T
+                                </kbd>
+                            </div>
+                            <div class="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                <span class="text-sm text-gray-700 dark:text-gray-300">Logo gallery</span>
+                                <kbd class="inline-flex items-center px-2 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 rounded">
+                                    Ctrl+L
                                 </kbd>
                             </div>
                         </div>
                     </div>
 
-                    {{-- Windows/Linux Note --}}
+                    {{-- Tip --}}
                     <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
                         <p class="text-xs text-gray-500 dark:text-gray-400">
-                            <span class="font-medium">Note:</span> On Windows/Linux, use <kbd class="px-1 py-0.5 bg-gray-100 dark:bg-gray-700 rounded">Ctrl</kbd> instead of <kbd class="px-1 py-0.5 bg-gray-100 dark:bg-gray-700 rounded">⌘</kbd>
+                            <span class="font-medium">Tip:</span> All keyboard shortcuts use the <kbd class="px-1 py-0.5 bg-gray-100 dark:bg-gray-700 rounded">Ctrl</kbd> key on all platforms
                         </p>
                     </div>
                 </div>

@@ -29,7 +29,7 @@ describe('Dashboard Component', function (): void {
             ->assertOk()
             ->assertSet('activeTab', 'generate')
             ->assertSet('businessIdea', '')
-            ->assertSet('generationMode', 'creative')
+            ->assertSet('generationMode', '')
             ->assertSet('deepThinking', false);
     });
 
@@ -227,7 +227,7 @@ describe('Dashboard Component', function (): void {
             ->test(NameGeneratorDashboard::class)
             ->call('loadFromHistory', 'test-hash')
             ->assertSet('businessIdea', 'Historical search')
-            ->assertSet('generationMode', 'professional')
+            ->assertSet('generationMode', '')
             ->assertSet('deepThinking', true)
             ->assertSet('generatedNames', ['HistoryName1', 'HistoryName2'])
             ->assertSet('showResults', true)

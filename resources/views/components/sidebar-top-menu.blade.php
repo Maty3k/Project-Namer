@@ -26,12 +26,20 @@
             {{ __('Logo Gallery') }}
         </flux:navlist.item>
 
-        <flux:navlist.item icon="layout-grid" 
-                           href="{{ route('themes.customizer') }}" 
+        <flux:navlist.item icon="layout-grid"
+                           href="{{ route('themes.customizer') }}"
                            :current="request()->routeIs('themes.customizer')"
                            wire:navigate
                            class="touch-target interactive focus-modern">
             {{ __('Theme Customizer') }}
+        </flux:navlist.item>
+
+        <flux:navlist.item icon="command-line"
+                           href="{{ route('settings.keyboard-shortcuts') }}"
+                           :current="request()->routeIs('settings.keyboard-shortcuts')"
+                           wire:navigate
+                           class="touch-target interactive focus-modern">
+            {{ __('Keyboard Shortcuts') }}
         </flux:navlist.item>
     </flux:navlist.group>
 </flux:navlist>

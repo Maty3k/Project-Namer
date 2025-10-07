@@ -42,7 +42,7 @@ class NameGeneratorDashboard extends Component
     // Business idea input
     public string $businessIdea = '';
 
-    public string $generationMode = 'creative';
+    public string $generationMode = '';
 
     public bool $deepThinking = false;
 
@@ -658,7 +658,7 @@ class NameGeneratorDashboard extends Component
         $this->currentSessionId = null;
         $this->resetState();
         $this->businessIdea = '';
-        $this->generationMode = 'creative';
+        $this->generationMode = '';
         $this->deepThinking = false;
         $this->activeTab = 'generate';
         $this->hasUnsavedChanges = false;
@@ -754,7 +754,8 @@ class NameGeneratorDashboard extends Component
             $this->currentSession = $session;
             $this->currentSessionId = $session->id;
             $this->businessIdea = $session->business_description ?? '';
-            $this->generationMode = $session->generation_mode ?? 'creative';
+            // Don't pre-select generation mode even from saved sessions - let user choose
+            $this->generationMode = '';
             $this->deepThinking = $session->deep_thinking ?? false;
 
             // Load results if available
@@ -849,7 +850,8 @@ class NameGeneratorDashboard extends Component
         $preferences = UserAIPreferences::findOrCreateForUser($user->id);
 
         $this->selectedAIModels = $preferences->preferred_models;
-        $this->generationMode = $preferences->default_generation_mode;
+        // Don't pre-select generation mode - let user choose each time
+        $this->generationMode = '';
         $this->deepThinking = $preferences->default_deep_thinking;
         $this->enableModelComparison = $preferences->enable_model_comparison;
     }
