@@ -33,15 +33,15 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 3.7 Add logging for DNS check results
   - [x] 3.8 Verify all DomainCheckService tests pass
 
-- [ ] 4. Background Job Processing
-  - [ ] 4.1 Write tests for CheckDomainDNSJob
-  - [ ] 4.2 Create App\Jobs\CheckDomainDNSJob class
-  - [ ] 4.3 Implement job handle() method with DNS checking
-  - [ ] 4.4 Add Livewire event dispatch on completion
-  - [ ] 4.5 Configure job retries (5 attempts)
-  - [ ] 4.6 Set job timeout (30 seconds)
-  - [ ] 4.7 Update NameGeneratorDashboard to dispatch DNS jobs
-  - [ ] 4.8 Verify CheckDomainDNSJob tests pass
+- [x] 4. Background Job Processing
+  - [x] 4.1 Write tests for CheckDomainDNSJob
+  - [x] 4.2 Create App\Jobs\CheckDomainDNSJob class
+  - [x] 4.3 Implement job handle() method with DNS checking
+  - [x] 4.4 Add Livewire event dispatch on completion
+  - [x] 4.5 Configure job retries (5 attempts)
+  - [x] 4.6 Set job timeout (30 seconds)
+  - [x] 4.7 Update NameGeneratorDashboard to dispatch DNS jobs
+  - [x] 4.8 Verify CheckDomainDNSJob tests pass
 
 - [ ] 5. Domain Filtering Logic
   - [ ] 5.1 Write tests for domain filtering in name generation
