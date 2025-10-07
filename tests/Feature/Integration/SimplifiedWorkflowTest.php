@@ -7,6 +7,8 @@ use App\Models\GenerationCache;
 use Illuminate\Support\Facades\Http;
 use Livewire\Volt\Volt;
 
+uses()->group('slow');
+
 describe('Simplified Integration Workflow Tests', function (): void {
     beforeEach(function (): void {
         // Clear cache for clean test state

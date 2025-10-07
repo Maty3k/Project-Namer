@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
-uses(RefreshDatabase::class);
+uses(RefreshDatabase::class)->group('slow');
 
 describe('Domain Checking Service', function (): void {
     it('can check domain availability for single domain', function (): void {

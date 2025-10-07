@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
-uses(RefreshDatabase::class);
+uses(RefreshDatabase::class)->group("slow");
 
 describe('SessionSidebar Loading States and Optimistic UI', function (): void {
     beforeEach(function (): void {

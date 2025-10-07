@@ -21,6 +21,7 @@ use Tests\TestCase;
  * Complete User Workflow Integration Tests
  * Task 9.1: Test complete user workflow from name generation to logo gallery
  * Task 9.6: Test smooth animations work consistently across all features
+ * @group slow
  */
 class CompleteUserWorkflowTest extends TestCase
 {

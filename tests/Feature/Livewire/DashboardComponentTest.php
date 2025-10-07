@@ -15,7 +15,7 @@ use Livewire\Livewire;
 use Prism\Prism\Prism;
 use Prism\Prism\Testing\TextResponseFake;
 
-uses(RefreshDatabase::class);
+uses(RefreshDatabase::class)->group("slow");
 
 beforeEach(function (): void {
     $this->user = User::factory()->create();

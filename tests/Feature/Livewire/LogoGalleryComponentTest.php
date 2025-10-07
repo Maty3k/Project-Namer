@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
-uses(RefreshDatabase::class);
+uses(RefreshDatabase::class)->group("slow");
 
 beforeEach(function (): void {
     $this->user = User::factory()->create();

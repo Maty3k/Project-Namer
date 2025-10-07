@@ -14,6 +14,9 @@ use Prism\Prism\Prism;
 use Prism\Prism\Testing\TextResponseFake;
 use Tests\TestCase;
 
+/**
+ * @group slow
+ */
 class AIEdgeCasesTest extends TestCase
 {
     use RefreshDatabase;

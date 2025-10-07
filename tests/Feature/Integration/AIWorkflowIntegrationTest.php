@@ -19,6 +19,7 @@ use Tests\TestCase;
 
 /**
  * @group integration
+ * @group slow
  */
 class AIWorkflowIntegrationTest extends TestCase
 {
