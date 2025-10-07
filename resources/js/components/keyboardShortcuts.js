@@ -25,7 +25,10 @@ export default () => ({
             window.addEventListener('keydown', (e) => globalShortcutsInstance.handleKeydown(e));
 
             // Listen for shortcuts-updated event from Livewire
-            window.addEventListener('shortcuts-updated', () => globalShortcutsInstance.loadUserPreferences());
+            window.addEventListener('shortcuts-updated', () => {
+                console.log('[Keyboard Shortcuts] shortcuts-updated event received, reloading preferences...');
+                globalShortcutsInstance.loadUserPreferences();
+            });
 
             // Define available shortcuts with handlers bound to the global instance
             this.shortcuts = [
@@ -59,6 +62,7 @@ export default () => ({
 
     async loadUserPreferences() {
         try {
+            console.log('[Keyboard Shortcuts] Loading user preferences from API...');
             const response = await fetch('/api/keyboard-shortcuts', {
                 headers: {
                     'Accept': 'application/json',
@@ -70,6 +74,10 @@ export default () => ({
                 const data = await response.json();
                 this.userPreferences = data.shortcuts;
                 this.shortcutsEnabled = data.enabled;
+                console.log('[Keyboard Shortcuts] Preferences loaded:', {
+                    enabled: this.shortcutsEnabled,
+                    shortcuts: this.userPreferences
+                });
             }
         } catch (error) {
             console.error('Failed to load keyboard shortcuts preferences:', error);
@@ -80,15 +88,19 @@ export default () => ({
     isShortcutEnabled(action) {
         // If shortcuts are globally disabled, return false
         if (!this.shortcutsEnabled) {
+            console.log(`[Keyboard Shortcuts] ${action} disabled - global shortcuts off`);
             return false;
         }
 
         // Check if user has specific preferences for this action
         if (this.userPreferences && this.userPreferences[action]) {
-            return this.userPreferences[action].enabled;
+            const enabled = this.userPreferences[action].enabled;
+            console.log(`[Keyboard Shortcuts] ${action} enabled: ${enabled}`);
+            return enabled;
         }
 
         // Default to enabled
+        console.log(`[Keyboard Shortcuts] ${action} enabled by default`);
         return true;
     },
 
