@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 use App\Models\User;
 use App\Models\UserThemePreference;
-use App\Models\UserThemePreference;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(Illuminate\\Foundation\\Testing\\RefreshDatabase::class)->group("slow");
-
+uses(RefreshDatabase::class)->group("slow");
 
 beforeEach(function (): void {
     $this->user = User::factory()->create();
