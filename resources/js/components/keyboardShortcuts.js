@@ -12,6 +12,7 @@ export default () => ({
     shortcuts: [],
     userPreferences: null,
     shortcutsEnabled: true,
+    preferencesLoaded: false,
 
     async init() {
         // If this is the first instance, set it as the global singleton
@@ -55,6 +56,7 @@ export default () => ({
                     this.shortcuts = globalShortcutsInstance.shortcuts;
                     this.userPreferences = globalShortcutsInstance.userPreferences;
                     this.shortcutsEnabled = globalShortcutsInstance.shortcutsEnabled;
+                    this.preferencesLoaded = globalShortcutsInstance.preferencesLoaded;
                 }
             }, 50); // Check every 50ms for state changes
         }
@@ -63,6 +65,8 @@ export default () => ({
     async loadUserPreferences() {
         try {
             console.log('[Keyboard Shortcuts] Loading user preferences from API...');
+            this.preferencesLoaded = false; // Mark as loading
+
             const response = await fetch('/api/keyboard-shortcuts', {
                 headers: {
                     'Accept': 'application/json',
@@ -74,14 +78,17 @@ export default () => ({
                 const data = await response.json();
                 this.userPreferences = data.shortcuts;
                 this.shortcutsEnabled = data.enabled;
+                this.preferencesLoaded = true; // Mark as loaded
                 console.log('[Keyboard Shortcuts] Preferences loaded:', {
                     enabled: this.shortcutsEnabled,
                     shortcuts: this.userPreferences
                 });
+            } else {
+                this.preferencesLoaded = true; // Even if failed, mark as loaded to use defaults
             }
         } catch (error) {
             console.error('Failed to load keyboard shortcuts preferences:', error);
-            // Continue with defaults if API fails
+            this.preferencesLoaded = true; // Mark as loaded to continue with defaults
         }
     },
 
@@ -111,14 +118,17 @@ export default () => ({
             return;
         }
 
-        console.log('Key pressed:', event.key, 'Ctrl:', event.ctrlKey, 'Meta:', event.metaKey);
+        // Don't process shortcuts while preferences are loading
+        if (!this.preferencesLoaded) {
+            console.log('[Keyboard Shortcuts] Preferences not loaded yet, ignoring key press');
+            return;
+        }
+
+        console.log('[Keyboard Shortcuts] Key pressed:', event.key, 'Ctrl:', event.ctrlKey, 'Meta:', event.metaKey);
+        console.log('[Keyboard Shortcuts] Global enabled state:', this.shortcutsEnabled);
 
         // Check each shortcut dynamically based on user preferences
         for (const shortcut of this.shortcuts) {
-            if (!this.isShortcutEnabled(shortcut.action)) {
-                continue;
-            }
-
             // Get the actual key configuration from user preferences
             const config = this.userPreferences && this.userPreferences[shortcut.action]
                 ? this.userPreferences[shortcut.action]
@@ -143,7 +153,16 @@ export default () => ({
 
             // All required modifiers must be present, and no extra modifiers
             if (needsCtrl === hasCtrl && needsAlt === hasAlt && needsShift === hasShift) {
-                console.log('Keyboard shortcut triggered:', shortcut.action);
+                console.log(`[Keyboard Shortcuts] Matched shortcut: ${shortcut.action}`);
+
+                // NOW check if shortcut is enabled AFTER we know it matched
+                if (!this.isShortcutEnabled(shortcut.action)) {
+                    console.log(`[Keyboard Shortcuts] Shortcut ${shortcut.action} is disabled, not executing`);
+                    event.preventDefault(); // Still prevent default behavior
+                    return;
+                }
+
+                console.log(`[Keyboard Shortcuts] Executing shortcut: ${shortcut.action}`);
                 event.preventDefault();
                 shortcut.handler();
                 return;
