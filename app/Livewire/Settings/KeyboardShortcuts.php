@@ -48,23 +48,18 @@ class KeyboardShortcuts extends Component
      */
     public function updatedEnabled(): void
     {
+        // Save to database
         $userShortcuts = UserKeyboardShortcut::findOrCreateForUser(Auth::id());
         $userShortcuts->update(['enabled' => $this->enabled]);
 
-        // Refresh shortcuts
+        // Refresh shortcuts to reflect the change
         $this->shortcuts = $userShortcuts->getMergedShortcuts();
 
+        // Dispatch Livewire event to notify JavaScript
         $this->dispatch('shortcuts-updated');
-        $this->dispatch('toast', message: 'Keyboard shortcuts '.($this->enabled ? 'enabled' : 'disabled'));
-    }
 
-    /**
-     * Toggle global keyboard shortcuts on/off.
-     */
-    public function toggleGlobalShortcuts(): void
-    {
-        $this->enabled = ! $this->enabled;
-        $this->updatedEnabled();
+        // Show toast notification
+        $this->dispatch('toast', message: 'Keyboard shortcuts '.($this->enabled ? 'enabled' : 'disabled'));
     }
 
     /**

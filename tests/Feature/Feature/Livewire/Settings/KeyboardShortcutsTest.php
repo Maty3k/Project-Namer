@@ -50,7 +50,7 @@ test('can toggle global shortcuts on and off', function () {
 
     Livewire::actingAs($user)
         ->test(KeyboardShortcuts::class)
-        ->call('toggleGlobalShortcuts')
+        ->set('enabled', false)
         ->assertSet('enabled', false)
         ->assertDispatched('shortcuts-updated')
         ->assertDispatched('toast');

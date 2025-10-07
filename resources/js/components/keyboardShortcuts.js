@@ -10,27 +10,24 @@ let globalShortcutsInstance = null;
 export default () => ({
     helpOverlayOpen: false,
     shortcuts: [],
-    userPreferences: null,
-    shortcutsEnabled: true,
-    preferencesLoaded: false,
+    enabled: true, // Global enabled state
 
     async init() {
         // If this is the first instance, set it as the global singleton
         if (!globalShortcutsInstance) {
             globalShortcutsInstance = this;
 
-            // Load user preferences from API
-            await this.loadUserPreferences();
+            // Load enabled state from API
+            await this.loadEnabledState();
 
             // Register keyboard event listener ONCE globally
             window.addEventListener('keydown', (e) => globalShortcutsInstance.handleKeydown(e));
 
             // Listen for shortcuts-updated event from Livewire
-            // Livewire v3 dispatches events that can be listened to with Livewire.on()
             document.addEventListener('livewire:init', () => {
                 Livewire.on('shortcuts-updated', () => {
-                    console.log('[Keyboard Shortcuts] shortcuts-updated event received, reloading preferences...');
-                    globalShortcutsInstance.loadUserPreferences();
+                    console.log('[Keyboard Shortcuts] Received shortcuts-updated event');
+                    globalShortcutsInstance.loadEnabledState();
                 });
             });
 
@@ -44,32 +41,19 @@ export default () => ({
                 { action: 'escape', key: 'Escape', modifiers: [], description: 'Close modals', handler: () => globalShortcutsInstance.closeModals() },
             ];
         } else {
-            // For subsequent instances, proxy state changes to/from the global instance
-            // Use Alpine's $watch to keep instances in sync
-            this.$watch('helpOverlayOpen', (value) => {
-                if (globalShortcutsInstance) {
-                    globalShortcutsInstance.helpOverlayOpen = value;
-                }
-            });
-
-            // Watch the global instance and update local state
+            // For subsequent instances, sync state from the global instance
             setInterval(() => {
                 if (globalShortcutsInstance) {
                     this.helpOverlayOpen = globalShortcutsInstance.helpOverlayOpen;
-                    this.shortcuts = globalShortcutsInstance.shortcuts;
-                    this.userPreferences = globalShortcutsInstance.userPreferences;
-                    this.shortcutsEnabled = globalShortcutsInstance.shortcutsEnabled;
-                    this.preferencesLoaded = globalShortcutsInstance.preferencesLoaded;
+                    this.enabled = globalShortcutsInstance.enabled;
                 }
-            }, 50); // Check every 50ms for state changes
+            }, 50);
         }
     },
 
-    async loadUserPreferences() {
+    async loadEnabledState() {
         try {
-            console.log('[Keyboard Shortcuts] Loading user preferences from API...');
-            this.preferencesLoaded = false; // Mark as loading
-
+            console.log('[Keyboard Shortcuts] Loading enabled state from API...');
             const response = await fetch('/api/keyboard-shortcuts', {
                 headers: {
                     'Accept': 'application/json',
@@ -79,39 +63,12 @@ export default () => ({
 
             if (response.ok) {
                 const data = await response.json();
-                this.userPreferences = data.shortcuts;
-                this.shortcutsEnabled = data.enabled;
-                this.preferencesLoaded = true; // Mark as loaded
-                console.log('[Keyboard Shortcuts] Preferences loaded:', {
-                    enabled: this.shortcutsEnabled,
-                    shortcuts: this.userPreferences
-                });
-            } else {
-                this.preferencesLoaded = true; // Even if failed, mark as loaded to use defaults
+                this.enabled = data.enabled;
+                console.log('[Keyboard Shortcuts] Enabled state loaded:', this.enabled);
             }
         } catch (error) {
-            console.error('Failed to load keyboard shortcuts preferences:', error);
-            this.preferencesLoaded = true; // Mark as loaded to continue with defaults
+            console.error('[Keyboard Shortcuts] Failed to load enabled state:', error);
         }
-    },
-
-    isShortcutEnabled(action) {
-        // If shortcuts are globally disabled, return false
-        if (!this.shortcutsEnabled) {
-            console.log(`[Keyboard Shortcuts] ${action} disabled - global shortcuts off`);
-            return false;
-        }
-
-        // Check if user has specific preferences for this action
-        if (this.userPreferences && this.userPreferences[action]) {
-            const enabled = this.userPreferences[action].enabled;
-            console.log(`[Keyboard Shortcuts] ${action} enabled: ${enabled}`);
-            return enabled;
-        }
-
-        // Default to enabled
-        console.log(`[Keyboard Shortcuts] ${action} enabled by default`);
-        return true;
     },
 
     handleKeydown(event) {
@@ -121,51 +78,36 @@ export default () => ({
             return;
         }
 
-        // Don't process shortcuts while preferences are loading
-        if (!this.preferencesLoaded) {
-            console.log('[Keyboard Shortcuts] Preferences not loaded yet, ignoring key press');
+        // Check if shortcuts are globally disabled
+        if (!this.enabled) {
+            console.log('[Keyboard Shortcuts] Shortcuts are globally disabled');
             return;
         }
 
-        console.log('[Keyboard Shortcuts] Key pressed:', event.key, 'Ctrl:', event.ctrlKey, 'Meta:', event.metaKey);
-        console.log('[Keyboard Shortcuts] Global enabled state:', this.shortcutsEnabled);
+        console.log('[Keyboard Shortcuts] Key pressed:', event.key, 'Ctrl:', event.ctrlKey);
 
-        // Check each shortcut dynamically based on user preferences
+        // Check each shortcut
         for (const shortcut of this.shortcuts) {
-            // Get the actual key configuration from user preferences
-            const config = this.userPreferences && this.userPreferences[shortcut.action]
-                ? this.userPreferences[shortcut.action]
-                : { key: shortcut.key, modifiers: shortcut.modifiers };
-
             // Check if the key matches
-            const keyMatches = event.key.toLowerCase() === config.key.toLowerCase() ||
-                              event.key === config.key;
+            const keyMatches = event.key.toLowerCase() === shortcut.key.toLowerCase() ||
+                              event.key === shortcut.key;
 
             if (!keyMatches) {
                 continue;
             }
 
             // Check modifiers
-            const needsCtrl = config.modifiers.includes('ctrl');
-            const needsAlt = config.modifiers.includes('alt');
-            const needsShift = config.modifiers.includes('shift');
+            const needsCtrl = shortcut.modifiers.includes('ctrl');
+            const needsAlt = shortcut.modifiers.includes('alt');
+            const needsShift = shortcut.modifiers.includes('shift');
 
-            const hasCtrl = event.ctrlKey || event.metaKey; // Support both Ctrl and Cmd
+            const hasCtrl = event.ctrlKey || event.metaKey;
             const hasAlt = event.altKey;
             const hasShift = event.shiftKey;
 
             // All required modifiers must be present, and no extra modifiers
             if (needsCtrl === hasCtrl && needsAlt === hasAlt && needsShift === hasShift) {
-                console.log(`[Keyboard Shortcuts] Matched shortcut: ${shortcut.action}`);
-
-                // NOW check if shortcut is enabled AFTER we know it matched
-                if (!this.isShortcutEnabled(shortcut.action)) {
-                    console.log(`[Keyboard Shortcuts] Shortcut ${shortcut.action} is disabled, not executing`);
-                    event.preventDefault(); // Still prevent default behavior
-                    return;
-                }
-
-                console.log(`[Keyboard Shortcuts] Executing shortcut: ${shortcut.action}`);
+                console.log('[Keyboard Shortcuts] Executing shortcut:', shortcut.action);
                 event.preventDefault();
                 shortcut.handler();
                 return;
@@ -174,22 +116,18 @@ export default () => ({
     },
 
     newProject() {
-        // Navigate to dashboard to start a new project
         window.location.href = '/dashboard';
     },
 
     openSettings() {
-        // Navigate to settings profile page
         window.location.href = '/settings/profile';
     },
 
     themeCustomizer() {
-        // Navigate to theme customizer
         window.location.href = '/themes';
     },
 
     logoGallery() {
-        // Navigate to logo gallery
         window.location.href = '/logos';
     },
 
