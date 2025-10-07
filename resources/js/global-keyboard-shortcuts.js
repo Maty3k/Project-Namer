@@ -44,34 +44,47 @@ function initGlobalKeyboardShortcuts() {
     // Load disabled shortcuts from injected data
     updateDisabledShortcuts();
 
-    // Listen for shortcuts updates from Livewire components
-    document.addEventListener('livewire:init', () => {
-        console.log('[Global Keyboard Shortcuts] Livewire initialized, setting up event listener');
+    // Setup Livewire event listener
+    const setupLivewireListener = () => {
+        if (typeof Livewire !== 'undefined') {
+            console.log('[Global Keyboard Shortcuts] Livewire available, setting up event listener');
 
-        Livewire.on('shortcuts-updated', async (data) => {
-            console.log('[Global Keyboard Shortcuts] Shortcuts updated event received, fetching latest state');
+            Livewire.on('shortcuts-updated', async (data) => {
+                console.log('[Global Keyboard Shortcuts] Shortcuts updated event received, fetching latest state');
 
-            // Fetch fresh data from API to get updated disabled shortcuts
-            try {
-                const response = await fetch('/api/keyboard-shortcuts', {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest',
-                    },
-                    credentials: 'same-origin',
-                });
+                // Fetch fresh data from API to get updated disabled shortcuts
+                try {
+                    const response = await fetch('/api/keyboard-shortcuts', {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        credentials: 'same-origin',
+                    });
 
-                if (response.ok) {
-                    const apiData = await response.json();
-                    disabledShortcuts = apiData.disabled_shortcuts || [];
-                    window.__disabledShortcuts = disabledShortcuts; // Update window variable
-                    console.log('[Global Keyboard Shortcuts] Updated disabled shortcuts from API:', disabledShortcuts);
+                    if (response.ok) {
+                        const apiData = await response.json();
+                        disabledShortcuts = apiData.disabled_shortcuts || [];
+                        window.__disabledShortcuts = disabledShortcuts; // Update window variable
+                        console.log('[Global Keyboard Shortcuts] Updated disabled shortcuts from API:', disabledShortcuts);
+                    }
+                } catch (error) {
+                    console.error('[Global Keyboard Shortcuts] Failed to fetch disabled shortcuts:', error);
                 }
-            } catch (error) {
-                console.error('[Global Keyboard Shortcuts] Failed to fetch disabled shortcuts:', error);
-            }
-        });
+            });
+        } else {
+            console.log('[Global Keyboard Shortcuts] Livewire not ready yet, will retry');
+        }
+    };
+
+    // Try to setup listener immediately if Livewire is ready
+    setupLivewireListener();
+
+    // Also listen for livewire:init event as fallback
+    document.addEventListener('livewire:init', () => {
+        console.log('[Global Keyboard Shortcuts] Livewire initialized event fired');
+        setupLivewireListener();
     });
 
     console.log('[Global Keyboard Shortcuts] Global keyboard handler registered');
