@@ -166,33 +166,90 @@
                                     // Domain service format: key is domain name, value is data
                                     $domainName = $key;
                                     $available = $domainData['available'] ?? null;
+                                    $hasDNS = $domainData['has_dns_records'] ?? null;
+                                    $checkMethod = $domainData['check_method'] ?? null;
+                                    $status = $domainData['status'] ?? null;
                                 } else {
                                     // Factory/test format: numeric array with 'extension' field
                                     $domainName = ($suggestion->name ?? 'domain') . ($domainData['extension'] ?? '');
                                     $available = $domainData['available'] ?? null;
+                                    $hasDNS = $domainData['has_dns_records'] ?? null;
+                                    $checkMethod = $domainData['check_method'] ?? null;
+                                    $status = $domainData['status'] ?? null;
+                                }
+
+                                // Determine tooltip text based on DNS status
+                                $tooltipText = '';
+                                if ($hasDNS === true) {
+                                    $tooltipText = 'Domain has DNS records - Already registered and in use';
+                                } elseif ($hasDNS === false) {
+                                    $tooltipText = 'No DNS records found - Potentially available';
+                                } elseif ($status === 'checking' || $checkMethod === null) {
+                                    $tooltipText = 'Checking DNS records...';
+                                } elseif ($status === 'error') {
+                                    $tooltipText = 'Unable to verify - DNS check failed';
+                                } else {
+                                    $tooltipText = $available === true ? 'Domain appears available' : ($available === false ? 'Domain is taken' : 'Status unknown');
                                 }
                             @endphp
-                            <div class="flex items-center justify-between p-2 rounded-lg border transition-all duration-300 ease-out hover:scale-105 hover:shadow-md transform
+                            <div class="group relative flex items-center justify-between p-2 rounded-lg border transition-all duration-300 ease-out hover:scale-105 hover:shadow-md transform
                                         {{ $available === true ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20 hover:border-green-300 hover:bg-green-100' : ($available === false ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20 hover:border-red-300 hover:bg-red-100' : 'border-gray-200 bg-gray-50 dark:border-gray-600 dark:bg-gray-800 hover:border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700') }}"
+                                 x-data="{ showTooltip: false }"
+                                 @mouseenter="showTooltip = true"
+                                 @mouseleave="showTooltip = false"
                                  x-transition:enter="transition-all duration-{{ 200 + ($loop->index * 50) }} ease-out"
                                  x-transition:enter-start="opacity-0 scale-95 translate-y-2"
                                  x-transition:enter-end="opacity-100 scale-100 translate-y-0">
-                                <span class="text-sm font-medium transition-colors duration-200 {{ $available === true ? 'text-green-800 dark:text-green-200' : ($available === false ? 'text-red-800 dark:text-red-200' : 'text-gray-800 dark:text-gray-200') }}">
-                                    {{ $domainName }}
-                                </span>
-                                @if($available === true)
-                                    <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                    </svg>
-                                @elseif($available === false)
-                                    <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                                    </svg>
-                                @else
-                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                    </svg>
-                                @endif
+
+                                <div class="flex items-center space-x-2 flex-1">
+                                    <span class="text-sm font-medium transition-colors duration-200 {{ $available === true ? 'text-green-800 dark:text-green-200' : ($available === false ? 'text-red-800 dark:text-red-200' : 'text-gray-800 dark:text-gray-200') }}">
+                                        {{ $domainName }}
+                                    </span>
+
+                                    @if($checkMethod === 'dns')
+                                        <span class="px-1.5 py-0.5 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded">
+                                            DNS
+                                        </span>
+                                    @endif
+                                </div>
+
+                                <div class="flex items-center space-x-1">
+                                    @if($status === 'checking')
+                                        <!-- Loading spinner -->
+                                        <svg class="animate-spin w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                    @elseif($available === true)
+                                        <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    @elseif($available === false)
+                                        <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    @endif
+                                </div>
+
+                                <!-- Tooltip -->
+                                <div x-show="showTooltip"
+                                     x-transition:enter="transition ease-out duration-200"
+                                     x-transition:enter-start="opacity-0 transform scale-95"
+                                     x-transition:enter-end="opacity-100 transform scale-100"
+                                     x-transition:leave="transition ease-in duration-150"
+                                     x-transition:leave-start="opacity-100 transform scale-100"
+                                     x-transition:leave-end="opacity-0 transform scale-95"
+                                     class="absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 text-xs font-medium text-white bg-gray-900 dark:bg-gray-700 rounded-lg shadow-lg whitespace-nowrap pointer-events-none"
+                                     style="display: none;">
+                                    {{ $tooltipText }}
+                                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                                        <div class="border-4 border-transparent border-t-gray-900 dark:border-t-gray-700"></div>
+                                    </div>
+                                </div>
                             </div>
                         @endforeach
                     </div>

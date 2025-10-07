@@ -52,13 +52,13 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 5.6 Show "unknown" status for timeout/error cases
   - [x] 5.7 Verify domain filtering tests pass
 
-- [ ] 6. Update UI Components
-  - [ ] 6.1 Write tests for domain result card DNS status display
-  - [ ] 6.2 Update domain result card to show DNS check status
-  - [ ] 6.3 Add loading indicator during DNS checks
-  - [ ] 6.4 Display appropriate icons/badges for DNS status
-  - [ ] 6.5 Update tooltip text to explain DNS filtering
-  - [ ] 6.6 Verify UI component tests pass
+- [x] 6. Update UI Components
+  - [x] 6.1 Write tests for domain result card DNS status display
+  - [x] 6.2 Update domain result card to show DNS check status
+  - [x] 6.3 Add loading indicator during DNS checks
+  - [x] 6.4 Display appropriate icons/badges for DNS status
+  - [x] 6.5 Update tooltip text to explain DNS filtering
+  - [x] 6.6 Verify UI component tests pass
 
 - [ ] 7. Cache Management Updates
   - [ ] 7.1 Write tests for cache TTL and cleanup
