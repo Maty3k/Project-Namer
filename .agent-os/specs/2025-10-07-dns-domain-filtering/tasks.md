@@ -43,14 +43,14 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 4.7 Update NameGeneratorDashboard to dispatch DNS jobs
   - [x] 4.8 Verify CheckDomainDNSJob tests pass
 
-- [ ] 5. Domain Filtering Logic
-  - [ ] 5.1 Write tests for domain filtering in name generation
-  - [ ] 5.2 Update name generation to filter domains with DNS records
-  - [ ] 5.3 Add real-time status updates as DNS checks complete
-  - [ ] 5.4 Implement "Checking DNS..." loading state
-  - [ ] 5.5 Handle DNS check failures gracefully
-  - [ ] 5.6 Show "unknown" status for timeout/error cases
-  - [ ] 5.7 Verify domain filtering tests pass
+- [x] 5. Domain Filtering Logic
+  - [x] 5.1 Write tests for domain filtering in name generation
+  - [x] 5.2 Update name generation to filter domains with DNS records
+  - [x] 5.3 Add real-time status updates as DNS checks complete
+  - [x] 5.4 Implement "Checking DNS..." loading state
+  - [x] 5.5 Handle DNS check failures gracefully
+  - [x] 5.6 Show "unknown" status for timeout/error cases
+  - [x] 5.7 Verify domain filtering tests pass
 
 - [ ] 6. Update UI Components
   - [ ] 6.1 Write tests for domain result card DNS status display

@@ -17,7 +17,7 @@ use Prism\Prism\ValueObjects\Messages\UserMessage;
  * Handles communication with OpenAI API via Prism to generate creative business names
  * based on user input and selected generation modes.
  */
-final class OpenAINameService
+class OpenAINameService
 {
     private const VALID_MODES = ['creative', 'professional', 'brandable', 'tech-focused'];
 
