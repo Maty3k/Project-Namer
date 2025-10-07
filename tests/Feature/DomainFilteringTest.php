@@ -25,6 +25,11 @@ describe('Domain Filtering in Name Generation', function (): void {
         // The actual name generation will use fallback service, which is fine
         // We just need to verify DNS filtering works
 
+        $this->mock(OpenAINameService::class, function ($mock): void {
+            $mock->shouldReceive('generateNames')
+                ->andReturn(['testbusiness', 'anothername']);
+        });
+
         $this->mock(DNSLookupService::class, function ($mock): void {
             // Mock DNS responses for various domains
             $mock->shouldReceive('hasDNSRecords')->andReturnUsing(fn ($domain) =>
@@ -159,6 +164,11 @@ describe('Domain Filtering in Name Generation', function (): void {
     it('shows availability status correctly across multiple TLDs', function (): void {
         // This test verifies that DNS checking works and properly marks domains
         // The actual implementation is already tested in DomainCheckServiceTest
+
+        $this->mock(OpenAINameService::class, function ($mock): void {
+            $mock->shouldReceive('generateNames')
+                ->andReturn(['testname']);
+        });
 
         $this->mock(DNSLookupService::class, function ($mock): void {
             $mock->shouldReceive('hasDNSRecords')->andReturn(false); // All available for this test
