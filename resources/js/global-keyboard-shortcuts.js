@@ -81,12 +81,7 @@ function handleGlobalKeydown(event) {
 
     // Check each shortcut
     for (const shortcut of SHORTCUTS) {
-        // Skip if shortcut is disabled
-        if (disabledShortcuts.includes(shortcut.action)) {
-            continue;
-        }
-
-        // Check if the key matches
+        // Check if the key matches first (optimization)
         const keyMatches = event.key.toLowerCase() === shortcut.key.toLowerCase() ||
                           event.key === shortcut.key;
 
@@ -105,6 +100,13 @@ function handleGlobalKeydown(event) {
 
         // All required modifiers must be present, and no extra modifiers
         if (needsCtrl === hasCtrl && needsAlt === hasAlt && needsShift === hasShift) {
+            // NOW check if shortcut is disabled (after confirming key+modifiers match)
+            if (disabledShortcuts.includes(shortcut.action)) {
+                console.log(`[Global Keyboard Shortcuts] Shortcut "${shortcut.action}" is disabled - ignoring`);
+                event.preventDefault(); // Still prevent default browser behavior
+                return;
+            }
+
             event.preventDefault();
 
             console.log(`[Global Keyboard Shortcuts] Shortcut triggered: ${shortcut.action}`);
