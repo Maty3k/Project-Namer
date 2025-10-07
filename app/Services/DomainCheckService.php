@@ -18,7 +18,7 @@ use InvalidArgumentException;
  * with caching support and error handling. Uses DNS pre-screening to filter
  * out domains with existing DNS records before making expensive API calls.
  */
-final class DomainCheckService
+final readonly class DomainCheckService
 {
     private const SUPPORTED_TLDS = ['com', 'net', 'org', 'io', 'co', 'app', 'dev', 'ai', 'tech', 'studio'];
 
@@ -32,7 +32,7 @@ final class DomainCheckService
      * DNS lookup service for pre-screening domains.
      */
     public function __construct(
-        private readonly DNSLookupService $dnsLookup
+        private DNSLookupService $dnsLookup
     ) {}
 
     /**

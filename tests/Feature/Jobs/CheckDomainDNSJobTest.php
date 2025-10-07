@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use App\Jobs\CheckDomainDNSJob;
 use App\Models\DomainCache;
-use App\Services\DomainCheckService;
 use App\Services\DNSLookupService;
+use App\Services\DomainCheckService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
@@ -18,9 +18,7 @@ describe('CheckDomainDNSJob', function (): void {
 
         CheckDomainDNSJob::dispatch('example.com');
 
-        Queue::assertPushed(CheckDomainDNSJob::class, function ($job) {
-            return $job->domain === 'example.com';
-        });
+        Queue::assertPushed(CheckDomainDNSJob::class, fn ($job) => $job->domain === 'example.com');
     });
 
     it('checks DNS records and stores result in cache', function (): void {

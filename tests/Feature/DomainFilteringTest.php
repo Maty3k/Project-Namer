@@ -27,10 +27,9 @@ describe('Domain Filtering in Name Generation', function (): void {
 
         $this->mock(DNSLookupService::class, function ($mock): void {
             // Mock DNS responses for various domains
-            $mock->shouldReceive('hasDNSRecords')->andReturnUsing(function ($domain) {
+            $mock->shouldReceive('hasDNSRecords')->andReturnUsing(fn ($domain) =>
                 // Simulate some domains having DNS, some not
-                return str_contains($domain, '.com') || str_contains($domain, '.org');
-            });
+                str_contains($domain, '.com') || str_contains($domain, '.org'));
 
             $mock->shouldReceive('getDNSRecords')->andReturn([
                 'A' => [['ip' => '192.0.2.1']],
@@ -176,12 +175,12 @@ describe('Domain Filtering in Name Generation', function (): void {
         expect($domainResults)->not->toBeEmpty();
 
         // Verify domain results structure is correct
-        foreach ($domainResults as $name => $domains) {
+        foreach ($domainResults as $domains) {
             expect($domains)->toBeArray();
             expect(count($domains))->toBeGreaterThan(0);
 
             // Each domain should have availability info
-            foreach ($domains as $domain => $info) {
+            foreach ($domains as $info) {
                 expect($info)->toHaveKey('available');
                 expect($info)->toHaveKey('status');
             }

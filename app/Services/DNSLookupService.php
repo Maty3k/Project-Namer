@@ -17,11 +17,6 @@ use Spatie\Dns\Dns;
 class DNSLookupService
 {
     /**
-     * Timeout for DNS queries in seconds.
-     */
-    private const TIMEOUT = 3;
-
-    /**
      * Domain validation regex pattern.
      *
      * Matches valid domain names according to RFC 1035.
@@ -48,7 +43,7 @@ class DNSLookupService
         }
 
         try {
-            $dns = new Dns();
+            $dns = new Dns;
 
             // Check for A records (IPv4)
             $aRecords = $dns->getRecords($domain, DNS_A);
@@ -103,7 +98,7 @@ class DNSLookupService
         }
 
         $records = [];
-        $dns = new Dns();
+        $dns = new Dns;
 
         try {
             $records['A'] = $dns->getRecords($domain, DNS_A);

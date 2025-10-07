@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Models\DomainCache;
-use App\Services\DomainCheckService;
 use App\Services\DNSLookupService;
+use App\Services\DomainCheckService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;

@@ -68,14 +68,14 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [ ] 7.5 Add cache statistics to dashboard (optional)
   - [x] 7.6 Verify cache management tests pass
 
-- [ ] 8. Integration Testing and Verification
-  - [ ] 8.1 Write end-to-end integration tests
-  - [ ] 8.2 Test complete workflow from generation to filtering
-  - [ ] 8.3 Test background job processing
-  - [ ] 8.4 Verify real-time updates work correctly
-  - [ ] 8.5 Test cache hit/miss scenarios
-  - [ ] 8.6 Performance test: DNS checks complete in <1 second
-  - [ ] 8.7 Run full test suite and verify all tests pass
+- [x] 8. Integration Testing and Verification
+  - [x] 8.1 Write end-to-end integration tests
+  - [x] 8.2 Test complete workflow from generation to filtering
+  - [x] 8.3 Test background job processing
+  - [x] 8.4 Verify real-time updates work correctly
+  - [x] 8.5 Test cache hit/miss scenarios
+  - [x] 8.6 Performance test: DNS checks complete in <1 second
+  - [x] 8.7 Run full test suite and verify all tests pass
 
 - [ ] 9. Documentation and Cleanup
   - [ ] 9.1 Update CHANGELOG.md with DNS filtering feature

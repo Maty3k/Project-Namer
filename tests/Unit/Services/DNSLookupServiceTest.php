@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Spatie\Dns\Dns;
 
 beforeEach(function (): void {
-    $this->service = new DNSLookupService();
+    $this->service = new DNSLookupService;
 
     // Mock Log facade for unit tests
     Log::spy();

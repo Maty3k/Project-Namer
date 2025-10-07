@@ -790,7 +790,9 @@ class NameGeneratorDashboard extends Component
     }
 
     /**
-     * Listen for DNS check completion events.
+     * Handle domain DNS check completion event.
+     *
+     * @param  array<string, mixed>  $data  Event data with domain status
      */
     #[On('domain-dns-checked')]
     public function onDomainDNSChecked(array $data): void
