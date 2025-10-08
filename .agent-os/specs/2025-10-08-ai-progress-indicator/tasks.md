@@ -1,0 +1,76 @@
+# Spec Tasks
+
+These are the tasks to be completed for the spec detailed in @.agent-os/specs/2025-10-08-ai-progress-indicator/spec.md
+
+> Created: 2025-10-08
+> Status: Ready for Implementation
+
+## Tasks
+
+- [ ] 1. Database Schema Updates
+  - [ ] 1.1 Write tests for AIGeneration model progress tracking
+  - [ ] 1.2 Create migration to add progress column to ai_generations table
+  - [ ] 1.3 Run migration and verify schema changes
+  - [ ] 1.4 Update AIGeneration model with progress attribute
+  - [ ] 1.5 Verify model tests pass
+
+- [ ] 2. Create AIProgressIndicator Livewire Component
+  - [ ] 2.1 Write tests for AIProgressIndicator component
+  - [ ] 2.2 Create AIProgressIndicator Livewire component with make:livewire
+  - [ ] 2.3 Implement progress tracking properties (progress, generationId, isDeepThinking)
+  - [ ] 2.4 Add Livewire event listeners (started, progress, complete)
+  - [ ] 2.5 Implement getProgress() method with polling
+  - [ ] 2.6 Add estimated time calculation logic
+  - [ ] 2.7 Verify component tests pass
+
+- [ ] 3. Progress Bar UI Implementation
+  - [ ] 3.1 Write tests for progress bar visual states
+  - [ ] 3.2 Create Blade view for AIProgressIndicator component
+  - [ ] 3.3 Add progress bar with CSS transitions
+  - [ ] 3.4 Implement normal mode styling (blue progress bar)
+  - [ ] 3.5 Implement deep thinking mode styling (purple gradient, brain icon)
+  - [ ] 3.6 Add estimated time remaining display
+  - [ ] 3.7 Add ARIA accessibility attributes
+  - [ ] 3.8 Verify UI tests pass
+
+- [ ] 4. Progress Tracking in AI Generation Jobs
+  - [ ] 4.1 Write tests for progress updates in GenerateNamesWithModelJob
+  - [ ] 4.2 Update GenerateNamesWithModelJob to set progress at key milestones
+  - [ ] 4.3 Dispatch Livewire events for progress updates (0%, 25%, 50%, 75%, 100%)
+  - [ ] 4.4 Update ProcessAIGenerationBatch to track overall progress
+  - [ ] 4.5 Add error handling for progress updates
+  - [ ] 4.6 Verify job tests pass
+
+- [ ] 5. Integrate Progress Indicator into NameGeneratorDashboard
+  - [ ] 5.1 Write tests for progress indicator integration
+  - [ ] 5.2 Add AIProgressIndicator component to NameGeneratorDashboard view
+  - [ ] 5.3 Dispatch ai-generation-started event when generation begins
+  - [ ] 5.4 Pass deep thinking mode flag to progress indicator
+  - [ ] 5.5 Hide progress indicator when generation completes
+  - [ ] 5.6 Test with both normal and deep thinking modes
+  - [ ] 5.7 Verify integration tests pass
+
+- [ ] 6. Styling and Animations
+  - [ ] 6.1 Write tests for animation behavior
+  - [ ] 6.2 Add Tailwind CSS transitions for smooth progress bar movement
+  - [ ] 6.3 Implement completion animation (brief success state)
+  - [ ] 6.4 Add loading spinner or pulsing effect during deep thinking
+  - [ ] 6.5 Ensure mobile responsive design
+  - [ ] 6.6 Test animations in different themes (light/dark mode)
+  - [ ] 6.7 Verify animation tests pass
+
+- [ ] 7. Testing and Edge Cases
+  - [ ] 7.1 Write tests for edge cases (cancellation, errors, timeouts)
+  - [ ] 7.2 Test progress bar behavior when generation fails
+  - [ ] 7.3 Test progress bar with rapid generation completion (<1s)
+  - [ ] 7.4 Test progress bar with slow generation (>15s)
+  - [ ] 7.5 Test concurrent generations (multiple tabs/sessions)
+  - [ ] 7.6 Verify accessibility with screen readers
+  - [ ] 7.7 Run full test suite and verify all tests pass
+
+- [ ] 8. Documentation and Cleanup
+  - [ ] 8.1 Update CHANGELOG.md with progress indicator feature
+  - [ ] 8.2 Add code comments for progress tracking logic
+  - [ ] 8.3 Update user-facing documentation if needed
+  - [ ] 8.4 Clean up any debug logging
+  - [ ] 8.5 Run composer ready to verify code quality
