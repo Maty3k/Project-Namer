@@ -191,6 +191,16 @@
                     </form>
                 </flux:card>
 
+                {{-- ALWAYS VISIBLE TEST BOX --}}
+                <div class="w-full max-w-4xl mx-auto mt-6 p-6 bg-red-500 text-white rounded-xl border-4 border-black">
+                    <h2 class="text-3xl font-bold mb-4">🔴 ALWAYS VISIBLE TEST BOX</h2>
+                    <div class="space-y-2 text-lg">
+                        <p><strong>useAIGeneration:</strong> {{ $useAIGeneration ? 'TRUE ✅' : 'FALSE ❌' }}</p>
+                        <p><strong>isGeneratingNames:</strong> {{ $isGeneratingNames ? 'TRUE ✅' : 'FALSE ❌' }}</p>
+                        <p><strong>Condition passes:</strong> {{ ($useAIGeneration && $isGeneratingNames) ? 'YES - PROGRESS BAR SHOULD SHOW ✅' : 'NO - PROGRESS BAR HIDDEN ❌' }}</p>
+                    </div>
+                </div>
+
                 {{-- AI Progress Bar - Positioned between generator and history --}}
                 @if($useAIGeneration && $isGeneratingNames)
                     <div class="w-full max-w-4xl mx-auto">

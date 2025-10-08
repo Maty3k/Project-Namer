@@ -939,6 +939,7 @@ class NameGeneratorDashboard extends Component
      */
     public function generateNamesWithAI(): void
     {
+        Log::info('🔴 DEBUG: generateNamesWithAI method called!');
 
         $this->validate([
             'businessIdea' => 'required|string|max:2000',
@@ -956,6 +957,11 @@ class NameGeneratorDashboard extends Component
         $this->resetState();
         $this->isGeneratingNames = true;
         $this->errorMessage = null;
+
+        Log::info('🔴 DEBUG: isGeneratingNames set to TRUE', [
+            'useAIGeneration' => $this->useAIGeneration,
+            'isGeneratingNames' => $this->isGeneratingNames,
+        ]);
 
         /** @var AIGeneration|null $aiGeneration */
         $aiGeneration = null;
