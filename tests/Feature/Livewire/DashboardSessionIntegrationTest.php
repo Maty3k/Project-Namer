@@ -9,7 +9,7 @@ use App\Services\SessionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
-uses(RefreshDatabase::class);
+uses(RefreshDatabase::class)->group('slow');
 
 describe('Dashboard Session Integration', function (): void {
     beforeEach(function (): void {

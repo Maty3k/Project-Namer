@@ -3,19 +3,36 @@
 declare(strict_types=1);
 
 use App\Models\DomainCache;
+use App\Services\DNSLookupService;
 use App\Services\DomainCheckService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
-uses(RefreshDatabase::class);
-
-beforeEach(function (): void {
-    $this->service = app(DomainCheckService::class);
-});
+uses(RefreshDatabase::class)->group('slow');
 
 describe('Domain Checking Service', function (): void {
+    beforeEach(function (): void {
+        // Mock DNS service to return no DNS records by default (domain potentially available)
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')->andReturn(false)->byDefault();
+            $mock->shouldReceive('getDNSRecords')->andReturn([
+                'A' => [],
+                'AAAA' => [],
+                'CNAME' => [],
+                'MX' => [],
+            ])->byDefault();
+        });
+
+        $this->service = app(DomainCheckService::class);
+    });
+
     it('can check domain availability for single domain', function (): void {
+        // Mock DNS service to return no DNS records (domain potentially available)
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')->andReturn(false);
+        });
+
         Http::fake([
             '*' => Http::response([
                 'available' => true,
@@ -32,6 +49,11 @@ describe('Domain Checking Service', function (): void {
     });
 
     it('can check multiple domains concurrently', function (): void {
+        // Mock DNS service to return no DNS records
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')->andReturn(false);
+        });
+
         Http::fake([
             '*' => Http::response([
                 'available' => true,  // We'll just make all domains available for this test
@@ -49,6 +71,11 @@ describe('Domain Checking Service', function (): void {
     });
 
     it('can check domains for a business name across all TLDs', function (): void {
+        // Mock DNS service to return no DNS records
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')->andReturn(false);
+        });
+
         Http::fake([
             '*' => Http::response(['available' => true], 200),
         ]);
@@ -76,6 +103,11 @@ describe('Domain Checking Service', function (): void {
     });
 
     it('handles domain API timeout errors gracefully', function (): void {
+        // Mock DNS service to return no DNS records
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')->andReturn(false);
+        });
+
         Http::fake([
             '*' => Http::response([], 408),
         ]);
@@ -89,6 +121,11 @@ describe('Domain Checking Service', function (): void {
     });
 
     it('handles domain API service unavailable errors', function (): void {
+        // Mock DNS service to return no DNS records
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')->andReturn(false);
+        });
+
         Http::fake([
             '*' => Http::response(['error' => 'Service temporarily unavailable'], 503),
         ]);
@@ -100,6 +137,11 @@ describe('Domain Checking Service', function (): void {
     });
 
     it('handles malformed domain API responses', function (): void {
+        // Mock DNS service to return no DNS records
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')->andReturn(false);
+        });
+
         Http::fake([
             '*' => Http::response(['invalid' => 'response'], 200),
         ]);
@@ -111,6 +153,11 @@ describe('Domain Checking Service', function (): void {
     });
 
     it('caches domain availability results', function (): void {
+        // Mock DNS service to return no DNS records
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')->andReturn(false);
+        });
+
         Http::fake([
             '*' => Http::response(['available' => true], 200),
         ]);
@@ -155,6 +202,11 @@ describe('Domain Checking Service', function (): void {
     });
 
     it('handles network connection errors', function (): void {
+        // Mock DNS service to return no DNS records
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')->andReturn(false);
+        });
+
         Http::fake(function (): void {
             throw new \Illuminate\Http\Client\ConnectionException('Network error');
         });
@@ -166,6 +218,11 @@ describe('Domain Checking Service', function (): void {
     });
 
     it('uses correct timeout for domain checks', function (): void {
+        // Mock DNS service to return no DNS records
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')->andReturn(false);
+        });
+
         Http::fake();
 
         $this->service->checkDomain('example.com');
@@ -209,5 +266,230 @@ describe('Domain Checking Service', function (): void {
         expect($result1['domain'])->toBe('example.com');
         expect($result2['domain'])->toBe('example.com');
         expect($result3['domain'])->toBe('example.com');
+    });
+});
+
+describe('DNS Pre-screening Integration', function (): void {
+    beforeEach(function (): void {
+        // Mock DNS service to return no DNS records by default (domain potentially available)
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')->andReturn(false)->byDefault();
+            $mock->shouldReceive('getDNSRecords')->andReturn([
+                'A' => [],
+                'AAAA' => [],
+                'CNAME' => [],
+                'MX' => [],
+            ])->byDefault();
+        });
+
+        $this->service = app(DomainCheckService::class);
+    });
+
+    it('checks DNS before making API calls', function (): void {
+        // Default mock already returns false for hasDNSRecords (domain potentially available)
+        Http::fake([
+            '*' => Http::response(['available' => true], 200),
+        ]);
+
+        $result = $this->service->checkDomain('example.com');
+
+        expect($result['available'])->toBeTrue();
+        expect($result['cached'])->toBeFalse();
+    });
+
+    it('skips API calls when DNS records are found', function (): void {
+        // Mock DNS service to return true (domain has DNS records)
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')
+                ->with('example.com')
+                ->andReturn(true);
+            $mock->shouldReceive('getDNSRecords')
+                ->andReturn([
+                    'A' => [['ip' => '192.0.2.1']],
+                    'AAAA' => [],
+                    'CNAME' => [],
+                    'MX' => [],
+                ]);
+        });
+
+        // Re-instantiate service after mock is set up
+        $service = app(DomainCheckService::class);
+
+        // HTTP should never be called if DNS records found
+        Http::fake();
+
+        $result = $service->checkDomain('example.com');
+
+        expect($result['available'])->toBeFalse();
+        expect($result['status'])->toBe('taken');
+        Http::assertNothingSent();
+    });
+
+    it('falls back to API when DNS check returns null (unknown)', function (): void {
+        // Mock DNS service to return null (DNS check failed/unknown)
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')
+                ->with('example.com')
+                ->andReturn(null);
+            $mock->shouldReceive('getDNSRecords')
+                ->andReturn([
+                    'A' => [],
+                    'AAAA' => [],
+                    'CNAME' => [],
+                    'MX' => [],
+                ]);
+        });
+
+        // Re-instantiate service after mock is set up
+        $service = app(DomainCheckService::class);
+
+        Http::fake([
+            '*' => Http::response(['available' => true], 200),
+        ]);
+
+        $result = $service->checkDomain('example.com');
+
+        expect($result['available'])->toBeTrue();
+        Http::assertSentCount(1);
+    });
+
+    it('stores DNS check method in cache', function (): void {
+        // Mock DNS service to return false (no DNS records)
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')
+                ->andReturn(false);
+        });
+
+        Http::fake([
+            '*' => Http::response(['available' => true], 200),
+        ]);
+
+        $this->service->checkDomain('example.com');
+
+        $cached = DomainCache::where('domain', 'example.com')->first();
+        expect($cached)->not->toBeNull();
+        expect($cached->check_method)->toBe('dns');
+    });
+
+    it('uses different cache TTL for DNS checks', function (): void {
+        // Create DNS cache entry (7 day TTL)
+        DomainCache::create([
+            'domain' => 'example.com',
+            'available' => false,
+            'has_dns_records' => true,
+            'check_method' => 'dns',
+            'checked_at' => now()->subDays(6),
+        ]);
+
+        // Should still be cached (DNS has 7 day TTL)
+        $result = $this->service->checkDomain('example.com');
+
+        expect($result['cached'])->toBeTrue();
+        expect($result['available'])->toBeFalse();
+    });
+
+    it('expires API cache after 24 hours but not DNS cache', function (): void {
+        // Create API cache entry (24 hour TTL) - should be expired
+        DomainCache::create([
+            'domain' => 'api-check.com',
+            'available' => true,
+            'check_method' => 'api',
+            'checked_at' => now()->subHours(25),
+        ]);
+
+        // Create DNS cache entry (7 day TTL) - should still be valid
+        DomainCache::create([
+            'domain' => 'dns-check.com',
+            'available' => false,
+            'has_dns_records' => true,
+            'check_method' => 'dns',
+            'checked_at' => now()->subDays(2),
+        ]);
+
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')
+                ->with('api-check.com')
+                ->andReturn(false);
+        });
+
+        Http::fake([
+            '*' => Http::response(['available' => true], 200),
+        ]);
+
+        // API cache should be expired - will re-check
+        $result1 = $this->service->checkDomain('api-check.com');
+        expect($result1['cached'])->toBeFalse();
+
+        // DNS cache should still be valid
+        $result2 = $this->service->checkDomain('dns-check.com');
+        expect($result2['cached'])->toBeTrue();
+    });
+
+    it('filters domains with DNS records in checkBusinessName', function (): void {
+        // Mock DNS to show some domains have records, some don't
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')->andReturnUsing(function ($domain) {
+                if (in_array($domain, ['testbiz.com', 'testbiz.org'])) {
+                    return true;  // Has DNS - filtered
+                }
+                if ($domain === 'testbiz.co') {
+                    return null;  // Unknown - check API
+                }
+
+                return false;  // No DNS - check API
+            });
+            $mock->shouldReceive('getDNSRecords')->andReturn([
+                'A' => [],
+                'AAAA' => [],
+                'CNAME' => [],
+                'MX' => [],
+            ]);
+        });
+
+        // Re-instantiate service after mock is set up
+        $service = app(DomainCheckService::class);
+
+        Http::fake([
+            '*' => Http::response(['available' => true], 200),
+        ]);
+
+        $results = $service->checkBusinessName('testbiz');
+
+        // Domains with DNS should be marked unavailable without API call
+        expect($results['testbiz.com']['available'])->toBeFalse();
+        expect($results['testbiz.org']['available'])->toBeFalse();
+
+        // Domains without DNS should be checked via API
+        expect($results['testbiz.net']['available'])->toBeTrue();
+        expect($results['testbiz.io']['available'])->toBeTrue();
+
+        // Unknown should fall back to API
+        expect($results['testbiz.co']['available'])->toBeTrue();
+    });
+
+    it('stores DNS record details when available', function (): void {
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')
+                ->with('example.com')
+                ->andReturn(true);
+            $mock->shouldReceive('getDNSRecords')
+                ->with('example.com')
+                ->andReturn([
+                    'A' => [['ip' => '192.0.2.1']],
+                    'MX' => [['target' => 'mail.example.com', 'pri' => 10]],
+                    'AAAA' => [],
+                    'CNAME' => [],
+                ]);
+        });
+
+        // Re-instantiate service after mock is set up
+        $service = app(DomainCheckService::class);
+
+        $service->checkDomain('example.com');
+
+        $cached = DomainCache::where('domain', 'example.com')->first();
+        expect($cached->dns_records)->toBeArray();
+        expect($cached->dns_records)->toHaveKey('A');
+        expect($cached->dns_records)->toHaveKey('MX');
     });
 });

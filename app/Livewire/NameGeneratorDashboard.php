@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Helpers\ThemeHelper;
+use App\Jobs\CheckDomainDNSJob;
 use App\Jobs\GenerateLogosJob;
 use App\Models\AIGeneration;
 use App\Models\AIModelPerformance;
@@ -234,6 +235,9 @@ class NameGeneratorDashboard extends Component
 
     /**
      * Check domain availability for all generated names.
+     *
+     * Dispatches background DNS check jobs for asynchronous processing
+     * to avoid blocking the UI during domain verification.
      */
     private function checkDomainAvailability(): void
     {
@@ -248,11 +252,19 @@ class NameGeneratorDashboard extends Component
             $this->domainResults = [];
 
             foreach ($this->generatedNames as $name) {
-                $this->domainResults[$name] = $domainService->checkBusinessName($name);
+                // Get immediate DNS check results (synchronous for initial display)
+                $results = $domainService->checkBusinessName($name);
+                $this->domainResults[$name] = $results;
+
+                // Dispatch background jobs for async DNS checks per TLD
+                // This allows for real-time updates as DNS checks complete
+                foreach ($results as $domain => $result) {
+                    CheckDomainDNSJob::dispatch($domain);
+                }
             }
         } catch (Exception $e) {
             // Log error but don't fail the entire generation
-            logger()->warning('Domain checking failed', ['error' => $e->getMessage()]);
+            Log::warning('Domain checking failed', ['error' => $e->getMessage()]);
         } finally {
             $this->isCheckingDomains = false;
         }
@@ -774,6 +786,44 @@ class NameGeneratorDashboard extends Component
                 message: 'Session not found',
                 type: 'error'
             );
+        }
+    }
+
+    /**
+     * Handle domain DNS check completion event.
+     *
+     * @param  array<string, mixed>  $data  Event data with domain status
+     */
+    #[On('domain-dns-checked')]
+    public function onDomainDNSChecked(array $data): void
+    {
+        $domain = $data['domain'] ?? null;
+
+        if (! $domain) {
+            return;
+        }
+
+        // Update domain results with new DNS check data
+        foreach ($this->domainResults as $name => $domains) {
+            if (isset($domains[$domain])) {
+                $this->domainResults[$name][$domain] = array_merge(
+                    $domains[$domain],
+                    [
+                        'available' => $data['available'] ?? null,
+                        'has_dns_records' => $data['has_dns_records'] ?? null,
+                        'status' => $data['status'] ?? 'unknown',
+                        'check_method' => $data['check_method'] ?? 'dns',
+                        'updated' => true,
+                    ]
+                );
+
+                Log::info('Updated domain status from DNS job', [
+                    'domain' => $domain,
+                    'available' => $data['available'] ?? null,
+                ]);
+
+                break;
+            }
         }
     }
 

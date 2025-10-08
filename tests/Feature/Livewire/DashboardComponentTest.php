@@ -7,6 +7,8 @@ use App\Livewire\NameGeneratorDashboard;
 use App\Models\GenerationCache;
 use App\Models\LogoGeneration;
 use App\Models\User;
+use App\Services\DNSLookupService;
+use App\Services\OpenAINameService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
@@ -15,11 +17,35 @@ use Livewire\Livewire;
 use Prism\Prism\Prism;
 use Prism\Prism\Testing\TextResponseFake;
 
-uses(RefreshDatabase::class);
+uses(RefreshDatabase::class)->group('slow');
 
 beforeEach(function (): void {
     $this->user = User::factory()->create();
     Storage::fake('public');
+
+    // Prevent external HTTP calls
+    Http::preventStrayRequests();
+    Http::fake(['*' => Http::response(['available' => true], 200)]);
+
+    // Fake queue to prevent job dispatching delays
+    Queue::fake();
+
+    // Mock OpenAI service to prevent real API calls
+    $this->mock(OpenAINameService::class, function ($mock): void {
+        $mock->shouldReceive('generateNames')
+            ->andReturn(['TechFlow', 'DataSync', 'CloudCore', 'AppForge', 'CodeCraft', 'ByteBridge', 'WebWorks', 'NetNinja', 'PixelPro', 'DevDesk']);
+    });
+
+    // Mock DNS service to prevent real DNS lookups
+    $this->mock(DNSLookupService::class, function ($mock): void {
+        $mock->shouldReceive('hasDNSRecords')->andReturn(false);
+        $mock->shouldReceive('getDNSRecords')->andReturn([
+            'A' => [],
+            'AAAA' => [],
+            'CNAME' => [],
+            'MX' => [],
+        ]);
+    });
 });
 
 describe('Dashboard Component', function (): void {
@@ -72,13 +98,6 @@ describe('Dashboard Component', function (): void {
             TextResponseFake::make()->withText($fakeResponse),
         ]);
 
-        // Mock domain checking HTTP responses
-        Http::fake([
-            '*techflow.com*' => Http::response(['available' => true, 'domain' => 'techflow.com'], 200),
-            '*techflow.io*' => Http::response(['available' => false, 'domain' => 'techflow.io'], 200),
-            '*' => Http::response(['available' => true], 200), // Default response for other domains
-        ]);
-
         $component = Livewire::actingAs($this->user)
             ->test(NameGeneratorDashboard::class)
             ->set('businessIdea', 'A tech startup building productivity tools')
@@ -124,8 +143,6 @@ describe('Dashboard Component', function (): void {
     });
 
     it('can generate logos for selected names', function (): void {
-        // Fake the queue to prevent actual job dispatch
-        Queue::fake();
 
         // Ensure session is started for this test
         $this->withSession(['test_session' => true]);
@@ -218,11 +235,6 @@ describe('Dashboard Component', function (): void {
             'cached_at' => now(),
         ]);
 
-        // Mock domain checking for all domains
-        Http::fake([
-            '*' => Http::response(['available' => true], 200),
-        ]);
-
         Livewire::actingAs($this->user)
             ->test(NameGeneratorDashboard::class)
             ->call('loadFromHistory', 'test-hash')
@@ -275,11 +287,6 @@ describe('Dashboard Component', function (): void {
             TextResponseFake::make()->withText($fakeResponse),
         ]);
 
-        // Mock domain service to fail
-        Http::fake([
-            '*' => Http::response([], 500), // Simulate server error
-        ]);
-
         $component = Livewire::actingAs($this->user)
             ->test(NameGeneratorDashboard::class)
             ->set('businessIdea', 'Test business')
@@ -330,11 +337,6 @@ describe('Dashboard Component', function (): void {
         $fakeResponse = "1. TestName\n2. BusinessName2\n3. BusinessName3\n4. BusinessName4\n5. BusinessName5\n6. BusinessName6\n7. BusinessName7\n8. BusinessName8\n9. BusinessName9\n10. BusinessName10";
         Prism::fake([
             TextResponseFake::make()->withText($fakeResponse),
-        ]);
-
-        // Mock domain checking
-        Http::fake([
-            '*' => Http::response(['available' => true], 200),
         ]);
 
         $component = Livewire::actingAs($this->user)

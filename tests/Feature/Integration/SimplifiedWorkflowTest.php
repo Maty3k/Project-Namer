@@ -4,17 +4,48 @@ declare(strict_types=1);
 
 use App\Models\DomainCache;
 use App\Models\GenerationCache;
+use App\Models\User;
+use App\Services\DNSLookupService;
+use App\Services\OpenAINameService;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Livewire\Volt\Volt;
+
+uses()->group('slow');
 
 describe('Simplified Integration Workflow Tests', function (): void {
     beforeEach(function (): void {
+        $this->user = User::factory()->create();
+        $this->actingAs($this->user);
+
         // Clear cache for clean test state
         DomainCache::query()->delete();
         GenerationCache::query()->delete();
 
         // Prevent any actual HTTP requests - these tests should only use cached data
         Http::preventStrayRequests();
+        Http::fake(['*' => Http::response(['available' => true], 200)]);
+
+        // Fake queue to prevent job dispatching delays
+        Queue::fake();
+
+        // Mock OpenAI service to prevent real API calls
+        $this->mock(OpenAINameService::class, function ($mock): void {
+            $mock->shouldReceive('generateNames')
+                ->andReturn(['TechName1', 'TechName2', 'TechName3', 'TechName4', 'TechName5',
+                    'TechName6', 'TechName7', 'TechName8', 'TechName9', 'TechName10']);
+        });
+
+        // Mock DNS service to prevent real DNS lookups
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')->andReturn(false);
+            $mock->shouldReceive('getDNSRecords')->andReturn([
+                'A' => [],
+                'AAAA' => [],
+                'CNAME' => [],
+                'MX' => [],
+            ]);
+        });
     });
 
     test('name generation workflow with cached results works end-to-end', function (): void {

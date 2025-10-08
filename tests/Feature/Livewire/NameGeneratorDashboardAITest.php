@@ -7,6 +7,10 @@ use App\Models\AIGeneration;
 use App\Models\AIModelPerformance;
 use App\Models\User;
 use App\Models\UserAIPreferences;
+use App\Services\DNSLookupService;
+use App\Services\OpenAINameService;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
 use Prism\Prism\Prism;
 use Prism\Prism\Testing\TextResponseFake;
@@ -17,6 +21,30 @@ use Prism\Prism\Testing\TextResponseFake;
 beforeEach(function (): void {
     $this->user = User::factory()->create();
     $this->actingAs($this->user);
+
+    // Prevent external HTTP calls
+    Http::preventStrayRequests();
+    Http::fake(['*' => Http::response(['available' => true], 200)]);
+
+    // Fake queue to prevent job dispatching delays
+    Queue::fake();
+
+    // Mock OpenAI service to prevent real API calls
+    $this->mock(OpenAINameService::class, function ($mock): void {
+        $mock->shouldReceive('generateNames')
+            ->andReturn(['TechNova', 'InnovateLabs', 'FutureSync', 'BrandFlow', 'MarketPulse']);
+    });
+
+    // Mock DNS service to prevent real DNS lookups
+    $this->mock(DNSLookupService::class, function ($mock): void {
+        $mock->shouldReceive('hasDNSRecords')->andReturn(false);
+        $mock->shouldReceive('getDNSRecords')->andReturn([
+            'A' => [],
+            'AAAA' => [],
+            'CNAME' => [],
+            'MX' => [],
+        ]);
+    });
 
     // Mock AI responses using Prism for fast tests
     Prism::fake([

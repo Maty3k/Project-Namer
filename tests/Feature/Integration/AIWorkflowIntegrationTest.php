@@ -11,14 +11,18 @@ use App\Models\Project;
 use App\Models\User;
 use App\Models\UserAIPreferences;
 use App\Services\AI\AIGenerationService;
+use App\Services\DNSLookupService;
+use App\Services\OpenAINameService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
 use Tests\TestCase;
 
 /**
  * @group integration
+ * @group slow
  */
 class AIWorkflowIntegrationTest extends TestCase
 {
@@ -40,6 +44,26 @@ class AIWorkflowIntegrationTest extends TestCase
         Http::fake([
             '*' => Http::response(['choices' => [['message' => ['content' => '1. TestName']]]], 200),
         ]);
+
+        // Fake queue to prevent job dispatching delays
+        Queue::fake();
+
+        // Mock OpenAI service to prevent real API calls
+        $this->mock(OpenAINameService::class, function ($mock): void {
+            $mock->shouldReceive('generateNames')
+                ->andReturn(['TechNova', 'InnovateLabs', 'CreativeFlow', 'BrightSpark', 'SynergyCore']);
+        });
+
+        // Mock DNS service to prevent real DNS lookups
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')->andReturn(false);
+            $mock->shouldReceive('getDNSRecords')->andReturn([
+                'A' => [],
+                'AAAA' => [],
+                'CNAME' => [],
+                'MX' => [],
+            ]);
+        });
 
         // Disable rate limiting for speed
         Cache::put('rate_limit_disabled_for_tests', true, 3600);

@@ -15,18 +15,31 @@ use InvalidArgumentException;
  * Service for checking domain name availability.
  *
  * Provides functionality to check domain availability across multiple TLDs
- * with caching support and error handling.
+ * with caching support and error handling. Uses DNS pre-screening to filter
+ * out domains with existing DNS records before making expensive API calls.
  */
-final class DomainCheckService
+final readonly class DomainCheckService
 {
     private const SUPPORTED_TLDS = ['com', 'net', 'org', 'io', 'co', 'app', 'dev', 'ai', 'tech', 'studio'];
 
     private const TIMEOUT_SECONDS = 5;
 
-    private const CACHE_HOURS = 24;
+    private const CACHE_HOURS_API = 24;
+
+    private const CACHE_DAYS_DNS = 7;
+
+    /**
+     * DNS lookup service for pre-screening domains.
+     */
+    public function __construct(
+        private DNSLookupService $dnsLookup
+    ) {}
 
     /**
      * Check availability for a single domain.
+     *
+     * Uses DNS pre-screening to filter domains with DNS records before
+     * making expensive API calls to registrars.
      *
      * @param  string  $domain  The domain name to check (e.g., example.com)
      * @return array<string, mixed> Domain availability information
@@ -48,14 +61,35 @@ final class DomainCheckService
             ];
         }
 
-        // Check via API
+        // DNS pre-screening: Check if domain has DNS records
+        $hasDNS = $this->dnsLookup->hasDNSRecords($domain);
+
+        // If DNS records found, domain is definitely taken
+        if ($hasDNS === true) {
+            Log::info('Domain has DNS records - marking as taken', ['domain' => $domain]);
+
+            $dnsRecords = $this->dnsLookup->getDNSRecords($domain);
+
+            // Cache the DNS result
+            $this->cacheResult($domain, false, 'dns', true, $dnsRecords);
+
+            return [
+                'domain' => $domain,
+                'available' => false,
+                'status' => 'taken',
+                'cached' => false,
+                'check_method' => 'dns',
+            ];
+        }
+
+        // If no DNS records (or DNS check failed), fall back to API
         try {
             $result = $this->checkDomainViaAPI($domain);
 
-            // Cache the result
-            $this->cacheResult($domain, $result['available']);
+            // Cache the result with DNS info
+            $this->cacheResult($domain, $result['available'], 'dns', $hasDNS === false);
 
-            return array_merge($result, ['cached' => false]);
+            return array_merge($result, ['cached' => false, 'check_method' => 'dns']);
         } catch (Exception $e) {
             Log::warning('Domain check failed', [
                 'domain' => $domain,
@@ -110,12 +144,29 @@ final class DomainCheckService
 
     /**
      * Clear expired cache entries.
+     *
+     * Respects different TTLs for DNS and API checks:
+     * - DNS checks expire after 7 days
+     * - API checks expire after 24 hours
      */
     public function clearExpiredCache(): int
     {
-        $cutoff = now()->subHours(self::CACHE_HOURS);
+        $apiCutoff = now()->subHours(self::CACHE_HOURS_API);
+        $dnsCutoff = now()->subDays(self::CACHE_DAYS_DNS);
 
-        return DomainCache::where('checked_at', '<', $cutoff)->delete();
+        $deleted = 0;
+
+        // Clear expired API caches
+        $deleted += DomainCache::where('check_method', 'api')
+            ->where('checked_at', '<', $apiCutoff)
+            ->delete();
+
+        // Clear expired DNS caches
+        $deleted += DomainCache::where('check_method', 'dns')
+            ->where('checked_at', '<', $dnsCutoff)
+            ->delete();
+
+        return $deleted;
     }
 
     /**
@@ -181,25 +232,57 @@ final class DomainCheckService
 
     /**
      * Get cached result for a domain.
+     *
+     * Respects different cache TTLs based on check method:
+     * - DNS checks: 7 days (records change infrequently)
+     * - API checks: 24 hours (availability can change quickly)
      */
     private function getCachedResult(string $domain): ?DomainCache
     {
-        $cutoff = now()->subHours(self::CACHE_HOURS);
+        $cache = DomainCache::where('domain', $domain)->first();
 
-        return DomainCache::where('domain', $domain)
-            ->where('checked_at', '>=', $cutoff)
-            ->first();
+        if ($cache === null) {
+            return null;
+        }
+
+        // Determine cutoff based on check method
+        $cutoff = match ($cache->check_method) {
+            'dns' => now()->subDays(self::CACHE_DAYS_DNS),
+            'api' => now()->subHours(self::CACHE_HOURS_API),
+            default => now()->subHours(self::CACHE_HOURS_API),
+        };
+
+        // Check if cache is still valid
+        if ($cache->checked_at->lt($cutoff)) {
+            return null;
+        }
+
+        return $cache;
     }
 
     /**
      * Cache domain availability result.
+     *
+     * @param  string  $domain  The domain name
+     * @param  bool  $available  Whether the domain is available
+     * @param  string  $checkMethod  The method used ('dns' or 'api')
+     * @param  bool|null  $hasDNS  Whether DNS records were found
+     * @param  array<string, array<int, mixed>>|null  $dnsRecords  Optional DNS record details
      */
-    private function cacheResult(string $domain, bool $available): void
-    {
+    private function cacheResult(
+        string $domain,
+        bool $available,
+        string $checkMethod = 'api',
+        ?bool $hasDNS = null,
+        ?array $dnsRecords = null
+    ): void {
         DomainCache::updateOrCreate(
             ['domain' => $domain],
             [
                 'available' => $available,
+                'has_dns_records' => $hasDNS,
+                'check_method' => $checkMethod,
+                'dns_records' => $dnsRecords,
                 'checked_at' => now(),
             ]
         );
