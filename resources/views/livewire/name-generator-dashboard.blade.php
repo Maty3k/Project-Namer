@@ -79,7 +79,26 @@
                         {{-- AI Progress Indicator (positioned prominently after generation style) --}}
                         @if($useAIGeneration && $isGeneratingNames)
                             <div class="my-6 p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl border-2 border-blue-200 dark:border-blue-800">
-                                <livewire:components.a-i-progress-indicator />
+                                <!-- Title -->
+                                <div class="mb-3 text-center">
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                        🤖 Generating Names with AI
+                                    </h3>
+                                </div>
+
+                                <!-- Progress Bar Container -->
+                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-6 overflow-hidden mb-3 shadow-inner">
+                                    <div class="h-full bg-blue-500 transition-all duration-500 ease-out animate-pulse"
+                                         style="width: 50%">
+                                        <span class="text-white text-xs font-bold ml-2">Processing...</span>
+                                    </div>
+                                </div>
+
+                                <!-- Status Text -->
+                                <div class="flex items-center justify-center text-sm text-gray-700 dark:text-gray-300">
+                                    <flux:icon.sparkles class="w-4 h-4 mr-2 text-blue-600 dark:text-blue-400 animate-spin" />
+                                    <span>AI is working on your names...</span>
+                                </div>
                             </div>
                         @endif
 
