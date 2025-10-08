@@ -998,68 +998,19 @@ class NameGeneratorDashboard extends Component
                 ]);
             }
 
-            // Generate names using AI service
-            $aiService = app(AIGenerationService::class);
+            // Dispatch generation job for the first model (simplified for now)
+            // In a full implementation, you'd dispatch multiple jobs for multiple models
+            $modelId = $this->selectedAIModels[0];
 
-            $startTime = microtime(true);
-            $results = $aiService->generateWithModels(
+            \App\Jobs\GenerateNamesWithModelJob::dispatch(
                 $aiGeneration,
-                $this->selectedAIModels,
+                $modelId,
                 $this->businessIdea,
-                [
-                    'mode' => $this->generationMode,
-                    'deep_thinking' => $this->deepThinking,
-                ]
-            );
-            $endTime = microtime(true);
+                10 // number of names
+            )->onQueue('ai-generation');
 
-            // Process results
-            $this->aiModelResults = $results;
-            $allNames = [];
-
-            foreach ($results as $model => $names) {
-                $allNames = array_merge($allNames, $names);
-
-                // Update model performance metrics
-                $this->updateModelPerformance($model, true, (int) (($endTime - $startTime) * 1000));
-            }
-
-            // Remove duplicates and set generated names
-            $this->generatedNames = array_unique($allNames);
-
-            // Initialize active model tab for comparison
-            $this->initializeActiveModelTab();
-
-            // Mark AI generation as completed
-            $aiGeneration->markAsCompleted([
-                'names' => $this->generatedNames,
-                'model_results' => $results,
-            ], [
-                'total_time_ms' => (int) (($endTime - $startTime) * 1000),
-                'models_used' => array_keys($results),
-            ]);
-
-            // Check domain availability
-            $this->checkDomainAvailability();
-            $this->showResults = true;
-            $this->activeTab = 'results';
-
-            // Auto-save session
-            $this->autoSaveSession();
-
-            $this->successMessage = 'AI generated '.count($this->generatedNames).' business names!';
-            $this->addToSearchHistory();
-
-            // Dispatch completion event for progress indicator
-            $this->dispatch('ai-generation-complete');
-
-            // Dispatch completion event with details
-            $this->dispatch('ai-generation-completed', [
-                'generationId' => $aiGeneration->id,
-                'totalNames' => count($this->generatedNames),
-                'modelsUsed' => count(array_keys($results)),
-                'processingTime' => (int) (($endTime - $startTime) * 1000),
-            ]);
+            // The component will poll to check completion
+            // When job completes, we'll process results in checkGenerationStatus()
 
         } catch (Exception $e) {
             Log::error('AI generation failed', ['error' => $e->getMessage()]);
@@ -1175,6 +1126,91 @@ class NameGeneratorDashboard extends Component
         ]);
 
         $this->dispatch('toast', message: 'AI preferences saved');
+    }
+
+    /**
+     * Check generation status (called by polling).
+     */
+    public function checkGenerationStatus(): void
+    {
+        if (! $this->currentAIGenerationId) {
+            return;
+        }
+
+        $aiGeneration = AIGeneration::find($this->currentAIGenerationId);
+
+        if (! $aiGeneration) {
+            return;
+        }
+
+        // Check if generation is complete
+        if ($aiGeneration->isCompleted()) {
+            $this->processCompletedGeneration($aiGeneration);
+        } elseif ($aiGeneration->hasFailed()) {
+            $this->handleFailedGeneration($aiGeneration);
+        }
+    }
+
+    /**
+     * Process completed generation results.
+     */
+    protected function processCompletedGeneration(AIGeneration $aiGeneration): void
+    {
+        // Get the results from the AIGeneration model
+        $resultsData = $aiGeneration->results_data;
+
+        if (empty($resultsData['names'])) {
+            $this->errorMessage = 'No names were generated';
+            $this->isGeneratingNames = false;
+            return;
+        }
+
+        $this->generatedNames = $resultsData['names'];
+        $this->aiModelResults = $resultsData['model_results'] ?? [];
+
+        // Initialize active model tab for comparison
+        $this->initializeActiveModelTab();
+
+        // Check domain availability
+        $this->checkDomainAvailability();
+        $this->showResults = true;
+        $this->activeTab = 'results';
+
+        // Auto-save session
+        $this->autoSaveSession();
+
+        $this->successMessage = 'AI generated '.count($this->generatedNames).' business names!';
+        $this->addToSearchHistory();
+
+        // Dispatch completion event for progress indicator
+        $this->dispatch('ai-generation-complete');
+
+        // Dispatch completion event with details
+        $this->dispatch('ai-generation-completed', [
+            'generationId' => $aiGeneration->id,
+            'totalNames' => count($this->generatedNames),
+            'modelsUsed' => count($this->selectedAIModels),
+        ]);
+
+        $this->isGeneratingNames = false;
+        $this->currentAIGenerationId = null;
+    }
+
+    /**
+     * Handle failed generation.
+     */
+    protected function handleFailedGeneration(AIGeneration $aiGeneration): void
+    {
+        $this->errorMessage = $aiGeneration->error_message ?? 'AI generation failed';
+        $this->isGeneratingNames = false;
+        $this->currentAIGenerationId = null;
+
+        $this->dispatch('ai-generation-error', [
+            'message' => $this->errorMessage,
+            'generationId' => $aiGeneration->id,
+        ]);
+
+        $this->dispatch('toast', message: $this->errorMessage, type: 'error');
     }
 
     /**

@@ -1,4 +1,5 @@
-<div class="h-full w-full themed-generator-dashboard">
+<div class="h-full w-full themed-generator-dashboard"
+     @if($isGeneratingNames) wire:poll.1s="checkGenerationStatus" @endif>
     <flux:tabs wire:model="activeTab" class="h-full flex flex-col">
         <flux:tab name="generate" class="flex items-center gap-2" title="Generate business names">
             <flux:icon.sparkles class="size-4" />

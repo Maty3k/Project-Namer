@@ -159,6 +159,24 @@ class GenerateNamesWithModelJob implements ShouldQueue
             // Progress: 100% - Completed
             $this->updateProgress(100);
 
+            // Save results to AIGeneration model for dashboard processing
+            $this->aiGeneration->refresh();
+            $this->aiGeneration->update([
+                'results_data' => [
+                    'names' => $results,
+                    'model_results' => [
+                        $this->modelId => [
+                            'names' => $results,
+                            'execution_time_ms' => $executionTime,
+                        ],
+                    ],
+                ],
+                'status' => 'completed',
+                'completed_at' => now(),
+                'total_names_generated' => count($results),
+                'total_response_time_ms' => (int) $executionTime,
+            ]);
+
             // Update model status to completed
             $this->updateModelStatus('completed', [
                 'execution_time_ms' => $executionTime,
