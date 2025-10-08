@@ -1090,11 +1090,10 @@ class NameGeneratorDashboard extends Component
                 Log::error('Fallback generation also failed', ['error' => $fallbackException->getMessage()]);
                 $this->dispatch('toast', message: $this->errorMessage, type: 'error');
             }
-        } finally {
-            $this->isGeneratingNames = false;
-            $this->currentAIGenerationId = null;
-            $this->aiGenerationStatus = '';
         }
+        // NOTE: We do NOT set isGeneratingNames = false here anymore!
+        // It will be set to false when checkGenerationStatus() detects completion
+        // in processCompletedGeneration() or handleFailedGeneration()
     }
 
     /**
