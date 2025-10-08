@@ -239,15 +239,16 @@ describe('AIProgressIndicator Edge Cases', function (): void {
     test('component visibility toggles correctly through lifecycle', function (): void {
         $component = Livewire::test(AIProgressIndicator::class);
 
-        // Initially has opacity-100 (default state)
-        $component->assertSee('opacity-100', false);
+        // Initially hidden (no generation ID)
+        $component->assertSee('hidden', false);
 
-        // Visible when started
+        // Visible with opacity-100 when started
         $component->dispatch('ai-generation-started', [
             'generation_id' => 1,
             'is_deep_thinking' => false,
         ]);
         $component->assertSee('opacity-100', false);
+        $component->assertSet('generationId', 1); // Verify generation ID is set
 
         // Fades out when complete
         $component->dispatch('ai-generation-complete');

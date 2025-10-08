@@ -31,9 +31,11 @@ test('progress indicator is included in NameGeneratorDashboard when AI is enable
     $user = User::factory()->create();
     $this->actingAs($user);
 
+    // Progress indicator is only visible when generation is in progress
     Livewire::test(NameGeneratorDashboard::class)
         ->set('useAIGeneration', true)
-        ->assertSee('wire:poll.500ms="getProgress"', false);
+        ->set('isGeneratingNames', true)
+        ->assertSee('Generating Names with AI'); // Check for the title instead
 });
 
 test('progress indicator is not shown when AI is disabled', function (): void {
