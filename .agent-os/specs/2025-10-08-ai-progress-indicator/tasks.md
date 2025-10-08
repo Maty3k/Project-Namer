@@ -37,7 +37,7 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 4.1 Write tests for progress updates in GenerateNamesWithModelJob
   - [x] 4.2 Update GenerateNamesWithModelJob to set progress at key milestones
   - [x] 4.3 Dispatch Livewire events for progress updates (0%, 25%, 50%, 75%, 100%)
-  - [ ] 4.4 Update ProcessAIGenerationBatch to track overall progress
+  - [x] 4.4 Update ProcessAIGenerationBatch to track overall progress (N/A - uses GenerationSession, already has progress tracking)
   - [x] 4.5 Add error handling for progress updates
   - [x] 4.6 Verify job tests pass
 
