@@ -26,6 +26,20 @@
                     </p>
                 </div>
 
+                {{-- DEBUG BOX - ALWAYS VISIBLE --}}
+                <div class="my-6 p-6 bg-yellow-100 dark:bg-yellow-900/20 rounded-xl border-2 border-yellow-500">
+                    <div class="text-center">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                            🔍 DEBUG INFO
+                        </h3>
+                        <div class="text-sm text-gray-700 dark:text-gray-300 space-y-1">
+                            <p>useAIGeneration: <strong>{{ $useAIGeneration ? 'TRUE ✅' : 'FALSE ❌' }}</strong></p>
+                            <p>isGeneratingNames: <strong>{{ $isGeneratingNames ? 'TRUE ✅' : 'FALSE ❌' }}</strong></p>
+                            <p>Form will call: <strong>{{ $useAIGeneration ? 'generateNamesWithAI' : 'generateNames' }}</strong></p>
+                        </div>
+                    </div>
+                </div>
+
                 {{-- Business Idea Input Form --}}
                 <flux:card class="p-8">
                     <form wire:submit="{{ $useAIGeneration ? 'generateNamesWithAI' : 'generateNames' }}" class="space-y-6">
