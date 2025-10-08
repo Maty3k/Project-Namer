@@ -41,14 +41,14 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 4.5 Add error handling for progress updates
   - [x] 4.6 Verify job tests pass
 
-- [ ] 5. Integrate Progress Indicator into NameGeneratorDashboard
-  - [ ] 5.1 Write tests for progress indicator integration
-  - [ ] 5.2 Add AIProgressIndicator component to NameGeneratorDashboard view
-  - [ ] 5.3 Dispatch ai-generation-started event when generation begins
-  - [ ] 5.4 Pass deep thinking mode flag to progress indicator
-  - [ ] 5.5 Hide progress indicator when generation completes
-  - [ ] 5.6 Test with both normal and deep thinking modes
-  - [ ] 5.7 Verify integration tests pass
+- [x] 5. Integrate Progress Indicator into NameGeneratorDashboard
+  - [x] 5.1 Write tests for progress indicator integration
+  - [x] 5.2 Add AIProgressIndicator component to NameGeneratorDashboard view
+  - [x] 5.3 Dispatch ai-generation-started event when generation begins
+  - [x] 5.4 Pass deep thinking mode flag to progress indicator
+  - [x] 5.5 Hide progress indicator when generation completes
+  - [x] 5.6 Test with both normal and deep thinking modes
+  - [x] 5.7 Verify integration tests pass
 
 - [ ] 6. Styling and Animations
   - [ ] 6.1 Write tests for animation behavior

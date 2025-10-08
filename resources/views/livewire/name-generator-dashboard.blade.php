@@ -186,6 +186,13 @@
                                 </flux:tooltip>
                             @endif
                         </div>
+
+                        {{-- AI Progress Indicator --}}
+                        @if($useAIGeneration)
+                            <div class="mt-6">
+                                <livewire:components.a-i-progress-indicator />
+                            </div>
+                        @endif
                     </form>
                 </flux:card>
             </div>

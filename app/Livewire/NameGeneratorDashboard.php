@@ -984,11 +984,10 @@ class NameGeneratorDashboard extends Component
             // Mark as started
             $aiGeneration->markAsStarted();
 
-            // Dispatch AI generation started event
+            // Dispatch AI generation started event for progress indicator
             $this->dispatch('ai-generation-started', [
-                'generationId' => $aiGeneration->id,
-                'models' => $this->selectedAIModels,
-                'deepThinking' => $this->deepThinking,
+                'generation_id' => $aiGeneration->id,
+                'is_deep_thinking' => $this->deepThinking,
             ]);
 
             // Dispatch deep thinking activation if enabled
@@ -1051,7 +1050,10 @@ class NameGeneratorDashboard extends Component
             $this->successMessage = 'AI generated '.count($this->generatedNames).' business names!';
             $this->addToSearchHistory();
 
-            // Dispatch completion event
+            // Dispatch completion event for progress indicator
+            $this->dispatch('ai-generation-complete');
+
+            // Dispatch completion event with details
             $this->dispatch('ai-generation-completed', [
                 'generationId' => $aiGeneration->id,
                 'totalNames' => count($this->generatedNames),
