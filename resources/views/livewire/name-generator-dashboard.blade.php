@@ -76,6 +76,13 @@
                             </div>
                         </div>
 
+                        {{-- AI Progress Indicator (positioned prominently after generation style) --}}
+                        @if($useAIGeneration && $isGeneratingNames)
+                            <div class="my-6 p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl border-2 border-blue-200 dark:border-blue-800">
+                                <livewire:components.a-i-progress-indicator />
+                            </div>
+                        @endif
+
                         {{-- AI Generation Section --}}
                         <div class="border-t pt-6 space-y-6">
                             {{-- Enable AI Generation Toggle --}}
@@ -188,12 +195,6 @@
                             @endif
                         </div>
 
-                        {{-- AI Progress Indicator --}}
-                        @if($useAIGeneration)
-                            <div class="mt-6">
-                                <livewire:components.a-i-progress-indicator />
-                            </div>
-                        @endif
                     </form>
                 </flux:card>
             </div>

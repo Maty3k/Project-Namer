@@ -1,14 +1,21 @@
 <div wire:poll.500ms="getProgress"
-     class="@if(!$generationId) hidden @endif w-full transition-opacity duration-300 {{ $isComplete ? 'opacity-0' : 'opacity-100' }}">
+     class="w-full transition-opacity duration-300 {{ !$generationId ? 'hidden' : ($isComplete ? 'opacity-0' : 'opacity-100') }}">
 
-    <!-- Progress Bar Container -->
-    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden mb-2"
+    <!-- Title -->
+    <div class="mb-3 text-center">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+            Generating Names with AI
+        </h3>
+    </div>
+
+    <!-- Progress Bar Container - Enhanced Size -->
+    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-6 overflow-hidden mb-3 shadow-inner"
          role="progressbar"
          aria-valuenow="{{ $progress }}"
          aria-valuemin="0"
          aria-valuemax="100"
          aria-label="{{ $isDeepThinking ? 'Deep Thinking Mode Progress' : 'AI Name Generation Progress' }}">
-        <div class="h-full transition-all duration-500 ease-out
+        <div class="h-full transition-all duration-500 ease-out flex items-center justify-end pr-2
                     @if($progress === 100)
                         bg-green-500
                     @elseif($isDeepThinking)
@@ -17,6 +24,7 @@
                         bg-blue-500
                     @endif"
              style="width: {{ $progress }}%">
+            <span class="text-white text-xs font-bold">{{ $progress }}%</span>
         </div>
     </div>
 
