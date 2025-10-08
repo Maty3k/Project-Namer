@@ -23,7 +23,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $generation_mode
  * @property bool $deep_thinking
  * @property string $status
- * @property int $progress
  * @property string $prompt_used
  * @property array<array-key, mixed>|null $results_data
  * @property array<array-key, mixed>|null $execution_metadata
@@ -37,6 +36,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $error_message
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $progress
  * @property-read \App\Models\Project|null $project
  * @property-read \App\Models\User $user
  *
@@ -60,6 +60,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|AIGeneration whereGenerationSessionId($value)
  * @method static Builder<static>|AIGeneration whereId($value)
  * @method static Builder<static>|AIGeneration whereModelsRequested($value)
+ * @method static Builder<static>|AIGeneration whereProgress($value)
  * @method static Builder<static>|AIGeneration whereProjectId($value)
  * @method static Builder<static>|AIGeneration wherePromptUsed($value)
  * @method static Builder<static>|AIGeneration whereResultsData($value)

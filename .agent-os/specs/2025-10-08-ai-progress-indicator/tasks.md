@@ -14,14 +14,14 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 1.4 Update AIGeneration model with progress attribute
   - [x] 1.5 Verify model tests pass
 
-- [ ] 2. Create AIProgressIndicator Livewire Component
-  - [ ] 2.1 Write tests for AIProgressIndicator component
-  - [ ] 2.2 Create AIProgressIndicator Livewire component with make:livewire
-  - [ ] 2.3 Implement progress tracking properties (progress, generationId, isDeepThinking)
-  - [ ] 2.4 Add Livewire event listeners (started, progress, complete)
-  - [ ] 2.5 Implement getProgress() method with polling
-  - [ ] 2.6 Add estimated time calculation logic
-  - [ ] 2.7 Verify component tests pass
+- [x] 2. Create AIProgressIndicator Livewire Component
+  - [x] 2.1 Write tests for AIProgressIndicator component
+  - [x] 2.2 Create AIProgressIndicator Livewire component with make:livewire
+  - [x] 2.3 Implement progress tracking properties (progress, generationId, isDeepThinking)
+  - [x] 2.4 Add Livewire event listeners (started, progress, complete)
+  - [x] 2.5 Implement getProgress() method with polling
+  - [x] 2.6 Add estimated time calculation logic
+  - [x] 2.7 Verify component tests pass
 
 - [ ] 3. Progress Bar UI Implementation
   - [ ] 3.1 Write tests for progress bar visual states
