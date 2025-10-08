@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **AI Progress Indicator** - Real-time visual progress tracking for AI name generation
+  - Live progress bar with smooth CSS transitions (500ms)
+  - Differentiated visual modes: normal (blue) and deep thinking (purple gradient)
+  - Estimated time remaining display (4s normal, 10s deep thinking)
+  - Polling-based progress updates every 500ms
+  - Database-backed progress tracking with 5 milestone updates (0%, 25%, 50%, 75%, 100%)
+  - Green success state animation on completion with fade-out effect
+  - Pulsing light-bulb icon animation for deep thinking mode
+  - Comprehensive ARIA accessibility attributes (role, aria-valuenow, aria-label)
+  - Full mobile responsive design with dark mode support
+  - Graceful error handling and edge case management
+  - Event-driven architecture with Livewire events (ai-generation-started, ai-generation-progress, ai-generation-complete)
+
 - **DNS Pre-screening Domain Filtering** - Intelligent domain availability checking using DNS lookups before API calls
   - Pre-screen domains using DNS records (A, AAAA, CNAME, MX) to identify taken domains
   - Skip expensive API calls for domains with existing DNS records

@@ -299,17 +299,27 @@ class GenerateNamesWithModelJob implements ShouldQueue
 
     /**
      * Update progress percentage and dispatch Livewire event.
+     *
+     * Progress milestones:
+     * - 0%: Job started
+     * - 25%: Prompts built, API request starting
+     * - 50%: API response received
+     * - 75%: Results parsed and validated
+     * - 100%: Complete, results cached
+     *
+     * Uses try/catch to prevent progress update failures from
+     * breaking the main generation workflow.
      */
     protected function updateProgress(int $progress): void
     {
         try {
-            // Refresh the model to get latest data
+            // Refresh the model to get latest data from database
             $this->aiGeneration->refresh();
 
-            // Update progress in database
+            // Update progress percentage in database for persistence
             $this->aiGeneration->update(['progress' => $progress]);
 
-            // Dispatch event for real-time UI updates
+            // Dispatch Livewire event for real-time UI progress bar updates
             event('ai-generation-progress', [
                 'generation_id' => $this->aiGeneration->id,
                 'progress' => $progress,

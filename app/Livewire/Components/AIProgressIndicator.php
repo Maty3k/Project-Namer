@@ -89,6 +89,13 @@ final class AIProgressIndicator extends Component
 
     /**
      * Calculate estimated time remaining based on current progress.
+     *
+     * Uses linear interpolation to estimate completion time:
+     * - Normal mode: 4 seconds total
+     * - Deep thinking mode: 10 seconds total
+     *
+     * The calculation assumes uniform progress rate, though actual
+     * generation time may vary based on API response times.
      */
     private function estimateTime(): void
     {
@@ -98,10 +105,16 @@ final class AIProgressIndicator extends Component
             return;
         }
 
+        // Total expected duration based on generation mode
         $totalTime = $this->isDeepThinking ? 10 : 4; // seconds
+
+        // Calculate what percentage of time has elapsed
         $elapsedProgress = $this->progress / 100;
+
+        // Remaining time = total time × (1 - progress percentage)
         $remaining = $totalTime * (1 - $elapsedProgress);
 
+        // Round up to nearest second, ensure non-negative
         $this->estimatedTimeRemaining = max(0, (int) ceil($remaining));
     }
 
