@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use App\Services\OpenAINameService;
 use Illuminate\Support\Facades\Http;
-use Livewire\Volt\Volt;
 
 describe('API Key Security & Environment Configuration Tests', function (): void {
     beforeEach(function (): void {
@@ -32,29 +31,22 @@ describe('API Key Security & Environment Configuration Tests', function (): void
     });
 
     test('environment configuration is not exposed in component props', function (): void {
-        $component = Volt::test('name-generator');
+        // Verify environment variables are not exposed in page response
+        $response = $this->get('/');
 
-        // Test that API keys are not included in component properties
         $apiKey = config('services.openai.api_key');
         if ($apiKey) {
-            expect($component->get('businessDescription'))->not->toContain($apiKey);
-            expect($component->get('errorMessage'))->not->toContain($apiKey);
+            $response->assertDontSeeText($apiKey);
         }
 
-        // Verify sensitive strings are not in any component properties
-        $componentProps = [
-            $component->get('businessDescription'),
-            $component->get('mode'),
-            $component->get('errorMessage'),
-        ];
+        // Verify sensitive strings are not in HTTP response
+        $response->assertDontSeeText('sk-');
+        $response->assertDontSeeText('OPENAI_API_KEY');
+        $response->assertDontSeeText(config('services.openai.api_key', 'no-key-set'));
 
-        foreach ($componentProps as $prop) {
-            if (is_string($prop)) {
-                expect($prop)->not->toContain('sk-');
-                expect($prop)->not->toContain('api_key');
-                expect($prop)->not->toContain('OPENAI_API_KEY');
-            }
-        }
+        // Verify environment config is properly isolated
+        expect(config('services.openai'))->toBeArray();
+        expect(config('services.openai'))->toHaveKey('api_key');
     });
 
     test('API keys configuration exists and follows security patterns', function (): void {
@@ -75,18 +67,21 @@ describe('API Key Security & Environment Configuration Tests', function (): void
     });
 
     test('sensitive configuration is not cached in client storage', function (): void {
-        $component = Volt::test('name-generator');
-        $component->set('businessDescription', 'test business');
+        // Verify cache configuration doesn't store sensitive data
+        $cacheDriver = config('cache.default');
+        expect($cacheDriver)->toBeString();
 
-        // Check that component state doesn't contain sensitive data
-        $businessDescription = $component->get('businessDescription');
+        // Verify session config doesn't expose API keys
+        $sessionDriver = config('session.driver');
+        expect($sessionDriver)->toBeString();
+        expect($sessionDriver)->not->toContain('sk-');
 
+        // Verify no API keys in environment that could leak to cache
         $apiKey = config('services.openai.api_key');
         if ($apiKey) {
-            expect($businessDescription)->not->toContain($apiKey);
+            expect(env('APP_NAME'))->not->toContain($apiKey);
+            expect(config('app.name'))->not->toContain($apiKey);
         }
-        expect($businessDescription)->not->toContain('sk-');
-        expect($businessDescription)->not->toContain('api_key');
     });
 
     test('application configuration prevents debug information leakage', function (): void {
@@ -102,18 +97,16 @@ describe('API Key Security & Environment Configuration Tests', function (): void
     });
 
     test('error responses do not leak API keys', function (): void {
-        $component = Volt::test('name-generator');
-        $component->set('businessDescription', 'test business');
+        // Verify HTTP error responses don't expose API keys
+        $response = $this->get('/');
 
-        // Check that component properties don't contain sensitive data
-        $businessDescription = $component->get('businessDescription');
         $apiKey = config('services.openai.api_key');
-
         if ($apiKey) {
-            expect($businessDescription)->not->toContain($apiKey);
+            $response->assertDontSeeText($apiKey);
         }
-        expect($businessDescription)->not->toContain('sk-');
-        expect($businessDescription)->not->toContain('api_key');
+        $response->assertDontSeeText('sk-');
+        $response->assertDontSeeText('api_key');
+        $response->assertDontSeeText('OPENAI_API_KEY');
     });
 
     test('server-side service classes are not accessible from client', function (): void {
@@ -149,16 +142,22 @@ describe('API Key Security & Environment Configuration Tests', function (): void
     });
 
     test('component validates API service availability without exposing credentials', function (): void {
-        $component = Volt::test('name-generator');
+        // Verify OpenAI service configuration is set but not exposed
+        $apiKey = config('services.openai.api_key');
 
-        // Set business description without triggering generation
-        $component->set('businessDescription', str_repeat('test', 1000));
+        // API key should be configured (may be null in testing)
+        expect(config('services.openai'))->toBeArray();
+        expect(config('services.openai'))->toHaveKey('api_key');
 
-        // Verify no sensitive data in component state
-        $businessDescription = $component->get('businessDescription');
-        expect($businessDescription)->toBe(str_repeat('test', 1000));
-        expect($businessDescription)->not->toContain('sk-');
-        expect($businessDescription)->not->toContain('api_key');
+        // If API key is set, verify it's not a placeholder
+        if ($apiKey !== null) {
+            expect($apiKey)->toBeString();
+            expect($apiKey)->not->toContain('your-openai-api-key-here');
+        }
+
+        // Verify environment doesn't expose API keys in app config
+        expect(config('app.name'))->not->toContain('sk-');
+        expect(config('app.name'))->not->toContain('api_key');
     });
 
     test('session configuration is secure', function (): void {

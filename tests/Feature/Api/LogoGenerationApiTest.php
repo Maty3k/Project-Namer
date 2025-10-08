@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 
-uses(RefreshDatabase::class)->group("slow");
+uses(RefreshDatabase::class)->group('slow');
 
 beforeEach(function (): void {
     Storage::fake('public');

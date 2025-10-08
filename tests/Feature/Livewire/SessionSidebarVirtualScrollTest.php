@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
-uses(RefreshDatabase::class)->group("slow");
+uses(RefreshDatabase::class)->group('slow');
 
 describe('SessionSidebar Virtual Scrolling', function (): void {
     beforeEach(function (): void {

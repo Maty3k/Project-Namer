@@ -5,6 +5,9 @@ declare(strict_types=1);
 use App\Services\DNSLookupService;
 use Illuminate\Support\Facades\Log;
 use Spatie\Dns\Dns;
+use Tests\TestCase;
+
+uses(TestCase::class);
 
 beforeEach(function (): void {
     $this->service = new DNSLookupService;

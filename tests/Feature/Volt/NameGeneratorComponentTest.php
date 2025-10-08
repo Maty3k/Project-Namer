@@ -3,11 +3,17 @@
 declare(strict_types=1);
 
 use App\Models\User;
+use App\Services\DNSLookupService;
+use App\Services\OpenAINameService;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Sleep;
 use Livewire\Volt\Volt;
 use Prism\Prism\Prism;
 use Prism\Prism\Testing\TextResponseFake;
+
+uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
     $this->user = User::factory()->create();
@@ -21,6 +27,25 @@ beforeEach(function (): void {
     Http::fake([
         '*' => Http::response(['available' => true], 200),
     ]);
+
+    // Fake queue to prevent job dispatching delays
+    Queue::fake();
+
+    // Mock services to prevent real API calls
+    $this->mock(OpenAINameService::class, function ($mock): void {
+        $mock->shouldReceive('generateNames')
+            ->andReturn(['TestName1', 'TestName2', 'TestName3', 'TestName4', 'TestName5']);
+    });
+
+    $this->mock(DNSLookupService::class, function ($mock): void {
+        $mock->shouldReceive('hasDNSRecords')->andReturn(false);
+        $mock->shouldReceive('getDNSRecords')->andReturn([
+            'A' => [],
+            'AAAA' => [],
+            'CNAME' => [],
+            'MX' => [],
+        ]);
+    });
 
     // Mock Prism AI responses for fast tests
     Prism::fake([

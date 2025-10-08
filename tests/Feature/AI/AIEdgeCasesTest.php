@@ -6,9 +6,12 @@ use App\Models\GenerationSession;
 use App\Models\Project;
 use App\Models\User;
 use App\Models\UserAIPreferences;
+use App\Services\DNSLookupService;
+use App\Services\OpenAINameService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
 use Prism\Prism\Prism;
 use Prism\Prism\Testing\TextResponseFake;
@@ -35,6 +38,26 @@ class AIEdgeCasesTest extends TestCase
         // Prevent any actual HTTP requests - all tests should use Http::fake()
         Http::preventStrayRequests();
         Http::fake(['*' => Http::response(['data' => 'mocked'], 200)]);
+
+        // Fake queue to prevent job dispatching delays
+        Queue::fake();
+
+        // Mock OpenAI service to prevent real API calls
+        $this->mock(OpenAINameService::class, function ($mock): void {
+            $mock->shouldReceive('generateNames')
+                ->andReturn(['EdgeCaseTest', 'TestName', 'AnotherName', 'ValidName', 'CreativeName']);
+        });
+
+        // Mock DNS service to prevent real DNS lookups
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')->andReturn(false);
+            $mock->shouldReceive('getDNSRecords')->andReturn([
+                'A' => [],
+                'AAAA' => [],
+                'CNAME' => [],
+                'MX' => [],
+            ]);
+        });
 
         // Mock Prism by default
         Prism::fake([

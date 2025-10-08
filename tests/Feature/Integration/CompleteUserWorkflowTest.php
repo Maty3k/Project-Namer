@@ -11,8 +11,12 @@ use App\Models\LogoGeneration;
 use App\Models\Project;
 use App\Models\UploadedLogo;
 use App\Models\User;
+use App\Services\DNSLookupService;
+use App\Services\OpenAINameService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -21,6 +25,7 @@ use Tests\TestCase;
  * Complete User Workflow Integration Tests
  * Task 9.1: Test complete user workflow from name generation to logo gallery
  * Task 9.6: Test smooth animations work consistently across all features
+ *
  * @group slow
  */
 class CompleteUserWorkflowTest extends TestCase
@@ -41,6 +46,32 @@ class CompleteUserWorkflowTest extends TestCase
             'name' => 'Test Project',
             'description' => 'Integration test project for complete workflow',
         ]);
+
+        // Prevent any external HTTP calls
+        Http::preventStrayRequests();
+        Http::fake([
+            '*' => Http::response(['available' => true], 200),
+        ]);
+
+        // Fake queue to prevent job dispatching delays
+        Queue::fake();
+
+        // Mock OpenAI service to prevent real API calls
+        $this->mock(OpenAINameService::class, function ($mock): void {
+            $mock->shouldReceive('generateNames')
+                ->andReturn(['WorkflowTest', 'IntegrationName', 'TestBrand', 'CreativeFlow', 'BrightIdea']);
+        });
+
+        // Mock DNS service to prevent real DNS lookups
+        $this->mock(DNSLookupService::class, function ($mock): void {
+            $mock->shouldReceive('hasDNSRecords')->andReturn(false);
+            $mock->shouldReceive('getDNSRecords')->andReturn([
+                'A' => [],
+                'AAAA' => [],
+                'CNAME' => [],
+                'MX' => [],
+            ]);
+        });
     }
 
     #[Test]

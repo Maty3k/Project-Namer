@@ -46,8 +46,7 @@ describe('Domain Filtering in Name Generation', function (): void {
     it('filters domains with DNS records from results', function (): void {
         // Override DNS mock for this specific test
         $this->mock(DNSLookupService::class, function ($mock): void {
-            $mock->shouldReceive('hasDNSRecords')->andReturnUsing(fn ($domain) =>
-                str_contains($domain, '.com') || str_contains($domain, '.org'));
+            $mock->shouldReceive('hasDNSRecords')->andReturnUsing(fn ($domain) => str_contains($domain, '.com') || str_contains($domain, '.org'));
             $mock->shouldReceive('getDNSRecords')->andReturn([
                 'A' => [['ip' => '192.0.2.1']],
                 'AAAA' => [],
@@ -68,7 +67,7 @@ describe('Domain Filtering in Name Generation', function (): void {
         expect($domainResults)->not->toBeEmpty();
 
         // Verify DNS filtering logic is working
-        foreach ($domainResults as $name => $domains) {
+        foreach ($domainResults as $domains) {
             expect($domains)->toBeArray();
             expect($domains)->not->toBeEmpty();
 

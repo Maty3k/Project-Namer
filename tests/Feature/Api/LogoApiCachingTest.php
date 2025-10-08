@@ -8,7 +8,7 @@ use App\Models\LogoGeneration;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 
-uses(RefreshDatabase::class)->group("slow");
+uses(RefreshDatabase::class)->group('slow');
 
 beforeEach(function (): void {
     Cache::flush();

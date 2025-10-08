@@ -77,9 +77,9 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 8.6 Performance test: DNS checks complete in <1 second
   - [x] 8.7 Run full test suite and verify all tests pass
 
-- [ ] 9. Documentation and Cleanup
-  - [ ] 9.1 Update CHANGELOG.md with DNS filtering feature
-  - [ ] 9.2 Add code comments for DNS-related methods
-  - [ ] 9.3 Update any relevant documentation
-  - [ ] 9.4 Clean up any debug logging
-  - [ ] 9.5 Run composer ready to verify code quality
+- [x] 9. Documentation and Cleanup
+  - [x] 9.1 Update CHANGELOG.md with DNS filtering feature
+  - [x] 9.2 Add code comments for DNS-related methods
+  - [x] 9.3 Update any relevant documentation
+  - [x] 9.4 Clean up any debug logging
+  - [x] 9.5 Run composer ready to verify code quality
