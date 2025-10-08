@@ -29,6 +29,7 @@ final class AIGenerationFactory extends Factory
             'generation_mode' => $this->faker->randomElement(['creative', 'professional', 'brandable', 'tech-focused']),
             'deep_thinking' => $this->faker->boolean(30),
             'status' => $this->faker->randomElement(['pending', 'running', 'completed', 'failed']),
+            'progress' => 0,
             'prompt_used' => $this->faker->sentence(),
             'results_data' => [
                 'names' => $this->faker->words(5),

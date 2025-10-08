@@ -259,3 +259,66 @@ test('AIGeneration returns null duration when not started', function (): void {
 
     expect($aiGeneration->getDurationInSeconds())->toBeNull();
 });
+
+test('AIGeneration can track progress percentage', function (): void {
+    $user = User::factory()->create();
+    $project = Project::factory()->create(['user_id' => $user->id]);
+
+    $aiGeneration = AIGeneration::factory()->create([
+        'project_id' => $project->id,
+        'user_id' => $user->id,
+        'progress' => 45,
+    ]);
+
+    expect($aiGeneration->progress)->toBe(45);
+});
+
+test('AIGeneration progress defaults to 0', function (): void {
+    $user = User::factory()->create();
+    $project = Project::factory()->create(['user_id' => $user->id]);
+
+    $aiGeneration = AIGeneration::factory()->create([
+        'project_id' => $project->id,
+        'user_id' => $user->id,
+    ]);
+
+    expect($aiGeneration->progress)->toBe(0);
+});
+
+test('AIGeneration can update progress', function (): void {
+    $user = User::factory()->create();
+    $project = Project::factory()->create(['user_id' => $user->id]);
+
+    $aiGeneration = AIGeneration::factory()->create([
+        'project_id' => $project->id,
+        'user_id' => $user->id,
+        'status' => 'running',
+        'progress' => 0,
+    ]);
+
+    $aiGeneration->update(['progress' => 25]);
+    expect($aiGeneration->fresh()->progress)->toBe(25);
+
+    $aiGeneration->update(['progress' => 50]);
+    expect($aiGeneration->fresh()->progress)->toBe(50);
+
+    $aiGeneration->update(['progress' => 100]);
+    expect($aiGeneration->fresh()->progress)->toBe(100);
+});
+
+test('AIGeneration includes progress in status snapshot', function (): void {
+    $user = User::factory()->create();
+    $project = Project::factory()->create(['user_id' => $user->id]);
+
+    $aiGeneration = AIGeneration::factory()->create([
+        'project_id' => $project->id,
+        'user_id' => $user->id,
+        'status' => 'running',
+        'progress' => 75,
+    ]);
+
+    $snapshot = $aiGeneration->getStatusSnapshot();
+
+    expect($snapshot)->toHaveKey('progress')
+        ->and($snapshot['progress'])->toBe(75);
+});

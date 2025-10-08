@@ -7,12 +7,12 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
 
 ## Tasks
 
-- [ ] 1. Database Schema Updates
-  - [ ] 1.1 Write tests for AIGeneration model progress tracking
-  - [ ] 1.2 Create migration to add progress column to ai_generations table
-  - [ ] 1.3 Run migration and verify schema changes
-  - [ ] 1.4 Update AIGeneration model with progress attribute
-  - [ ] 1.5 Verify model tests pass
+- [x] 1. Database Schema Updates
+  - [x] 1.1 Write tests for AIGeneration model progress tracking
+  - [x] 1.2 Create migration to add progress column to ai_generations table
+  - [x] 1.3 Run migration and verify schema changes
+  - [x] 1.4 Update AIGeneration model with progress attribute
+  - [x] 1.5 Verify model tests pass
 
 - [ ] 2. Create AIProgressIndicator Livewire Component
   - [ ] 2.1 Write tests for AIProgressIndicator component

@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $generation_mode
  * @property bool $deep_thinking
  * @property string $status
+ * @property int $progress
  * @property string $prompt_used
  * @property array<array-key, mixed>|null $results_data
  * @property array<array-key, mixed>|null $execution_metadata
@@ -88,6 +89,7 @@ final class AIGeneration extends Model
         'generation_mode',
         'deep_thinking',
         'status',
+        'progress',
         'prompt_used',
         'results_data',
         'execution_metadata',
@@ -108,6 +110,7 @@ final class AIGeneration extends Model
             'deep_thinking' => 'boolean',
             'results_data' => 'array',
             'execution_metadata' => 'array',
+            'progress' => 'integer',
             'total_names_generated' => 'integer',
             'total_response_time_ms' => 'integer',
             'total_tokens_used' => 'integer',
@@ -293,6 +296,7 @@ final class AIGeneration extends Model
             'id' => $this->id,
             'generation_session_id' => $this->generation_session_id,
             'status' => $this->status,
+            'progress' => $this->progress,
             'total_names_generated' => $this->total_names_generated,
             'duration_seconds' => $this->getDurationInSeconds(),
             'is_completed' => $this->isCompleted(),
