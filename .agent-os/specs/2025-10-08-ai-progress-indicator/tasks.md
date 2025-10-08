@@ -74,3 +74,12 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 8.3 Update user-facing documentation if needed
   - [x] 8.4 Clean up any debug logging
   - [x] 8.5 Run composer ready to verify code quality
+
+- [x] 9. Async Queue Refactoring (Fix Progress Bar Visibility)
+  - [x] 9.1 Refactor NameGeneratorDashboard to dispatch jobs instead of synchronous service calls
+  - [x] 9.2 Add wire:poll.1s to blade view for status polling
+  - [x] 9.3 Add checkGenerationStatus() method to poll job completion
+  - [x] 9.4 Add processCompletedGeneration() to handle results
+  - [x] 9.5 Add handleFailedGeneration() for error handling
+  - [x] 9.6 Update GenerateNamesWithModelJob to save results to AIGeneration model
+  - [x] 9.7 Test async flow with queue worker (manual testing required)

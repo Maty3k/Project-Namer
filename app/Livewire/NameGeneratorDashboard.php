@@ -1006,7 +1006,11 @@ class NameGeneratorDashboard extends Component
                 $aiGeneration,
                 $modelId,
                 $this->businessIdea,
-                10 // number of names
+                [
+                    'mode' => $this->generationMode,
+                    'deep_thinking' => $this->deepThinking,
+                    'count' => 10,
+                ]
             )->onQueue('ai-generation');
 
             // The component will poll to check completion

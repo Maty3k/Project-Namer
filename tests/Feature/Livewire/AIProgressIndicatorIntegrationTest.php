@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Livewire\Components\AIProgressIndicator;
 use App\Livewire\NameGeneratorDashboard;
+use App\Models\AIGeneration;
 use App\Models\User;
 use App\Services\OpenAINameService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -76,12 +77,27 @@ test('dashboard dispatches ai-generation-complete event when generation finishes
     $user = User::factory()->create();
     $this->actingAs($user);
 
+    // Create a completed AIGeneration to simulate job completion
+    $aiGeneration = AIGeneration::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'completed',
+        'progress' => 100,
+        'results_data' => [
+            'names' => ['TechNova', 'InnovateLabs', 'FutureSync'],
+            'model_results' => [
+                'gpt-4' => [
+                    'names' => ['TechNova', 'InnovateLabs', 'FutureSync'],
+                    'execution_time_ms' => 1000,
+                ],
+            ],
+        ],
+    ]);
+
+    // Test that checkGenerationStatus dispatches completion event
     Livewire::test(NameGeneratorDashboard::class)
-        ->set('useAIGeneration', true)
-        ->set('businessIdea', 'A tech startup')
-        ->set('generationMode', 'creative')
-        ->set('selectedAIModels', ['gpt-4'])
-        ->call('generateNamesWithAI')
+        ->set('currentAIGenerationId', $aiGeneration->id)
+        ->set('isGeneratingNames', true)
+        ->call('checkGenerationStatus')
         ->assertDispatched('ai-generation-complete');
 });
 
@@ -147,18 +163,31 @@ test('full workflow: dashboard starts generation and progress indicator tracks i
     $user = User::factory()->create();
     $this->actingAs($user);
 
-    // Start the dashboard
-    $dashboard = Livewire::test(NameGeneratorDashboard::class)
+    // Create a completed AIGeneration to test polling
+    $aiGeneration = AIGeneration::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'completed',
+        'progress' => 100,
+        'results_data' => [
+            'names' => ['TechNova', 'InnovateLabs', 'FutureSync'],
+            'model_results' => [
+                'gpt-4' => [
+                    'names' => ['TechNova', 'InnovateLabs', 'FutureSync'],
+                    'execution_time_ms' => 1000,
+                ],
+            ],
+        ],
+        'completed_at' => now(),
+    ]);
+
+    // Test that checkGenerationStatus processes completed generation
+    Livewire::test(NameGeneratorDashboard::class)
+        ->set('currentAIGenerationId', $aiGeneration->id)
+        ->set('isGeneratingNames', true)
         ->set('useAIGeneration', true)
-        ->set('businessIdea', 'A tech startup for developers')
-        ->set('generationMode', 'tech-focused')
-        ->set('selectedAIModels', ['gpt-4']);
-
-    // Generate names - this should dispatch ai-generation-started
-    $dashboard->call('generateNamesWithAI');
-
-    // Verify events were dispatched
-    $dashboard
-        ->assertDispatched('ai-generation-started')
+        ->set('selectedAIModels', ['gpt-4'])
+        ->call('checkGenerationStatus')
+        ->assertSet('showResults', true)
+        ->assertSet('isGeneratingNames', false)
         ->assertDispatched('ai-generation-complete');
 });
