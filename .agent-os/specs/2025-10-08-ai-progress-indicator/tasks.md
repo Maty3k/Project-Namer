@@ -50,23 +50,23 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 5.6 Test with both normal and deep thinking modes
   - [x] 5.7 Verify integration tests pass
 
-- [x] 6. Styling and Animations
-  - [x] 6.1 Write tests for animation behavior
-  - [x] 6.2 Add Tailwind CSS transitions for smooth progress bar movement
-  - [x] 6.3 Implement completion animation (brief success state)
-  - [x] 6.4 Add loading spinner or pulsing effect during deep thinking
-  - [x] 6.5 Ensure mobile responsive design
-  - [x] 6.6 Test animations in different themes (light/dark mode)
-  - [x] 6.7 Verify animation tests pass
+- [ ] 6. Styling and Animations
+  - [ ] 6.1 Write tests for animation behavior
+  - [ ] 6.2 Add Tailwind CSS transitions for smooth progress bar movement
+  - [ ] 6.3 Implement completion animation (brief success state)
+  - [ ] 6.4 Add loading spinner or pulsing effect during deep thinking
+  - [ ] 6.5 Ensure mobile responsive design
+  - [ ] 6.6 Test animations in different themes (light/dark mode)
+  - [ ] 6.7 Verify animation tests pass
 
-- [ ] 7. Testing and Edge Cases
-  - [ ] 7.1 Write tests for edge cases (cancellation, errors, timeouts)
-  - [ ] 7.2 Test progress bar behavior when generation fails
-  - [ ] 7.3 Test progress bar with rapid generation completion (<1s)
-  - [ ] 7.4 Test progress bar with slow generation (>15s)
-  - [ ] 7.5 Test concurrent generations (multiple tabs/sessions)
-  - [ ] 7.6 Verify accessibility with screen readers
-  - [ ] 7.7 Run full test suite and verify all tests pass
+- [x] 7. Testing and Edge Cases
+  - [x] 7.1 Write tests for edge cases (cancellation, errors, timeouts)
+  - [x] 7.2 Test progress bar behavior when generation fails
+  - [x] 7.3 Test progress bar with rapid generation completion (<1s)
+  - [x] 7.4 Test progress bar with slow generation (>15s)
+  - [x] 7.5 Test concurrent generations (multiple tabs/sessions)
+  - [x] 7.6 Verify accessibility with screen readers
+  - [x] 7.7 Run full test suite and verify all tests pass
 
 - [ ] 8. Documentation and Cleanup
   - [ ] 8.1 Update CHANGELOG.md with progress indicator feature
