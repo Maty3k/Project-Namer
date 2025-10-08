@@ -26,20 +26,6 @@
                     </p>
                 </div>
 
-                {{-- DEBUG BOX - ALWAYS VISIBLE --}}
-                <div class="my-6 p-6 bg-yellow-100 dark:bg-yellow-900/20 rounded-xl border-2 border-yellow-500">
-                    <div class="text-center">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                            🔍 DEBUG INFO
-                        </h3>
-                        <div class="text-sm text-gray-700 dark:text-gray-300 space-y-1">
-                            <p>useAIGeneration: <strong>{{ $useAIGeneration ? 'TRUE ✅' : 'FALSE ❌' }}</strong></p>
-                            <p>isGeneratingNames: <strong>{{ $isGeneratingNames ? 'TRUE ✅' : 'FALSE ❌' }}</strong></p>
-                            <p>Form will call: <strong>{{ $useAIGeneration ? 'generateNamesWithAI' : 'generateNames' }}</strong></p>
-                        </div>
-                    </div>
-                </div>
-
                 {{-- Business Idea Input Form --}}
                 <flux:card class="p-8">
                     <form wire:submit="{{ $useAIGeneration ? 'generateNamesWithAI' : 'generateNames' }}" class="space-y-6">
@@ -89,49 +75,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        {{-- AI Progress Indicator - DEBUG VERSION --}}
-                        @if($useAIGeneration)
-                            {{-- Debug: Always show if AI is enabled --}}
-                            <div class="my-6 p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl border-2 border-blue-200 dark:border-blue-800">
-                                <div class="mb-3 text-center">
-                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                        DEBUG: AI Status Check
-                                    </h3>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400">
-                                        useAIGeneration: {{ $useAIGeneration ? 'TRUE' : 'FALSE' }}<br>
-                                        isGeneratingNames: {{ $isGeneratingNames ? 'TRUE' : 'FALSE' }}
-                                    </p>
-                                </div>
-
-                                @if($isGeneratingNames)
-                                    <!-- Title -->
-                                    <div class="mb-3 text-center">
-                                        <h3 class="text-lg font-semibold text-green-600 dark:text-green-400">
-                                            ✅ GENERATION ACTIVE - Progress bar should be visible!
-                                        </h3>
-                                    </div>
-
-                                    <!-- Progress Bar Container -->
-                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-6 overflow-hidden mb-3 shadow-inner">
-                                        <div class="h-full bg-blue-500 transition-all duration-500 ease-out animate-pulse"
-                                             style="width: 50%">
-                                            <span class="text-white text-xs font-bold ml-2">Processing...</span>
-                                        </div>
-                                    </div>
-
-                                    <!-- Status Text -->
-                                    <div class="flex items-center justify-center text-sm text-gray-700 dark:text-gray-300">
-                                        <flux:icon.sparkles class="w-4 h-4 mr-2 text-blue-600 dark:text-blue-400 animate-spin" />
-                                        <span>AI is working on your names...</span>
-                                    </div>
-                                @else
-                                    <div class="text-center text-gray-600 dark:text-gray-400">
-                                        ⏸️ Not currently generating. Click "Generate Business Names" to start.
-                                    </div>
-                                @endif
-                            </div>
-                        @endif
 
                         {{-- AI Generation Section --}}
                         <div class="border-t pt-6 space-y-6">
@@ -247,6 +190,37 @@
 
                     </form>
                 </flux:card>
+
+                {{-- AI Progress Bar - Positioned between generator and history --}}
+                @if($useAIGeneration && $isGeneratingNames)
+                    <div class="w-full max-w-4xl mx-auto">
+                        <div class="p-8 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl border-2 border-blue-300 dark:border-blue-700 shadow-lg">
+                            <!-- Title -->
+                            <div class="mb-4 text-center">
+                                <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
+                                    🤖 AI is Generating Your Business Names
+                                </h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                                    This may take a few seconds...
+                                </p>
+                            </div>
+
+                            <!-- Progress Bar Container -->
+                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-8 overflow-hidden mb-4 shadow-inner">
+                                <div class="h-full bg-gradient-to-r from-blue-500 to-purple-600 transition-all duration-500 ease-out animate-pulse flex items-center justify-center"
+                                     style="width: 70%">
+                                    <span class="text-white text-sm font-bold">Processing...</span>
+                                </div>
+                            </div>
+
+                            <!-- Status Text -->
+                            <div class="flex items-center justify-center text-base text-gray-700 dark:text-gray-300">
+                                <flux:icon.sparkles class="w-5 h-5 mr-2 text-purple-600 dark:text-purple-400 animate-spin" />
+                                <span class="font-medium">AI models are analyzing your business idea</span>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
         </flux:tab.panel>
 
