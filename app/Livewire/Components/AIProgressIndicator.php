@@ -105,7 +105,7 @@ final class AIProgressIndicator extends Component
         $this->estimatedTimeRemaining = max(0, (int) ceil($remaining));
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         return view('livewire.components.a-i-progress-indicator');
     }

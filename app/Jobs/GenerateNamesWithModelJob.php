@@ -309,11 +309,11 @@ class GenerateNamesWithModelJob implements ShouldQueue
             // Update progress in database
             $this->aiGeneration->update(['progress' => $progress]);
 
-            // Dispatch Livewire event for real-time UI updates
-            event(new \Illuminate\Broadcasting\BroadcastEvent('ai-generation-progress', [
+            // Dispatch event for real-time UI updates
+            event('ai-generation-progress', [
                 'generation_id' => $this->aiGeneration->id,
                 'progress' => $progress,
-            ]));
+            ]);
 
             Log::debug('Progress updated', [
                 'model' => $this->modelId,
