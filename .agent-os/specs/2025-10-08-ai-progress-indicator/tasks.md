@@ -33,13 +33,13 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 3.7 Add ARIA accessibility attributes
   - [x] 3.8 Verify UI tests pass
 
-- [ ] 4. Progress Tracking in AI Generation Jobs
-  - [ ] 4.1 Write tests for progress updates in GenerateNamesWithModelJob
-  - [ ] 4.2 Update GenerateNamesWithModelJob to set progress at key milestones
-  - [ ] 4.3 Dispatch Livewire events for progress updates (0%, 25%, 50%, 75%, 100%)
+- [x] 4. Progress Tracking in AI Generation Jobs
+  - [x] 4.1 Write tests for progress updates in GenerateNamesWithModelJob
+  - [x] 4.2 Update GenerateNamesWithModelJob to set progress at key milestones
+  - [x] 4.3 Dispatch Livewire events for progress updates (0%, 25%, 50%, 75%, 100%)
   - [ ] 4.4 Update ProcessAIGenerationBatch to track overall progress
-  - [ ] 4.5 Add error handling for progress updates
-  - [ ] 4.6 Verify job tests pass
+  - [x] 4.5 Add error handling for progress updates
+  - [x] 4.6 Verify job tests pass
 
 - [ ] 5. Integrate Progress Indicator into NameGeneratorDashboard
   - [ ] 5.1 Write tests for progress indicator integration

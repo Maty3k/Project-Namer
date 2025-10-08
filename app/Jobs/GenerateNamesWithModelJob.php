@@ -88,6 +88,9 @@ class GenerateNamesWithModelJob implements ShouldQueue
                 'session' => $this->aiGeneration->generation_session_id,
             ]);
 
+            // Progress: 0% - Job started
+            $this->updateProgress(0);
+
             // Update model status to running
             $this->updateModelStatus('running');
 
@@ -104,6 +107,9 @@ class GenerateNamesWithModelJob implements ShouldQueue
             // Build prompts
             $prompts = $promptBuilder->build($this->prompt, $this->modelId, $count, $mode, $deepThinking);
 
+            // Progress: 25% - Prompts built, API request starting
+            $this->updateProgress(25);
+
             // Generate names using Prism directly
             $response = Prism::text()
                 ->using($config['provider'], $config['model'])
@@ -115,8 +121,14 @@ class GenerateNamesWithModelJob implements ShouldQueue
                 ])
                 ->asText();
 
+            // Progress: 50% - API response received
+            $this->updateProgress(50);
+
             // Parse results
             $results = $this->parseResponse($response->text, $count);
+
+            // Progress: 75% - Results parsed
+            $this->updateProgress(75);
 
             $endTime = microtime(true);
             $executionTime = ($endTime - $startTime) * 1000; // milliseconds
@@ -143,6 +155,9 @@ class GenerateNamesWithModelJob implements ShouldQueue
             ];
 
             Cache::put($cacheKey, $resultData, 600); // Cache for 10 minutes
+
+            // Progress: 100% - Completed
+            $this->updateProgress(100);
 
             // Update model status to completed
             $this->updateModelStatus('completed', [
@@ -280,6 +295,40 @@ class GenerateNamesWithModelJob implements ShouldQueue
 
         // Retry for network errors, rate limits, etc.
         return true;
+    }
+
+    /**
+     * Update progress percentage and dispatch Livewire event.
+     */
+    protected function updateProgress(int $progress): void
+    {
+        try {
+            // Refresh the model to get latest data
+            $this->aiGeneration->refresh();
+
+            // Update progress in database
+            $this->aiGeneration->update(['progress' => $progress]);
+
+            // Dispatch Livewire event for real-time UI updates
+            event(new \Illuminate\Broadcasting\BroadcastEvent('ai-generation-progress', [
+                'generation_id' => $this->aiGeneration->id,
+                'progress' => $progress,
+            ]));
+
+            Log::debug('Progress updated', [
+                'model' => $this->modelId,
+                'generation_id' => $this->aiGeneration->id,
+                'progress' => $progress,
+            ]);
+        } catch (Exception $e) {
+            // Don't fail the job if progress update fails
+            Log::warning('Failed to update progress', [
+                'model' => $this->modelId,
+                'generation_id' => $this->aiGeneration->id,
+                'progress' => $progress,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**
