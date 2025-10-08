@@ -1,5 +1,5 @@
 <div wire:poll.500ms="getProgress"
-     class="@if(!$generationId || $isComplete) hidden @endif w-full">
+     class="@if(!$generationId) hidden @endif w-full transition-opacity duration-300 {{ $isComplete ? 'opacity-0' : 'opacity-100' }}">
 
     <!-- Progress Bar Container -->
     <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden mb-2"
@@ -9,7 +9,9 @@
          aria-valuemax="100"
          aria-label="{{ $isDeepThinking ? 'Deep Thinking Mode Progress' : 'AI Name Generation Progress' }}">
         <div class="h-full transition-all duration-500 ease-out
-                    @if($isDeepThinking)
+                    @if($progress === 100)
+                        bg-green-500
+                    @elseif($isDeepThinking)
                         bg-gradient-to-r from-purple-500 via-violet-500 to-purple-600
                     @else
                         bg-blue-500
@@ -21,8 +23,13 @@
     <!-- Status Text -->
     <div class="flex items-center justify-between text-sm">
         <div class="flex items-center gap-2">
-            @if($isDeepThinking)
-                <flux:icon.light-bulb class="w-4 h-4 text-purple-600 dark:text-purple-400" />
+            @if($progress === 100)
+                <flux:icon.check-circle class="w-4 h-4 text-green-600 dark:text-green-400" />
+                <span class="text-green-700 dark:text-green-300 font-medium">
+                    Complete!
+                </span>
+            @elseif($isDeepThinking)
+                <flux:icon.light-bulb class="w-4 h-4 text-purple-600 dark:text-purple-400 animate-pulse" />
                 <span class="text-purple-700 dark:text-purple-300 font-medium">
                     Deep Thinking Mode
                 </span>
@@ -35,7 +42,9 @@
         </div>
 
         <div class="text-gray-600 dark:text-gray-400">
-            @if($estimatedTimeRemaining > 0)
+            @if($progress === 100)
+                <span class="text-green-600 dark:text-green-400">✓</span>
+            @elseif($estimatedTimeRemaining > 0)
                 ~{{ $estimatedTimeRemaining }}s remaining
             @else
                 Almost done...

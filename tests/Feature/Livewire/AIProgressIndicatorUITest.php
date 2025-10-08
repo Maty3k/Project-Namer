@@ -90,7 +90,7 @@ test('progress bar displays estimated time remaining', function (): void {
         ->assertSee('remaining');
 });
 
-test('progress bar shows "Almost done" when time is near completion', function (): void {
+test('progress bar shows completion message when done', function (): void {
     $user = User::factory()->create();
     $project = Project::factory()->create(['user_id' => $user->id]);
     $generation = AIGeneration::factory()->create([
@@ -108,7 +108,7 @@ test('progress bar shows "Almost done" when time is near completion', function (
         ->dispatch('ai-generation-progress', [
             'progress' => 100,
         ])
-        ->assertSee('Almost done');
+        ->assertSee('Complete!');
 });
 
 test('progress bar has ARIA accessibility attributes', function (): void {
