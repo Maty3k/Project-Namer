@@ -23,15 +23,15 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 2.6 Add estimated time calculation logic
   - [x] 2.7 Verify component tests pass
 
-- [ ] 3. Progress Bar UI Implementation
-  - [ ] 3.1 Write tests for progress bar visual states
-  - [ ] 3.2 Create Blade view for AIProgressIndicator component
-  - [ ] 3.3 Add progress bar with CSS transitions
-  - [ ] 3.4 Implement normal mode styling (blue progress bar)
-  - [ ] 3.5 Implement deep thinking mode styling (purple gradient, brain icon)
-  - [ ] 3.6 Add estimated time remaining display
-  - [ ] 3.7 Add ARIA accessibility attributes
-  - [ ] 3.8 Verify UI tests pass
+- [x] 3. Progress Bar UI Implementation
+  - [x] 3.1 Write tests for progress bar visual states
+  - [x] 3.2 Create Blade view for AIProgressIndicator component
+  - [x] 3.3 Add progress bar with CSS transitions
+  - [x] 3.4 Implement normal mode styling (blue progress bar)
+  - [x] 3.5 Implement deep thinking mode styling (purple gradient, brain icon)
+  - [x] 3.6 Add estimated time remaining display
+  - [x] 3.7 Add ARIA accessibility attributes
+  - [x] 3.8 Verify UI tests pass
 
 - [ ] 4. Progress Tracking in AI Generation Jobs
   - [ ] 4.1 Write tests for progress updates in GenerateNamesWithModelJob
