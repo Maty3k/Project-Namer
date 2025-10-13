@@ -67,15 +67,8 @@ test('Dashboard can generate more names and append to existing', function (): vo
     // Should have 3 names initially
     expect($component->get('generatedNames'))->toHaveCount(3);
 
-    // Click generate more - sets append flag and switches to generate tab
+    // Click generate more - automatically generates and appends
     $component->call('generateMoreNames');
-
-    // Should switch to generate tab
-    $component->assertSet('activeTab', 'generate');
-    $component->assertSet('appendToExisting', true);
-
-    // User can now modify settings, then generate more names
-    $component->call('generateNames');
 
     // Should now have 6 names total
     expect($component->get('generatedNames'))->toHaveCount(6);
@@ -85,6 +78,9 @@ test('Dashboard can generate more names and append to existing', function (): vo
 
     // Append flag should be reset after generation
     $component->assertSet('appendToExisting', false);
+
+    // Should stay on results tab
+    $component->assertSet('activeTab', 'results');
 });
 
 test('Dashboard removes duplicate names when appending', function (): void {
@@ -104,9 +100,8 @@ test('Dashboard removes duplicate names when appending', function (): void {
         ->set('generationMode', 'professional')
         ->call('generateNames');
 
-    // Click generate more, then generate
-    $component->call('generateMoreNames')
-        ->call('generateNames');
+    // Click generate more - automatically generates and deduplicates
+    $component->call('generateMoreNames');
 
     // Should have 5 unique names (not 6)
     expect($component->get('generatedNames'))->toHaveCount(5);
@@ -115,12 +110,15 @@ test('Dashboard removes duplicate names when appending', function (): void {
     expect($component->get('generatedNames'))->toContain('Name1', 'Name2', 'Name3', 'Name4', 'Name5');
 });
 
-test('Dashboard preserves existing business idea when generating more', function (): void {
-    // Mock OpenAI service
+test('Dashboard preserves settings when generating more', function (): void {
+    // Mock OpenAI service for two generations
     $mockService = Mockery::mock(OpenAINameService::class);
     $mockService->shouldReceive('generateNames')
-        ->once()
-        ->andReturn(['Name1', 'Name2', 'Name3']);
+        ->twice()
+        ->andReturn(
+            ['Name1', 'Name2', 'Name3'],
+            ['Name4', 'Name5', 'Name6']
+        );
     $this->app->instance(OpenAINameService::class, $mockService);
 
     // Generate initial names
@@ -129,14 +127,15 @@ test('Dashboard preserves existing business idea when generating more', function
         ->set('generationMode', 'tech-focused')
         ->call('generateNames');
 
-    // Click generate more - switches to generate tab
+    // Click generate more - automatically uses same settings
     $component->call('generateMoreNames');
 
-    // Business idea should still be populated
+    // Settings should be preserved
     $component->assertSet('businessIdea', 'A fitness app');
     $component->assertSet('generationMode', 'tech-focused');
-    $component->assertSet('activeTab', 'generate');
-    $component->assertSet('appendToExisting', true);
+
+    // Should have appended names
+    expect($component->get('generatedNames'))->toHaveCount(6);
 });
 
 test('Dashboard resets append flag on generation failure', function (): void {
@@ -165,12 +164,8 @@ test('Dashboard resets append flag on generation failure', function (): void {
         ->set('generationMode', 'creative')
         ->call('generateNames');
 
-    // Click generate more to set append flag
+    // Click generate more - automatically tries to generate but fails (uses fallback)
     $component->call('generateMoreNames');
-    $component->assertSet('appendToExisting', true);
-
-    // Try to generate more but it fails (uses fallback)
-    $component->call('generateNames');
 
     // Append flag should be reset even on failure
     $component->assertSet('appendToExisting', false);
@@ -198,13 +193,8 @@ test('Dashboard generate more works with AI generation enabled', function (): vo
     // Should have 3 names initially
     expect($component->get('generatedNames'))->toHaveCount(3);
 
-    // Click generate more - sets append flag and switches to generate tab
+    // Click generate more - automatically generates with AI
     $component->call('generateMoreNames');
-    $component->assertSet('activeTab', 'generate');
-    $component->assertSet('appendToExisting', true);
-
-    // User can modify settings, then generate more with AI
-    $component->call('generateNamesWithAI');
 
     // Should now have 6 names total
     expect($component->get('generatedNames'))->toHaveCount(6);
@@ -214,16 +204,19 @@ test('Dashboard generate more works with AI generation enabled', function (): vo
 
     // Append flag should be reset
     $component->assertSet('appendToExisting', false);
+
+    // Should stay on results tab
+    $component->assertSet('activeTab', 'results');
 });
 
-test('Dashboard allows modifying business idea before generating more', function (): void {
+test('Dashboard generates more with same business idea automatically', function (): void {
     // Mock OpenAI service
     $mockService = Mockery::mock(OpenAINameService::class);
     $mockService->shouldReceive('generateNames')
         ->twice()
         ->andReturn(
             ['Coffee1', 'Coffee2', 'Coffee3'],
-            ['Tea1', 'Tea2', 'Tea3']
+            ['Coffee4', 'Coffee5', 'Coffee6']
         );
     $this->app->instance(OpenAINameService::class, $mockService);
 
@@ -233,29 +226,28 @@ test('Dashboard allows modifying business idea before generating more', function
         ->set('generationMode', 'creative')
         ->call('generateNames');
 
-    // Click generate more
+    // Click generate more - automatically generates with same idea
     $component->call('generateMoreNames');
-    $component->assertSet('appendToExisting', true);
-
-    // User modifies business idea
-    $component->set('businessIdea', 'A tea shop');
-
-    // Generate more with modified idea
-    $component->call('generateNames');
 
     // Should have 6 names total
     expect($component->get('generatedNames'))->toHaveCount(6);
 
+    // Business idea should be unchanged
+    $component->assertSet('businessIdea', 'A coffee shop');
+
     // Should contain names from both generations
-    expect($component->get('generatedNames'))->toContain('Coffee1', 'Tea1');
+    expect($component->get('generatedNames'))->toContain('Coffee1', 'Coffee4');
 });
 
-test('Dashboard can cancel append mode', function (): void {
+test('Dashboard generates immediately when clicking generate more button', function (): void {
     // Mock OpenAI service
     $mockService = Mockery::mock(OpenAINameService::class);
     $mockService->shouldReceive('generateNames')
-        ->once()
-        ->andReturn(['Name1', 'Name2', 'Name3']);
+        ->twice()
+        ->andReturn(
+            ['Name1', 'Name2', 'Name3'],
+            ['Name4', 'Name5', 'Name6']
+        );
     $this->app->instance(OpenAINameService::class, $mockService);
 
     // Generate initial names
@@ -264,12 +256,14 @@ test('Dashboard can cancel append mode', function (): void {
         ->set('generationMode', 'brandable')
         ->call('generateNames');
 
-    // Click generate more
-    $component->call('generateMoreNames');
-    $component->assertSet('appendToExisting', true);
+    // Should have 3 names initially
+    expect($component->get('generatedNames'))->toHaveCount(3);
 
-    // User cancels append mode
-    $component->set('appendToExisting', false);
+    // Click generate more - should immediately generate without user action
+    $component->call('generateMoreNames');
+
+    // Should have 6 names now (no need for additional generateNames call)
+    expect($component->get('generatedNames'))->toHaveCount(6);
     $component->assertSet('appendToExisting', false);
 });
 
@@ -305,41 +299,29 @@ test('Dashboard can generate more names infinitely', function (): void {
     $component->assertSet('showResults', true);
     $component->assertSet('activeTab', 'results');
 
-    // Second generation (append)
-    $component->call('generateMoreNames')
-        ->assertSet('appendToExisting', true)
-        ->assertSet('activeTab', 'generate')
-        ->call('generateNames');
+    // Second generation (append) - automatically generates
+    $component->call('generateMoreNames');
     expect($component->get('generatedNames'))->toHaveCount(4);
     $component->assertSet('appendToExisting', false);
     $component->assertSet('showResults', true);
     $component->assertSet('activeTab', 'results');
 
-    // Third generation (append) - THIS IS WHERE THE ISSUE HAPPENS
-    $component->call('generateMoreNames')
-        ->assertSet('appendToExisting', true)
-        ->assertSet('activeTab', 'generate')
-        ->call('generateNames');
+    // Third generation (append) - automatically generates
+    $component->call('generateMoreNames');
     expect($component->get('generatedNames'))->toHaveCount(6);
     $component->assertSet('appendToExisting', false);
     $component->assertSet('showResults', true);
     $component->assertSet('activeTab', 'results');
 
-    // Fourth generation (append)
-    $component->call('generateMoreNames')
-        ->assertSet('appendToExisting', true)
-        ->assertSet('activeTab', 'generate')
-        ->call('generateNames');
+    // Fourth generation (append) - automatically generates
+    $component->call('generateMoreNames');
     expect($component->get('generatedNames'))->toHaveCount(8);
     $component->assertSet('appendToExisting', false);
     $component->assertSet('showResults', true);
     $component->assertSet('activeTab', 'results');
 
-    // Fifth generation (append)
-    $component->call('generateMoreNames')
-        ->assertSet('appendToExisting', true)
-        ->assertSet('activeTab', 'generate')
-        ->call('generateNames');
+    // Fifth generation (append) - automatically generates
+    $component->call('generateMoreNames');
     expect($component->get('generatedNames'))->toHaveCount(10);
     $component->assertSet('appendToExisting', false);
     $component->assertSet('showResults', true);

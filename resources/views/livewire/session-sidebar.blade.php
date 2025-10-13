@@ -37,15 +37,6 @@
                 >
                     <x-app-icon name="star" style="solid" size="sm" />
                 </button>
-                
-                <!-- Focus Mode Toggle -->
-                <button
-                    wire:click="toggleFocusMode"
-                    class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150 text-gray-500 dark:text-gray-400"
-                    title="Toggle focus mode (Cmd+/)"
-                >
-                    <x-app-icon name="eye-slash" size="sm" />
-                </button>
             </div>
         </div>
 

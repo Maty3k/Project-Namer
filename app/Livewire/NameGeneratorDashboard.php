@@ -456,19 +456,19 @@ class NameGeneratorDashboard extends Component
     /**
      * Generate more names and append to existing results.
      *
-     * Switches to the generate tab and sets the append flag,
-     * allowing users to modify their prompt or settings before generating.
+     * Automatically generates more names using the same settings as the previous generation.
      */
     public function generateMoreNames(): void
     {
         // Set flag to append to existing results
         $this->appendToExisting = true;
 
-        // Switch to generate tab so user can review/modify before generating
-        $this->activeTab = 'generate';
-
-        // Dispatch event to focus on the business idea input
-        $this->dispatch('focus-business-idea');
+        // Automatically trigger generation with the same settings
+        if ($this->useAIGeneration) {
+            $this->generateNamesWithAI();
+        } else {
+            $this->generateNames();
+        }
     }
 
     /**

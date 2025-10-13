@@ -27,30 +27,6 @@
 
                 {{-- Business Idea Input Form --}}
                 <flux:card class="p-8">
-                    {{-- Append Mode Indicator --}}
-                    @if($appendToExisting)
-                        <div class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                            <div class="flex items-start gap-3">
-                                <flux:icon.information-circle class="size-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-                                <div class="flex-1">
-                                    <h3 class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-1">
-                                        Ready to Generate More Names
-                                    </h3>
-                                    <p class="text-sm text-blue-700 dark:text-blue-300">
-                                        You can modify your business idea or settings below, then click generate to add more names to your existing results.
-                                    </p>
-                                    <button
-                                        type="button"
-                                        wire:click="$set('appendToExisting', false)"
-                                        class="mt-2 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 underline"
-                                    >
-                                        Cancel and start fresh instead
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
                     <form wire:submit="{{ $useAIGeneration ? 'generateNamesWithAI' : 'generateNames' }}" class="space-y-6">
                         {{-- Business Idea Textarea --}}
                         <div class="space-y-3">
@@ -64,14 +40,6 @@
                                 rows="4"
                                 class="resize-none"
                                 maxlength="2000"
-                                x-init="
-                                    $wire.on('focus-business-idea', () => {
-                                        setTimeout(() => {
-                                            $el.focus();
-                                            $el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                        }, 100);
-                                    });
-                                "
                             />
                             <div class="flex justify-between items-center text-sm text-gray-500">
                                 <flux:error name="businessIdea" />
