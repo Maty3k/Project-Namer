@@ -43,7 +43,7 @@ class NameGeneratorDashboard extends Component
     // Business idea input
     public string $businessIdea = '';
 
-    public string $generationMode = '';
+    public string $generationMode = 'creative';
 
     public bool $deepThinking = false;
 
@@ -140,6 +140,7 @@ class NameGeneratorDashboard extends Component
     protected array $messages = [
         'businessIdea.required' => 'Please describe your business idea',
         'businessIdea.max' => 'Business idea must be less than 2000 characters',
+        'generationMode.required' => 'Please select a generation style',
         'selectedNamesForLogos.max' => 'You can select up to 5 names for logo generation',
         'selectedAIModels.required' => 'Please select at least one AI model',
         'selectedAIModels.min' => 'Please select at least one AI model',
@@ -951,8 +952,10 @@ class NameGeneratorDashboard extends Component
         $preferences = UserAIPreferences::findOrCreateForUser($user->id);
 
         $this->selectedAIModels = $preferences->preferred_models;
-        // Don't pre-select generation mode - let user choose each time
-        $this->generationMode = '';
+        // Use saved generation mode preference, or keep the default if not set
+        if (! empty($preferences->default_generation_mode)) {
+            $this->generationMode = $preferences->default_generation_mode;
+        }
         $this->deepThinking = $preferences->default_deep_thinking;
         $this->enableModelComparison = $preferences->enable_model_comparison;
     }

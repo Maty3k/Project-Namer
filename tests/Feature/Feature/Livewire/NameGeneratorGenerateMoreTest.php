@@ -273,6 +273,13 @@ test('Dashboard can cancel append mode', function (): void {
     $component->assertSet('appendToExisting', false);
 });
 
+test('Dashboard has default generation mode on mount', function (): void {
+    $component = Livewire::test(NameGeneratorDashboard::class);
+
+    // Should have creative as default generation mode
+    $component->assertSet('generationMode', 'creative');
+});
+
 test('Dashboard can generate more names infinitely', function (): void {
     // Mock OpenAI service for 5 consecutive generations
     $mockService = Mockery::mock(OpenAINameService::class);
