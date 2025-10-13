@@ -272,3 +272,64 @@ test('Dashboard can cancel append mode', function (): void {
     $component->set('appendToExisting', false);
     $component->assertSet('appendToExisting', false);
 });
+
+test('Dashboard can generate more names infinitely', function (): void {
+    // Mock OpenAI service for 5 consecutive generations
+    $mockService = Mockery::mock(OpenAINameService::class);
+    $mockService->shouldReceive('generateNames')
+        ->times(5)
+        ->andReturn(
+            ['Set1Name1', 'Set1Name2'],
+            ['Set2Name1', 'Set2Name2'],
+            ['Set3Name1', 'Set3Name2'],
+            ['Set4Name1', 'Set4Name2'],
+            ['Set5Name1', 'Set5Name2']
+        );
+    $this->app->instance(OpenAINameService::class, $mockService);
+
+    $component = Livewire::test(NameGeneratorDashboard::class)
+        ->set('businessIdea', 'A tech company')
+        ->set('generationMode', 'tech-focused');
+
+    // First generation
+    $component->call('generateNames');
+    expect($component->get('generatedNames'))->toHaveCount(2);
+    $component->assertSet('appendToExisting', false);
+
+    // Second generation (append)
+    $component->call('generateMoreNames')
+        ->assertSet('appendToExisting', true)
+        ->call('generateNames');
+    expect($component->get('generatedNames'))->toHaveCount(4);
+    $component->assertSet('appendToExisting', false);
+
+    // Third generation (append)
+    $component->call('generateMoreNames')
+        ->assertSet('appendToExisting', true)
+        ->call('generateNames');
+    expect($component->get('generatedNames'))->toHaveCount(6);
+    $component->assertSet('appendToExisting', false);
+
+    // Fourth generation (append)
+    $component->call('generateMoreNames')
+        ->assertSet('appendToExisting', true)
+        ->call('generateNames');
+    expect($component->get('generatedNames'))->toHaveCount(8);
+    $component->assertSet('appendToExisting', false);
+
+    // Fifth generation (append)
+    $component->call('generateMoreNames')
+        ->assertSet('appendToExisting', true)
+        ->call('generateNames');
+    expect($component->get('generatedNames'))->toHaveCount(10);
+    $component->assertSet('appendToExisting', false);
+
+    // Verify all names from all generations are present
+    expect($component->get('generatedNames'))->toContain(
+        'Set1Name1',
+        'Set2Name1',
+        'Set3Name1',
+        'Set4Name1',
+        'Set5Name1'
+    );
+});
