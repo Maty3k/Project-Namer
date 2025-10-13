@@ -27,6 +27,30 @@
 
                 {{-- Business Idea Input Form --}}
                 <flux:card class="p-8">
+                    {{-- Append Mode Indicator --}}
+                    @if($appendToExisting)
+                        <div class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                            <div class="flex items-start gap-3">
+                                <flux:icon.information-circle class="size-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+                                <div class="flex-1">
+                                    <h3 class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-1">
+                                        Ready to Generate More Names
+                                    </h3>
+                                    <p class="text-sm text-blue-700 dark:text-blue-300">
+                                        You can modify your business idea or settings below, then click generate to add more names to your existing results.
+                                    </p>
+                                    <button
+                                        type="button"
+                                        wire:click="$set('appendToExisting', false)"
+                                        class="mt-2 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 underline"
+                                    >
+                                        Cancel and start fresh instead
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                     <form wire:submit="{{ $useAIGeneration ? 'generateNamesWithAI' : 'generateNames' }}" class="space-y-6">
                         {{-- Business Idea Textarea --}}
                         <div class="space-y-3">
@@ -40,6 +64,14 @@
                                 rows="4"
                                 class="resize-none"
                                 maxlength="2000"
+                                x-init="
+                                    $wire.on('focus-business-idea', () => {
+                                        setTimeout(() => {
+                                            $el.focus();
+                                            $el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                        }, 100);
+                                    });
+                                "
                             />
                             <div class="flex justify-between items-center text-sm text-gray-500">
                                 <flux:error name="businessIdea" />
@@ -195,14 +227,66 @@
         @if($showResults)
             <flux:tab.panel name="results" class="flex-1">
                 <div class="max-w-6xl mx-auto w-full space-y-6">
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                        Generated Names
-                    </h2>
-                    <div class="rounded-lg p-6 bg-gray-50 dark:bg-gray-800">
-                        <p class="text-gray-700 dark:text-gray-300">
-                            Your generated business names will appear here.
-                        </p>
+                    {{-- Header with Generate More Button --}}
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                            Generated Names ({{ count($generatedNames) }})
+                        </h2>
+
+                        <flux:button
+                            wire:click="generateMoreNames"
+                            variant="primary"
+                            size="sm"
+                            class="whitespace-nowrap"
+                        >
+                            <flux:icon.sparkles class="size-4 mr-2" />
+                            Generate More Names
+                        </flux:button>
                     </div>
+
+                    @if(!empty($generatedNames))
+                        <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
+                            <table class="w-full">
+                                <thead class="bg-gray-50 dark:bg-gray-800">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">
+                                            Business Name
+                                        </th>
+                                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">
+                                            Domain Status
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
+                                    @foreach($generatedNames as $name)
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                                            <td class="px-6 py-4">
+                                                <div class="flex flex-col">
+                                                    <span class="font-medium text-lg text-gray-900 dark:text-white">
+                                                        {{ $name }}
+                                                    </span>
+                                                </div>
+                                            </td>
+
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
+                                                        Check domain availability
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="rounded-lg p-6 bg-gray-50 dark:bg-gray-800">
+                            <p class="text-gray-700 dark:text-gray-300">
+                                No names generated yet. Click "Generate Names" to get started!
+                            </p>
+                        </div>
+                    @endif
                 </div>
             </flux:tab.panel>
         @endif

@@ -67,8 +67,15 @@ test('Dashboard can generate more names and append to existing', function (): vo
     // Should have 3 names initially
     expect($component->get('generatedNames'))->toHaveCount(3);
 
-    // Click generate more - this now automatically generates more names
+    // Click generate more - sets append flag and switches to generate tab
     $component->call('generateMoreNames');
+
+    // Should switch to generate tab
+    $component->assertSet('activeTab', 'generate');
+    $component->assertSet('appendToExisting', true);
+
+    // User can now modify settings, then generate more names
+    $component->call('generateNames');
 
     // Should now have 6 names total
     expect($component->get('generatedNames'))->toHaveCount(6);
@@ -76,7 +83,7 @@ test('Dashboard can generate more names and append to existing', function (): vo
     // Should contain all names
     expect($component->get('generatedNames'))->toContain('Name1', 'Name2', 'Name3', 'Name4', 'Name5', 'Name6');
 
-    // Append flag should be reset
+    // Append flag should be reset after generation
     $component->assertSet('appendToExisting', false);
 });
 
@@ -97,8 +104,9 @@ test('Dashboard removes duplicate names when appending', function (): void {
         ->set('generationMode', 'professional')
         ->call('generateNames');
 
-    // Generate more names - now automatically generates
-    $component->call('generateMoreNames');
+    // Click generate more, then generate
+    $component->call('generateMoreNames')
+        ->call('generateNames');
 
     // Should have 5 unique names (not 6)
     expect($component->get('generatedNames'))->toHaveCount(5);
@@ -108,14 +116,11 @@ test('Dashboard removes duplicate names when appending', function (): void {
 });
 
 test('Dashboard preserves existing business idea when generating more', function (): void {
-    // Mock OpenAI service for two generations
+    // Mock OpenAI service
     $mockService = Mockery::mock(OpenAINameService::class);
     $mockService->shouldReceive('generateNames')
-        ->twice()
-        ->andReturn(
-            ['Name1', 'Name2', 'Name3'],
-            ['Name4', 'Name5', 'Name6']
-        );
+        ->once()
+        ->andReturn(['Name1', 'Name2', 'Name3']);
     $this->app->instance(OpenAINameService::class, $mockService);
 
     // Generate initial names
@@ -124,12 +129,14 @@ test('Dashboard preserves existing business idea when generating more', function
         ->set('generationMode', 'tech-focused')
         ->call('generateNames');
 
-    // Click generate more - automatically generates more names
+    // Click generate more - switches to generate tab
     $component->call('generateMoreNames');
 
     // Business idea should still be populated
     $component->assertSet('businessIdea', 'A fitness app');
     $component->assertSet('generationMode', 'tech-focused');
+    $component->assertSet('activeTab', 'generate');
+    $component->assertSet('appendToExisting', true);
 });
 
 test('Dashboard resets append flag on generation failure', function (): void {
@@ -158,8 +165,12 @@ test('Dashboard resets append flag on generation failure', function (): void {
         ->set('generationMode', 'creative')
         ->call('generateNames');
 
-    // Try to generate more but it fails - now automatically triggers generation
+    // Click generate more to set append flag
     $component->call('generateMoreNames');
+    $component->assertSet('appendToExisting', true);
+
+    // Try to generate more but it fails (uses fallback)
+    $component->call('generateNames');
 
     // Append flag should be reset even on failure
     $component->assertSet('appendToExisting', false);
@@ -187,8 +198,13 @@ test('Dashboard generate more works with AI generation enabled', function (): vo
     // Should have 3 names initially
     expect($component->get('generatedNames'))->toHaveCount(3);
 
-    // Click generate more with AI enabled - should automatically generate
+    // Click generate more - sets append flag and switches to generate tab
     $component->call('generateMoreNames');
+    $component->assertSet('activeTab', 'generate');
+    $component->assertSet('appendToExisting', true);
+
+    // User can modify settings, then generate more with AI
+    $component->call('generateNamesWithAI');
 
     // Should now have 6 names total
     expect($component->get('generatedNames'))->toHaveCount(6);
@@ -197,5 +213,62 @@ test('Dashboard generate more works with AI generation enabled', function (): vo
     expect($component->get('generatedNames'))->toContain('AIName1', 'AIName2', 'AIName3', 'AIName4', 'AIName5', 'AIName6');
 
     // Append flag should be reset
+    $component->assertSet('appendToExisting', false);
+});
+
+test('Dashboard allows modifying business idea before generating more', function (): void {
+    // Mock OpenAI service
+    $mockService = Mockery::mock(OpenAINameService::class);
+    $mockService->shouldReceive('generateNames')
+        ->twice()
+        ->andReturn(
+            ['Coffee1', 'Coffee2', 'Coffee3'],
+            ['Tea1', 'Tea2', 'Tea3']
+        );
+    $this->app->instance(OpenAINameService::class, $mockService);
+
+    // Generate initial names
+    $component = Livewire::test(NameGeneratorDashboard::class)
+        ->set('businessIdea', 'A coffee shop')
+        ->set('generationMode', 'creative')
+        ->call('generateNames');
+
+    // Click generate more
+    $component->call('generateMoreNames');
+    $component->assertSet('appendToExisting', true);
+
+    // User modifies business idea
+    $component->set('businessIdea', 'A tea shop');
+
+    // Generate more with modified idea
+    $component->call('generateNames');
+
+    // Should have 6 names total
+    expect($component->get('generatedNames'))->toHaveCount(6);
+
+    // Should contain names from both generations
+    expect($component->get('generatedNames'))->toContain('Coffee1', 'Tea1');
+});
+
+test('Dashboard can cancel append mode', function (): void {
+    // Mock OpenAI service
+    $mockService = Mockery::mock(OpenAINameService::class);
+    $mockService->shouldReceive('generateNames')
+        ->once()
+        ->andReturn(['Name1', 'Name2', 'Name3']);
+    $this->app->instance(OpenAINameService::class, $mockService);
+
+    // Generate initial names
+    $component = Livewire::test(NameGeneratorDashboard::class)
+        ->set('businessIdea', 'A startup')
+        ->set('generationMode', 'brandable')
+        ->call('generateNames');
+
+    // Click generate more
+    $component->call('generateMoreNames');
+    $component->assertSet('appendToExisting', true);
+
+    // User cancels append mode
+    $component->set('appendToExisting', false);
     $component->assertSet('appendToExisting', false);
 });
