@@ -171,6 +171,10 @@ class NameGeneratorDashboard extends Component
      */
     public function generateNames(): void
     {
+        // Ensure generation mode is always set before validation
+        if (empty($this->generationMode)) {
+            $this->generationMode = 'creative';
+        }
 
         $this->validate([
             'businessIdea' => 'required|string|max:2000',
@@ -460,6 +464,11 @@ class NameGeneratorDashboard extends Component
      */
     public function generateMoreNames(): void
     {
+        // Ensure generation mode is set before generating more
+        if (empty($this->generationMode)) {
+            $this->generationMode = 'creative';
+        }
+
         // Set flag to append to existing results
         $this->appendToExisting = true;
 
@@ -1004,6 +1013,10 @@ class NameGeneratorDashboard extends Component
      */
     public function generateNamesWithAI(): void
     {
+        // Ensure generation mode is always set before validation
+        if (empty($this->generationMode)) {
+            $this->generationMode = 'creative';
+        }
 
         $this->validate([
             'businessIdea' => 'required|string|max:2000',
