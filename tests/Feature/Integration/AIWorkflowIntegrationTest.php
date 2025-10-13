@@ -143,6 +143,7 @@ class AIWorkflowIntegrationTest extends TestCase
         $component = Livewire::actingAs($this->user)
             ->test('name-generator-dashboard')
             ->set('businessIdea', 'Test')
+            ->set('generationMode', 'creative')
             ->set('useAIGeneration', true)
             ->set('selectedAIModels', ['gpt-4'])
             ->call('generateNamesWithAI');

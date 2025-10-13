@@ -205,8 +205,8 @@ test('Dashboard loads user AI preferences on mount', function (): void {
 
     Livewire::test(NameGeneratorDashboard::class)
         ->assertSet('selectedAIModels', ['claude-3.5-sonnet'])
-        // Generation mode should not be pre-selected, even if user has a saved preference
-        ->assertSet('generationMode', '')
+        // Generation mode should be loaded from user's saved preference
+        ->assertSet('generationMode', 'professional')
         ->assertSet('deepThinking', true)
         ->assertSet('enableModelComparison', true);
 });

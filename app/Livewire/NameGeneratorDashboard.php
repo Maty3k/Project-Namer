@@ -1170,7 +1170,10 @@ class NameGeneratorDashboard extends Component
 
                 $this->dispatch('toast', message: $this->errorMessage, type: 'error');
 
-                // Reset append flag on graceful failure
+                // Reset generation state on graceful failure
+                $this->isGeneratingNames = false;
+                $this->currentAIGenerationId = null;
+                $this->aiGenerationStatus = '';
                 $this->appendToExisting = false;
 
                 return;

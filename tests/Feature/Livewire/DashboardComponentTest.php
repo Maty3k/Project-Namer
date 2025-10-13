@@ -55,7 +55,7 @@ describe('Dashboard Component', function (): void {
             ->assertOk()
             ->assertSet('activeTab', 'generate')
             ->assertSet('businessIdea', '')
-            ->assertSet('generationMode', '')
+            ->assertSet('generationMode', 'creative')
             ->assertSet('deepThinking', false);
     });
 

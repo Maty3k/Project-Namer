@@ -54,11 +54,12 @@ describe('SessionSidebar Focus Mode Functionality', function (): void {
     });
 
     describe('Focus Mode UI Elements', function (): void {
-        it('shows focus mode toggle button in header', function (): void {
-            $component = Livewire::test(SessionSidebar::class);
+        it('shows focus mode toggle button when collapsed', function (): void {
+            $component = Livewire::test(SessionSidebar::class)
+                ->set('isCollapsed', true);
 
             $component->assertSeeHtml('wire:click="toggleFocusMode"')
-                ->assertSeeHtml('title="Toggle focus mode (Cmd+/)"');
+                ->assertSeeHtml('title="Show sidebar (Cmd+/)"');
         });
 
         it('applies collapsed styles when in focus mode', function (): void {
@@ -143,10 +144,11 @@ describe('SessionSidebar Focus Mode Functionality', function (): void {
     });
 
     describe('Focus Mode Accessibility', function (): void {
-        it('includes proper ARIA labels for focus toggle', function (): void {
-            $component = Livewire::test(SessionSidebar::class);
+        it('includes proper title attribute for floating button', function (): void {
+            $component = Livewire::test(SessionSidebar::class)
+                ->set('isCollapsed', true);
 
-            $component->assertSeeHtml('title="Toggle focus mode (Cmd+/)"');
+            $component->assertSeeHtml('title="Show sidebar (Cmd+/)"');
         });
 
         it('includes proper ARIA labels for floating button', function (): void {

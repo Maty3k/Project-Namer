@@ -4,29 +4,33 @@ declare(strict_types=1);
 
 use App\Livewire\NameGeneratorDashboard;
 use App\Models\User;
-use App\Services\DomainCheckService;
+use App\Services\DNSLookupService;
 use App\Services\OpenAINameService;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
 
 beforeEach(function (): void {
     $this->user = User::factory()->create();
     $this->actingAs($this->user);
 
-    // Create a mock domain check service using an anonymous class
-    $mockDomainService = new class
-    {
-        public function checkBusinessName(string $name): array
-        {
-            return [
-                strtolower(str_replace(' ', '', $name)).'.com' => ['available' => true, 'status' => 'available'],
-                strtolower(str_replace(' ', '', $name)).'.io' => ['available' => true, 'status' => 'available'],
-                strtolower(str_replace(' ', '', $name)).'.co' => ['available' => true, 'status' => 'available'],
-                strtolower(str_replace(' ', '', $name)).'.net' => ['available' => true, 'status' => 'available'],
-            ];
-        }
-    };
+    // Prevent external HTTP calls
+    Http::preventStrayRequests();
+    Http::fake(['*' => Http::response(['available' => true], 200)]);
 
-    $this->app->instance(DomainCheckService::class, $mockDomainService);
+    // Fake queue to prevent job dispatching delays
+    Queue::fake();
+
+    // Mock DNS service to prevent real DNS lookups
+    $this->mock(DNSLookupService::class, function ($mock): void {
+        $mock->shouldReceive('hasDNSRecords')->andReturn(false);
+        $mock->shouldReceive('getDNSRecords')->andReturn([
+            'A' => [],
+            'AAAA' => [],
+            'CNAME' => [],
+            'MX' => [],
+        ]);
+    });
 });
 
 test('Dashboard shows generate more button when results exist', function (): void {
