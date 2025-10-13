@@ -155,6 +155,11 @@ class NameGeneratorDashboard extends Component
         $this->checkModelAvailability();
         $this->loadUserTheme();
 
+        // Ensure generation mode is always set (safety check)
+        if (empty($this->generationMode)) {
+            $this->generationMode = 'creative';
+        }
+
         // Force a re-render to apply theme immediately
         if ($this->userTheme) {
             $this->dispatch('theme-loaded');
@@ -953,8 +958,13 @@ class NameGeneratorDashboard extends Component
 
         $this->selectedAIModels = $preferences->preferred_models;
         // Use saved generation mode preference, or keep the default if not set
-        if (! empty($preferences->default_generation_mode)) {
+        if (! empty($preferences->default_generation_mode) &&
+            in_array($preferences->default_generation_mode, ['creative', 'professional', 'brandable', 'tech-focused'])) {
             $this->generationMode = $preferences->default_generation_mode;
+        }
+        // Ensure generation mode is never empty
+        if (empty($this->generationMode)) {
+            $this->generationMode = 'creative';
         }
         $this->deepThinking = $preferences->default_deep_thinking;
         $this->enableModelComparison = $preferences->enable_model_comparison;

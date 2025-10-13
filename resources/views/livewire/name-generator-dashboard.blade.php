@@ -238,6 +238,8 @@
                             variant="primary"
                             size="sm"
                             class="whitespace-nowrap"
+                            wire:loading.attr="disabled"
+                            wire:loading.class="opacity-50 cursor-not-allowed"
                         >
                             <flux:icon.sparkles class="size-4 mr-2" />
                             Generate More Names

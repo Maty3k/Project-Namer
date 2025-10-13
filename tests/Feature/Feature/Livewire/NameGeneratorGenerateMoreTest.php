@@ -302,34 +302,48 @@ test('Dashboard can generate more names infinitely', function (): void {
     $component->call('generateNames');
     expect($component->get('generatedNames'))->toHaveCount(2);
     $component->assertSet('appendToExisting', false);
+    $component->assertSet('showResults', true);
+    $component->assertSet('activeTab', 'results');
 
     // Second generation (append)
     $component->call('generateMoreNames')
         ->assertSet('appendToExisting', true)
+        ->assertSet('activeTab', 'generate')
         ->call('generateNames');
     expect($component->get('generatedNames'))->toHaveCount(4);
     $component->assertSet('appendToExisting', false);
+    $component->assertSet('showResults', true);
+    $component->assertSet('activeTab', 'results');
 
-    // Third generation (append)
+    // Third generation (append) - THIS IS WHERE THE ISSUE HAPPENS
     $component->call('generateMoreNames')
         ->assertSet('appendToExisting', true)
+        ->assertSet('activeTab', 'generate')
         ->call('generateNames');
     expect($component->get('generatedNames'))->toHaveCount(6);
     $component->assertSet('appendToExisting', false);
+    $component->assertSet('showResults', true);
+    $component->assertSet('activeTab', 'results');
 
     // Fourth generation (append)
     $component->call('generateMoreNames')
         ->assertSet('appendToExisting', true)
+        ->assertSet('activeTab', 'generate')
         ->call('generateNames');
     expect($component->get('generatedNames'))->toHaveCount(8);
     $component->assertSet('appendToExisting', false);
+    $component->assertSet('showResults', true);
+    $component->assertSet('activeTab', 'results');
 
     // Fifth generation (append)
     $component->call('generateMoreNames')
         ->assertSet('appendToExisting', true)
+        ->assertSet('activeTab', 'generate')
         ->call('generateNames');
     expect($component->get('generatedNames'))->toHaveCount(10);
     $component->assertSet('appendToExisting', false);
+    $component->assertSet('showResults', true);
+    $component->assertSet('activeTab', 'results');
 
     // Verify all names from all generations are present
     expect($component->get('generatedNames'))->toContain(
