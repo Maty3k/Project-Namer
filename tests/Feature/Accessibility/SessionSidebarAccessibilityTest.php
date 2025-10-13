@@ -46,7 +46,11 @@ describe('SessionSidebar Accessibility Compliance', function (): void {
 
         // Buttons should have titles or aria-labels
         expect($html)->toContain('title="Show starred only"');
-        expect($html)->toContain('title="Toggle focus mode');
+
+        // Focus mode toggle only shows when collapsed
+        $component->set('isCollapsed', true);
+        $html = $component->html();
+        expect($html)->toContain('title="Show sidebar (Cmd+/)"');
 
         // Clear search button only shows when there's a search query
         $component->set('searchQuery', 'test');
@@ -58,11 +62,13 @@ describe('SessionSidebar Accessibility Compliance', function (): void {
         $session = NamingSession::factory()->create(['user_id' => $this->user->id]);
         $component = Livewire::test(SessionSidebar::class);
 
-        // Focus mode keyboard shortcut should be documented
+        // Focus mode keyboard shortcut should be documented when sidebar is collapsed
+        $component->set('isCollapsed', true);
         $html = $component->html();
         expect($html)->toContain('(Cmd+/)');
 
         // Keyboard events only appear when in rename mode
+        $component->set('isCollapsed', false);
         $component->call('startRename', $session->id);
         $html = $component->html();
         expect($html)->toContain('wire:keydown.enter');
@@ -207,8 +213,8 @@ describe('SessionSidebar Accessibility Compliance', function (): void {
         // Collapsed sidebar should still be accessible
         expect($component->get('isCollapsed'))->toBe(true);
 
-        // Focus mode toggle should have proper attributes
-        expect($html)->toContain('title="Toggle focus mode');
+        // Focus mode toggle should have proper attributes - when collapsed it shows "Show sidebar"
+        expect($html)->toContain('title="Show sidebar (Cmd+/)"');
     });
 
     it('provides proper button states and feedback', function (): void {
