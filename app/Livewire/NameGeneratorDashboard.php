@@ -99,6 +99,8 @@ class NameGeneratorDashboard extends Component
 
     public bool $showResults = false;
 
+    public bool $appendToExisting = false;
+
     public bool $showHistory = false;
 
     /** @var array<int, array<string, mixed>> */
@@ -170,7 +172,11 @@ class NameGeneratorDashboard extends Component
             'deepThinking' => 'boolean',
         ]);
 
-        $this->resetState();
+        // Only reset if not appending
+        if (! $this->appendToExisting) {
+            $this->resetState();
+        }
+
         $this->isGeneratingNames = true;
         $this->errorMessage = null;
 
@@ -179,11 +185,18 @@ class NameGeneratorDashboard extends Component
 
         try {
             $nameService = app(OpenAINameService::class);
-            $this->generatedNames = $nameService->generateNames(
+            $newNames = $nameService->generateNames(
                 $this->businessIdea,
                 $this->generationMode,
                 $this->deepThinking
             );
+
+            // Append or replace based on flag
+            if ($this->appendToExisting) {
+                $this->generatedNames = array_unique(array_merge($this->generatedNames, $newNames));
+            } else {
+                $this->generatedNames = $newNames;
+            }
 
             $this->checkDomainAvailability();
             $this->showResults = true;
@@ -203,15 +216,25 @@ class NameGeneratorDashboard extends Component
             // Ensure theme consistency after generation
             $this->ensureThemeConsistency();
 
+            // Reset append flag after successful generation
+            $this->appendToExisting = false;
+
         } catch (Exception) {
             // Try fallback generation when OpenAI fails
             try {
                 $fallbackService = app(\App\Services\FallbackNameService::class);
-                $this->generatedNames = $fallbackService->generateNames(
+                $newNames = $fallbackService->generateNames(
                     $this->businessIdea,
                     $this->generationMode,
                     10
                 );
+
+                // Append or replace based on flag
+                if ($this->appendToExisting) {
+                    $this->generatedNames = array_unique(array_merge($this->generatedNames, $newNames));
+                } else {
+                    $this->generatedNames = $newNames;
+                }
 
                 $this->checkDomainAvailability();
                 $this->showResults = true;
@@ -224,9 +247,15 @@ class NameGeneratorDashboard extends Component
                 // Ensure theme consistency after fallback generation
                 $this->ensureThemeConsistency();
 
+                // Reset append flag after fallback generation
+                $this->appendToExisting = false;
+
             } catch (Exception $fallbackException) {
                 $this->errorMessage = $this->getFriendlyErrorMessage($fallbackException->getMessage());
                 $this->dispatch('toast', message: $this->errorMessage, type: 'error');
+
+                // Reset append flag on failure
+                $this->appendToExisting = false;
             }
         } finally {
             $this->isGeneratingNames = false;
@@ -416,6 +445,22 @@ class NameGeneratorDashboard extends Component
         $this->resetState();
         $this->activeTab = 'generate';
         $this->dispatch('toast', message: 'Results cleared', type: 'info');
+    }
+
+    /**
+     * Generate more names and append to existing results.
+     */
+    public function generateMoreNames(): void
+    {
+        // Set flag to append to existing results
+        $this->appendToExisting = true;
+
+        // Automatically trigger the appropriate generation method
+        if ($this->useAIGeneration) {
+            $this->generateNamesWithAI();
+        } else {
+            $this->generateNames();
+        }
     }
 
     /**
@@ -696,6 +741,11 @@ class NameGeneratorDashboard extends Component
                 'deep_thinking' => $this->deepThinking,
                 'title' => $this->generateSessionTitle(),
             ]);
+
+            // Reload session if needed for results
+            if ($this->currentSession === null && ! empty($this->generatedNames)) {
+                $this->currentSession = NamingSession::find($this->currentSessionId);
+            }
         } else {
             // Create new session
             $this->currentSession = $sessionService->createSession($user, [
@@ -707,8 +757,8 @@ class NameGeneratorDashboard extends Component
             $this->currentSessionId = $this->currentSession->id;
         }
 
-        // Save results if available
-        if (! empty($this->generatedNames)) {
+        // Save results if available and session exists
+        if (! empty($this->generatedNames) && $this->currentSession) {
             $this->currentSession->results()->create([
                 'generated_names' => $this->generatedNames,
                 'domain_results' => $this->domainResults,
@@ -953,7 +1003,11 @@ class NameGeneratorDashboard extends Component
             return;
         }
 
-        $this->resetState();
+        // Only reset if not appending
+        if (! $this->appendToExisting) {
+            $this->resetState();
+        }
+
         $this->isGeneratingNames = true;
         $this->errorMessage = null;
 
@@ -1025,8 +1079,13 @@ class NameGeneratorDashboard extends Component
                 $this->updateModelPerformance($model, true, (int) (($endTime - $startTime) * 1000));
             }
 
-            // Remove duplicates and set generated names
-            $this->generatedNames = array_unique($allNames);
+            // Remove duplicates and append or replace based on flag
+            $newNames = array_unique($allNames);
+            if ($this->appendToExisting) {
+                $this->generatedNames = array_unique(array_merge($this->generatedNames, $newNames));
+            } else {
+                $this->generatedNames = $newNames;
+            }
 
             // Initialize active model tab for comparison
             $this->initializeActiveModelTab();
@@ -1059,6 +1118,12 @@ class NameGeneratorDashboard extends Component
                 'processingTime' => (int) (($endTime - $startTime) * 1000),
             ]);
 
+            // Reset generation state after successful generation
+            $this->isGeneratingNames = false;
+            $this->currentAIGenerationId = null;
+            $this->aiGenerationStatus = '';
+            $this->appendToExisting = false;
+
         } catch (Exception $e) {
             Log::error('AI generation failed', ['error' => $e->getMessage()]);
 
@@ -1090,6 +1155,9 @@ class NameGeneratorDashboard extends Component
 
                 $this->dispatch('toast', message: $this->errorMessage, type: 'error');
 
+                // Reset append flag on graceful failure
+                $this->appendToExisting = false;
+
                 return;
             }
 
@@ -1106,11 +1174,18 @@ class NameGeneratorDashboard extends Component
             // Fall back to creative generation using fallback service
             try {
                 $fallbackService = app(\App\Services\FallbackNameService::class);
-                $this->generatedNames = $fallbackService->generateNames(
+                $newNames = $fallbackService->generateNames(
                     $this->businessIdea,
                     $this->generationMode,
                     10
                 );
+
+                // Append or replace based on flag
+                if ($this->appendToExisting) {
+                    $this->generatedNames = array_unique(array_merge($this->generatedNames, $newNames));
+                } else {
+                    $this->generatedNames = $newNames;
+                }
 
                 $this->checkDomainAvailability();
                 $this->showResults = true;
@@ -1122,15 +1197,23 @@ class NameGeneratorDashboard extends Component
                     'type' => 'success',
                 ]);
 
+                // Reset generation state after successful fallback generation
+                $this->isGeneratingNames = false;
+                $this->currentAIGenerationId = null;
+                $this->aiGenerationStatus = '';
+                $this->appendToExisting = false;
+
             } catch (Exception $fallbackException) {
                 $this->errorMessage = 'All generation methods failed. Please try again later.';
                 Log::error('Fallback generation also failed', ['error' => $fallbackException->getMessage()]);
                 $this->dispatch('toast', message: $this->errorMessage, type: 'error');
+
+                // Reset generation state on complete failure
+                $this->isGeneratingNames = false;
+                $this->currentAIGenerationId = null;
+                $this->aiGenerationStatus = '';
+                $this->appendToExisting = false;
             }
-        } finally {
-            $this->isGeneratingNames = false;
-            $this->currentAIGenerationId = null;
-            $this->aiGenerationStatus = '';
         }
     }
 
