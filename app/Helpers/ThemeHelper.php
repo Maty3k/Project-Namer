@@ -25,10 +25,11 @@ final class ThemeHelper
         }
 
         // Cache theme for the current request to ensure consistency
+        // Short cache (5 seconds) to avoid stale data after theme changes
         $sessionId = request()->hasSession() ? request()->session()->getId() : 'no-session';
         $cacheKey = "user_theme_{$user->id}_{$sessionId}";
 
-        return Cache::remember($cacheKey, 300, fn () => UserThemePreference::where('user_id', $user->id)->first());
+        return Cache::remember($cacheKey, 5, fn () => UserThemePreference::where('user_id', $user->id)->first());
     }
 
     /**
