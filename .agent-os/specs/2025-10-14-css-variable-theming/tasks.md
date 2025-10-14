@@ -83,12 +83,12 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 9.5 Test theme selection updates user preference correctly
   - [x] 9.6 Verify all tests pass
 
-- [ ] 10. Update Theme Quick Toggle Component
-  - [ ] 10.1 Write tests for dark mode toggle functionality
-  - [ ] 10.2 Update ThemeQuickToggle Livewire component for new schema
-  - [ ] 10.3 Ensure dark mode toggle updates `is_dark_mode` in database
-  - [ ] 10.4 Test Alpine.js persistence of dark mode state
-  - [ ] 10.5 Verify all tests pass
+- [x] 10. Update Theme Quick Toggle Component
+  - [x] 10.1 Write tests for dark mode toggle functionality
+  - [x] 10.2 Update ThemeQuickToggle Livewire component for new schema
+  - [x] 10.3 Ensure dark mode toggle updates `is_dark_mode` in database
+  - [x] 10.4 Test Alpine.js persistence of dark mode state
+  - [x] 10.5 Verify all tests pass
 
 - [ ] 11. Update Existing Theme Tests
   - [ ] 11.1 Update `tests/Feature/ThemeConsistencyTest.php` for CSS variables

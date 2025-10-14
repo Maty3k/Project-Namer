@@ -36,8 +36,6 @@ final class ThemeQuickToggle extends Component
         if ($preference) {
             $preference->update([
                 'is_dark_mode' => $newIsDarkMode,
-                'background_color' => $newIsDarkMode ? '#1f2937' : '#ffffff',
-                'text_color' => $newIsDarkMode ? '#f9fafb' : '#111827',
             ]);
         } else {
             // Create new preference
@@ -45,14 +43,10 @@ final class ThemeQuickToggle extends Component
                 'user_id' => $user->id,
                 'theme_name' => $user->current_theme ?? 'default',
                 'is_dark_mode' => $newIsDarkMode,
-                'primary_color' => '#3b82f6',
-                'accent_color' => '#10b981',
-                'background_color' => $newIsDarkMode ? '#1f2937' : '#ffffff',
-                'text_color' => $newIsDarkMode ? '#f9fafb' : '#111827',
             ]);
         }
 
-        // Clear theme cache to ensure consistency and force fresh data
+        // Clear theme cache to ensure consistency
         ThemeHelper::clearUserThemeCache();
 
         // Clear Laravel cache to ensure all cached theme data is fresh
@@ -69,6 +63,10 @@ final class ThemeQuickToggle extends Component
             logger()->debug('Cache clearing failed: '.$e->getMessage());
         }
 
+        // Get theme name for CSS file path
+        $themeName = $preference ? $preference->theme_name : ($user->current_theme ?? 'default');
+        $themeCssPath = "/css/themes/{$themeName}.css";
+
         // Instantly apply dark mode to HTML element
         $isDarkModeJs = $newIsDarkMode ? 'true' : 'false';
         $this->js("
@@ -82,6 +80,17 @@ final class ThemeQuickToggle extends Component
                 window.authorizeThemeChange(isDark, 10000); // 10 second authorization for quick toggle
             }
 
+            // Update theme CSS link (ensure it's loaded)
+            let themeLink = document.getElementById('theme-css-link');
+            if (!themeLink) {
+                themeLink = document.createElement('link');
+                themeLink.id = 'theme-css-link';
+                themeLink.rel = 'stylesheet';
+                document.head.appendChild(themeLink);
+            }
+            themeLink.href = '{$themeCssPath}';
+
+            // Toggle dark mode class
             if (isDark) {
                 html.classList.add('dark');
                 localStorage.setItem('darkMode', 'true');
@@ -93,28 +102,28 @@ final class ThemeQuickToggle extends Component
             // Update the global current theme preference
             window.currentThemePreference = isDark;
 
-            // Force a repaint to ensure styles update
-            html.style.display = 'none';
-            html.offsetHeight; // Trigger reflow
-            html.style.display = '';
-
             // Also refresh any theme-dependent components
-            window.dispatchEvent(new CustomEvent('theme-changed', { detail: { isDark } }));
+            window.dispatchEvent(new CustomEvent('theme-changed', {
+                detail: {
+                    isDark,
+                    themeName: '{$themeName}',
+                    themeCssPath: '{$themeCssPath}'
+                }
+            }));
 
             // Force global state synchronization
             setTimeout(() => {
                 if (window.Livewire) {
                     window.Livewire.dispatch('refresh-theme-components');
                 }
-            }, 500);
+            }, 100);
         ");
 
         // Dispatch events for UI updates and theme customizer synchronization
         $this->dispatch('theme-updated');
         $this->dispatch('theme-quick-toggle-changed', [
             'isDarkMode' => $newIsDarkMode,
-            'backgroundColor' => $newIsDarkMode ? '#1f2937' : '#ffffff',
-            'textColor' => $newIsDarkMode ? '#f9fafb' : '#111827',
+            'themeName' => $themeName,
         ]);
     }
 
