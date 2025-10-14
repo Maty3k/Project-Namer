@@ -7,6 +7,7 @@ namespace App\Livewire;
 use App\Models\NameSuggestion;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\View\View;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 /**
@@ -19,19 +20,27 @@ class NameResultCard extends Component
 {
     use AuthorizesRequests;
 
-    public ?NameSuggestion $suggestion = null;
+    public int $suggestionId;
 
     public bool $expanded = false;
 
-    public ?int $suggestionId = null;
+    public int $domainsCheckedAt = 0;
 
     /**
      * Mount the component with a name suggestion.
      */
-    public function mount(NameSuggestion $suggestion): void
+    public function mount(int $suggestionId): void
     {
-        $this->suggestion = $suggestion;
-        $this->suggestionId = $suggestion->id;
+        $this->suggestionId = $suggestionId;
+    }
+
+    /**
+     * Get the suggestion model (always fresh from database).
+     */
+    #[Computed]
+    public function suggestion(): NameSuggestion
+    {
+        return NameSuggestion::findOrFail($this->suggestionId);
     }
 
     /**
@@ -127,7 +136,8 @@ class NameResultCard extends Component
      */
     public function checkDomains(): void
     {
-        $this->authorize('update', $this->suggestion->project);
+        $suggestion = $this->suggestion;
+        $this->authorize('update', $suggestion->project);
 
         // Check if domains have already been checked
         if ($this->domainsAlreadyChecked()) {
@@ -138,7 +148,7 @@ class NameResultCard extends Component
         $checkedDomains = [];
 
         // Check all domains
-        foreach ($this->suggestion->domains as $domainName => $domainData) {
+        foreach ($suggestion->domains as $domainName => $domainData) {
             try {
                 $result = $domainCheckService->checkDomain($domainName);
                 $checkedDomains[$domainName] = [
@@ -160,10 +170,13 @@ class NameResultCard extends Component
         }
 
         // Save all checked domains to database
-        $this->suggestion->update(['domains' => $checkedDomains]);
+        $suggestion->update(['domains' => $checkedDomains]);
 
-        // CRITICAL: Use fresh() to get a new instance and trigger Livewire's change detection
-        $this->suggestion = $this->suggestion->fresh();
+        // CRITICAL: Update timestamp to trigger Livewire re-render
+        $this->domainsCheckedAt = time();
+
+        // Dispatch browser event to tell Alpine the domains have been checked
+        $this->dispatch('domains-checked', ['suggestionId' => $this->suggestionId]);
 
         $this->dispatch('show-toast', [
             'message' => 'Domain availability checked!',
@@ -302,62 +315,6 @@ class NameResultCard extends Component
         return $this->suggestion->generation_metadata['ai_model'] ?? null;
     }
 
-    /**
-     * Livewire boot method for component initialization.
-     */
-    public function boot(): void
-    {
-        // Always ensure fresh suggestion data from database on each request
-        if ($this->suggestionId) {
-            $this->suggestion = NameSuggestion::find($this->suggestionId);
-        }
-    }
-
-    /**
-     * Handle component dehydration for state persistence.
-     */
-    public function dehydrate(): void
-    {
-        // Ensure suggestion ID is preserved
-        if ($this->suggestion instanceof NameSuggestion) {
-            $this->suggestionId = $this->suggestion->id;
-        }
-    }
-
-    /**
-     * Handle component hydration for state restoration.
-     */
-    public function hydrate(): void
-    {
-        // Always restore fresh suggestion from database
-        if ($this->suggestionId) {
-            $this->suggestion = NameSuggestion::find($this->suggestionId);
-        }
-    }
-
-    /**
-     * Serialize properties for Livewire state management.
-     */
-    protected function serializeProperty(string $property): mixed
-    {
-        if ($property === 'suggestion' && $this->$property instanceof NameSuggestion) {
-            return $this->$property->id;
-        }
-
-        return $this->$property;
-    }
-
-    /**
-     * Hydrate properties from Livewire state.
-     */
-    protected function hydrateProperty(string $property, mixed $value): mixed
-    {
-        if ($property === 'suggestion' && is_int($value)) {
-            return NameSuggestion::find($value);
-        }
-
-        return $value;
-    }
 
     public function render(): View
     {

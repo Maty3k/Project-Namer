@@ -1,11 +1,12 @@
-@if($suggestion)
+@if($this->suggestion)
 <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-300 ease-out hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-800/50 transform hover:-translate-y-1
              {{ $this->isSelected ? 'ring-2 ring-blue-500 bg-primary-50 dark:bg-primary-900/10 shadow-lg shadow-blue-200/30 dark:shadow-blue-800/30' : 'hover:border-gray-300 dark:hover:border-gray-600' }}
-             {{ $suggestion->is_hidden ? 'opacity-60 scale-95' : 'scale-100 hover:scale-[1.02]' }}
+             {{ $this->suggestion->is_hidden ? 'opacity-60 scale-95' : 'scale-100 hover:scale-[1.02]' }}
              focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:outline-none"
      x-data="{
          isExpanded: false,
          checkingDomains: false,
+         suggestionId: {{ $this->suggestion->id }},
          toggle() {
              this.isExpanded = !this.isExpanded;
              // Check domains when card is first expanded
@@ -17,14 +18,11 @@
              // Only check if domains haven't been checked yet
              if (!this.checkingDomains && this.isExpanded) {
                  this.checkingDomains = true;
-                 @this.call('checkDomains').then(() => {
-                     this.checkingDomains = false;
-                 }).catch(() => {
-                     this.checkingDomains = false;
-                 });
+                 @this.call('checkDomains');
              }
          }
      }"
+     @domains-checked.window="if ($event.detail.suggestionId === suggestionId) { checkingDomains = false; }"
  
     <!-- Card Header -->
     <div class="p-4 border-b border-gray-200 dark:border-gray-700">
@@ -42,7 +40,7 @@
                 <!-- Name -->
                 <h3 class="text-lg font-semibold transition-all duration-300 text-gray-900 dark:text-white
                            {{ $this->isSelected ? 'text-primary-900 dark:text-primary-100' : '' }}">
-                    {{ $suggestion->name }}
+                    {{ $this->suggestion->name }}
                 </h3>
 
 
@@ -103,7 +101,7 @@
                     @endif
 
                     <!-- Hide/Show Toggle -->
-                    @if($suggestion->is_hidden)
+                    @if($this->suggestion->is_hidden)
                         <flux:button
                             wire:click="showSuggestion"
                             variant="ghost"
@@ -176,7 +174,7 @@
 
                 @if($this->hasDomains)
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                        @foreach($suggestion->domains as $key => $domainData)
+                        @foreach($this->suggestion->domains as $key => $domainData)
                             @php
                                 // Handle both formats: associative array (domain service) and indexed array (factory/tests)
                                 if (is_string($key) && !is_numeric($key)) {
@@ -188,7 +186,7 @@
                                     $status = $domainData['status'] ?? null;
                                 } else {
                                     // Factory/test format: numeric array with 'extension' field
-                                    $domainName = ($suggestion->name ?? 'domain') . ($domainData['extension'] ?? '');
+                                    $domainName = ($this->suggestion->name ?? 'domain') . ($domainData['extension'] ?? '');
                                     $available = $domainData['available'] ?? null;
                                     $hasDNS = $domainData['has_dns_records'] ?? null;
                                     $checkMethod = $domainData['check_method'] ?? null;
@@ -300,12 +298,12 @@
 
                 @if($this->hasLogos)
                     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                        @foreach($suggestion->logos as $logo)
+                        @foreach($this->suggestion->logos as $logo)
                             <div class="aspect-square rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow">
                                 @if(isset($logo['url']))
                                     <img
                                         src="{{ $logo['url'] }}"
-                                        alt="Logo for {{ $suggestion->name }}"
+                                        alt="Logo for {{ $this->suggestion->name }}"
                                         class="w-full h-full object-cover"
                                         loading="lazy"
                                     />
@@ -329,7 +327,7 @@
             </div>
 
             <!-- Generation Metadata (if available) -->
-            @if($suggestion && $suggestion->generation_metadata && is_array($suggestion->generation_metadata))
+            @if($this->suggestion && $this->suggestion->generation_metadata && is_array($this->suggestion->generation_metadata))
                 <div class="pt-2 border-t border-gray-200 dark:border-gray-700">
                     <details class="group">
                         <summary class="flex items-center cursor-pointer text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
@@ -339,7 +337,7 @@
                             Generation Details
                         </summary>
                         <div class="mt-2 pl-5 text-xs text-gray-500 dark:text-gray-400">
-                            @foreach($suggestion->generation_metadata as $key => $value)
+                            @foreach($this->suggestion->generation_metadata as $key => $value)
                                 <div class="flex justify-between">
                                     <span class="capitalize">{{ str_replace('_', ' ', $key) }}:</span>
                                     <span>{{ is_array($value) ? json_encode($value) : $value }}</span>
