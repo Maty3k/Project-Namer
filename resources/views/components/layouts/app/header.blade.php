@@ -30,7 +30,7 @@
         </script>
     </head>
     <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:header container class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 !py-2">
+        <flux:header container class="border-b border-gray-200 bg-white dark:border-zinc-700 dark:bg-zinc-800 !py-2">
             <flux:sidebar.toggle class="lg:hidden !m-0" icon="bars-2" inset="left" />
 
             <a href="{{ route('dashboard') }}" class="ms-2 me-5 flex items-center space-x-2 rtl:space-x-reverse lg:ms-0" wire:navigate>
@@ -115,7 +115,7 @@
         </flux:header>
 
         <!-- Mobile Menu -->
-        <flux:sidebar stashable sticky class="lg:hidden border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+        <flux:sidebar stashable sticky class="lg:hidden border-e border-gray-200 bg-white dark:border-zinc-700 dark:bg-zinc-800">
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
             <a href="{{ route('dashboard') }}" class="ms-1 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
@@ -123,7 +123,7 @@
             </a>
 
             <!-- User Profile Section -->
-            <div class="p-3 mx-2 mt-2 mb-3 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700">
+            <div class="p-3 mx-2 mt-2 mb-3 bg-gray-50 dark:bg-zinc-700 rounded-lg border border-gray-200 dark:border-zinc-600">
                 <div class="flex items-center gap-2 mb-3">
                     <span class="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-lg">
                         <span class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white font-semibold">
@@ -138,7 +138,7 @@
 
                 <div class="space-y-1">
                     <a href="{{ route('settings.profile') }}"
-                       class="flex items-center gap-2 px-2 py-2 text-sm rounded hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors {{ request()->routeIs('settings.*') ? 'bg-zinc-100 dark:bg-zinc-700' : '' }}"
+                       class="flex items-center gap-2 px-2 py-2 text-sm rounded hover:bg-gray-100 dark:hover:bg-zinc-600 transition-colors {{ request()->routeIs('settings.*') ? 'bg-gray-100 dark:bg-zinc-600' : '' }}"
                        wire:navigate>
                         <flux:icon.cog class="w-4 h-4" />
                         <span>{{ __('Settings') }}</span>
@@ -146,7 +146,7 @@
 
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
                         @csrf
-                        <button type="submit" class="w-full flex items-center gap-2 px-2 py-2 text-sm rounded hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors text-left">
+                        <button type="submit" class="w-full flex items-center gap-2 px-2 py-2 text-sm rounded hover:bg-gray-100 dark:hover:bg-zinc-600 transition-colors text-left">
                             <flux:icon.arrow-right-start-on-rectangle class="w-4 h-4" />
                             <span>{{ __('Log Out') }}</span>
                         </button>
