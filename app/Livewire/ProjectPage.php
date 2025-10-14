@@ -773,15 +773,39 @@ class ProjectPage extends Component
      */
     protected function createNameSuggestionsFromAI(array $results, AIGeneration $aiGeneration): void
     {
+        $domainCheckService = app(\App\Services\DomainCheckService::class);
+
         foreach ($results as $modelName => $names) {
             foreach ($names as $name) {
                 // Generate domain list for this name
                 $domains = $this->generateDomainsForName($name);
 
+                // Actually check domain availability with real DNS lookups
+                $checkedDomains = [];
+                foreach ($domains as $domainName => $domainData) {
+                    try {
+                        $result = $domainCheckService->checkDomain($domainName);
+                        $checkedDomains[$domainName] = [
+                            'extension' => $domainData['extension'],
+                            'available' => $result['available'] ?? null,
+                            'status' => $result['status'] ?? 'unknown',
+                            'has_dns_records' => $result['has_dns_records'] ?? null,
+                            'check_method' => $result['check_method'] ?? 'dns',
+                        ];
+                    } catch (\Exception $e) {
+                        // If check fails, keep as pending
+                        $checkedDomains[$domainName] = $domainData;
+                        Log::warning('Domain check failed during generation', [
+                            'domain' => $domainName,
+                            'error' => $e->getMessage(),
+                        ]);
+                    }
+                }
+
                 NameSuggestion::create([
                     'project_id' => $this->project->id,
                     'name' => $name,
-                    'domains' => $domains,
+                    'domains' => $checkedDomains, // Use checked domains instead of pending ones
                     'generation_metadata' => [
                         'ai_model' => $modelName,
                         'generation_mode' => $this->generationMode,
