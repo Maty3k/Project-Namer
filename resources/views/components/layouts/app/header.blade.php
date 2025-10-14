@@ -4,23 +4,26 @@
         @include('partials.head')
 
         <script>
-            // Ensure theme persists correctly on page load
+            // Use localStorage as primary source (fast, prevents flash)
             (function() {
-                // Always trust the server preference (database) as the source of truth
+                const localStorageTheme = localStorage.getItem('darkMode');
                 const serverThemePreference = {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
-                const shouldBeDark = serverThemePreference;
 
-                // Sync localStorage to match the server preference
-                localStorage.setItem('darkMode', shouldBeDark ? 'true' : 'false');
+                // Use localStorage if available, otherwise use server preference
+                const shouldBeDark = localStorageTheme !== null
+                    ? localStorageTheme === 'true'
+                    : serverThemePreference;
 
-                console.log('HEADER LAYOUT: Using server theme from database', shouldBeDark ? 'DARK' : 'LIGHT');
-
-                // Apply immediately to html element
+                // Apply theme immediately
                 if (shouldBeDark) {
                     document.documentElement.classList.add('dark');
+                    localStorage.setItem('darkMode', 'true');
                 } else {
                     document.documentElement.classList.remove('dark');
+                    localStorage.setItem('darkMode', 'false');
                 }
+
+                console.log('HEADER: Applied theme', shouldBeDark ? 'DARK' : 'LIGHT', '(localStorage:', localStorageTheme, 'database:', serverThemePreference, ')');
             })();
         </script>
     </head>
