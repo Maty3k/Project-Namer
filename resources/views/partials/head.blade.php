@@ -6,45 +6,81 @@
 {{-- CRITICAL: Apply theme BEFORE page renders to prevent flash --}}
 <script>
 (function() {
-    // Apply dark/light mode
+    // Get theme preferences from both sources
     const localStorageTheme = localStorage.getItem('darkMode');
+    const localStorageThemeName = localStorage.getItem('themeName');
     const serverThemePreference = {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
+    const serverThemeName = '{{ \App\Helpers\ThemeHelper::getThemeName() }}';
 
-    const shouldBeDark = localStorageTheme !== null
-        ? localStorageTheme === 'true'
-        : serverThemePreference;
+    // Determine final theme name (localStorage takes precedence)
+    const themeName = localStorageThemeName || serverThemeName;
 
-    console.log('=== THEME DEBUG ===');
-    console.log('localStorage darkMode:', localStorageTheme);
-    console.log('Server preference:', serverThemePreference);
-    console.log('Final shouldBeDark:', shouldBeDark);
-    console.log('Applying dark class:', shouldBeDark ? 'YES' : 'NO');
-
-    if (shouldBeDark) {
-        document.documentElement.classList.add('dark');
+    // Determine dark mode state
+    let shouldBeDark;
+    if (localStorageTheme !== null) {
+        // localStorage exists, use it
+        shouldBeDark = localStorageTheme === 'true';
     } else {
-        document.documentElement.classList.remove('dark');
+        // No localStorage, use server preference
+        shouldBeDark = serverThemePreference;
     }
 
-    // Load correct theme CSS file
-    const storedThemeName = localStorage.getItem('themeName');
-    const serverThemeName = '{{ \App\Helpers\ThemeHelper::getThemeName() }}';
-    const themeName = storedThemeName || serverThemeName;
-
-    console.log('localStorage themeName:', storedThemeName);
+    console.log('=== THEME INITIALIZATION ===');
+    console.log('localStorage darkMode:', localStorageTheme, '(type:', typeof localStorageTheme + ')');
+    console.log('localStorage themeName:', localStorageThemeName);
+    console.log('Server isDarkMode:', serverThemePreference, '(type:', typeof serverThemePreference + ')');
     console.log('Server themeName:', serverThemeName);
-    console.log('Final themeName:', themeName);
-    console.log('Loading CSS:', '/css/themes/' + themeName + '.css');
+    console.log('---');
+    console.log('FINAL themeName:', themeName);
+    console.log('FINAL shouldBeDark:', shouldBeDark, '(type:', typeof shouldBeDark + ')');
+    console.log('ACTION: Will', shouldBeDark ? 'ADD' : 'REMOVE', 'dark class');
 
-    // Create or update theme CSS link
+    // Apply dark mode class
+    if (shouldBeDark) {
+        document.documentElement.classList.add('dark');
+        console.log('✓ Dark class ADDED to <html>');
+    } else {
+        document.documentElement.classList.remove('dark');
+        console.log('✓ Dark class REMOVED from <html>');
+    }
+
+    // Load theme CSS file
+    const themeCssPath = '/css/themes/' + themeName + '.css';
     let themeLink = document.getElementById('theme-css-link');
     if (!themeLink) {
         themeLink = document.createElement('link');
         themeLink.id = 'theme-css-link';
         themeLink.rel = 'stylesheet';
         document.head.appendChild(themeLink);
+        console.log('✓ Created theme CSS link element');
     }
-    themeLink.href = '/css/themes/' + themeName + '.css';
+    themeLink.href = themeCssPath;
+    console.log('✓ Loading theme CSS:', themeCssPath);
+    console.log('=== END THEME INITIALIZATION ===\n');
+
+    // Verify theme state after DOM loads
+    document.addEventListener('DOMContentLoaded', function() {
+        const htmlClasses = document.documentElement.classList;
+        const hasDarkClass = htmlClasses.contains('dark');
+
+        console.log('=== THEME VERIFICATION (DOMContentLoaded) ===');
+        console.log('Expected dark class:', shouldBeDark);
+        console.log('Actual dark class present:', hasDarkClass);
+        console.log('HTML element classes:', Array.from(htmlClasses).join(', ') || '(none)');
+
+        if (shouldBeDark !== hasDarkClass) {
+            console.warn('⚠️ MISMATCH: Expected', shouldBeDark, 'but found', hasDarkClass);
+            console.warn('⚠️ Correcting dark class...');
+            if (shouldBeDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        } else {
+            console.log('✓ Theme state is correct');
+        }
+        console.log('=== END VERIFICATION ===\n');
+    });
 })();
 </script>
 

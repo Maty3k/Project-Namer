@@ -61,17 +61,50 @@
                 window.__matchMediaOverridden = true;
             }
 
-
             // Listen for theme changes from ThemeCustomizer ONLY
             window.addEventListener('theme-changed', function(event) {
                 const isDark = event.detail.isDark;
+                console.log('=== theme-changed EVENT RECEIVED ===');
+                console.log('Event detail isDark:', isDark);
+                console.log('Current dark class before change:', document.documentElement.classList.contains('dark'));
+
                 if (isDark) {
                     document.documentElement.classList.add('dark');
                 } else {
                     document.documentElement.classList.remove('dark');
                 }
                 localStorage.setItem('darkMode', isDark ? 'true' : 'false');
-                console.log('Theme changed manually:', isDark ? 'DARK' : 'LIGHT');
+
+                console.log('Updated localStorage darkMode to:', isDark ? 'true' : 'false');
+                console.log('Current dark class after change:', document.documentElement.classList.contains('dark'));
+                console.log('=== END theme-changed EVENT ===\n');
+            });
+
+            // Final verification after page fully loads
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    const localStorageDarkMode = localStorage.getItem('darkMode');
+                    const shouldBeDark = localStorageDarkMode === 'true';
+                    const hasDarkClass = document.documentElement.classList.contains('dark');
+
+                    console.log('=== FINAL THEME CHECK (window.load) ===');
+                    console.log('localStorage darkMode:', localStorageDarkMode);
+                    console.log('Should be dark:', shouldBeDark);
+                    console.log('Has dark class:', hasDarkClass);
+
+                    if (shouldBeDark !== hasDarkClass) {
+                        console.warn('⚠️ FINAL CHECK: Mismatch detected! Correcting...');
+                        if (shouldBeDark) {
+                            document.documentElement.classList.add('dark');
+                        } else {
+                            document.documentElement.classList.remove('dark');
+                        }
+                        console.log('✓ Corrected dark class to match localStorage');
+                    } else {
+                        console.log('✓ Theme state is correct on final check');
+                    }
+                    console.log('=== END FINAL CHECK ===\n');
+                }, 100); // Small delay to ensure everything else has run
             });
         })();
     </script>
