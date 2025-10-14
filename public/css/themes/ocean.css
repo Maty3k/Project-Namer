@@ -1,0 +1,25 @@
+/* Ocean Breeze Theme */
+
+/* Light Mode (Default) */
+:root {
+  --color-primary: #0284c7;
+  --color-secondary: #0284c7;
+  --color-accent: #0891b2;
+  --color-background: #f0f9ff;
+  --color-surface: #e4edf3;
+  --color-text-primary: #0c4a6e;
+  --color-text-secondary: #075985;
+  --color-border: #ccd4d9;
+}
+
+/* Dark Mode */
+:root.dark {
+  --color-primary: #0284c7;
+  --color-secondary: #0284c7;
+  --color-accent: #0891b2;
+  --color-background: #111827;
+  --color-surface: #282f3c;
+  --color-text-primary: #f9fafb;
+  --color-text-secondary: #d4d5d6;
+  --color-border: #404652;
+}

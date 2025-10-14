@@ -1,0 +1,25 @@
+/* Lava Red Theme */
+
+/* Light Mode (Default) */
+:root {
+  --color-primary: #dc2626;
+  --color-secondary: #dc2626;
+  --color-accent: #f97316;
+  --color-background: #ffffff;
+  --color-surface: #f3f3f3;
+  --color-text-primary: #111827;
+  --color-text-secondary: #343a47;
+  --color-border: #d9d9d9;
+}
+
+/* Dark Mode */
+:root.dark {
+  --color-primary: #dc2626;
+  --color-secondary: #dc2626;
+  --color-accent: #f97316;
+  --color-background: #1c1917;
+  --color-surface: #32302e;
+  --color-text-primary: #fef2f2;
+  --color-text-secondary: #fecaca;
+  --color-border: #494745;
+}

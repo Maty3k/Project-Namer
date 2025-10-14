@@ -1,0 +1,25 @@
+/* Gold Rush Theme */
+
+/* Light Mode (Default) */
+:root {
+  --color-primary: #eab308;
+  --color-secondary: #eab308;
+  --color-accent: #f59e0b;
+  --color-background: #ffffff;
+  --color-surface: #f3f3f3;
+  --color-text-primary: #111827;
+  --color-text-secondary: #343a47;
+  --color-border: #d9d9d9;
+}
+
+/* Dark Mode */
+:root.dark {
+  --color-primary: #eab308;
+  --color-secondary: #eab308;
+  --color-accent: #f59e0b;
+  --color-background: #451a03;
+  --color-surface: #57301c;
+  --color-text-primary: #fef3c7;
+  --color-text-secondary: #fde68a;
+  --color-border: #6a4735;
+}

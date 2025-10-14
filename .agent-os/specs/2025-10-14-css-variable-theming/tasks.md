@@ -7,13 +7,13 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
 
 ## Tasks
 
-- [ ] 1. Create Theme CSS Files Infrastructure
-  - [ ] 1.1 Write tests for CSS file structure and variable naming
-  - [ ] 1.2 Create `public/css/themes/` directory structure
-  - [ ] 1.3 Create all 18 theme CSS files with light and dark mode variants
-  - [ ] 1.4 Validate all CSS files contain required variables
-  - [ ] 1.5 Test CSS files load correctly via HTTP requests
-  - [ ] 1.6 Verify all tests pass
+- [x] 1. Create Theme CSS Files Infrastructure
+  - [x] 1.1 Write tests for CSS file structure and variable naming
+  - [x] 1.2 Create `public/css/themes/` directory structure
+  - [x] 1.3 Create all 18 theme CSS files with light and dark mode variants
+  - [x] 1.4 Validate all CSS files contain required variables
+  - [x] 1.5 Test CSS files load correctly via HTTP requests
+  - [x] 1.6 Verify all tests pass
 
 - [ ] 2. Simplify Database Schema
   - [ ] 2.1 Write tests for simplified UserThemePreference model

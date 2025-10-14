@@ -1,0 +1,25 @@
+/* Warm Sunset Theme */
+
+/* Light Mode (Default) */
+:root {
+  --color-primary: #d97706;
+  --color-secondary: #d97706;
+  --color-accent: #dc2626;
+  --color-background: #fffbeb;
+  --color-surface: #f3efe0;
+  --color-text-primary: #92400e;
+  --color-text-secondary: #a16207;
+  --color-border: #d9d6c8;
+}
+
+/* Dark Mode */
+:root.dark {
+  --color-primary: #d97706;
+  --color-secondary: #d97706;
+  --color-accent: #dc2626;
+  --color-background: #111827;
+  --color-surface: #282f3c;
+  --color-text-primary: #f9fafb;
+  --color-text-secondary: #d4d5d6;
+  --color-border: #404652;
+}

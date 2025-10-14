@@ -1,0 +1,25 @@
+/* Lime Punch Theme */
+
+/* Light Mode (Default) */
+:root {
+  --color-primary: #4d7c0f;
+  --color-secondary: #4d7c0f;
+  --color-accent: #4d7c0f;
+  --color-background: #f7fee7;
+  --color-surface: #ebf2dc;
+  --color-text-primary: #365314;
+  --color-text-secondary: #4d7c0f;
+  --color-border: #d2d8c5;
+}
+
+/* Dark Mode */
+:root.dark {
+  --color-primary: #4d7c0f;
+  --color-secondary: #4d7c0f;
+  --color-accent: #4d7c0f;
+  --color-background: #111827;
+  --color-surface: #282f3c;
+  --color-text-primary: #f9fafb;
+  --color-text-secondary: #d4d5d6;
+  --color-border: #404652;
+}

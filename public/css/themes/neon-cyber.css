@@ -1,0 +1,25 @@
+/* Neon Cyber Theme */
+
+/* Light Mode (Default) */
+:root {
+  --color-primary: #00ff88;
+  --color-secondary: #00ff88;
+  --color-accent: #ff0080;
+  --color-background: #ffffff;
+  --color-surface: #f3f3f3;
+  --color-text-primary: #111827;
+  --color-text-secondary: #343a47;
+  --color-border: #d9d9d9;
+}
+
+/* Dark Mode */
+:root.dark {
+  --color-primary: #00ff88;
+  --color-secondary: #00ff88;
+  --color-accent: #ff0080;
+  --color-background: #0a0a0a;
+  --color-surface: #222222;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #e0e0e0;
+  --color-border: #3b3b3b;
+}

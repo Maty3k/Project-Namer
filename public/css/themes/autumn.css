@@ -1,0 +1,25 @@
+/* Autumn Harvest Theme */
+
+/* Light Mode (Default) */
+:root {
+  --color-primary: #b45309;
+  --color-secondary: #b45309;
+  --color-accent: #c53030;
+  --color-background: #fffaf0;
+  --color-surface: #f3eee4;
+  --color-text-primary: #744210;
+  --color-text-secondary: #92400e;
+  --color-border: #d9d5cc;
+}
+
+/* Dark Mode */
+:root.dark {
+  --color-primary: #b45309;
+  --color-secondary: #b45309;
+  --color-accent: #c53030;
+  --color-background: #111827;
+  --color-surface: #282f3c;
+  --color-text-primary: #f9fafb;
+  --color-text-secondary: #d4d5d6;
+  --color-border: #404652;
+}

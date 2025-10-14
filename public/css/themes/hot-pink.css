@@ -1,0 +1,25 @@
+/* Hot Pink Theme */
+
+/* Light Mode (Default) */
+:root {
+  --color-primary: #e11d48;
+  --color-secondary: #e11d48;
+  --color-accent: #ec4899;
+  --color-background: #fdf2f8;
+  --color-surface: #f1e6ec;
+  --color-text-primary: #831843;
+  --color-text-secondary: #9d174d;
+  --color-border: #d8ced3;
+}
+
+/* Dark Mode */
+:root.dark {
+  --color-primary: #e11d48;
+  --color-secondary: #e11d48;
+  --color-accent: #ec4899;
+  --color-background: #111827;
+  --color-surface: #282f3c;
+  --color-text-primary: #f9fafb;
+  --color-text-secondary: #d4d5d6;
+  --color-border: #404652;
+}

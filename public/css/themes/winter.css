@@ -1,0 +1,25 @@
+/* Winter Frost Theme */
+
+/* Light Mode (Default) */
+:root {
+  --color-primary: #4a90e2;
+  --color-secondary: #4a90e2;
+  --color-accent: #1e40af;
+  --color-background: #f8fafc;
+  --color-surface: #eceef0;
+  --color-text-primary: #1a202c;
+  --color-text-secondary: #2d3748;
+  --color-border: #d3d5d7;
+}
+
+/* Dark Mode */
+:root.dark {
+  --color-primary: #4a90e2;
+  --color-secondary: #4a90e2;
+  --color-accent: #1e40af;
+  --color-background: #111827;
+  --color-surface: #282f3c;
+  --color-text-primary: #f9fafb;
+  --color-text-secondary: #d4d5d6;
+  --color-border: #404652;
+}

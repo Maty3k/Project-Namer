@@ -1,0 +1,25 @@
+/* Electric Blue Theme */
+
+/* Light Mode (Default) */
+:root {
+  --color-primary: #0099ff;
+  --color-secondary: #0099ff;
+  --color-accent: #00ddff;
+  --color-background: #ffffff;
+  --color-surface: #f3f3f3;
+  --color-text-primary: #111827;
+  --color-text-secondary: #343a47;
+  --color-border: #d9d9d9;
+}
+
+/* Dark Mode */
+:root.dark {
+  --color-primary: #0099ff;
+  --color-secondary: #0099ff;
+  --color-accent: #00ddff;
+  --color-background: #001122;
+  --color-surface: #192838;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #f0f9ff;
+  --color-border: #33404e;
+}

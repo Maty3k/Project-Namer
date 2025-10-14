@@ -1,0 +1,25 @@
+/* Coral Reef Theme */
+
+/* Light Mode (Default) */
+:root {
+  --color-primary: #ea580c;
+  --color-secondary: #ea580c;
+  --color-accent: #0891b2;
+  --color-background: #fefcfb;
+  --color-surface: #f2f0ef;
+  --color-text-primary: #9a3412;
+  --color-text-secondary: #c2410c;
+  --color-border: #d8d7d6;
+}
+
+/* Dark Mode */
+:root.dark {
+  --color-primary: #ea580c;
+  --color-secondary: #ea580c;
+  --color-accent: #0891b2;
+  --color-background: #111827;
+  --color-surface: #282f3c;
+  --color-text-primary: #f9fafb;
+  --color-text-secondary: #d4d5d6;
+  --color-border: #404652;
+}

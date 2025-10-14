@@ -1,0 +1,25 @@
+/* Cosmic Violet Theme */
+
+/* Light Mode (Default) */
+:root {
+  --color-primary: #a855f7;
+  --color-secondary: #a855f7;
+  --color-accent: #c084fc;
+  --color-background: #ffffff;
+  --color-surface: #f3f3f3;
+  --color-text-primary: #111827;
+  --color-text-secondary: #343a47;
+  --color-border: #d9d9d9;
+}
+
+/* Dark Mode */
+:root.dark {
+  --color-primary: #a855f7;
+  --color-secondary: #a855f7;
+  --color-accent: #c084fc;
+  --color-background: #0c0a09;
+  --color-surface: #242221;
+  --color-text-primary: #f3e8ff;
+  --color-text-secondary: #ddd6fe;
+  --color-border: #3c3b3a;
+}

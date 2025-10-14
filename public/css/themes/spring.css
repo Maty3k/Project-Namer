@@ -1,0 +1,25 @@
+/* Spring Bloom Theme */
+
+/* Light Mode (Default) */
+:root {
+  --color-primary: #059669;
+  --color-secondary: #059669;
+  --color-accent: #be185d;
+  --color-background: #f0fff4;
+  --color-surface: #e4f3e8;
+  --color-text-primary: #2d3748;
+  --color-text-secondary: #4a5568;
+  --color-border: #ccd9d0;
+}
+
+/* Dark Mode */
+:root.dark {
+  --color-primary: #059669;
+  --color-secondary: #059669;
+  --color-accent: #be185d;
+  --color-background: #111827;
+  --color-surface: #282f3c;
+  --color-text-primary: #f9fafb;
+  --color-text-secondary: #d4d5d6;
+  --color-border: #404652;
+}

@@ -1,0 +1,25 @@
+/* Midnight Teal Theme */
+
+/* Light Mode (Default) */
+:root {
+  --color-primary: #0891b2;
+  --color-secondary: #0891b2;
+  --color-accent: #22d3ee;
+  --color-background: #ffffff;
+  --color-surface: #f3f3f3;
+  --color-text-primary: #111827;
+  --color-text-secondary: #343a47;
+  --color-border: #d9d9d9;
+}
+
+/* Dark Mode */
+:root.dark {
+  --color-primary: #0891b2;
+  --color-secondary: #0891b2;
+  --color-accent: #22d3ee;
+  --color-background: #0f172a;
+  --color-surface: #272e3f;
+  --color-text-primary: #e0f2fe;
+  --color-text-secondary: #bae6fd;
+  --color-border: #3f4554;
+}

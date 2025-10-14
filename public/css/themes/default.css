@@ -1,0 +1,25 @@
+/* Default Blue Theme */
+
+/* Light Mode (Default) */
+:root {
+  --color-primary: #3b82f6;
+  --color-secondary: #3b82f6;
+  --color-accent: #059669;
+  --color-background: #ffffff;
+  --color-surface: #f3f3f3;
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+  --color-border: #d9d9d9;
+}
+
+/* Dark Mode */
+:root.dark {
+  --color-primary: #3b82f6;
+  --color-secondary: #3b82f6;
+  --color-accent: #059669;
+  --color-background: #111827;
+  --color-surface: #282f3c;
+  --color-text-primary: #f9fafb;
+  --color-text-secondary: #d4d5d6;
+  --color-border: #404652;
+}
