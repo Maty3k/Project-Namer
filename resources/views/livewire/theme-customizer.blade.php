@@ -1,19 +1,12 @@
 <div class="space-y-8">
     <!-- Theme Customizer Header -->
-    <div class="flex items-center justify-between">
-        <div>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                Theme Customizer
-            </h2>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-                Choose from our predefined theme collection
-            </p>
-        </div>
-
-        <!-- Dark Mode Toggle -->
-        <flux:switch wire:model.live="isDarkMode" wire:click="toggleDarkMode">
-            Dark Mode
-        </flux:switch>
+    <div>
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            Theme Customizer
+        </h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+            Choose from our predefined theme collection
+        </p>
     </div>
 
     <!-- Seasonal Recommendation -->
