@@ -61,7 +61,7 @@ final readonly class DomainCheckService
             ];
         }
 
-        // DNS pre-screening: Check if domain has DNS records
+        // DNS-only checking for speed (no slow API calls)
         $hasDNS = $this->dnsLookup->hasDNSRecords($domain);
 
         // If DNS records found, domain is definitely taken
@@ -79,31 +79,39 @@ final readonly class DomainCheckService
                 'status' => 'taken',
                 'cached' => false,
                 'check_method' => 'dns',
+                'has_dns_records' => true,
             ];
         }
 
-        // If no DNS records (or DNS check failed), fall back to API
-        try {
-            $result = $this->checkDomainViaAPI($domain);
+        // If no DNS records found, domain is likely available
+        // (We skip slow API calls for performance)
+        if ($hasDNS === false) {
+            Log::info('No DNS records found - marking as likely available', ['domain' => $domain]);
 
-            // Cache the result with DNS info
-            $this->cacheResult($domain, $result['available'], 'dns', $hasDNS === false);
-
-            return array_merge($result, ['cached' => false, 'check_method' => 'dns']);
-        } catch (Exception $e) {
-            Log::warning('Domain check failed', [
-                'domain' => $domain,
-                'error' => $e->getMessage(),
-            ]);
+            // Cache the DNS result
+            $this->cacheResult($domain, true, 'dns', false);
 
             return [
                 'domain' => $domain,
-                'available' => null,
-                'status' => 'error',
-                'error' => $e->getMessage(),
+                'available' => true,
+                'status' => 'available',
                 'cached' => false,
+                'check_method' => 'dns',
+                'has_dns_records' => false,
             ];
         }
+
+        // DNS check failed - mark as unknown
+        Log::warning('DNS check failed for domain', ['domain' => $domain]);
+
+        return [
+            'domain' => $domain,
+            'available' => null,
+            'status' => 'unknown',
+            'cached' => false,
+            'check_method' => 'dns',
+            'has_dns_records' => null,
+        ];
     }
 
     /**
