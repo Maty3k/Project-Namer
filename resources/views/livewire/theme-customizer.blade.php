@@ -72,38 +72,41 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 gap-6
+        <div class="grid grid-cols-1 gap-8
                     sm:grid-cols-2
                     lg:grid-cols-3
-                    xl:grid-cols-4">
+                    2xl:grid-cols-4">
             @foreach($this->predefinedThemes as $theme)
                 <div wire:click="applyPreset('{{ $theme['name'] }}')"
-                     class="group relative cursor-pointer rounded-2xl overflow-hidden transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl
-                            {{ $themeName === $theme['name'] ? 'ring-4 ring-blue-500 ring-offset-2 dark:ring-offset-gray-900 shadow-2xl scale-[1.02]' : 'hover:ring-2 hover:ring-blue-400/50' }}">
+                     class="group relative cursor-pointer transition-all duration-500 ease-out">
 
-                    <!-- Background Gradient based on theme -->
-                    <div class="absolute inset-0 opacity-10 dark:opacity-20 transition-opacity group-hover:opacity-20 dark:group-hover:opacity-30"
-                         style="background: linear-gradient(135deg,
-                            {{ $theme['is_dark_mode'] ? '#1e293b' : '#f8fafc' }} 0%,
-                            {{ $theme['is_dark_mode'] ? '#334155' : '#e2e8f0' }} 100%);"></div>
+                    <!-- Premium Card with Depth -->
+                    <div class="relative bg-white dark:bg-gray-900 rounded-3xl p-8 transition-all duration-500
+                                border border-gray-200/50 dark:border-gray-700/50
+                                shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)]
+                                hover:shadow-[0_20px_60px_rgb(0,0,0,0.08)] dark:hover:shadow-[0_20px_60px_rgb(0,0,0,0.5)]
+                                hover:-translate-y-1
+                                {{ $themeName === $theme['name'] ? 'ring-2 ring-blue-500/50 shadow-[0_20px_60px_rgb(59,130,246,0.15)] dark:shadow-[0_20px_60px_rgb(59,130,246,0.3)] -translate-y-1' : '' }}">
 
-                    <!-- Card Content -->
-                    <div class="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
-                        <!-- Active Badge (top-right corner) -->
+                        <!-- Subtle Background Pattern -->
+                        <div class="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none">
+                            <div class="absolute inset-0 bg-gradient-to-br from-gray-50/50 to-transparent dark:from-gray-800/30 dark:to-transparent"></div>
+                        </div>
+
+                        <!-- Active Indicator - Elegant Checkmark -->
                         @if($themeName === $theme['name'])
-                            <div class="absolute top-3 right-3">
-                                <div class="flex items-center gap-1.5 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
-                                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            <div class="absolute -top-3 -right-3 z-10">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
                                     </svg>
-                                    <span>Active</span>
                                 </div>
                             </div>
                         @endif
 
-                        <div class="space-y-4">
-                            <!-- Theme Icon with Background Circle -->
-                            <div class="flex items-center justify-center">
+                        <div class="relative space-y-6">
+                            <!-- Premium Icon Display -->
+                            <div class="flex items-center justify-center pt-2">
                                 @php
                                     $themeIcon = match($theme['name'] ?? '') {
                                         'default' => '🔵',
@@ -128,69 +131,73 @@
                                         default => '🎨'
                                     };
                                 @endphp
-                                <div class="relative">
-                                    <div class="absolute inset-0 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-full blur-xl group-hover:blur-2xl transition-all"></div>
-                                    <span class="relative text-6xl {{ $themeName === $theme['name'] ? 'animate-bounce' : 'group-hover:scale-110' }} transition-transform duration-300 inline-block">
-                                        {{ $themeIcon }}
-                                    </span>
+                                <div class="relative w-24 h-24 flex items-center justify-center">
+                                    <!-- Ambient Glow -->
+                                    <div class="absolute inset-0 bg-gradient-to-br from-blue-400/20 via-purple-400/20 to-pink-400/20 rounded-full blur-2xl scale-150 group-hover:scale-[1.8] transition-transform duration-700"></div>
+
+                                    <!-- Icon Container -->
+                                    <div class="relative w-20 h-20 flex items-center justify-center rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 shadow-inner">
+                                        <span class="text-5xl transform group-hover:scale-110 transition-transform duration-500 ease-out">
+                                            {{ $themeIcon }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Theme Info -->
-                            <div class="text-center space-y-2">
-                                <!-- Theme Name -->
-                                <div class="flex items-center justify-center gap-2">
+                            <!-- Theme Information -->
+                            <div class="text-center space-y-3">
+                                <!-- Theme Name with Seasonal Indicator -->
+                                <div class="space-y-1">
+                                    <h3 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
+                                        {{ $theme['display_name'] }}
+                                    </h3>
+
                                     @if(($theme['category'] ?? '') === 'seasonal')
-                                        <span class="text-sm">
+                                        <div class="flex items-center justify-center gap-1.5">
                                             @switch($theme['season'] ?? '')
                                                 @case('summer')
-                                                    <span class="text-yellow-500">☀️</span>
+                                                    <span class="text-xs text-yellow-600 dark:text-yellow-400 font-medium">☀️ Seasonal</span>
                                                     @break
                                                 @case('winter')
-                                                    <span class="text-blue-400">❄️</span>
+                                                    <span class="text-xs text-blue-600 dark:text-blue-400 font-medium">❄️ Seasonal</span>
                                                     @break
                                                 @case('halloween')
-                                                    <span class="text-orange-500">🎃</span>
+                                                    <span class="text-xs text-orange-600 dark:text-orange-400 font-medium">🎃 Seasonal</span>
                                                     @break
                                                 @case('spring')
-                                                    <span class="text-green-500">🌸</span>
+                                                    <span class="text-xs text-green-600 dark:text-green-400 font-medium">🌸 Seasonal</span>
                                                     @break
                                                 @case('autumn')
-                                                    <span class="text-orange-600">🍂</span>
+                                                    <span class="text-xs text-orange-700 dark:text-orange-400 font-medium">🍂 Seasonal</span>
                                                     @break
                                             @endswitch
-                                        </span>
+                                        </div>
                                     @endif
-                                    <h4 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                                        {{ $theme['display_name'] }}
-                                    </h4>
                                 </div>
 
-                                <!-- Mode Badge -->
+                                <!-- Elegant Mode Indicator -->
                                 <div class="flex items-center justify-center">
                                     @if($theme['is_dark_mode'])
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-gray-800 dark:bg-gray-700 text-gray-100 border border-gray-700 dark:border-gray-600">
-                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
-                                            </svg>
-                                            Dark Mode
-                                        </span>
+                                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-900/5 dark:bg-white/5 border border-gray-900/10 dark:border-white/10">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-gray-900 dark:bg-gray-100"></div>
+                                            <span class="text-xs font-medium text-gray-700 dark:text-gray-300 tracking-wide">DARK</span>
+                                        </div>
                                     @else
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-700">
-                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
-                                            </svg>
-                                            Light Mode
-                                        </span>
+                                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-500/5 dark:bg-yellow-400/10 border border-yellow-500/20 dark:border-yellow-400/20">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-yellow-500 dark:bg-yellow-400"></div>
+                                            <span class="text-xs font-medium text-yellow-700 dark:text-yellow-300 tracking-wide">LIGHT</span>
+                                        </div>
                                     @endif
                                 </div>
                             </div>
 
-                            <!-- Hover Indicator -->
-                            <div class="pt-3 border-t border-gray-200 dark:border-gray-700 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <p class="text-xs text-center text-gray-500 dark:text-gray-400 font-medium">
-                                    Click to activate
-                                </p>
+                            <!-- Premium Hover State -->
+                            <div class="pt-4 border-t border-gray-100 dark:border-gray-800 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                <div class="flex items-center justify-center gap-2 text-xs font-medium text-gray-400 dark:text-gray-500">
+                                    <div class="w-1 h-1 rounded-full bg-blue-500"></div>
+                                    <span>Click to activate</span>
+                                    <div class="w-1 h-1 rounded-full bg-blue-500"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
