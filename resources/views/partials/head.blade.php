@@ -6,6 +6,7 @@
 {{-- CRITICAL: Apply theme BEFORE page renders to prevent flash --}}
 <script>
 (function() {
+    // Apply dark/light mode
     const localStorageTheme = localStorage.getItem('darkMode');
     const serverThemePreference = {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
 
@@ -18,6 +19,21 @@
     } else {
         document.documentElement.classList.remove('dark');
     }
+
+    // Load correct theme CSS file
+    const storedThemeName = localStorage.getItem('themeName');
+    const serverThemeName = '{{ \App\Helpers\ThemeHelper::getThemeName() }}';
+    const themeName = storedThemeName || serverThemeName;
+
+    // Create or update theme CSS link
+    let themeLink = document.getElementById('theme-css-link');
+    if (!themeLink) {
+        themeLink = document.createElement('link');
+        themeLink.id = 'theme-css-link';
+        themeLink.rel = 'stylesheet';
+        document.head.appendChild(themeLink);
+    }
+    themeLink.href = '/css/themes/' + themeName + '.css';
 })();
 </script>
 
@@ -32,5 +48,4 @@
 <link rel="stylesheet" href="{{ asset('css/smooth-animations.css') }}">
 @fluxAppearance
 
-{{-- Dynamic theme CSS loading based on user preference --}}
-<link rel="stylesheet" href="{{ \App\Helpers\ThemeHelper::getThemeCssPath() }}">
+{{-- Theme CSS is loaded dynamically via script above --}}

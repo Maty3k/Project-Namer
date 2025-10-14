@@ -139,11 +139,6 @@ final class ThemeCustomizer extends Component
 
                 console.log('THEME CUSTOMIZER: Applying theme', '{$this->themeName}', isDark ? 'DARK' : 'LIGHT');
 
-                // Authorize this theme change with the protection system
-                if (window.authorizeThemeChange) {
-                    window.authorizeThemeChange(isDark, 15000); // 15 second authorization
-                }
-
                 // Update theme CSS link
                 let themeLink = document.getElementById('theme-css-link');
                 if (!themeLink) {
@@ -162,6 +157,9 @@ final class ThemeCustomizer extends Component
                     html.classList.remove('dark');
                     localStorage.setItem('darkMode', 'false');
                 }
+
+                // Store theme name in localStorage for persistence
+                localStorage.setItem('themeName', '{$this->themeName}');
 
                 // Update the global current theme preference
                 window.currentThemePreference = isDark;
