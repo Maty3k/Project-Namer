@@ -24,7 +24,6 @@ final class ThemeAccessibilityBrowserTest extends DuskTestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
         $this->user = User::factory()->create();
         $this->themeService = new ThemeService;
     }
