@@ -32,14 +32,14 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 3.5 Add helper method to construct theme CSS path
   - [x] 3.6 Verify all tests pass
 
-- [ ] 4. Implement Dynamic Theme Loading System
-  - [ ] 4.1 Write tests for theme CSS file injection
-  - [ ] 4.2 Update `resources/views/partials/head.blade.php` to remove inline style block
-  - [ ] 4.3 Add dynamic `<link>` tag for theme CSS file based on user preference
-  - [ ] 4.4 Implement Alpine.js dark mode toggle with persistence
-  - [ ] 4.5 Add `.dark` class toggle to root HTML element
-  - [ ] 4.6 Test theme switching without page reload
-  - [ ] 4.7 Verify all tests pass
+- [x] 4. Implement Dynamic Theme Loading System
+  - [x] 4.1 Write tests for theme CSS file injection
+  - [x] 4.2 Update `resources/views/partials/head.blade.php` to remove inline style block
+  - [x] 4.3 Add dynamic `<link>` tag for theme CSS file based on user preference
+  - [x] 4.4 Implement Alpine.js dark mode toggle with persistence
+  - [x] 4.5 Add `.dark` class toggle to root HTML element
+  - [x] 4.6 Test theme switching without page reload
+  - [x] 4.7 Verify all tests pass
 
 - [ ] 5. Remove Hex Colors from Templates (Batch 1: Critical Files)
   - [ ] 5.1 Write tests to verify no hex colors in templates

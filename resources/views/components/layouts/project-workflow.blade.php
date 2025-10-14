@@ -3,7 +3,9 @@
     $isDarkMode = \App\Helpers\ThemeHelper::isDarkMode();
 @endphp
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="{{ $isDarkMode ? 'dark' : '' }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+      x-data="{ darkMode: {{ $isDarkMode ? 'true' : 'false' }} }"
+      :class="{ 'dark': darkMode }">
 <head>
     @include('partials.head')
     @if($userTheme)

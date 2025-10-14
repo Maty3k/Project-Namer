@@ -51,7 +51,7 @@ class GenerateThemeCssFiles extends Command
     }
 
     /**
-     * @param array<string, mixed> $theme
+     * @param  array<string, mixed>  $theme
      */
     protected function generateThemeCss(array $theme): string
     {
@@ -67,7 +67,7 @@ class GenerateThemeCssFiles extends Command
     }
 
     /**
-     * @param array<string, mixed> $theme
+     * @param  array<string, mixed>  $theme
      */
     protected function generateLightPrimaryTheme(array $theme): string
     {
@@ -124,7 +124,7 @@ CSS;
     }
 
     /**
-     * @param array<string, mixed> $theme
+     * @param  array<string, mixed>  $theme
      */
     protected function generateDarkPrimaryTheme(array $theme): string
     {
@@ -181,7 +181,7 @@ CSS;
     }
 
     /**
-     * @param array<string, mixed> $theme
+     * @param  array<string, mixed>  $theme
      */
     protected function calculateSecondary(array $theme): string
     {
@@ -226,7 +226,7 @@ CSS;
     }
 
     /**
-     * @param array{r: int, g: int, b: int} $rgb
+     * @param  array{r: int, g: int, b: int}  $rgb
      */
     protected function calculateLuminance(array $rgb): float
     {
