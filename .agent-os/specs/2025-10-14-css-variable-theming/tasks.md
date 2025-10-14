@@ -24,13 +24,13 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 2.6 Run migration and verify schema changes
   - [x] 2.7 Verify all tests pass
 
-- [ ] 3. Update ThemeService and ThemeHelper
-  - [ ] 3.1 Write tests for updated theme service methods
-  - [ ] 3.2 Remove hex-based methods from ThemeService
-  - [ ] 3.3 Update `getPredefinedThemes()` to return theme metadata only (no hex colors)
-  - [ ] 3.4 Update ThemeHelper to return theme name and dark mode status
-  - [ ] 3.5 Add helper method to construct theme CSS path
-  - [ ] 3.6 Verify all tests pass
+- [x] 3. Update ThemeService and ThemeHelper
+  - [x] 3.1 Write tests for updated theme service methods
+  - [x] 3.2 Remove hex-based methods from ThemeService
+  - [x] 3.3 Update `getPredefinedThemes()` to return theme metadata only (no hex colors)
+  - [x] 3.4 Update ThemeHelper to return theme name and dark mode status
+  - [x] 3.5 Add helper method to construct theme CSS path
+  - [x] 3.6 Verify all tests pass
 
 - [ ] 4. Implement Dynamic Theme Loading System
   - [ ] 4.1 Write tests for theme CSS file injection

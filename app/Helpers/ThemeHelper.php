@@ -29,22 +29,7 @@ final class ThemeHelper
         $cacheKey = "user_theme_{$user->id}_{$sessionId}";
 
         return Cache::remember($cacheKey, 300, function () use ($user) {
-            $preference = UserThemePreference::where('user_id', $user->id)->first();
-
-            // If no detailed preference exists, create one from User model settings
-            if (! $preference && ($user->prefers_dark_mode !== null || $user->current_theme !== null)) {
-                $preference = new UserThemePreference([
-                    'user_id' => $user->id,
-                    'theme_name' => $user->current_theme ?? 'default',
-                    'is_dark_mode' => $user->prefers_dark_mode ?? false,
-                    'primary_color' => '#3b82f6',
-                    'accent_color' => '#10b981',
-                    'background_color' => ($user->prefers_dark_mode ?? false) ? '#1f2937' : '#ffffff',
-                    'text_color' => ($user->prefers_dark_mode ?? false) ? '#f9fafb' : '#111827',
-                ]);
-            }
-
-            return $preference;
+            return UserThemePreference::where('user_id', $user->id)->first();
         });
     }
 
@@ -81,22 +66,6 @@ final class ThemeHelper
     }
 
     /**
-     * Get theme CSS variables for consistent styling.
-     *
-     * @return array<string, string>
-     */
-    public static function getThemeCssVariables(): array
-    {
-        $theme = self::getCurrentUserTheme();
-
-        if (! $theme) {
-            return [];
-        }
-
-        return $theme->generateCssVariables($theme->is_dark_mode);
-    }
-
-    /**
      * Check if the current theme is dark mode.
      */
     public static function isDarkMode(): bool
@@ -114,41 +83,34 @@ final class ThemeHelper
     }
 
     /**
-     * Get theme-aware background color for components.
+     * Get the theme CSS file path for the current user.
      */
-    public static function getComponentBackgroundColor(string $componentType = 'surface'): string
+    public static function getThemeCssPath(): string
     {
         $theme = self::getCurrentUserTheme();
 
-        if (! $theme) {
-            return '#ffffff';
+        if ($theme) {
+            return $theme->getThemeCssPath();
         }
 
-        return match ($componentType) {
-            'main' => $theme->background_color,
-            'surface' => $theme->surface_color ?? '#f8fafc',
-            'sidebar' => $theme->is_dark_mode ? $theme->background_color : ($theme->surface_color ?? '#f8fafc'),
-            default => $theme->background_color,
-        };
+        // Default theme for unauthenticated users
+        return '/css/themes/default.css';
     }
 
     /**
-     * Get theme-aware text color.
+     * Get the theme name for the current user.
      */
-    public static function getTextColor(): string
+    public static function getThemeName(): string
     {
         $theme = self::getCurrentUserTheme();
 
-        return $theme ? $theme->text_color : '#111827';
-    }
+        if ($theme) {
+            return $theme->theme_name;
+        }
 
-    /**
-     * Get theme-aware primary color.
-     */
-    public static function getPrimaryColor(): string
-    {
-        $theme = self::getCurrentUserTheme();
+        // Fall back to User model if no theme preference
+        $user = Auth::user();
 
-        return $theme ? $theme->primary_color : '#3b82f6';
+        return $user && $user->current_theme ? $user->current_theme : 'default';
     }
 }
