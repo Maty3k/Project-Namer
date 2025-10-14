@@ -58,14 +58,14 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 6.6 Replace all hex values with CSS variable references
   - [x] 6.7 Verify all tests pass
 
-- [ ] 7. Remove Hex Colors from Templates (Batch 3: Components & Utilities)
-  - [ ] 7.1 Update `resources/views/livewire/image-uploader.blade.php`
-  - [ ] 7.2 Update `resources/views/livewire/mood-board-canvas.blade.php`
-  - [ ] 7.3 Update `resources/views/components/ai/accessible-interface.blade.php`
-  - [ ] 7.4 Update `resources/views/components/ai/accessible-model-selector.blade.php`
-  - [ ] 7.5 Update `resources/views/components/ai/accessibility-announcements.blade.php`
-  - [ ] 7.6 Replace all hex values with CSS variable references
-  - [ ] 7.7 Verify all tests pass
+- [x] 7. Remove Hex Colors from Templates (Batch 3: Components & Utilities)
+  - [x] 7.1 Update `resources/views/livewire/image-uploader.blade.php`
+  - [x] 7.2 Update `resources/views/livewire/mood-board-canvas.blade.php`
+  - [x] 7.3 Update `resources/views/components/ai/accessible-interface.blade.php`
+  - [x] 7.4 Update `resources/views/components/ai/accessible-model-selector.blade.php`
+  - [x] 7.5 Update `resources/views/components/ai/accessibility-announcements.blade.php`
+  - [x] 7.6 Replace all hex values with CSS variable references
+  - [x] 7.7 Verify all tests pass
 
 - [ ] 8. Remove Hex Colors from Templates (Batch 4: Dashboards & Exports)
   - [ ] 8.1 Update `resources/views/livewire/name-generator-dashboard-backup.blade.php`

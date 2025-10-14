@@ -201,15 +201,15 @@
                      }"
                      @drop="handleDrop($event)"
                      @dragover="handleDragOver($event)"
-                     style="background-color: {{ $layoutConfig['background_color'] ?? '#ffffff' }}"
+                     style="background-color: {{ $layoutConfig['background_color'] ?? 'rgb(255 255 255)' }}"
                      class="relative w-full h-full min-h-96 overflow-auto">
-                    
+
                     <!-- Grid Background (when enabled) -->
                     @if($layoutConfig['snap_to_grid'] ?? false)
                         <div class="absolute inset-0 opacity-20 pointer-events-none"
-                             style="background-image: 
-                                    linear-gradient(to right, #000 1px, transparent 1px),
-                                    linear-gradient(to bottom, #000 1px, transparent 1px);
+                             style="background-image:
+                                    linear-gradient(to right, rgb(0 0 0) 1px, transparent 1px),
+                                    linear-gradient(to bottom, rgb(0 0 0) 1px, transparent 1px);
                                     background-size: {{ $layoutConfig['grid_size'] ?? 20 }}px {{ $layoutConfig['grid_size'] ?? 20 }}px;">
                         </div>
                     @endif

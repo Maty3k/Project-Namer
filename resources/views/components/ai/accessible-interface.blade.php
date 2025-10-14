@@ -291,7 +291,7 @@ window.aiAccessibility = {
 <style>
 /* Additional accessibility styles */
 .keyboard-navigation *:focus-visible {
-    outline: 3px solid #2563eb !important;
+    outline: 3px solid rgb(37 99 235) !important;
     outline-offset: 2px !important;
 }
 
@@ -300,15 +300,15 @@ window.aiAccessibility = {
 }
 
 .ai-high-contrast .bg-white {
-    background-color: #ffffff !important;
+    background-color: rgb(255 255 255) !important;
 }
 
 .ai-high-contrast .bg-gray-50 {
-    background-color: #f8f9fa !important;
+    background-color: rgb(248 249 250) !important;
 }
 
 .ai-high-contrast .text-gray-900 {
-    color: #000000 !important;
+    color: rgb(0 0 0) !important;
 }
 
 .ai-high-contrast button {

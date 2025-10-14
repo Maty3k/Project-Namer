@@ -1,19 +1,14 @@
-@php
-    $userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
-    $primaryColor = $userTheme ? $userTheme->primary_color : '#3B82F6';
-@endphp
-
 @push('styles')
 <style>
     body.dragging-files {
-        background: {{ $primaryColor }}1a;
+        background: rgb(59 130 246 / 0.1);
     }
 
     body.dragging-files .upload-zone {
         transform: scale(1.02);
-        border-color: {{ $primaryColor }} !important;
-        background-color: {{ $primaryColor }}1a !important;
-        box-shadow: 0 10px 25px -5px {{ $primaryColor }}4d;
+        border-color: rgb(59 130 246) !important;
+        background-color: rgb(59 130 246 / 0.1) !important;
+        box-shadow: 0 10px 25px -5px rgb(59 130 246 / 0.3);
     }
 
     .upload-zone {

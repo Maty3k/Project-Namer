@@ -293,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function() {
     width: auto;
     height: auto;
     padding: 8px 16px;
-    background: #2563eb;
+    background: rgb(37 99 235);
     color: white;
     text-decoration: none;
     border-radius: 4px;
@@ -304,15 +304,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /* Enhanced focus indicators for AI interface */
 .ai-interface *:focus-visible {
-    outline: 3px solid #2563eb;
+    outline: 3px solid rgb(37 99 235);
     outline-offset: 2px;
-    box-shadow: 0 0 0 2px white, 0 0 0 5px #2563eb;
+    box-shadow: 0 0 0 2px white, 0 0 0 5px rgb(37 99 235);
 }
 
 /* Dark mode focus indicators */
 .dark .ai-interface *:focus-visible {
-    outline: 3px solid #60a5fa;
-    box-shadow: 0 0 0 2px #1f2937, 0 0 0 5px #60a5fa;
+    outline: 3px solid rgb(96 165 250);
+    box-shadow: 0 0 0 2px rgb(31 41 55), 0 0 0 5px rgb(96 165 250);
 }
 
 /* Ensure interactive elements meet minimum touch target size */
@@ -328,12 +328,12 @@ document.addEventListener('DOMContentLoaded', function() {
     .ai-high-contrast .ai-interface * {
         border: 2px solid currentColor !important;
     }
-    
+
     .ai-high-contrast .ai-interface button:focus,
     .ai-high-contrast .ai-interface [role="button"]:focus {
-        background: #ffff00 !important;
-        color: #000000 !important;
-        border: 4px solid #000000 !important;
+        background: rgb(255 255 0) !important;
+        color: rgb(0 0 0) !important;
+        border: 4px solid rgb(0 0 0) !important;
     }
 }
 

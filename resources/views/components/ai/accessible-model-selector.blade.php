@@ -259,13 +259,13 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .ai-model-card.selected {
-    border-color: #3b82f6;
-    background-color: #eff6ff;
+    border-color: rgb(59 130 246);
+    background-color: rgb(239 246 255);
 }
 
 .dark .ai-model-card.selected {
-    border-color: #60a5fa;
-    background-color: #1e40af;
+    border-color: rgb(96 165 250);
+    background-color: rgb(30 64 175);
 }
 
 .ai-model-card.disabled {
@@ -275,13 +275,13 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .ai-model-card:focus-visible {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    border-color: rgb(37 99 235);
+    box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
 }
 
 .dark .ai-model-card:focus-visible {
-    border-color: #60a5fa;
-    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+    border-color: rgb(96 165 250);
+    box-shadow: 0 0 0 3px rgb(96 165 250 / 0.1);
 }
 
 /* High contrast mode enhancements */
@@ -289,16 +289,16 @@ document.addEventListener('DOMContentLoaded', function() {
     .ai-model-card {
         border: 2px solid currentColor !important;
     }
-    
+
     .ai-model-card.selected {
-        background-color: #ffff00 !important;
-        color: #000000 !important;
+        background-color: rgb(255 255 0) !important;
+        color: rgb(0 0 0) !important;
     }
-    
+
     .ai-model-card:focus-visible {
-        border: 4px solid #000000 !important;
-        background-color: #ffff00 !important;
-        color: #000000 !important;
+        border: 4px solid rgb(0 0 0) !important;
+        background-color: rgb(255 255 0) !important;
+        color: rgb(0 0 0) !important;
     }
 }
 
