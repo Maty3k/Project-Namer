@@ -188,10 +188,8 @@ class CompleteUserWorkflowTest extends TestCase
         $themeComponent = Livewire::actingAs($this->user)->test(ThemeCustomizer::class);
 
         $themeComponent
-            ->set('primaryColor', '#3b82f6')
-            ->set('accentColor', '#10b981')
-            ->set('backgroundColor', '#ffffff')
-            ->set('textColor', '#111827')
+            ->set('themeName', 'ocean')
+            ->set('isDarkMode', false)
             ->assertHasNoErrors();
 
         $themeComponent
@@ -446,8 +444,8 @@ class CompleteUserWorkflowTest extends TestCase
         $startTime = microtime(true);
 
         $themeComponent
-            ->set('primaryColor', '#ff6b35')
-            ->set('accentColor', '#f7931e')
+            ->set('themeName', 'sunset')
+            ->set('isDarkMode', false)
             ->call('save')
             ->assertHasNoErrors()
             ->assertDispatched('theme-saved');

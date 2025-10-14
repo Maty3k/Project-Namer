@@ -206,9 +206,10 @@ class AnimationPerformanceTest extends TestCase
             ->test(ThemeCustomizer::class);
 
         // Multiple rapid theme changes (which trigger animations)
+        $themes = ['default', 'ocean', 'sunset', 'forest', 'dark'];
         for ($i = 0; $i < 10; $i++) {
             $component
-                ->set('primaryColor', sprintf('#%06x', random_int(0, 0xFFFFFF)))
+                ->set('themeName', $themes[$i % count($themes)])
                 ->assertHasNoErrors();
         }
 
@@ -264,7 +265,8 @@ class AnimationPerformanceTest extends TestCase
                 ->test(ThemeCustomizer::class);
 
             $component
-                ->set('primaryColor', '#ff0000')
+                ->set('themeName', 'sunset')
+                ->set('isDarkMode', false)
                 ->call('save');
 
             // Simulate component cleanup

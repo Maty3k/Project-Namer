@@ -83,11 +83,12 @@ test('sidebar highlights active project', function (): void {
     $component = Livewire::test(Sidebar::class, ['activeProjectUuid' => $project->uuid])
         ->assertSet('activeProjectUuid', $project->uuid);
 
-    // Check for active project highlighting with inline style or theme classes
+    // Check for active project highlighting with CSS classes
     $html = $component->html();
-    $hasActiveHighlight = str_contains((string) $html, 'border-left: 4px solid') ||
-                         str_contains((string) $html, 'theme-interactive') ||
-                         str_contains((string) $html, '#3B82F6');
+    $hasActiveHighlight = str_contains((string) $html, 'border-l-4') ||
+                         str_contains((string) $html, 'border-blue-500') ||
+                         str_contains((string) $html, 'bg-blue-50') ||
+                         str_contains((string) $html, 'theme-interactive');
     expect($hasActiveHighlight)->toBeTrue('Should have active project highlighting');
 });
 
