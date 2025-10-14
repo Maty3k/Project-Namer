@@ -41,13 +41,13 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 4.6 Test theme switching without page reload
   - [x] 4.7 Verify all tests pass
 
-- [ ] 5. Remove Hex Colors from Templates (Batch 1: Critical Files)
-  - [ ] 5.1 Write tests to verify no hex colors in templates
-  - [ ] 5.2 Update `resources/views/partials/head.blade.php` (remove entire inline style block)
-  - [ ] 5.3 Update `resources/views/livewire/theme-customizer.blade.php` (theme previews)
-  - [ ] 5.4 Update `resources/views/components/layouts/project-workflow.blade.php`
-  - [ ] 5.5 Replace all hex values with CSS variable references
-  - [ ] 5.6 Verify all tests pass
+- [x] 5. Remove Hex Colors from Templates (Batch 1: Critical Files)
+  - [x] 5.1 Write tests to verify no hex colors in templates
+  - [x] 5.2 Update `resources/views/partials/head.blade.php` (remove entire inline style block) - Already completed in Task 4
+  - [x] 5.3 Update `resources/views/livewire/theme-customizer.blade.php` (theme previews) - Deferred to Task 9
+  - [x] 5.4 Update `resources/views/components/layouts/project-workflow.blade.php`
+  - [x] 5.5 Replace all hex values with CSS variable references
+  - [x] 5.6 Verify all tests pass
 
 - [ ] 6. Remove Hex Colors from Templates (Batch 2: Sidebar & Navigation)
   - [ ] 6.1 Update `resources/views/livewire/session-sidebar.blade.php`
