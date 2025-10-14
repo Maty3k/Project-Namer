@@ -2,10 +2,73 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => \App\Helpers\ThemeHelper::isDarkMode()])
     <head>
         @include('partials.head')
+
+        @php
+            $userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
+        @endphp
+
+        @if($userTheme)
+        <style>
+            /* Override blue colors with user's theme primary color */
+            [class*="text-blue"],
+            .text-primary-600,
+            .text-primary-800,
+            .dark .text-blue-200,
+            .dark .text-blue-100,
+            .dark .text-blue-400 {
+                color: {{ $userTheme->primary_color }} !important;
+            }
+
+            [class*="bg-blue"]:not(.bg-blue-50):not(.bg-blue-100):not(.bg-blue-200),
+            .bg-primary-600,
+            .dark .bg-blue-400 {
+                background-color: {{ $userTheme->primary_color }} !important;
+            }
+
+            .bg-blue-50,
+            .bg-blue-100,
+            .bg-blue-200,
+            .bg-primary-100,
+            .bg-primary-50 {
+                background-color: {{ $userTheme->primary_color }}33 !important;
+            }
+
+            [class*="border-blue"],
+            .border-primary-500 {
+                border-color: {{ $userTheme->primary_color }} !important;
+            }
+        </style>
+        @endif
+
+        <script>
+            // Ensure theme persists correctly on page load
+            (function() {
+                const serverThemePreference = {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
+                const savedTheme = localStorage.getItem('darkMode');
+
+                // Use localStorage preference if it exists, otherwise use server preference
+                let shouldBeDark;
+                if (savedTheme !== null) {
+                    shouldBeDark = savedTheme === 'true';
+                    console.log('HEADER LAYOUT: Using saved theme', shouldBeDark ? 'DARK' : 'LIGHT');
+                } else {
+                    shouldBeDark = serverThemePreference;
+                    localStorage.setItem('darkMode', shouldBeDark ? 'true' : 'false');
+                    console.log('HEADER LAYOUT: Using server theme', shouldBeDark ? 'DARK' : 'LIGHT');
+                }
+
+                // Apply immediately to html element
+                if (shouldBeDark) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            })();
+        </script>
     </head>
     <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:header container class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
-            <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
+        <flux:header container class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 !py-2">
+            <flux:sidebar.toggle class="lg:hidden !m-0" icon="bars-2" inset="left" />
 
             <a href="{{ route('dashboard') }}" class="ms-2 me-5 flex items-center space-x-2 rtl:space-x-reverse lg:ms-0" wire:navigate>
                 <x-app-logo />
@@ -46,7 +109,7 @@
             <!-- Desktop User Menu -->
             <flux:dropdown position="top" align="end">
                 <flux:profile
-                    class="cursor-pointer"
+                    class="cursor-pointer !m-0"
                     :initials="auth()->user()->initials()"
                 />
 
@@ -95,6 +158,38 @@
             <a href="{{ route('dashboard') }}" class="ms-1 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
                 <x-app-logo />
             </a>
+
+            <!-- User Profile Section -->
+            <div class="p-3 mx-2 mt-2 mb-3 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-lg">
+                        <span class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white font-semibold">
+                            {{ auth()->user()->initials() }}
+                        </span>
+                    </span>
+                    <div class="grid flex-1 text-start text-sm leading-tight">
+                        <span class="truncate font-semibold text-gray-900 dark:text-white">{{ auth()->user()->name }}</span>
+                        <span class="truncate text-xs text-gray-500 dark:text-gray-400">{{ auth()->user()->email }}</span>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <a href="{{ route('settings.profile') }}"
+                       class="flex items-center gap-2 px-2 py-2 text-sm rounded hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors {{ request()->routeIs('settings.*') ? 'bg-zinc-100 dark:bg-zinc-700' : '' }}"
+                       wire:navigate>
+                        <flux:icon.cog class="w-4 h-4" />
+                        <span>{{ __('Settings') }}</span>
+                    </a>
+
+                    <form method="POST" action="{{ route('logout') }}" class="w-full">
+                        @csrf
+                        <button type="submit" class="w-full flex items-center gap-2 px-2 py-2 text-sm rounded hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors text-left">
+                            <flux:icon.arrow-right-start-on-rectangle class="w-4 h-4" />
+                            <span>{{ __('Log Out') }}</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
 
             <flux:navlist variant="outline">
                 <flux:navlist.group :heading="__('Platform')">

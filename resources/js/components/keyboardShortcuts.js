@@ -7,6 +7,7 @@
 
 export default () => ({
     helpOverlayOpen: false,
+    commandPaletteOpen: false,
     shortcuts: [],
 
     init() {
@@ -39,5 +40,14 @@ export default () => ({
 
     closeModals() {
         this.helpOverlayOpen = false;
+        this.commandPaletteOpen = false;
+    },
+
+    openCommandPalette() {
+        this.commandPaletteOpen = true;
+    },
+
+    closeCommandPalette() {
+        this.commandPaletteOpen = false;
     }
 });

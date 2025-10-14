@@ -63,7 +63,7 @@
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
                             General
                         </h3>
-                        <div class="space-y-2">
+                        <div class="space-y-3">
                             <div class="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50">
                                 <span class="text-sm text-gray-700 dark:text-gray-300">Show keyboard shortcuts</span>
                                 <kbd class="inline-flex items-center px-2 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 rounded">
@@ -84,7 +84,7 @@
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
                             Navigation
                         </h3>
-                        <div class="space-y-2">
+                        <div class="space-y-3">
                             <div class="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50">
                                 <span class="text-sm text-gray-700 dark:text-gray-300">Create new project</span>
                                 <kbd class="inline-flex items-center px-2 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 rounded">

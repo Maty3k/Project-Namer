@@ -296,10 +296,11 @@ describe('ProjectPage AI Generation', function (): void {
             'default_deep_thinking' => true,
         ]);
 
+        // No longer pre-selects models - user must choose each time
         Livewire::test(ProjectPage::class, ['uuid' => $this->project->uuid])
-            ->assertSet('selectedAIModels', ['grok-beta', 'claude-3.5-sonnet'])
+            ->assertSet('selectedAIModels', [])
             ->assertSet('generationMode', '')
-            ->assertSet('deepThinking', true);
+            ->assertSet('deepThinking', false);
     });
 
     test('ProjectPage handles AI service failures gracefully', function (): void {

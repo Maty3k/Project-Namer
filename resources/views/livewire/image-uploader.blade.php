@@ -1,14 +1,19 @@
+@php
+    $userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
+    $primaryColor = $userTheme ? $userTheme->primary_color : '#3B82F6';
+@endphp
+
 @push('styles')
 <style>
     body.dragging-files {
-        background: rgba(59, 130, 246, 0.1);
+        background: {{ $primaryColor }}1a;
     }
 
     body.dragging-files .upload-zone {
         transform: scale(1.02);
-        border-color: #3B82F6 !important;
-        background-color: rgba(59, 130, 246, 0.1) !important;
-        box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
+        border-color: {{ $primaryColor }} !important;
+        background-color: {{ $primaryColor }}1a !important;
+        box-shadow: 0 10px 25px -5px {{ $primaryColor }}4d;
     }
 
     .upload-zone {
@@ -102,8 +107,8 @@
                         md:grid-cols-4
                         lg:grid-cols-6">
                 @foreach($images as $index => $image)
-                    <div class="relative group bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm
-                                border border-gray-200 dark:border-gray-700
+                    <div class="relative group rounded-lg overflow-hidden shadow-sm
+                                border
                                 hover:shadow-md transition-shadow duration-200">
                         
                         @if($image->temporaryUrl())

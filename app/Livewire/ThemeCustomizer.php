@@ -312,6 +312,10 @@ final class ThemeCustomizer extends Component
 
             $this->themeFile = null;
             $this->validateAccessibility();
+
+            // Automatically apply the imported theme so user doesn't need to refresh
+            $this->applyTheme();
+
             $this->dispatch('theme-imported');
         } catch (\Exception $e) {
             logger()->error('Theme import failed: '.$e->getMessage());

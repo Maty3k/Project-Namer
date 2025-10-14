@@ -297,7 +297,8 @@ class ProjectPage extends Component
      */
     public function getFilteredSuggestionsProperty(): Collection
     {
-        $query = $this->project->nameSuggestions();
+        // Always get fresh query to avoid caching issues
+        $query = $this->project->nameSuggestions()->latest();
 
         return match ($this->resultsFilter) {
             'visible' => $query->where('is_hidden', false)->get(),
@@ -419,40 +420,11 @@ class ProjectPage extends Component
      */
     protected function loadUserAIPreferences(): void
     {
-        $preferences = UserAIPreferences::where('user_id', auth()->id())->first();
-
-        if ($preferences) {
-            $this->selectedAIModels = $preferences->preferred_models ?? [];
-            // Don't pre-select generation mode - let user choose each time
-            $this->generationMode = '';
-            $this->deepThinking = $preferences->default_deep_thinking ?? false;
-            $this->enableModelComparison = $preferences->enable_model_comparison ?? false;
-        } else {
-            // Apply smart recommendations for users without saved preferences
-            $recommendations = $this->getModelRecommendations();
-
-            if ($recommendations['based_on_generations'] > 0) {
-                // User has history, use smart recommendations
-                $this->selectedAIModels = array_slice($recommendations['recommended_models'], 0, 2);
-                $this->enableModelComparison = $recommendations['based_on_generations'] > 3;
-
-                // Dispatch event for analytics
-                $this->dispatch('smart-recommendations-auto-applied', [
-                    'user_id' => auth()->id(),
-                    'project_uuid' => $this->project->uuid,
-                    'recommendations' => $recommendations,
-                    'auto_selected_models' => $this->selectedAIModels,
-                ]);
-            } else {
-                // New user, use default recommendations
-                $this->selectedAIModels = ['gpt-4'];
-                $this->enableModelComparison = false;
-            }
-
-            // Set other defaults
-            $this->generationMode = '';
-            $this->deepThinking = false;
-        }
+        // Don't pre-select anything - let user choose each time
+        $this->selectedAIModels = [];
+        $this->generationMode = '';
+        $this->deepThinking = false;
+        $this->enableModelComparison = false;
     }
 
     /**
@@ -676,6 +648,13 @@ class ProjectPage extends Component
 
             // Create NameSuggestion records from AI results
             $this->createNameSuggestionsFromAI($results, $aiGeneration);
+
+            // Refresh the project to load newly created name suggestions
+            $this->project->unsetRelation('nameSuggestions');
+            $this->project = $this->project->fresh(['nameSuggestions']);
+
+            // Clear Livewire's computed property cache to force re-render
+            unset($this->filteredSuggestions);
 
             // Update generation status
             $aiGeneration->update([

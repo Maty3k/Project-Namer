@@ -36,7 +36,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $error_message
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property int $progress
  * @property-read \App\Models\Project|null $project
  * @property-read \App\Models\User $user
  *
@@ -60,7 +59,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|AIGeneration whereGenerationSessionId($value)
  * @method static Builder<static>|AIGeneration whereId($value)
  * @method static Builder<static>|AIGeneration whereModelsRequested($value)
- * @method static Builder<static>|AIGeneration whereProgress($value)
  * @method static Builder<static>|AIGeneration whereProjectId($value)
  * @method static Builder<static>|AIGeneration wherePromptUsed($value)
  * @method static Builder<static>|AIGeneration whereResultsData($value)

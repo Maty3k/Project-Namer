@@ -3,14 +3,99 @@
 <head>
     @include('partials.head')
 
+    @php
+        $userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
+    @endphp
+
+    @if($userTheme)
+    <style>
+        /* Override blue colors with user's theme primary color */
+        [class*="text-blue"],
+        .text-primary-600,
+        .text-primary-800,
+        .dark .text-blue-200,
+        .dark .text-blue-100,
+        .dark .text-blue-400 {
+            color: {{ $userTheme->primary_color }} !important;
+        }
+
+        [class*="bg-blue"]:not(.bg-blue-50):not(.bg-blue-100):not(.bg-blue-200),
+        .bg-primary-600,
+        .dark .bg-blue-400 {
+            background-color: {{ $userTheme->primary_color }} !important;
+        }
+
+        .bg-blue-50,
+        .bg-blue-100,
+        .bg-blue-200,
+        .bg-primary-100,
+        .bg-primary-50 {
+            background-color: {{ $userTheme->primary_color }}33 !important;
+        }
+
+        [class*="border-blue"],
+        .border-primary-500 {
+            border-color: {{ $userTheme->primary_color }} !important;
+        }
+    </style>
+    @endif
+
+    <style>
+        /* Nuclear option - remove ALL top spacing from sidebar */
+        [data-flux-sidebar],
+        [data-flux-sidebar] *,
+        aside[data-flux-sidebar],
+        aside[data-flux-sidebar] * {
+            padding-top: 0 !important;
+            margin-top: 0 !important;
+        }
+
+        /* Specifically target the sidebar container */
+        aside[data-flux-sidebar] {
+            padding: 0 !important;
+        }
+
+        /* Re-add minimal horizontal padding only */
+        [data-flux-sidebar] > * {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+            padding-top: 0 !important;
+            margin-top: 0 !important;
+        }
+
+        /* First element should be at absolute top */
+        [data-flux-sidebar] > *:first-child {
+            padding-top: 0.25rem !important;
+            margin-top: 0 !important;
+        }
+
+        /* Override any Flux utility classes */
+        .pt-0, .pt-1, .pt-2, .pt-3, .pt-4, .pt-5, .pt-6,
+        .py-0, .py-1, .py-2, .py-3, .py-4, .py-5, .py-6,
+        .p-0, .p-1, .p-2, .p-3, .p-4, .p-5, .p-6 {
+            padding-top: 0 !important;
+        }
+    </style>
+
     <script>
         // SMART THEME PROTECTION - Block automatic switching, allow intentional changes
         (function() {
             try {
                 // Get server's theme preference
-                let currentThemePreference = {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
+                const serverThemePreference = {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
 
-                console.log('SMART THEME PROTECTION: Initial theme is', currentThemePreference ? 'DARK' : 'LIGHT');
+                // Check localStorage for user's last saved preference (this takes priority)
+                const savedTheme = localStorage.getItem('darkMode');
+
+                // Use saved theme if it exists, otherwise use server preference
+                let currentThemePreference;
+                if (savedTheme !== null) {
+                    currentThemePreference = savedTheme === 'true';
+                    console.log('SMART THEME PROTECTION: Using saved theme from localStorage', currentThemePreference ? 'DARK' : 'LIGHT');
+                } else {
+                    currentThemePreference = serverThemePreference;
+                    console.log('SMART THEME PROTECTION: Using server theme preference', currentThemePreference ? 'DARK' : 'LIGHT');
+                }
 
                 // Apply theme immediately
                 const applyTheme = (isDark) => {

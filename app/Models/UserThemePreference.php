@@ -35,12 +35,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $text_color
  * @property bool $is_dark_mode
- * @property string|null $accent_content_color
- * @property string $accent_foreground_color
- * @property string $base_color_shade
- * @property string|null $dark_accent_color
- * @property string|null $dark_accent_content_color
- * @property string $dark_accent_foreground_color
  * @property-read \App\Models\User $user
  *
  * @method static Builder<static>|UserThemePreference customThemes()
@@ -50,16 +44,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|UserThemePreference newQuery()
  * @method static Builder<static>|UserThemePreference query()
  * @method static Builder<static>|UserThemePreference whereAccentColor($value)
- * @method static Builder<static>|UserThemePreference whereAccentContentColor($value)
- * @method static Builder<static>|UserThemePreference whereAccentForegroundColor($value)
  * @method static Builder<static>|UserThemePreference whereBackgroundColor($value)
- * @method static Builder<static>|UserThemePreference whereBaseColorShade($value)
  * @method static Builder<static>|UserThemePreference whereBorderRadius($value)
  * @method static Builder<static>|UserThemePreference whereCompactMode($value)
  * @method static Builder<static>|UserThemePreference whereCreatedAt($value)
- * @method static Builder<static>|UserThemePreference whereDarkAccentColor($value)
- * @method static Builder<static>|UserThemePreference whereDarkAccentContentColor($value)
- * @method static Builder<static>|UserThemePreference whereDarkAccentForegroundColor($value)
  * @method static Builder<static>|UserThemePreference whereDarkBackgroundColor($value)
  * @method static Builder<static>|UserThemePreference whereDarkSurfaceColor($value)
  * @method static Builder<static>|UserThemePreference whereDarkTextPrimaryColor($value)

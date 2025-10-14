@@ -1,14 +1,12 @@
 @php
     $userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
 @endphp
-<aside 
-    class="h-full {{ $userTheme ? '' : 'bg-white dark:bg-slate-900' }} border-r {{ $userTheme ? '' : 'border-gray-200 dark:border-slate-700' }} flex flex-col transition-all duration-300 ease-in-out transform
+<aside
+    class="h-full border-r flex flex-col transition-all duration-300 ease-in-out transform
            {{ $isCollapsed ? 'w-0 opacity-0 overflow-hidden invisible -translate-x-full' : 'w-80 opacity-100 translate-x-0' }}"
-    @if($userTheme)
-        style="background-color: {{ $userTheme->is_dark_mode ? $userTheme->background_color : ($userTheme->surface_color ?? '#f8fafc') }};
-               border-color: {{ $userTheme->primary_color }}50;
-               color: {{ $userTheme->text_color }};"
-    @endif
+    style="background-color: {{ $userTheme ? ($userTheme->is_dark_mode ? $userTheme->background_color : ($userTheme->surface_color ?? '#f8fafc')) : '' }};
+           border-color: {{ $userTheme ? $userTheme->primary_color . '50' : '' }};
+           color: {{ $userTheme ? $userTheme->text_color : '' }};"
     x-data="{
         showActionMenu: null,
         focusMode: $wire.isCollapsed,
@@ -44,15 +42,12 @@
         <button
             wire:click="createNewSession"
             @if($isCreatingSession) disabled @endif
-            class="w-full {{ $userTheme ? '' : 'bg-black dark:bg-white text-white dark:text-black' }} rounded-lg px-4 py-3 
-                   {{ $userTheme ? '' : 'hover:bg-gray-800 dark:hover:bg-gray-100' }} transition-all duration-200 
+            class="w-full rounded-lg px-4 py-3 transition-all duration-200
                    flex items-center justify-center gap-2 font-medium shadow-sm hover:shadow-md
                    hover:scale-[1.02] active:scale-[0.98]
                    @if($isCreatingSession) opacity-75 cursor-not-allowed @endif"
-            @if($userTheme)
-                style="background-color: {{ $userTheme->primary_color }} !important;
-                       color: {{ $userTheme->is_dark_mode ? '#ffffff' : '#000000' }} !important;"
-            @endif
+            style="background-color: {{ $userTheme ? $userTheme->primary_color : '' }} !important;
+                   color: {{ $userTheme ? ($userTheme->is_dark_mode ? '#ffffff' : '#000000') : '' }} !important;"
         >
             @if($isCreatingSession)
                 <div class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
@@ -133,7 +128,7 @@
         @if($isLoadingSessions)
             <!-- Loading Skeletons -->
             <div class="mb-2">
-                <div class="sticky top-0 bg-white dark:bg-gray-900 py-2 px-2 mb-2">
+                <div class="sticky top-0 py-2 px-2 mb-2">
                     <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16 animate-pulse"></div>
                 </div>
                 @for($i = 0; $i < 6; $i++)
@@ -152,7 +147,10 @@
         @else
             @foreach($groupedSessions as $dateGroup => $sessions)
                 <!-- Date Group Header -->
-                <div class="sticky top-0 bg-white dark:bg-gray-900 py-2 px-2 mb-2">
+                <div class="sticky top-0 py-2 px-2 mb-2"
+                     @if($userTheme)
+                         style="background-color: {{ $userTheme->is_dark_mode ? $userTheme->background_color : ($userTheme->surface_color ?? '#f8fafc') }};"
+                     @endif>
                     <h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                         {{ $dateGroup }}
                     </h3>
@@ -235,7 +233,7 @@
                                             x-transition:leave="transition ease-in duration-100"
                                             x-transition:leave-start="opacity-100 scale-100"
                                             x-transition:leave-end="opacity-0 scale-95"
-                                            class="absolute right-0 top-8 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-20"
+                                            class="absolute right-0 top-8 w-48 rounded-lg shadow-lg border py-1 z-20"
                                         >
                                             <!-- Rename -->
                                             <button
@@ -312,9 +310,13 @@
 @if($isCollapsed)
     <button
         wire:click="toggleFocusMode"
-        class="fixed top-4 left-4 z-50 bg-black dark:bg-white p-3 rounded-lg shadow-lg 
-               hover:bg-gray-800 dark:hover:bg-gray-100 transition-all duration-300 ease-in-out 
+        class="fixed top-4 left-4 z-50 p-3 rounded-lg shadow-lg
+               transition-all duration-300 ease-in-out
                hover:scale-105 transform animate-slide-in-left"
+        @if($userTheme)
+            style="background-color: {{ $userTheme->primary_color }} !important;
+                   color: {{ $userTheme->is_dark_mode ? '#ffffff' : '#000000' }} !important;"
+        @endif
         title="Show sidebar (Cmd+/)"
     >
         <x-app-icon name="bars-3" size="sm" />

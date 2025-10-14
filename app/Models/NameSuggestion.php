@@ -27,9 +27,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int|null $ai_cost_cents
  * @property string|null $ai_generation_session_id
  * @property array<array-key, mixed>|null $ai_prompt_metadata
- * @property int $dns_checked
- * @property int|null $dns_has_records
- * @property string|null $dns_checked_at
  * @property-read \App\Models\Project $project
  *
  * @method static Builder<static>|NameSuggestion aiGenerated()
@@ -49,9 +46,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|NameSuggestion whereAiResponseTimeMs($value)
  * @method static Builder<static>|NameSuggestion whereAiTokensUsed($value)
  * @method static Builder<static>|NameSuggestion whereCreatedAt($value)
- * @method static Builder<static>|NameSuggestion whereDnsChecked($value)
- * @method static Builder<static>|NameSuggestion whereDnsCheckedAt($value)
- * @method static Builder<static>|NameSuggestion whereDnsHasRecords($value)
  * @method static Builder<static>|NameSuggestion whereDomains($value)
  * @method static Builder<static>|NameSuggestion whereGenerationMetadata($value)
  * @method static Builder<static>|NameSuggestion whereId($value)

@@ -200,6 +200,32 @@
             @endif
         </style>
     @endif
+
+    <script>
+        // Ensure theme persists correctly on page load
+        (function() {
+            const serverThemePreference = {{ $isDarkMode ? 'true' : 'false' }};
+            const savedTheme = localStorage.getItem('darkMode');
+
+            // Use localStorage preference if it exists, otherwise use server preference
+            let shouldBeDark;
+            if (savedTheme !== null) {
+                shouldBeDark = savedTheme === 'true';
+                console.log('PROJECT WORKFLOW: Using saved theme', shouldBeDark ? 'DARK' : 'LIGHT');
+            } else {
+                shouldBeDark = serverThemePreference;
+                localStorage.setItem('darkMode', shouldBeDark ? 'true' : 'false');
+                console.log('PROJECT WORKFLOW: Using server theme', shouldBeDark ? 'DARK' : 'LIGHT');
+            }
+
+            // Apply immediately to html element
+            if (shouldBeDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
 </head>
 <body class="min-h-screen bg-white dark:bg-slate-900 flex" 
       @if($isDarkMode && $userTheme) 
@@ -216,7 +242,7 @@
         <!-- Header -->
         <header class="border-b px-6 py-4 transition-all duration-300"
                 @if($userTheme)
-                  style="background: {{ $userTheme->background_color }}; 
+                  style="background: {{ $userTheme->background_color }};
                          border-color: {{ $userTheme->primary_color }}40;"
                 @else
                   class="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700"
