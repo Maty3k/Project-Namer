@@ -49,13 +49,13 @@ class DNSLookupService
     }
 
     /**
-     * Check if a domain has DNS records.
+     * Check if a domain has DNS records (fast check - only A/AAAA records).
      *
-     * Returns true if ANY of the following record types exist:
+     * Optimized for speed by only checking the most common record types:
      * - A (IPv4 address)
      * - AAAA (IPv6 address)
-     * - CNAME (canonical name)
-     * - MX (mail exchange)
+     *
+     * This is faster than checking CNAME and MX records which are less common.
      *
      * @param  string  $domain  The domain to check
      * @return bool|null True if records exist, false if no records, null on error
@@ -70,31 +70,22 @@ class DNSLookupService
         try {
             $dns = $this->getDns();
 
-            // Check for A records (IPv4)
+            // Check for A records (IPv4) - most common
             $aRecords = $dns->getRecords($domain, DNS_A);
             if (! empty($aRecords)) {
                 return true;
             }
 
-            // Check for AAAA records (IPv6)
+            // Check for AAAA records (IPv6) - increasingly common
             $aaaaRecords = $dns->getRecords($domain, DNS_AAAA);
             if (! empty($aaaaRecords)) {
                 return true;
             }
 
-            // Check for CNAME records
-            $cnameRecords = $dns->getRecords($domain, DNS_CNAME);
-            if (! empty($cnameRecords)) {
-                return true;
-            }
+            // Skip CNAME and MX checks for speed - if no A/AAAA records,
+            // domain is likely available or we can check via API
 
-            // Check for MX records (mail)
-            $mxRecords = $dns->getRecords($domain, DNS_MX);
-            if (! empty($mxRecords)) {
-                return true;
-            }
-
-            // No records found
+            // No A/AAAA records found
             return false;
         } catch (\Exception $e) {
             // Log error but don't fail - treat as unknown
