@@ -229,7 +229,7 @@
                                  x-transition:enter-end="opacity-100 scale-100 translate-y-0">
 
                                 <div class="flex items-center space-x-2 flex-1">
-                                    <span class="text-sm font-medium transition-colors duration-200 {{ $available === true ? 'text-green-800 dark:text-green-200' : ($available === false ? 'text-red-800 dark:text-red-200' : 'text-gray-800 dark:text-gray-200') }}">
+                                    <span class="text-sm font-medium transition-colors duration-200 {{ $available === true ? 'text-green-800 dark:text-green-200' : ($available === false ? 'text-red-800 dark:text-red-200 line-through opacity-70' : 'text-gray-800 dark:text-gray-200') }}">
                                         {{ $domainName }}
                                     </span>
 
