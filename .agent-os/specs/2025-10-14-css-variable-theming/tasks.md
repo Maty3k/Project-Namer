@@ -15,14 +15,14 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 1.5 Test CSS files load correctly via HTTP requests
   - [x] 1.6 Verify all tests pass
 
-- [ ] 2. Simplify Database Schema
-  - [ ] 2.1 Write tests for simplified UserThemePreference model
-  - [ ] 2.2 Create migration to remove color columns from user_theme_preferences
-  - [ ] 2.3 Update UserThemePreference model to remove color-related methods
-  - [ ] 2.4 Update UserThemePreferenceFactory to generate valid theme names only
-  - [ ] 2.5 Add `getThemeCssPath()` method to model
-  - [ ] 2.6 Run migration and verify schema changes
-  - [ ] 2.7 Verify all tests pass
+- [x] 2. Simplify Database Schema
+  - [x] 2.1 Write tests for simplified UserThemePreference model
+  - [x] 2.2 Create migration to remove color columns from user_theme_preferences
+  - [x] 2.3 Update UserThemePreference model to remove color-related methods
+  - [x] 2.4 Update UserThemePreferenceFactory to generate valid theme names only
+  - [x] 2.5 Add `getThemeCssPath()` method to model
+  - [x] 2.6 Run migration and verify schema changes
+  - [x] 2.7 Verify all tests pass
 
 - [ ] 3. Update ThemeService and ThemeHelper
   - [ ] 3.1 Write tests for updated theme service methods

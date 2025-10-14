@@ -21,39 +21,39 @@ class UserThemePreferenceFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'theme_name' => $this->faker->words(2, true),
-            'is_custom_theme' => $this->faker->boolean(30),
-            'primary_color' => $this->faker->hexColor(),
-            'secondary_color' => $this->faker->hexColor(),
-            'accent_color' => $this->faker->hexColor(),
-            'background_color' => $this->faker->hexColor(),
-            'surface_color' => $this->faker->hexColor(),
-            'text_primary_color' => $this->faker->hexColor(),
-            'text_secondary_color' => $this->faker->hexColor(),
-            'dark_background_color' => $this->faker->hexColor(),
-            'dark_surface_color' => $this->faker->hexColor(),
-            'dark_text_primary_color' => $this->faker->hexColor(),
-            'dark_text_secondary_color' => $this->faker->hexColor(),
+            'theme_name' => $this->faker->randomElement([
+                'default', 'dark', 'ocean', 'sunset', 'forest',
+                'cosmic-violet', 'coral-reef', 'midnight-teal',
+                'summer', 'winter', 'halloween', 'spring', 'autumn',
+                'neon-cyber', 'electric-blue', 'hot-pink', 'lava-red',
+                'lime-punch', 'gold-rush', 'matrix-green',
+            ]),
+            'is_dark_mode' => $this->faker->boolean(),
             'border_radius' => $this->faker->randomElement(['none', 'small', 'medium', 'large', 'full']),
             'font_size' => $this->faker->randomElement(['small', 'medium', 'large']),
             'compact_mode' => $this->faker->boolean(25),
-            'theme_config' => null,
         ];
-    }
-
-    public function customTheme(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'is_custom_theme' => true,
-            'theme_name' => $this->faker->word().'-theme',
-        ]);
     }
 
     public function defaultTheme(): static
     {
         return $this->state(fn (array $attributes) => [
             'theme_name' => 'default',
-            'is_custom_theme' => false,
+            'is_dark_mode' => false,
+        ]);
+    }
+
+    public function darkMode(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_dark_mode' => true,
+        ]);
+    }
+
+    public function lightMode(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_dark_mode' => false,
         ]);
     }
 }
