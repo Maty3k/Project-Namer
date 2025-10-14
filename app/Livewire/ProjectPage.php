@@ -803,8 +803,8 @@ class ProjectPage extends Component
      */
     protected function generateDomainsForName(string $name): array
     {
-        // Only check 2 most popular TLDs for speed - users can manually check others
-        $tlds = ['com', 'io'];
+        // Check popular TLDs - parallel checking makes this fast
+        $tlds = ['com', 'net', 'org', 'io', 'co', 'app', 'dev', 'ai', 'tech', 'studio'];
         $domains = [];
 
         // Sanitize the name for domain use - remove spaces and special characters
