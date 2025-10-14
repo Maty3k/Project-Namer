@@ -6,19 +6,14 @@
         <script>
             // Ensure theme persists correctly on page load
             (function() {
+                // Always trust the server preference (database) as the source of truth
                 const serverThemePreference = {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
-                const savedTheme = localStorage.getItem('darkMode');
+                const shouldBeDark = serverThemePreference;
 
-                // Use localStorage preference if it exists, otherwise use server preference
-                let shouldBeDark;
-                if (savedTheme !== null) {
-                    shouldBeDark = savedTheme === 'true';
-                    console.log('HEADER LAYOUT: Using saved theme', shouldBeDark ? 'DARK' : 'LIGHT');
-                } else {
-                    shouldBeDark = serverThemePreference;
-                    localStorage.setItem('darkMode', shouldBeDark ? 'true' : 'false');
-                    console.log('HEADER LAYOUT: Using server theme', shouldBeDark ? 'DARK' : 'LIGHT');
-                }
+                // Sync localStorage to match the server preference
+                localStorage.setItem('darkMode', shouldBeDark ? 'true' : 'false');
+
+                console.log('HEADER LAYOUT: Using server theme from database', shouldBeDark ? 'DARK' : 'LIGHT');
 
                 // Apply immediately to html element
                 if (shouldBeDark) {
