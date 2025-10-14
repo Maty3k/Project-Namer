@@ -125,16 +125,16 @@
                                     default => '🎨'
                                 };
                             @endphp
-                            <span class="text-3xl">{{ $themeIcon }}</span>
+                            <span class="text-2xl">{{ $themeIcon }}</span>
                         </div>
 
                         <!-- Theme Name -->
-                        <h3 class="text-xs font-semibold text-gray-900 dark:text-white text-center leading-tight mb-1 px-1 line-clamp-2">
+                        <h3 class="text-[10px] font-semibold text-gray-900 dark:text-white text-center leading-tight mb-1 px-1 line-clamp-2">
                             {{ $theme['display_name'] }}
                         </h3>
 
                         <!-- Mode Badge -->
-                        <div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-[10px] font-medium text-gray-600 dark:text-gray-400">
+                        <div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-[9px] font-medium text-gray-600 dark:text-gray-400">
                             {{ $theme['is_dark_mode'] ? 'Dark' : 'Light' }}
                         </div>
                     </div>
