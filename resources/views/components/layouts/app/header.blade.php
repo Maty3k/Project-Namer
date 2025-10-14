@@ -29,8 +29,8 @@
             })();
         </script>
     </head>
-    <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:header container class="border-b border-gray-200 bg-white dark:border-zinc-700 dark:bg-zinc-800 !py-2">
+    <body class="min-h-screen" style="background-color: var(--color-background);">
+        <flux:header container class="border-b !py-2" style="background-color: var(--color-background); border-color: var(--color-border);">
             <flux:sidebar.toggle class="lg:hidden !m-0" icon="bars-2" inset="left" />
 
             <a href="{{ route('dashboard') }}" class="ms-2 me-5 flex items-center space-x-2 rtl:space-x-reverse lg:ms-0" wire:navigate>
@@ -81,16 +81,14 @@
                         <div class="p-0 text-sm font-normal">
                             <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
                                 <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
-                                    <span
-                                        class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
-                                    >
+                                    <span class="flex h-full w-full items-center justify-center rounded-lg font-semibold" style="background-color: var(--color-primary); color: white;">
                                         {{ auth()->user()->initials() }}
                                     </span>
                                 </span>
 
                                 <div class="grid flex-1 text-start text-sm leading-tight">
-                                    <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
-                                    <span class="truncate text-xs">{{ auth()->user()->email }}</span>
+                                    <span class="truncate font-semibold" style="color: var(--color-text-primary);">{{ auth()->user()->name }}</span>
+                                    <span class="truncate text-xs" style="color: var(--color-text-secondary);">{{ auth()->user()->email }}</span>
                                 </div>
                             </div>
                         </div>
@@ -115,7 +113,7 @@
         </flux:header>
 
         <!-- Mobile Menu -->
-        <flux:sidebar stashable sticky class="lg:hidden border-e border-gray-200 bg-white dark:border-zinc-700 dark:bg-zinc-800">
+        <flux:sidebar stashable sticky class="lg:hidden border-e" style="background-color: var(--color-background); border-color: var(--color-border);">
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
             <a href="{{ route('dashboard') }}" class="ms-1 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
@@ -123,22 +121,25 @@
             </a>
 
             <!-- User Profile Section -->
-            <div class="p-3 mx-2 mt-2 mb-3 bg-gray-50 dark:bg-zinc-700 rounded-lg border border-gray-200 dark:border-zinc-600">
+            <div class="p-3 mx-2 mt-2 mb-3 rounded-lg border" style="background-color: var(--color-secondary); border-color: var(--color-border);">
                 <div class="flex items-center gap-2 mb-3">
                     <span class="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-lg">
-                        <span class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white font-semibold">
+                        <span class="flex h-full w-full items-center justify-center rounded-lg font-semibold" style="background-color: var(--color-primary); color: white;">
                             {{ auth()->user()->initials() }}
                         </span>
                     </span>
                     <div class="grid flex-1 text-start text-sm leading-tight">
-                        <span class="truncate font-semibold text-gray-900 dark:text-white">{{ auth()->user()->name }}</span>
-                        <span class="truncate text-xs text-gray-500 dark:text-gray-400">{{ auth()->user()->email }}</span>
+                        <span class="truncate font-semibold" style="color: var(--color-text-primary);">{{ auth()->user()->name }}</span>
+                        <span class="truncate text-xs" style="color: var(--color-text-secondary);">{{ auth()->user()->email }}</span>
                     </div>
                 </div>
 
                 <div class="space-y-1">
                     <a href="{{ route('settings.profile') }}"
-                       class="flex items-center gap-2 px-2 py-2 text-sm rounded hover:bg-gray-100 dark:hover:bg-zinc-600 transition-colors {{ request()->routeIs('settings.*') ? 'bg-gray-100 dark:bg-zinc-600' : '' }}"
+                       class="flex items-center gap-2 px-2 py-2 text-sm rounded transition-colors {{ request()->routeIs('settings.*') ? 'bg-opacity-10' : '' }}"
+                       style="color: var(--color-text-primary);"
+                       onmouseover="this.style.backgroundColor='color-mix(in srgb, var(--color-primary) 10%, transparent)'"
+                       onmouseout="this.style.backgroundColor='{{ request()->routeIs('settings.*') ? 'color-mix(in srgb, var(--color-primary) 10%, transparent)' : 'transparent' }}'"
                        wire:navigate>
                         <flux:icon.cog class="w-4 h-4" />
                         <span>{{ __('Settings') }}</span>
@@ -146,7 +147,11 @@
 
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
                         @csrf
-                        <button type="submit" class="w-full flex items-center gap-2 px-2 py-2 text-sm rounded hover:bg-gray-100 dark:hover:bg-zinc-600 transition-colors text-left">
+                        <button type="submit"
+                                class="w-full flex items-center gap-2 px-2 py-2 text-sm rounded transition-colors text-left"
+                                style="color: var(--color-text-primary);"
+                                onmouseover="this.style.backgroundColor='color-mix(in srgb, var(--color-primary) 10%, transparent)'"
+                                onmouseout="this.style.backgroundColor='transparent'">
                             <flux:icon.arrow-right-start-on-rectangle class="w-4 h-4" />
                             <span>{{ __('Log Out') }}</span>
                         </button>
