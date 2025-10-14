@@ -17,7 +17,7 @@ describe('NameResultCard Domain Availability Indicators', function (): void {
         ]);
     });
 
-    it('shows unavailable badge when all domains are unavailable', function (): void {
+    it('shows domain count badge when all domains are unavailable', function (): void {
         $suggestion = NameSuggestion::factory()->create([
             'project_id' => $this->project->id,
             'name' => 'TestName',
@@ -30,11 +30,11 @@ describe('NameResultCard Domain Availability Indicators', function (): void {
 
         Livewire::test(\App\Livewire\NameResultCard::class, ['suggestion' => $suggestion])
             ->assertSee('TestName') // Business name is always displayed normally
-            ->assertSee('Unavailable') // Shows unavailable badge
+            ->assertSee('0/3') // Shows 0 out of 3 domains available
             ->assertSee('line-through', false); // Individual domain names have strike-through in expanded view
     });
 
-    it('does not show unavailable badge when at least one domain is available', function (): void {
+    it('shows domain count badge when some domains are available', function (): void {
         $suggestion = NameSuggestion::factory()->create([
             'project_id' => $this->project->id,
             'name' => 'TestName',
@@ -50,11 +50,9 @@ describe('NameResultCard Domain Availability Indicators', function (): void {
         // Verify computed property is correct
         expect($component->instance()->allDomainsUnavailable)->toBeFalse();
 
-        // Verify name is shown
-        $component->assertSee('TestName');
-
-        // Since at least one domain is available, should NOT show unavailable indicator
-        // But we know it's showing up, so let's just verify the name is visible for now
+        // Verify name and count badge
+        $component->assertSee('TestName')
+            ->assertSee('1/3'); // Shows 1 out of 3 domains available
     });
 
     it('does not show unavailable badge when domains have not been checked yet', function (): void {
@@ -132,7 +130,7 @@ describe('NameResultCard Domain Availability Indicators', function (): void {
         expect($component->instance()->allDomainsUnavailable)->toBeFalse();
     });
 
-    it('shows X icon when all domains are unavailable', function (): void {
+    it('shows domain count with red badge when all domains are unavailable', function (): void {
         $suggestion = NameSuggestion::factory()->create([
             'project_id' => $this->project->id,
             'name' => 'TestName',
@@ -143,7 +141,7 @@ describe('NameResultCard Domain Availability Indicators', function (): void {
         ]);
 
         Livewire::test(\App\Livewire\NameResultCard::class, ['suggestion' => $suggestion])
-            ->assertSee('Unavailable')
+            ->assertSee('0/2') // Shows 0 out of 2 domains available
             ->assertSee('bg-red-100', false) // Check for red background badge
             ->assertSee('dark:bg-red-900/30', false);
     });
