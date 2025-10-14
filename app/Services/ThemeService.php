@@ -65,7 +65,6 @@ final class ThemeService
         return ($primaryScore + $textScore) / 2;
     }
 
-
     /**
      * Get predefined theme collection without hex color values.
      * Colors are now defined in CSS files located in public/css/themes/

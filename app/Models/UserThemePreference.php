@@ -15,19 +15,28 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $user_id
  * @property string $theme_name
- * @property bool $is_dark_mode
  * @property string $border_radius
  * @property string $font_size
  * @property bool $compact_mode
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property bool $is_dark_mode
  * @property-read \App\Models\User $user
  *
- * @method static Builder<static>|UserThemePreference forTheme(string $themeName)
  * @method static \Database\Factories\UserThemePreferenceFactory factory($count = null, $state = [])
+ * @method static Builder<static>|UserThemePreference forTheme(string $themeName)
  * @method static Builder<static>|UserThemePreference newModelQuery()
  * @method static Builder<static>|UserThemePreference newQuery()
  * @method static Builder<static>|UserThemePreference query()
+ * @method static Builder<static>|UserThemePreference whereBorderRadius($value)
+ * @method static Builder<static>|UserThemePreference whereCompactMode($value)
+ * @method static Builder<static>|UserThemePreference whereCreatedAt($value)
+ * @method static Builder<static>|UserThemePreference whereFontSize($value)
+ * @method static Builder<static>|UserThemePreference whereId($value)
+ * @method static Builder<static>|UserThemePreference whereIsDarkMode($value)
+ * @method static Builder<static>|UserThemePreference whereThemeName($value)
+ * @method static Builder<static>|UserThemePreference whereUpdatedAt($value)
+ * @method static Builder<static>|UserThemePreference whereUserId($value)
  *
  * @mixin \Eloquent
  */

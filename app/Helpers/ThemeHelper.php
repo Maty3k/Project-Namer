@@ -28,9 +28,7 @@ final class ThemeHelper
         $sessionId = request()->hasSession() ? request()->session()->getId() : 'no-session';
         $cacheKey = "user_theme_{$user->id}_{$sessionId}";
 
-        return Cache::remember($cacheKey, 300, function () use ($user) {
-            return UserThemePreference::where('user_id', $user->id)->first();
-        });
+        return Cache::remember($cacheKey, 300, fn () => UserThemePreference::where('user_id', $user->id)->first());
     }
 
     /**

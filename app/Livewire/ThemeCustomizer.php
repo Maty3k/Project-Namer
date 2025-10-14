@@ -529,18 +529,22 @@ final class ThemeCustomizer extends Component
 
     /**
      * Get generated CSS for current theme.
+     *
+     * Note: This method is deprecated. Theme CSS is now loaded from pre-defined CSS files.
+     * This will be properly updated in Task 9: Update Theme Customizer Component.
      */
     #[Computed]
     public function generatedCss(): string
     {
-        $themeService = app(ThemeService::class);
-
-        return $themeService->generateCssProperties([
-            'primary_color' => $this->primaryColor,
-            'accent_color' => $this->accentColor,
-            'background_color' => $this->backgroundColor,
-            'text_color' => $this->textColor,
-        ]);
+        // Temporary simple CSS generation for preview purposes
+        // Will be replaced with proper theme CSS file loading in Task 9
+        return sprintf(
+            ':root { --color-primary: %s; --color-accent: %s; --color-background: %s; --color-text: %s; }',
+            $this->primaryColor,
+            $this->accentColor,
+            $this->backgroundColor,
+            $this->textColor
+        );
     }
 
     /**

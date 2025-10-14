@@ -98,7 +98,16 @@ final class ThemeController extends Controller
         }
 
         $data = $validator->validated();
-        $css = $this->themeService->generateCssProperties($data);
+
+        // Note: CSS generation moved to pre-defined theme CSS files
+        // This endpoint is deprecated and will be removed in future versions
+        $css = sprintf(
+            ':root { --color-primary: %s; --color-accent: %s; --color-background: %s; --color-text: %s; }',
+            $data['primary_color'],
+            $data['accent_color'] ?? $data['primary_color'],
+            $data['background_color'],
+            $data['text_color']
+        );
 
         $accessibilityScore = $this->themeService->calculateAccessibilityScore(
             $data['primary_color'],
