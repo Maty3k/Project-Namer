@@ -70,13 +70,13 @@
             </flux:navbar>
 
             <!-- Desktop User Menu -->
-            <flux:dropdown position="top" align="end">
+            <flux:dropdown position="top" align="end" class="[&>div]:!bg-white dark:[&>div]:!bg-zinc-800 [&>div]:!border [&>div]:!border-gray-200 dark:[&>div]:!border-zinc-700">
                 <flux:profile
                     class="cursor-pointer !m-0"
                     :initials="auth()->user()->initials()"
                 />
 
-                <flux:menu>
+                <flux:menu class="!bg-white dark:!bg-zinc-800">
                     <flux:menu.radio.group>
                         <div class="p-0 text-sm font-normal">
                             <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
@@ -87,8 +87,8 @@
                                 </span>
 
                                 <div class="grid flex-1 text-start text-sm leading-tight">
-                                    <span class="truncate font-semibold" style="color: var(--color-text-primary);">{{ auth()->user()->name }}</span>
-                                    <span class="truncate text-xs" style="color: var(--color-text-secondary);">{{ auth()->user()->email }}</span>
+                                    <span class="truncate font-semibold text-gray-900 dark:text-white">{{ auth()->user()->name }}</span>
+                                    <span class="truncate text-xs text-gray-600 dark:text-gray-400">{{ auth()->user()->email }}</span>
                                 </div>
                             </div>
                         </div>
