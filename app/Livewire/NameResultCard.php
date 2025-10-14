@@ -192,6 +192,14 @@ class NameResultCard extends Component
     }
 
     /**
+     * Check if domains have been checked (public property for blade).
+     */
+    public function getDomainsCheckedProperty(): bool
+    {
+        return $this->domainsAlreadyChecked();
+    }
+
+    /**
      * Check if this suggestion is currently selected.
      */
     public function getIsSelectedProperty(): bool
