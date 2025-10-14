@@ -137,10 +137,11 @@ class NameResultCard extends Component
         }
 
         $domainCheckService = app(\App\Services\DomainCheckService::class);
+        $allDomains = $this->suggestion->domains;
         $checkedDomains = [];
 
-        // Check all domains
-        foreach ($this->suggestion->domains as $domainName => $domainData) {
+        // Check each domain and update after EACH one for progressive results
+        foreach ($allDomains as $domainName => $domainData) {
             try {
                 $result = $domainCheckService->checkDomain($domainName);
                 $checkedDomains[$domainName] = [
@@ -159,14 +160,14 @@ class NameResultCard extends Component
                     'error' => $e->getMessage(),
                 ];
             }
+
+            // Update after EACH domain check so results appear progressively
+            $updatedDomains = array_merge($allDomains, $checkedDomains);
+            $this->suggestion->update(['domains' => $updatedDomains]);
+
+            // Force Livewire to detect change by completely replacing the model
+            $this->suggestion = NameSuggestion::find($this->suggestion->id);
         }
-
-        // Update all domains at once and refresh
-        $this->suggestion->update(['domains' => $checkedDomains]);
-        $this->suggestion->refresh();
-
-        // Update timestamp to force Livewire to detect change and re-render
-        $this->domainsLastChecked = time();
 
         $this->dispatch('show-toast', [
             'message' => 'Domain availability checked!',
