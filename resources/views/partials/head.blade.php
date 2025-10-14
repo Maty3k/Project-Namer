@@ -3,6 +3,24 @@
 
 <title>{{ $title ?? config('app.name') }}</title>
 
+{{-- CRITICAL: Apply theme BEFORE page renders to prevent flash --}}
+<script>
+(function() {
+    const localStorageTheme = localStorage.getItem('darkMode');
+    const serverThemePreference = {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
+
+    const shouldBeDark = localStorageTheme !== null
+        ? localStorageTheme === 'true'
+        : serverThemePreference;
+
+    if (shouldBeDark) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+})();
+</script>
+
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
