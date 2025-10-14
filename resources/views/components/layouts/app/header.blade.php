@@ -72,7 +72,7 @@
             <!-- Desktop User Menu -->
             <flux:dropdown position="top" align="end" class="[&>div]:!bg-white dark:[&>div]:!bg-zinc-800 [&>div]:!border [&>div]:!border-gray-200 dark:[&>div]:!border-zinc-700">
                 <flux:profile
-                    class="cursor-pointer !m-0"
+                    class="cursor-pointer !m-0 [&>div]:!bg-blue-600 dark:[&>div]:!bg-blue-500 [&>div]:!text-white"
                     :initials="auth()->user()->initials()"
                 />
 
