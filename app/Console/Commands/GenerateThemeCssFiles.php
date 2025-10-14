@@ -50,6 +50,9 @@ class GenerateThemeCssFiles extends Command
         return Command::SUCCESS;
     }
 
+    /**
+     * @param array<string, mixed> $theme
+     */
     protected function generateThemeCss(array $theme): string
     {
         $isDarkTheme = $theme['is_dark_mode'] ?? false;
@@ -63,9 +66,12 @@ class GenerateThemeCssFiles extends Command
         return $this->generateLightPrimaryTheme($theme);
     }
 
+    /**
+     * @param array<string, mixed> $theme
+     */
     protected function generateLightPrimaryTheme(array $theme): string
     {
-        $name = $theme['display_name'] ?? ucfirst($theme['name']);
+        $name = $theme['display_name'] ?? ucfirst((string) $theme['name']);
 
         // Light mode (default) uses the theme's defined colors
         $lightPrimary = $theme['primary_color'];
@@ -117,9 +123,12 @@ class GenerateThemeCssFiles extends Command
 CSS;
     }
 
+    /**
+     * @param array<string, mixed> $theme
+     */
     protected function generateDarkPrimaryTheme(array $theme): string
     {
-        $name = $theme['display_name'] ?? ucfirst($theme['name']);
+        $name = $theme['display_name'] ?? ucfirst((string) $theme['name']);
 
         // For dark-primary themes, use their colors for dark mode and generate light variants
         $darkPrimary = $theme['primary_color'];
@@ -171,6 +180,9 @@ CSS;
 CSS;
     }
 
+    /**
+     * @param array<string, mixed> $theme
+     */
     protected function calculateSecondary(array $theme): string
     {
         // If theme doesn't have explicit secondary, derive from primary
@@ -213,6 +225,9 @@ CSS;
         return $this->lightenColor($primaryText, 15);
     }
 
+    /**
+     * @param array{r: int, g: int, b: int} $rgb
+     */
     protected function calculateLuminance(array $rgb): float
     {
         $r = $this->linearizeColorComponent($rgb['r'] / 255);
@@ -253,6 +268,9 @@ CSS;
         return '#111827'; // Gray-900
     }
 
+    /**
+     * @return array{r: int, g: int, b: int}
+     */
     protected function hexToRgb(string $hex): array
     {
         $hex = ltrim($hex, '#');

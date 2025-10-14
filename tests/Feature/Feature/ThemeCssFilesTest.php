@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\File;
 
-describe('Theme CSS Files', function () {
-    it('has all 18 predefined theme CSS files', function () {
+describe('Theme CSS Files', function (): void {
+    it('has all 18 predefined theme CSS files', function (): void {
         $expectedThemes = [
             'default', 'dark', 'ocean', 'sunset', 'forest',
             'cosmic-violet', 'coral-reef', 'midnight-teal',
@@ -21,7 +21,7 @@ describe('Theme CSS Files', function () {
         }
     });
 
-    it('contains required CSS variables in each theme file', function () {
+    it('contains required CSS variables in each theme file', function (): void {
         $expectedThemes = [
             'default', 'dark', 'ocean', 'sunset', 'forest',
             'cosmic-violet', 'coral-reef', 'midnight-teal',
@@ -55,7 +55,7 @@ describe('Theme CSS Files', function () {
         }
     });
 
-    it('has both light and dark mode selectors in each theme file', function () {
+    it('has both light and dark mode selectors in each theme file', function (): void {
         $expectedThemes = [
             'default', 'dark', 'ocean', 'sunset', 'forest',
             'cosmic-violet', 'coral-reef', 'midnight-teal',
@@ -81,7 +81,7 @@ describe('Theme CSS Files', function () {
         }
     });
 
-    it('has CSS files in public directory for web accessibility', function () {
+    it('has CSS files in public directory for web accessibility', function (): void {
         $expectedThemes = [
             'default', 'dark', 'ocean', 'sunset', 'forest',
             'cosmic-violet', 'coral-reef', 'midnight-teal',
@@ -103,7 +103,7 @@ describe('Theme CSS Files', function () {
         }
     });
 
-    it('validates CSS variable format with hex color values', function () {
+    it('validates CSS variable format with hex color values', function (): void {
         $expectedThemes = [
             'default', 'dark', 'ocean', 'sunset', 'forest',
             'cosmic-violet', 'coral-reef', 'midnight-teal',
