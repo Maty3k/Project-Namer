@@ -2,30 +2,6 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     @include('partials.head')
-
-    <script>
-        // Use localStorage as primary source (fast, prevents flash)
-        (function() {
-            const localStorageTheme = localStorage.getItem('darkMode');
-            const serverThemePreference = {{ $isDarkMode ? 'true' : 'false' }};
-
-            // Use localStorage if available, otherwise use server preference
-            const shouldBeDark = localStorageTheme !== null
-                ? localStorageTheme === 'true'
-                : serverThemePreference;
-
-            // Apply theme immediately
-            if (shouldBeDark) {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('darkMode', 'true');
-            } else {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('darkMode', 'false');
-            }
-
-            console.log('PROJECT WORKFLOW: Applied theme', shouldBeDark ? 'DARK' : 'LIGHT', '(localStorage:', localStorageTheme, 'database:', serverThemePreference, ')');
-        })();
-    </script>
 </head>
 <body class="min-h-screen bg-white dark:bg-slate-900 flex">
     
