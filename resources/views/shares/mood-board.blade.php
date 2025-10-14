@@ -47,14 +47,14 @@
             <div class="mx-auto max-w-full h-screen">
                 <!-- Canvas Display -->
                 <div class="relative w-full h-full overflow-auto"
-                     style="background-color: {{ $moodBoard->layout_config['background_color'] ?? '#ffffff' }};">
-                    
+                     style="background-color: {{ $moodBoard->layout_config['background_color'] ?? 'rgb(255 255 255)' }};">
+
                     <!-- Grid Background (when enabled) -->
                     @if($moodBoard->layout_config['snap_to_grid'] ?? false)
                         <div class="absolute inset-0 opacity-10 pointer-events-none"
-                             style="background-image: 
-                                    linear-gradient(to right, #000 1px, transparent 1px),
-                                    linear-gradient(to bottom, #000 1px, transparent 1px);
+                             style="background-image:
+                                    linear-gradient(to right, rgb(0 0 0) 1px, transparent 1px),
+                                    linear-gradient(to bottom, rgb(0 0 0) 1px, transparent 1px);
                                     background-size: {{ $moodBoard->layout_config['grid_size'] ?? 20 }}px {{ $moodBoard->layout_config['grid_size'] ?? 20 }}px;">
                         </div>
                     @endif

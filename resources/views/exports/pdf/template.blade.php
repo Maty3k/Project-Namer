@@ -8,24 +8,24 @@
         body {
             font-family: 'DejaVu Sans', sans-serif;
             margin: 40px;
-            color: #333;
+            color: rgb(51 51 51);
             line-height: 1.6;
         }
         .header {
             text-align: center;
             margin-bottom: 40px;
             padding-bottom: 20px;
-            border-bottom: 2px solid #e5e7eb;
+            border-bottom: 2px solid rgb(229 231 235);
         }
         .title {
             font-size: 24px;
             font-weight: bold;
-            color: #1f2937;
+            color: rgb(31 41 55);
             margin-bottom: 10px;
         }
         .subtitle {
             font-size: 14px;
-            color: #6b7280;
+            color: rgb(107 114 128);
         }
         .section {
             margin-bottom: 30px;
@@ -33,10 +33,10 @@
         .section-title {
             font-size: 18px;
             font-weight: bold;
-            color: #374151;
+            color: rgb(55 65 81);
             margin-bottom: 15px;
             padding-bottom: 5px;
-            border-bottom: 1px solid #d1d5db;
+            border-bottom: 1px solid rgb(209 213 219);
         }
         .info-grid {
             display: table;
@@ -63,14 +63,14 @@
             left: 40px;
             right: 40px;
             font-size: 12px;
-            color: #6b7280;
+            color: rgb(107 114 128);
             text-align: center;
-            border-top: 1px solid #e5e7eb;
+            border-top: 1px solid rgb(229 231 235);
             padding-top: 10px;
         }
         @if(($settings['template'] ?? 'default') === 'professional')
         .professional-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, rgb(102 126 234) 0%, rgb(118 75 162) 100%);
             color: white;
             padding: 30px;
             margin: -40px -40px 40px -40px;

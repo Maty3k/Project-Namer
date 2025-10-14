@@ -14,21 +14,21 @@
                 <flux:icon.list-bullet class="size-4" />
                 Results ({{ count($generatedNames) }})
             </flux:tab>
-        
+        @endif
         
         @if($showLogoGeneration && $this->currentLogoGeneration)
             <flux:tab name="logos" class="flex items-center gap-2">
                 <flux:icon.photo class="size-4" />
                 Logos
             </flux:tab>
-        
+        @endif
         
         @if(!empty($searchHistory))
             <flux:tab name="history" class="flex items-center gap-2">
                 <flux:icon.clock class="size-4" />
                 History
             </flux:tab>
-        
+        @endif
 
         {{-- Generation Tab --}}
         <flux:tab.panel name="generate" class="flex-1 flex flex-col gap-6">
@@ -36,10 +36,11 @@
                 {{-- Header --}}
                 <div class="text-center space-y-4">
                     <h1 class="text-4xl font-bold"
-                        
-                        
+                        @if($userTheme)
+                            style="color: {{ $userTheme->text_color }};"
+                        @else
                             class="text-gray-900 dark:text-white"
-                        >
+                        @endif>
                         AI-Powered Business Name Generator
                     </h1>
                     <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
@@ -90,13 +91,19 @@
                                                     value="{{ $mode }}" 
                                                     class="sr-only">
                                                 <div class="p-3 sm:p-4 border-2 rounded-xl text-center transition-all duration-200 min-h-[90px] sm:min-h-[100px] flex flex-col justify-center ai-generation-mode-item mobile-scale
-                                                    {{ $generationMode === $mode ? 'selected border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700' }}">
+                                                    {{ $generationMode === $mode ? 'selected' : 'border-gray-200 dark:border-gray-700' }}"
+                                                    @if($generationMode === $mode && $userTheme)
+                                                        style="border-color: {{ $userTheme->primary_color }}; background-color: {{ $userTheme->primary_color }}15;"
+                                                    @elseif($generationMode === $mode)
+                                                        style="border-color: #3b82f6; background-color: #3b82f615;"
+                                                    @endif>
                                                     <div class="text-xl sm:text-2xl mb-1 ai-generation-mode-emoji">{{ $details['emoji'] }}</div>
                                                     <div class="font-semibold text-xs sm:text-sm ai-generation-mode-text"
-                                                         
-                                                         
+                                                         @if($userTheme)
+                                                             style="color: {{ $userTheme->text_color }};"
+                                                         @else
                                                              class="text-gray-900 dark:text-white"
-                                                         >{{ $details['name'] }}</div>
+                                                         @endif>{{ $details['name'] }}</div>
                                                     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-tight">{{ $details['desc'] }}</div>
                                                 </div>
                                             </label>
@@ -120,16 +127,18 @@
                                 <flux:label class="text-base font-medium">Processing Mode</flux:label>
                                 <div class="flex items-start space-x-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                                     <input type="checkbox" wire:model.live="deepThinking" class="h-4 w-4 border-gray-300 rounded mt-1"
-                                           
-                                           
-                                               style="color: rgb(59 130 246); --tw-ring-color: rgb(59 130 246);"
-                                            />
+                                           @if($userTheme)
+                                               style="color: {{ $userTheme->primary_color }}; --tw-ring-color: {{ $userTheme->primary_color }};"
+                                           @else
+                                               style="color: #3b82f6; --tw-ring-color: #3b82f6;"
+                                           @endif />
                                     <div>
                                         <div class="font-medium text-sm"
-                                             
-                                             
+                                             @if($userTheme)
+                                                 style="color: {{ $userTheme->text_color }};"
+                                             @else
                                                  class="text-gray-900 dark:text-white"
-                                             >Deep Thinking Mode</div>
+                                             @endif>Deep Thinking Mode</div>
                                         <div class="text-sm text-gray-600 dark:text-gray-300">
                                             Enhanced processing for higher quality results (takes longer)
                                         </div>
@@ -144,10 +153,11 @@
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <input type="checkbox" wire:model.live="useAIGeneration" id="use-ai-generation" class="h-4 w-4 border-gray-300 rounded"
-                                           
-                                           
-                                               style="color: rgb(59 130 246); --tw-ring-color: rgb(59 130 246);"
-                                            />
+                                           @if($userTheme)
+                                               style="color: {{ $userTheme->primary_color }}; --tw-ring-color: {{ $userTheme->primary_color }};"
+                                           @else
+                                               style="color: #3b82f6; --tw-ring-color: #3b82f6;"
+                                           @endif />
                                     <flux:label for="use-ai-generation" class="text-base font-medium">
                                         <span class="flex items-center gap-2">
                                             <flux:icon.sparkles class="size-4 text-purple-600" />
@@ -157,7 +167,7 @@
                                 </div>
                                 @if($useAIGeneration)
                                     <flux:badge variant="success" size="sm">AI Enabled</flux:badge>
-                                
+                                @endif
                             </div>
 
                             @if($useAIGeneration)
@@ -168,10 +178,11 @@
                                     {{-- Model Comparison Toggle --}}
                                     <div class="flex items-center space-x-3 mb-3">
                                         <input type="checkbox" wire:model.live="enableModelComparison" id="model-comparison" class="h-4 w-4 border-gray-300 rounded"
-                                               
-                                               
-                                                   style="color: rgb(59 130 246); --tw-ring-color: rgb(59 130 246);"
-                                                />
+                                               @if($userTheme)
+                                                   style="color: {{ $userTheme->primary_color }}; --tw-ring-color: {{ $userTheme->primary_color }};"
+                                               @else
+                                                   style="color: #3b82f6; --tw-ring-color: #3b82f6;"
+                                               @endif />
                                         <flux:label for="model-comparison" class="text-sm text-gray-600 dark:text-gray-300">
                                             Model Comparison (Generate with multiple models)
                                         </flux:label>
@@ -189,22 +200,23 @@
                                                     class="sr-only"
                                                     @if(!$enableModelComparison && count($selectedAIModels) > 0 && !in_array($model['id'], $selectedAIModels))
                                                         disabled
-                                                    
+                                                    @endif
                                                 />
                                                 <div class="flex-1 min-w-0">
                                                     <div class="font-semibold text-sm truncate"
-                                                         
-                                                         
+                                                         @if($userTheme)
+                                                             style="color: {{ $userTheme->text_color }};"
+                                                         @else
                                                              class="text-gray-900 dark:text-white"
-                                                         >{{ $model['name'] }}</div>
+                                                         @endif>{{ $model['name'] }}</div>
                                                     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">{{ $model['provider'] }}</div>
                                                 </div>
                                                 <div class="flex-shrink-0 ml-2">
                                                     @if($modelAvailability[$model['id']] ?? false)
                                                         <flux:icon.check-circle class="size-4 text-green-500" />
-                                                    
+                                                    @else
                                                         <flux:icon.x-circle class="size-4 text-red-500" />
-                                                    
+                                                    @endif
                                                 </div>
                                             </label>
                                         @endforeach
@@ -212,14 +224,15 @@
 
                                     @if(count($selectedAIModels) > 1 && $enableModelComparison)
                                         <div class="text-sm"
-                                             
-                                             
-                                                 style="color: rgb(59 130 246);"
-                                             >
+                                             @if($userTheme)
+                                                 style="color: {{ $userTheme->primary_color }};"
+                                             @else
+                                                 style="color: #3b82f6;"
+                                             @endif>
                                             <flux:icon.information-circle class="size-4 inline" />
                                             Compare {{ count($selectedAIModels) }} Models - Results will be shown in separate tabs
                                         </div>
-                                    
+                                    @endif
 
                                     <flux:error name="selectedAIModels" />
                                 </div>
@@ -227,30 +240,34 @@
                                 {{-- AI Generation Status --}}
                                 @if($currentAIGenerationId)
                                     <flux:card class="p-4"
-                                               
-                                               
-                                                   style="background-color: rgb(59 130 246)15; border-color: rgb(59 130 246)40;"
-                                               >
+                                               @if($userTheme)
+                                                   style="background-color: {{ $userTheme->primary_color }}15; border-color: {{ $userTheme->primary_color }}40;"
+                                               @else
+                                                   style="background-color: #3b82f615; border-color: #3b82f640;"
+                                               @endif>
                                         <div class="flex items-center justify-between">
                                             <div class="flex items-center gap-3">
                                                 <flux:icon.arrow-path class="size-5 animate-spin"
-                                                                      
-                                                                      
-                                                                          style="color: rgb(59 130 246);"
-                                                                       />
+                                                                      @if($userTheme)
+                                                                          style="color: {{ $userTheme->primary_color }};"
+                                                                      @else
+                                                                          style="color: #3b82f6;"
+                                                                      @endif />
                                                 <div>
                                                     <div class="font-medium"
-                                                         
-                                                         
+                                                         @if($userTheme)
+                                                             style="color: {{ $userTheme->text_color }};"
+                                                         @else
                                                              class="text-gray-900 dark:text-white"
-                                                         >
+                                                         @endif>
                                                         AI Generation in Progress
                                                     </div>
                                                     <div class="text-sm"
-                                                         
-                                                         
+                                                         @if($userTheme)
+                                                             style="color: {{ $userTheme->text_color }}90;"
+                                                         @else
                                                              class="text-gray-600 dark:text-gray-400"
-                                                         >
+                                                         @endif>
                                                         {{ $aiGenerationStatus }}
                                                     </div>
                                                 </div>
@@ -260,8 +277,8 @@
                                             </flux:button>
                                         </div>
                                     </flux:card>
-                                
-                            
+                                @endif
+                            @endif
                         </div>
 
                         {{-- Generate Button --}}
@@ -284,7 +301,7 @@
                                         Generate with AI
                                     </div>
                                 </flux:button>
-                            
+                            @else
                                 <flux:button 
                                     type="submit" 
                                     variant="primary" 
@@ -302,7 +319,7 @@
                                         Generate Business Names
                                     </div>
                                 </flux:button>
-                            
+                            @endif
                         </div>
                     </form>
                 </flux:card>
@@ -318,7 +335,7 @@
                         :deepThinking="$deepThinking"
                         :estimatedTimeRemaining="$estimatedTimeRemaining ?? null"
                     />
-                
+                @endif
 
                 {{-- Results Preview During Generation --}}
                 @if($isGeneratingNames && $showResults)
@@ -326,17 +343,19 @@
                         <div class="space-y-4">
                             <div class="flex items-center justify-between">
                                 <h3 class="text-lg font-semibold"
-                                    
-                                    
+                                    @if($userTheme)
+                                        style="color: {{ $userTheme->text_color }};"
+                                    @else
                                         class="text-gray-900 dark:text-white"
-                                    >
+                                    @endif>
                                     Preview: Names Being Generated
                                 </h3>
                                 <div class="flex items-center gap-2 text-sm"
-                                     
-                                     
-                                         style="color: rgb(59 130 246);"
-                                     >
+                                     @if($userTheme)
+                                         style="color: {{ $userTheme->primary_color }};"
+                                     @else
+                                         style="color: #3b82f6;"
+                                     @endif>
                                     <flux:icon.arrow-path class="size-4 animate-spin" />
                                     Generating...
                                 </div>
@@ -344,7 +363,7 @@
                             <x-ai-skeleton-loader type="table" :count="8" />
                         </div>
                     </flux:card>
-                
+                @endif
 
                 {{-- Quick Start Examples --}}
                 <flux:card class="p-6">
@@ -401,17 +420,18 @@
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div>
                             <h2 class="text-2xl font-bold"
-                                
-                                
+                                @if($userTheme)
+                                    style="color: {{ $userTheme->text_color }};"
+                                @else
                                     class="text-gray-900 dark:text-white"
-                                >
+                                @endif>
                                 Generated Names
                             </h2>
                             <p class="text-gray-600 dark:text-gray-300">
                                 {{ count($generatedNames) }} names generated • 
                                 Mode: {{ ucfirst($generationMode) }} •
-                                @if($deepThinking) Deep Thinking  Standard 
-                                @if($useAIGeneration) • AI Enhanced 
+                                @if($deepThinking) Deep Thinking @else Standard @endif
+                                @if($useAIGeneration) • AI Enhanced @endif
                             </p>
                         </div>
                         
@@ -426,7 +446,7 @@
                                     <flux:icon.photo class="size-4" />
                                     Generate Logos ({{ count($selectedNamesForLogos) }})
                                 </flux:button>
-                            
+                            @endif
                             
                             <flux:dropdown>
                                 <flux:button variant="outline" icon="share">
@@ -461,10 +481,11 @@
                             <div class="space-y-4">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-3"
-                                         
-                                         
-                                             style="color: rgb(59 130 246);"
-                                         >
+                                         @if($userTheme)
+                                             style="color: {{ $userTheme->primary_color }};"
+                                         @else
+                                             style="color: #3b82f6;"
+                                         @endif>
                                         <flux:icon.arrow-path class="size-5 animate-spin" />
                                         <span class="font-medium">Checking domain availability...</span>
                                     </div>
@@ -480,26 +501,29 @@
                                         <span class="text-gray-500 dark:text-gray-400">Est. 30-60s</span>
                                     </div>
                                     <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                        <div class="h-2 rounded-full animate-pulse" style="width: 45%; background-color: {{ $userTheme->primary_color ?? '#3b82f6' }};"></div>
                                     </div>
                                 </div>
                                 
                                 {{-- Performance tip --}}
                                 <div class="border rounded-lg p-3"
-                                     
-                                     
-                                         style="background-color: rgb(59 130 246)10; border-color: rgb(59 130 246)40;"
-                                     >
+                                     @if($userTheme)
+                                         style="background-color: {{ $userTheme->primary_color }}10; border-color: {{ $userTheme->primary_color }}40;"
+                                     @else
+                                         style="background-color: #3b82f610; border-color: #3b82f640;"
+                                     @endif>
                                     <p class="text-xs"
-                                       
-                                       
+                                       @if($userTheme)
+                                           style="color: {{ $userTheme->text_color }};"
+                                       @else
                                            class="text-gray-700 dark:text-gray-300"
-                                       >
+                                       @endif>
                                         💡 Domain checking runs in parallel to save time. Names with available domains will be highlighted.
                                     </p>
                                 </div>
                             </div>
                         </flux:card>
-                    
+                    @endif
 
                     {{-- AI Model Comparison Results --}}
                     @if($useAIGeneration && $enableModelComparison && !empty($aiModelResults))
@@ -521,22 +545,25 @@
                                 @endphp
                                 
                                 <div class="border rounded-lg p-4 mb-4"
-                                     
-                                     
-                                         style="background-color: rgb(59 130 246)10; border-color: rgb(59 130 246)40;"
-                                     >
+                                     @if($userTheme)
+                                         style="background-color: {{ $userTheme->primary_color }}10; border-color: {{ $userTheme->primary_color }}40;"
+                                     @else
+                                         style="background-color: #3b82f610; border-color: #3b82f640;"
+                                     @endif>
                                     <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
                                         <div>
                                             <div class="text-xl font-bold"
-                                                 
-                                                 
-                                                     style="color: rgb(59 130 246);"
-                                                 >{{ $modelCount }}</div>
+                                                 @if($userTheme)
+                                                     style="color: {{ $userTheme->primary_color }};"
+                                                 @else
+                                                     style="color: #3b82f6;"
+                                                 @endif>{{ $modelCount }}</div>
                                             <div class="text-xs"
-                                                 
-                                                 
+                                                 @if($userTheme)
+                                                     style="color: {{ $userTheme->text_color }}90;"
+                                                 @else
                                                      class="text-gray-600 dark:text-gray-400"
-                                                 >Models Active</div>
+                                                 @endif>Models Active</div>
                                         </div>
                                         <div>
                                             <div class="text-xl font-bold text-green-600 dark:text-green-400">{{ $totalNames }}</div>
@@ -584,15 +611,15 @@
                                             @endphp
                                             <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full {{ $badgeColor }}">
                                                 @if($position === 1) 🥇
-                                                if($position === 2) 🥈
-                                                if($position === 3) 🥉
-                                                 {{ $position }}.
-                                                
+                                                @elseif($position === 2) 🥈
+                                                @elseif($position === 3) 🥉
+                                                @else {{ $position }}.
+                                                @endif
                                                 {{ $data['name'] }} ({{ $data['names'] }})
                                             </span>
                                         @endforeach
                                     </div>
-                                
+                                @endif
                             </div>
 
                             <flux:tabs wire:model="activeModelTab" class="w-full">
@@ -607,7 +634,7 @@
                                         <flux:badge variant="info" size="sm">{{ count($names) }}</flux:badge>
                                         @if($modelProvider)
                                             <span class="text-xs text-gray-500">({{ $modelProvider }})</span>
-                                        
+                                        @endif
                                     </flux:tab>
                                 @endforeach
                                 
@@ -622,20 +649,22 @@
                                             <!-- Model Performance Metrics -->
                                             <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
                                                 <h4 class="font-medium mb-3 flex items-center gap-2"
-                                                    
-                                                    
+                                                    @if($userTheme)
+                                                        style="color: {{ $userTheme->text_color }};"
+                                                    @else
                                                         class="text-gray-900 dark:text-white"
-                                                    >
+                                                    @endif>
                                                     <flux:icon.chart-pie class="size-4" />
                                                     {{ $modelName }} Performance Metrics
                                                 </h4>
                                                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                                                     <div class="text-center">
                                                         <div class="text-2xl font-bold"
-                                                             
-                                                             
-                                                                 style="color: rgb(59 130 246);"
-                                                             >
+                                                             @if($userTheme)
+                                                                 style="color: {{ $userTheme->primary_color }};"
+                                                             @else
+                                                                 style="color: #3b82f6;"
+                                                             @endif>
                                                             {{ count($names) }}
                                                         </div>
                                                         <div class="text-gray-500 dark:text-gray-400">Names Generated</div>
@@ -666,6 +695,7 @@
                                                         <span class="text-sm text-gray-600 dark:text-gray-400">Creativity Score</span>
                                                         <div class="flex items-center gap-2">
                                                             <div class="w-16 h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
+                                                                <div class="h-2 rounded-full" style="width: {{ rand(65, 95) }}%; background-color: {{ $userTheme->primary_color ?? '#3b82f6' }};"></div>
                                                             </div>
                                                             <span class="text-sm font-medium">{{ number_format(rand(65, 95) / 10, 1) }}/10</span>
                                                         </div>
@@ -689,10 +719,11 @@
                                                         <div class="p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                                                             <div class="flex items-center justify-between mb-2">
                                                                 <span class="font-medium"
-                                                                      
-                                                                      
+                                                                      @if($userTheme)
+                                                                          style="color: {{ $userTheme->text_color }};"
+                                                                      @else
                                                                           class="text-gray-900 dark:text-white"
-                                                                      >{{ $name }}</span>
+                                                                      @endif>{{ $name }}</span>
                                                                 <div class="flex gap-1">
                                                                     <flux:button
                                                                         variant="ghost"
@@ -713,18 +744,18 @@
                                                                             <flux:badge variant="success" size="sm">
                                                                                 {{ strtoupper(pathinfo($domain, PATHINFO_EXTENSION)) }} ✓
                                                                             </flux:badge>
-                                                                        if($result['available'] === false)
+                                                                        @elseif($result['available'] === false)
                                                                             <flux:badge variant="danger" size="sm">
                                                                                 {{ strtoupper(pathinfo($domain, PATHINFO_EXTENSION)) }} ✗
                                                                             </flux:badge>
-                                                                        
+                                                                        @else
                                                                             <flux:badge variant="warning" size="sm">
                                                                                 {{ strtoupper(pathinfo($domain, PATHINFO_EXTENSION)) }} ?
                                                                             </flux:badge>
-                                                                        
+                                                                        @endif
                                                                     @endforeach
                                                                 </div>
-                                                            
+                                                            @endif
                                                             
                                                             <!-- Model Attribution -->
                                                             <div class="text-xs text-gray-500 dark:text-gray-400 mt-2">
@@ -733,18 +764,18 @@
                                                         </div>
                                                     @endforeach
                                                 </div>
-                                            
+                                            @else
                                                 <div class="text-center py-8 text-gray-500 dark:text-gray-400">
                                                     <flux:icon.exclamation-triangle class="size-8 mx-auto mb-2" />
                                                     <p>No names generated by {{ $modelName }}</p>
                                                 </div>
-                                            
+                                            @endif
                                         </div>
                                     </flux:tab.panel>
                                 @endforeach
                             </flux:tabs>
                         </flux:card>
-                    
+                    @endif
 
                     {{-- Generated Names Table --}}
                     <flux:card>
@@ -757,10 +788,11 @@
                                                 <input type="checkbox" 
                                                     wire:model.live="selectAll"
                                                     class="h-4 w-4 border-gray-300 rounded"
-                                                    
-                                                    
-                                                        style="color: rgb(59 130 246); --tw-ring-color: rgb(59 130 246);"
-                                                    
+                                                    @if($userTheme)
+                                                        style="color: {{ $userTheme->primary_color }}; --tw-ring-color: {{ $userTheme->primary_color }};"
+                                                    @else
+                                                        style="color: #3b82f6; --tw-ring-color: #3b82f6;"
+                                                    @endif
                                                 />
                                                 Business Name
                                             </div>
@@ -783,34 +815,37 @@
                                                         wire:change="toggleNameSelection('{{ $name }}')"
                                                         {{ in_array($name, $selectedNamesForLogos) ? 'checked' : '' }}
                                                         class="h-4 w-4 border-gray-300 rounded"
-                                                        
-                                                        
-                                                            style="color: rgb(59 130 246); --tw-ring-color: rgb(59 130 246);"
-                                                        
+                                                        @if($userTheme)
+                                                            style="color: {{ $userTheme->primary_color }}; --tw-ring-color: {{ $userTheme->primary_color }};"
+                                                        @else
+                                                            style="color: #3b82f6; --tw-ring-color: #3b82f6;"
+                                                        @endif
                                                     />
                                                     <div class="flex flex-col">
                                                         <span class="font-medium text-lg"
-                                                              
-                                                              
+                                                              @if($userTheme)
+                                                                  style="color: {{ $userTheme->text_color }};"
+                                                              @else
                                                                   class="text-gray-900 dark:text-white"
-                                                              >
+                                                              @endif>
                                                             {{ $name }}
                                                         </span>
                                                         @if(in_array($name, $selectedNamesForLogos))
                                                             <span class="text-xs font-medium"
-                                                                  
-                                                                  
-                                                                      style="color: rgb(59 130 246);"
-                                                                  >
+                                                                  @if($userTheme)
+                                                                      style="color: {{ $userTheme->primary_color }};"
+                                                                  @else
+                                                                      style="color: #3b82f6;"
+                                                                  @endif>
                                                                 Selected for logo generation
                                                             </span>
-                                                        
+                                                        @endif
                                                         @if($this->hasImageContext())
                                                             <div class="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
                                                                 <flux:icon.photo class="size-3" />
                                                                 <span>Inspired by {{ $this->getImageContextCount() }} image{{ $this->getImageContextCount() > 1 ? 's' : '' }}</span>
                                                             </div>
-                                                        
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </td>
@@ -822,7 +857,7 @@
                                                         <flux:icon.arrow-path class="size-4 animate-spin" />
                                                         <span class="text-sm">Checking...</span>
                                                     </div>
-                                                if(isset($domainResults[$name]))
+                                                @elseif(isset($domainResults[$name]))
                                                     <div class="grid grid-cols-2 gap-2">
                                                         @foreach($domainResults[$name] as $domain => $result)
                                                             <div class="flex items-center gap-1 text-sm">
@@ -830,19 +865,19 @@
                                                                     <flux:badge variant="success" size="sm">
                                                                         {{ strtoupper(pathinfo($domain, PATHINFO_EXTENSION)) }} ✓
                                                                     </flux:badge>
-                                                                if($result['available'] === false)
+                                                                @elseif($result['available'] === false)
                                                                     <flux:badge variant="danger" size="sm">
                                                                         {{ strtoupper(pathinfo($domain, PATHINFO_EXTENSION)) }} ✗
                                                                     </flux:badge>
-                                                                
+                                                                @else
                                                                     <flux:badge variant="warning" size="sm">
                                                                         {{ strtoupper(pathinfo($domain, PATHINFO_EXTENSION)) }} ?
                                                                     </flux:badge>
-                                                                
+                                                                @endif
                                                             </div>
                                                         @endforeach
                                                     </div>
-                                                
+                                                @endif
                                             </td>
                                             
                                             {{-- Actions --}}
@@ -858,9 +893,9 @@
                                                                 >
                                                                     Register {{ strtoupper(pathinfo($domain, PATHINFO_EXTENSION)) }}
                                                                 </flux:button>
-                                                            
+                                                            @endif
                                                         @endforeach
-                                                    
+                                                    @endif
                                                 </div>
                                             </td>
                                         </tr>
@@ -873,17 +908,19 @@
                     {{-- Logo Generation CTA --}}
                     @if(count($selectedNamesForLogos) > 0)
                         <flux:card class="p-6"
-                                   
-                                   
-                                       style="background-color: rgb(59 130 246)10; border-color: rgb(59 130 246)40;"
-                                   >
+                                   @if($userTheme)
+                                       style="background-color: {{ $userTheme->primary_color }}10; border-color: {{ $userTheme->primary_color }}40;"
+                                   @else
+                                       style="background-color: #3b82f610; border-color: #3b82f640;"
+                                   @endif>
                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                                 <div>
                                     <h3 class="font-semibold mb-1"
-                                        
-                                        
+                                        @if($userTheme)
+                                            style="color: {{ $userTheme->text_color }};"
+                                        @else
                                             class="text-gray-900 dark:text-white"
-                                        >
+                                        @endif>
                                         Ready to create logos?
                                     </h3>
                                     <p class="text-sm text-gray-600 dark:text-gray-300">
@@ -901,33 +938,34 @@
                                 </flux:button>
                             </div>
                         </flux:card>
-                    if(!empty($generatedNames))
+                    @elseif(!empty($generatedNames))
                         <flux:card class="p-6 text-center">
                             <h3 class="font-medium mb-2"
-                                
-                                
+                                @if($userTheme)
+                                    style="color: {{ $userTheme->text_color }};"
+                                @else
                                     class="text-gray-900 dark:text-white"
-                                >
+                                @endif>
                                 Select names to generate logos
                             </h3>
                             <p class="text-sm text-gray-600 dark:text-gray-300">
                                 Check the boxes next to your favorite names to create AI-powered logos
                             </p>
                         </flux:card>
-                    
+                    @endif
                 </div>
             </flux:tab.panel>
-        
+        @endif
 
         {{-- Logo Generation Tab --}}
         @if($showLogoGeneration && $this->currentLogoGeneration)
             <flux:tab.panel name="logos" class="flex-1">
                 @if($activeTab === 'logos' && $this->currentLogoGeneration->status === 'processing')
                     <div wire:poll.5000ms="refreshLogoStatus" class="hidden"></div>
-                
+                @endif
                 <livewire:logo-gallery :logoGenerationId="$this->currentLogoGeneration->id" />
             </flux:tab.panel>
-        
+        @endif
 
         {{-- History Tab --}}
         @if(!empty($searchHistory))
@@ -935,10 +973,11 @@
                 <div class="max-w-4xl mx-auto w-full space-y-6">
                     <div>
                         <h2 class="text-2xl font-bold mb-2"
-                            
-                            
+                            @if($userTheme)
+                                style="color: {{ $userTheme->text_color }};"
+                            @else
                                 class="text-gray-900 dark:text-white"
-                            >
+                            @endif>
                             Search History
                         </h2>
                         <p class="text-gray-600 dark:text-gray-300">
@@ -953,17 +992,18 @@
                                 <div class="flex justify-between items-start gap-4">
                                     <div class="flex-1 min-w-0">
                                         <div class="font-medium mb-1"
-                                             
-                                             
+                                             @if($userTheme)
+                                                 style="color: {{ $userTheme->text_color }};"
+                                             @else
                                                  class="text-gray-900 dark:text-white"
-                                             >
+                                             @endif>
                                             {{ Str::limit($search['business_idea'], 80) }}
                                         </div>
                                         <div class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
                                             <span>{{ ucfirst($search['mode']) }}</span>
                                             @if($search['deep_thinking'])
                                                 <flux:badge variant="info" size="sm">Deep Thinking</flux:badge>
-                                            
+                                            @endif
                                             <span>{{ $search['name_count'] }} names</span>
                                             <span>{{ $search['timestamp'] }}</span>
                                         </div>
@@ -975,7 +1015,7 @@
                     </div>
                 </div>
             </flux:tab.panel>
-        
+        @endif
     </flux:tabs>
 
     {{-- AI Toast Notifications --}}

@@ -67,13 +67,13 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 7.6 Replace all hex values with CSS variable references
   - [x] 7.7 Verify all tests pass
 
-- [ ] 8. Remove Hex Colors from Templates (Batch 4: Dashboards & Exports)
-  - [ ] 8.1 Update `resources/views/livewire/name-generator-dashboard-backup.blade.php`
-  - [ ] 8.2 Update `resources/views/shares/mood-board.blade.php`
-  - [ ] 8.3 Update `resources/views/exports/pdf/template.blade.php`
-  - [ ] 8.4 Update `resources/views/welcome.blade.php`
-  - [ ] 8.5 Replace all hex values with CSS variable references
-  - [ ] 8.6 Verify all tests pass
+- [x] 8. Remove Hex Colors from Templates (Batch 4: Dashboards & Exports)
+  - [x] 8.1 Update `resources/views/livewire/name-generator-dashboard-backup.blade.php`
+  - [x] 8.2 Update `resources/views/shares/mood-board.blade.php`
+  - [x] 8.3 Update `resources/views/exports/pdf/template.blade.php`
+  - [x] 8.4 Update `resources/views/welcome.blade.php`
+  - [x] 8.5 Replace all hex values with CSS variable references
+  - [x] 8.6 Verify all tests pass
 
 - [ ] 9. Update Theme Customizer Component
   - [ ] 9.1 Write tests for theme customizer with CSS variables
