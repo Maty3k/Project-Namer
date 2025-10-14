@@ -54,10 +54,6 @@ it('can apply seasonal themes', function (): void {
     Livewire::actingAs($user)
         ->test(ThemeCustomizer::class)
         ->call('applyPreset', 'summer')
-        ->assertSet('primaryColor', '#dc2626')
-        ->assertSet('accentColor', '#0891b2')
-        ->assertSet('backgroundColor', '#fff5f5')
-        ->assertSet('textColor', '#2d3748')
         ->assertSet('themeName', 'summer')
         ->assertSet('isDarkMode', false);
 });
@@ -68,10 +64,6 @@ it('can apply bold themes', function (): void {
     Livewire::actingAs($user)
         ->test(ThemeCustomizer::class)
         ->call('applyPreset', 'neon-cyber')
-        ->assertSet('primaryColor', '#00ff88')
-        ->assertSet('accentColor', '#ff0080')
-        ->assertSet('backgroundColor', '#0a0a0a')
-        ->assertSet('textColor', '#ffffff')
         ->assertSet('themeName', 'neon-cyber')
         ->assertSet('isDarkMode', true);
 });
@@ -101,10 +93,8 @@ it('can apply seasonal recommendation', function (): void {
 
     if ($recommendation) {
         $component->call('applySeasonalRecommendation')
-            ->assertSet('primaryColor', $recommendation['primary_color'])
-            ->assertSet('accentColor', $recommendation['accent_color'])
-            ->assertSet('backgroundColor', $recommendation['background_color'])
-            ->assertSet('textColor', $recommendation['text_color']);
+            ->assertSet('themeName', $recommendation['name'])
+            ->assertSet('isDarkMode', $recommendation['is_dark_mode']);
     } else {
         // If no recommendation, just check that the method doesn't throw
         $component->call('applySeasonalRecommendation');
@@ -117,11 +107,7 @@ test('user can save theme preferences', function (): void {
 
     Livewire::actingAs($user)
         ->test(ThemeCustomizer::class)
-        ->set('primaryColor', '#ff6b6b')
-        ->set('accentColor', '#4ecdc4')
-        ->set('backgroundColor', '#ffffff')
-        ->set('textColor', '#333333')
-        ->set('themeName', 'custom-test')
+        ->set('themeName', 'ocean')
         ->set('isDarkMode', false)
         ->call('save')
         ->assertDispatched('theme-saved')
@@ -129,11 +115,7 @@ test('user can save theme preferences', function (): void {
 
     // Verify database record was created
     expect(\App\Models\UserThemePreference::where('user_id', $user->id)->first())
-        ->primary_color->toBe('#ff6b6b')
-        ->accent_color->toBe('#4ecdc4')
-        ->background_color->toBe('#ffffff')
-        ->text_color->toBe('#333333')
-        ->theme_name->toBe('custom-test')
+        ->theme_name->toBe('ocean')
         ->is_dark_mode->toBeFalse();
 });
 
@@ -142,111 +124,22 @@ test('user can reset theme to defaults', function (): void {
 
     Livewire::actingAs($user)
         ->test(ThemeCustomizer::class)
-        ->set('primaryColor', '#ff6b6b')
-        ->set('accentColor', '#4ecdc4')
+        ->set('themeName', 'ocean')
         ->call('resetToDefault')
-        ->assertSet('primaryColor', '#3b82f6')
-        ->assertSet('accentColor', '#10b981')
-        ->assertSet('backgroundColor', '#ffffff')
-        ->assertSet('textColor', '#111827')
         ->assertSet('themeName', 'default')
         ->assertSet('isDarkMode', false)
         ->assertDispatched('theme-updated');
 });
 
-test('theme customizer validates color formats', function (): void {
-    $user = User::factory()->create();
-
-    $component = Livewire::actingAs($user)
-        ->test(ThemeCustomizer::class);
-
-    // Test invalid color format
-    $component->set('primaryColor', 'invalid-color')
-        ->call('save')
-        ->assertHasErrors(['primaryColor']);
-
-    // Test valid color format
-    $component->set('primaryColor', '#3b82f6')
-        ->call('save')
-        ->assertHasNoErrors(['primaryColor']);
-});
-
-test('user can export current theme', function (): void {
+test('user can toggle dark mode', function (): void {
     $user = User::factory()->create();
 
     Livewire::actingAs($user)
         ->test(ThemeCustomizer::class)
-        ->set('primaryColor', '#ff6b6b')
-        ->set('accentColor', '#4ecdc4')
-        ->set('themeName', 'export-test')
-        ->call('exportTheme')
-        ->assertDispatched('download-theme');
-});
-
-test('user can import theme from file', function (): void {
-    $user = User::factory()->create();
-
-    // Create a mock theme file
-    $themeData = [
-        'theme_name' => 'imported-theme',
-        'primary_color' => '#ff6b6b',
-        'accent_color' => '#4ecdc4',
-        'background_color' => '#ffffff',
-        'text_color' => '#333333',
-        'is_dark_mode' => false,
-    ];
-
-    // For now, skip the file upload test and test the core import logic directly
-    $component = Livewire::actingAs($user)->test(ThemeCustomizer::class);
-
-    // Manually set the theme data on the component to simulate successful file processing
-    $component->set('primaryColor', $themeData['primary_color'])
-        ->set('accentColor', $themeData['accent_color'])
-        ->set('backgroundColor', $themeData['background_color'])
-        ->set('textColor', $themeData['text_color'])
-        ->set('themeName', $themeData['theme_name'])
-        ->set('isDarkMode', $themeData['is_dark_mode']);
-
-    // Test that the values were set correctly (simulates import success)
-    $component->assertSet('primaryColor', '#ff6b6b')
-        ->assertSet('accentColor', '#4ecdc4')
-        ->assertSet('themeName', 'imported-theme');
-});
-
-test('color inputs work correctly', function (): void {
-    $user = User::factory()->create();
-
-    Livewire::actingAs($user)
-        ->test(ThemeCustomizer::class)
-        ->set('primaryColor', '#ff6b6b')
-        ->assertSet('primaryColor', '#ff6b6b')
-        ->set('accentColor', '#4ecdc4')
-        ->assertSet('accentColor', '#4ecdc4')
-        ->set('backgroundColor', '#ffffff')
-        ->assertSet('backgroundColor', '#ffffff')
-        ->set('textColor', '#333333')
-        ->assertSet('textColor', '#333333');
-});
-
-test('accessibility score is calculated and displayed', function (): void {
-    $user = User::factory()->create();
-
-    $component = Livewire::actingAs($user)
-        ->test(ThemeCustomizer::class)
-        ->set('primaryColor', '#3b82f6')
-        ->set('backgroundColor', '#ffffff')
-        ->set('textColor', '#111827');
-
-    // Accessibility score should be calculated
-    $score = $component->get('accessibilityScore');
-    expect($score)->toBeFloat();
-    expect($score)->toBeGreaterThan(0);
-    expect($score)->toBeLessThanOrEqual(1);
-
-    // Feedback should be provided
-    $feedback = $component->get('accessibilityFeedback');
-    expect($feedback)->toBeArray();
-    expect($feedback)->toHaveKeys(['warnings', 'suggestions']);
+        ->set('isDarkMode', false)
+        ->call('toggleDarkMode')
+        ->assertSet('isDarkMode', true)
+        ->assertDispatched('theme-saved');
 });
 
 test('theme changes persist after save', function (): void {
@@ -255,8 +148,8 @@ test('theme changes persist after save', function (): void {
     // Save initial theme
     Livewire::actingAs($user)
         ->test(ThemeCustomizer::class)
-        ->set('primaryColor', '#ff6b6b')
-        ->set('themeName', 'persistent-theme')
+        ->set('themeName', 'sunset')
+        ->set('isDarkMode', true)
         ->call('save');
 
     // Create new component instance (simulating page reload)
@@ -264,13 +157,77 @@ test('theme changes persist after save', function (): void {
         ->test(ThemeCustomizer::class);
 
     // Verify theme was loaded from database
-    expect($component->get('primaryColor'))->toBe('#ff6b6b');
-    expect($component->get('themeName'))->toBe('persistent-theme');
+    expect($component->get('themeName'))->toBe('sunset');
+    expect($component->get('isDarkMode'))->toBeTrue();
 });
 
 test('guest user cannot save themes', function (): void {
     Livewire::test(ThemeCustomizer::class)
-        ->set('primaryColor', '#ff6b6b')
+        ->set('themeName', 'ocean')
         ->call('save')
         ->assertDispatched('theme-error');
+});
+
+test('theme customizer displays current theme info', function (): void {
+    $user = User::factory()->create();
+
+    $component = Livewire::actingAs($user)
+        ->test(ThemeCustomizer::class)
+        ->set('themeName', 'forest')
+        ->set('isDarkMode', false);
+
+    $component->assertSee('Current Theme')
+        ->assertSee('forest')
+        ->assertSee('Light Mode');
+});
+
+test('can change between different themes', function (): void {
+    $user = User::factory()->create();
+
+    $component = Livewire::actingAs($user)
+        ->test(ThemeCustomizer::class);
+
+    $component->call('applyPreset', 'default')
+        ->assertSet('themeName', 'default')
+        ->assertDispatched('theme-applied');
+
+    $component->call('applyPreset', 'ocean')
+        ->assertSet('themeName', 'ocean')
+        ->assertDispatched('theme-applied');
+
+    $component->call('applyPreset', 'sunset')
+        ->assertSet('themeName', 'sunset')
+        ->assertDispatched('theme-applied');
+});
+
+test('theme name validation works', function (): void {
+    $user = User::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test(ThemeCustomizer::class)
+        ->set('themeName', str_repeat('a', 51)) // Too long
+        ->call('save')
+        ->assertHasErrors(['themeName']);
+});
+
+test('predefined themes are loaded correctly', function (): void {
+    $user = User::factory()->create();
+
+    $component = Livewire::actingAs($user)
+        ->test(ThemeCustomizer::class);
+
+    $themes = $component->get('predefinedThemes');
+    expect($themes)->toBeArray();
+    expect(count($themes))->toBeGreaterThan(0);
+});
+
+test('available categories are loaded correctly', function (): void {
+    $user = User::factory()->create();
+
+    $component = Livewire::actingAs($user)
+        ->test(ThemeCustomizer::class);
+
+    $categories = $component->get('availableCategories');
+    expect($categories)->toBeArray();
+    expect(count($categories))->toBeGreaterThan(0);
 });

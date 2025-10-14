@@ -75,13 +75,13 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 8.5 Replace all hex values with CSS variable references
   - [x] 8.6 Verify all tests pass
 
-- [ ] 9. Update Theme Customizer Component
-  - [ ] 9.1 Write tests for theme customizer with CSS variables
-  - [ ] 9.2 Update ThemeCustomizer Livewire component to work with new theme system
-  - [ ] 9.3 Update theme preview rendering to use CSS variables
-  - [ ] 9.4 Remove color picker inputs (if any)
-  - [ ] 9.5 Test theme selection updates user preference correctly
-  - [ ] 9.6 Verify all tests pass
+- [x] 9. Update Theme Customizer Component
+  - [x] 9.1 Write tests for theme customizer with CSS variables
+  - [x] 9.2 Update ThemeCustomizer Livewire component to work with new theme system
+  - [x] 9.3 Update theme preview rendering to use CSS variables
+  - [x] 9.4 Remove color picker inputs (if any)
+  - [x] 9.5 Test theme selection updates user preference correctly
+  - [x] 9.6 Verify all tests pass
 
 - [ ] 10. Update Theme Quick Toggle Component
   - [ ] 10.1 Write tests for dark mode toggle functionality
