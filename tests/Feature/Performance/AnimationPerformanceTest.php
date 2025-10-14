@@ -51,12 +51,10 @@ class AnimationPerformanceTest extends TestCase
         $component = Livewire::actingAs($this->user)
             ->test(ThemeCustomizer::class);
 
-        // Test theme color changes (which trigger animations)
+        // Test theme changes (which trigger animations)
         $component
-            ->set('primaryColor', '#ff0000')
-            ->set('accentColor', '#00ff00')
-            ->set('backgroundColor', '#ffffff')
-            ->set('textColor', '#000000')
+            ->set('themeName', 'sunset')
+            ->set('isDarkMode', false)
             ->assertHasNoErrors();
 
         // Test theme save functionality works with animations

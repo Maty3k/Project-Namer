@@ -24,6 +24,7 @@ final class ThemeAccessibilityBrowserTest extends DuskTestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
         $this->user = User::factory()->create();
         $this->themeService = new ThemeService;
     }
@@ -176,12 +177,11 @@ final class ThemeAccessibilityBrowserTest extends DuskTestCase
                 // Test accessibility of the customizer interface
                 $browser->assertNoAccessibilityIssues();
 
-                // Test color picker interactions
-                if ($browser->element('.color-picker-trigger')) {
-                    $browser->click('.color-picker-trigger')
+                // Test theme selection interactions
+                if ($browser->element('.theme-card')) {
+                    $browser->click('.theme-card')
                         ->pause(500)
-                        ->assertNoAccessibilityIssues()
-                        ->press('Escape'); // Close color picker
+                        ->assertNoAccessibilityIssues();
                 }
             }
         });
@@ -225,35 +225,25 @@ final class ThemeAccessibilityBrowserTest extends DuskTestCase
     }
 
     /**
-     * Test high contrast mode for themes that support it.
+     * Test that CSS files load correctly for all themes.
      */
-    public function test_high_contrast_accessibility(): void
+    public function test_theme_css_files_load_correctly(): void
     {
         $themes = $this->themeService->getPredefinedThemes();
 
-        // Filter themes that should have high contrast (AAA level)
-        $highContrastThemes = array_filter($themes, function ($theme) {
-            $textBgRatio = $this->themeService->calculateContrastRatio(
-                $theme['text_color'],
-                $theme['background_color']
-            );
-
-            return $textBgRatio >= 7.0;
-        });
-
-        $this->browse(function (Browser $browser) use ($highContrastThemes): void {
+        $this->browse(function (Browser $browser) use ($themes): void {
             $browser->loginAs($this->user);
 
-            foreach ($highContrastThemes as $theme) {
+            foreach ($themes as $theme) {
                 $this->applyThemeToUser($theme);
 
                 $browser->visit('/dashboard')
                     ->waitFor('.name-generator-container', 10)
-                    ->pause(1000)
-                    ->assertNoAccessibilityIssues();
+                    ->pause(1000);
 
-                // Test that text is clearly visible
-                $browser->assertVisible('.text-gray-900, .text-white, .dark\\:text-white');
+                // Verify theme CSS link exists in the page
+                $cssPath = "/css/themes/{$theme['name']}.css";
+                $browser->assertSourceHas($cssPath);
             }
         });
     }
@@ -267,13 +257,15 @@ final class ThemeAccessibilityBrowserTest extends DuskTestCase
             ['user_id' => $this->user->id],
             [
                 'theme_name' => $theme['name'],
-                'primary_color' => $theme['primary_color'],
-                'accent_color' => $theme['accent_color'],
-                'background_color' => $theme['background_color'],
-                'text_color' => $theme['text_color'],
                 'is_dark_mode' => $theme['is_dark_mode'],
             ]
         );
+
+        // Update User model to match
+        $this->user->update([
+            'current_theme' => $theme['name'],
+            'prefers_dark_mode' => $theme['is_dark_mode'],
+        ]);
 
         // Clear any cached theme data
         cache()->forget("user_theme_{$this->user->id}");
