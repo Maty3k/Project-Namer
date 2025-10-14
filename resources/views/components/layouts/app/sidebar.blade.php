@@ -44,14 +44,16 @@
         // SMART THEME PROTECTION - Block automatic switching, allow intentional changes
         (function() {
             try {
-                // Always trust the server preference (database) as the source of truth
+                // Use localStorage as primary source (fast, prevents flash)
+                const localStorageTheme = localStorage.getItem('darkMode');
                 const serverThemePreference = {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
-                const currentThemePreference = serverThemePreference;
 
-                // Sync localStorage to match the server preference
-                localStorage.setItem('darkMode', currentThemePreference ? 'true' : 'false');
+                // Use localStorage if available, otherwise use server preference
+                const currentThemePreference = localStorageTheme !== null
+                    ? localStorageTheme === 'true'
+                    : serverThemePreference;
 
-                console.log('SMART THEME PROTECTION: Using server theme from database', currentThemePreference ? 'DARK' : 'LIGHT');
+                console.log('SMART THEME PROTECTION: Applied theme', currentThemePreference ? 'DARK' : 'LIGHT', '(localStorage:', localStorageTheme, 'database:', serverThemePreference, ')');
 
                 // Apply theme immediately
                 const applyTheme = (isDark) => {
@@ -132,8 +134,11 @@
                 mutations.forEach(function(mutation) {
                     if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                         const currentIsDark = document.documentElement.classList.contains('dark');
-                        // Always trust server (database) as source of truth
-                        const expectedTheme = {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
+                        // Get expected theme from localStorage (primary) or server (fallback)
+                        const localStorageTheme = localStorage.getItem('darkMode');
+                        const expectedTheme = localStorageTheme !== null
+                            ? localStorageTheme === 'true'
+                            : {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
 
                         // Check if this is an authorized change
                         const isAuthorized = window.__authorizedThemeChange ||
@@ -164,8 +169,11 @@
                 if (window.__themeProtectionEnabled) {
                     const currentIsDark = document.documentElement.classList.contains('dark');
 
-                    // Get expected theme - always trust server (database) as source of truth
-                    const expectedTheme = {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
+                            // Get expected theme from localStorage (primary) or server (fallback)
+                    const localStorageTheme = localStorage.getItem('darkMode');
+                    const expectedTheme = localStorageTheme !== null
+                        ? localStorageTheme === 'true'
+                        : {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
 
                     // Keep window.currentThemePreference in sync
                     if (window.currentThemePreference !== expectedTheme) {
@@ -237,31 +245,32 @@
                 window.currentThemePreference = isDark;
             });
 
-            // Preserve theme state during Livewire navigation - use database as source
+            // Preserve theme state during Livewire navigation
             window.addEventListener('livewire:navigating', function() {
-                // Use server (database) preference as source of truth
-                const serverThemePreference = {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
-                localStorage.setItem('darkMode', serverThemePreference ? 'true' : 'false');
-                window.currentThemePreference = serverThemePreference;
+                // Save current theme state from localStorage
+                const currentIsDark = document.documentElement.classList.contains('dark');
+                localStorage.setItem('darkMode', currentIsDark ? 'true' : 'false');
+                window.currentThemePreference = currentIsDark;
 
                 // Authorize theme changes during navigation
                 if (window.authorizeThemeChange) {
-                    window.authorizeThemeChange(serverThemePreference, 3000); // 3 second authorization
+                    window.authorizeThemeChange(currentIsDark, 3000); // 3 second authorization
                 }
             });
 
-            // Restore theme state after Livewire navigation - always use database as source of truth
+            // Restore theme state after Livewire navigation
             window.addEventListener('livewire:navigated', function() {
                 setTimeout(function() {
-                    // Server preference (from database) is always the source of truth
+                    // Restore from localStorage (primary) or server (fallback)
+                    const localStorageTheme = localStorage.getItem('darkMode');
                     const serverThemePreference = {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
-                    const isDark = serverThemePreference;
+                    const isDark = localStorageTheme !== null
+                        ? localStorageTheme === 'true'
+                        : serverThemePreference;
+
                     window.currentThemePreference = isDark;
 
-                    // Sync localStorage to match database
-                    localStorage.setItem('darkMode', isDark ? 'true' : 'false');
-
-                    // Apply database theme if different from current
+                    // Apply theme if different from current
                     const currentIsDark = document.documentElement.classList.contains('dark');
                     if (currentIsDark !== isDark) {
                         if (window.authorizeThemeChange) {
@@ -272,6 +281,7 @@
                         } else {
                             document.documentElement.classList.remove('dark');
                         }
+                        localStorage.setItem('darkMode', isDark ? 'true' : 'false');
                     }
                 }, 100); // Small delay to let DOM settle
             });
