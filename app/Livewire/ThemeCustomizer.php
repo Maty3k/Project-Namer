@@ -139,6 +139,9 @@ final class ThemeCustomizer extends Component
 
                 console.log('THEME CUSTOMIZER: Applying theme', '{$this->themeName}', isDark ? 'DARK' : 'LIGHT');
 
+                // Allow this theme change (bypass MutationObserver blocking)
+                window.__allowingThemeChange = true;
+
                 // Update theme CSS link
                 let themeLink = document.getElementById('theme-css-link');
                 if (!themeLink) {
@@ -160,6 +163,13 @@ final class ThemeCustomizer extends Component
 
                 // Store theme name in localStorage for persistence
                 localStorage.setItem('themeName', '{$this->themeName}');
+
+                console.log('✓ Theme saved to localStorage:', '{$this->themeName}', isDark ? 'DARK' : 'LIGHT');
+
+                // Re-enable blocking after a short delay
+                setTimeout(function() {
+                    window.__allowingThemeChange = false;
+                }, 200);
 
                 // Update the global current theme preference
                 window.currentThemePreference = isDark;

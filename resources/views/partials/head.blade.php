@@ -81,6 +81,36 @@
         }
         console.log('=== END VERIFICATION ===\n');
     });
+
+    // CRITICAL: Prevent Flux UI or other libraries from overriding theme
+    // Monitor for unauthorized dark class changes and block them immediately
+    const darkModeObserver = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                const hasDarkClass = document.documentElement.classList.contains('dark');
+
+                // Only correct if there's a mismatch and we're not in the middle of a manual change
+                if (hasDarkClass !== shouldBeDark && !window.__allowingThemeChange) {
+                    console.warn('🚫 BLOCKED: Something tried to change dark class!');
+                    console.warn('   Expected:', shouldBeDark, 'Found:', hasDarkClass);
+                    console.warn('   Reverting immediately...');
+
+                    if (shouldBeDark) {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                }
+            }
+        });
+    });
+
+    // Start monitoring immediately
+    darkModeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class']
+    });
+    console.log('✓ Dark class protection active (MutationObserver monitoring)');
 })();
 </script>
 
