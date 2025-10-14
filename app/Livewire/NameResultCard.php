@@ -25,8 +25,6 @@ class NameResultCard extends Component
 
     public ?int $suggestionId = null;
 
-    public ?int $domainsLastChecked = null; // Timestamp to force Livewire re-render
-
     /**
      * Mount the component with a name suggestion.
      */
@@ -137,11 +135,10 @@ class NameResultCard extends Component
         }
 
         $domainCheckService = app(\App\Services\DomainCheckService::class);
-        $allDomains = $this->suggestion->domains;
         $checkedDomains = [];
 
-        // Check each domain and update after EACH one for progressive results
-        foreach ($allDomains as $domainName => $domainData) {
+        // Check all domains
+        foreach ($this->suggestion->domains as $domainName => $domainData) {
             try {
                 $result = $domainCheckService->checkDomain($domainName);
                 $checkedDomains[$domainName] = [
@@ -160,14 +157,13 @@ class NameResultCard extends Component
                     'error' => $e->getMessage(),
                 ];
             }
-
-            // Update after EACH domain check so results appear progressively
-            $updatedDomains = array_merge($allDomains, $checkedDomains);
-            $this->suggestion->update(['domains' => $updatedDomains]);
-
-            // Force Livewire to detect change by completely replacing the model
-            $this->suggestion = NameSuggestion::find($this->suggestion->id);
         }
+
+        // Save all checked domains to database
+        $this->suggestion->update(['domains' => $checkedDomains]);
+
+        // CRITICAL: Use fresh() to get a new instance and trigger Livewire's change detection
+        $this->suggestion = $this->suggestion->fresh();
 
         $this->dispatch('show-toast', [
             'message' => 'Domain availability checked!',
@@ -311,8 +307,8 @@ class NameResultCard extends Component
      */
     public function boot(): void
     {
-        // Ensure fresh suggestion data on each request
-        if ($this->suggestionId && (! $this->suggestion || $this->suggestion->id !== $this->suggestionId)) {
+        // Always ensure fresh suggestion data from database on each request
+        if ($this->suggestionId) {
             $this->suggestion = NameSuggestion::find($this->suggestionId);
         }
     }
@@ -333,8 +329,8 @@ class NameResultCard extends Component
      */
     public function hydrate(): void
     {
-        // Restore suggestion from ID if needed
-        if ($this->suggestionId && (! $this->suggestion || $this->suggestion->id !== $this->suggestionId)) {
+        // Always restore fresh suggestion from database
+        if ($this->suggestionId) {
             $this->suggestion = NameSuggestion::find($this->suggestionId);
         }
     }
