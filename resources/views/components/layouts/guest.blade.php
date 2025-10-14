@@ -24,80 +24,34 @@
         @endif
 
         <script>
-            // Use localStorage as primary source (fast, prevents flash)
+            // SIMPLIFIED THEME - No automatic switching
             (function() {
-                try {
-                    const localStorageTheme = localStorage.getItem('darkMode');
-                    const serverThemePreference = {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
+                // Block system preference changes
+                if (window.matchMedia && !window.__matchMediaOverridden) {
+                    const originalMatchMedia = window.matchMedia;
+                    window.matchMedia = function(query) {
+                        const result = originalMatchMedia.call(this, query);
+                        if (query.includes('prefers-color-scheme')) {
+                            return {
+                                matches: false,
+                                addEventListener: () => {},
+                                removeEventListener: () => {}
+                            };
+                        }
+                        return result;
+                    };
+                    window.__matchMediaOverridden = true;
+                }
 
-                    // Use localStorage if available, otherwise use server preference
-                    const shouldBeDark = localStorageTheme !== null
-                        ? localStorageTheme === 'true'
-                        : serverThemePreference;
-
-                    // Apply theme immediately
-                    if (shouldBeDark) {
+                // Listen for theme changes from ThemeCustomizer ONLY
+                window.addEventListener('theme-changed', function(event) {
+                    const isDark = event.detail.isDark;
+                    if (isDark) {
                         document.documentElement.classList.add('dark');
-                        localStorage.setItem('darkMode', 'true');
                     } else {
                         document.documentElement.classList.remove('dark');
-                        localStorage.setItem('darkMode', 'false');
                     }
-
-                    // Lock the theme to prevent unwanted changes
-                    window.__themeIsLocked = true;
-                    window.__lockedTheme = shouldBeDark;
-                } catch (error) {
-                    console.warn('Dark mode initialization failed:', error);
-                }
-            })();
-
-            // Theme protection system - prevent automatic theme switching
-            (function() {
-                // Override any system preference changes after page load
-                window.addEventListener('load', function() {
-                    const lockedTheme = window.__lockedTheme;
-                    if (window.__themeIsLocked && lockedTheme !== undefined) {
-                        if (lockedTheme) {
-                            document.documentElement.classList.add('dark');
-                        } else {
-                            document.documentElement.classList.remove('dark');
-                        }
-                    }
-                });
-
-                // Monitor for unwanted theme changes and revert them
-                const observer = new MutationObserver(function(mutations) {
-                    if (!window.__themeIsLocked) return;
-
-                    mutations.forEach(function(mutation) {
-                        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                            const isDark = document.documentElement.classList.contains('dark');
-                            const shouldBeDark = window.__lockedTheme;
-
-                            if (isDark !== shouldBeDark && !window.__allowThemeChange) {
-                                if (shouldBeDark) {
-                                    document.documentElement.classList.add('dark');
-                                } else {
-                                    document.documentElement.classList.remove('dark');
-                                }
-                            }
-                        }
-                    });
-                });
-
-                observer.observe(document.documentElement, {
-                    attributes: true,
-                    attributeFilter: ['class']
-                });
-
-                // Listen for legitimate theme changes from our components
-                window.addEventListener('theme-changed', function(event) {
-                    window.__allowThemeChange = true;
-                    window.__lockedTheme = event.detail.isDark;
-                    setTimeout(function() {
-                        window.__allowThemeChange = false;
-                    }, 100);
+                    localStorage.setItem('darkMode', isDark ? 'true' : 'false');
                 });
             })();
         </script>
