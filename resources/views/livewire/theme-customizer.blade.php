@@ -72,17 +72,17 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-5
+        <div class="grid grid-cols-2 gap-7
                     sm:grid-cols-3
-                    lg:grid-cols-4
-                    xl:grid-cols-5
-                    2xl:grid-cols-6">
+                    lg:grid-cols-5
+                    xl:grid-cols-6
+                    2xl:grid-cols-7">
             @foreach($this->predefinedThemes as $theme)
                 <div wire:click="applyPreset('{{ $theme['name'] }}')"
                      class="group relative cursor-pointer transition-all duration-500 ease-out">
 
                     <!-- Premium Card with Depth -->
-                    <div class="relative bg-white dark:bg-gray-900 rounded-2xl p-5 transition-all duration-500
+                    <div class="relative bg-white dark:bg-gray-900 rounded-xl p-4 transition-all duration-500
                                 border border-gray-200/50 dark:border-gray-700/50
                                 shadow-[0_4px_20px_rgb(0,0,0,0.04)] dark:shadow-[0_4px_20px_rgb(0,0,0,0.3)]
                                 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:hover:shadow-[0_8px_30px_rgb(0,0,0,0.5)]
@@ -90,22 +90,22 @@
                                 {{ $themeName === $theme['name'] ? 'ring-2 ring-blue-500/50 shadow-[0_8px_30px_rgb(59,130,246,0.15)] dark:shadow-[0_8px_30px_rgb(59,130,246,0.3)] -translate-y-0.5' : '' }}">
 
                         <!-- Subtle Background Pattern -->
-                        <div class="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+                        <div class="absolute inset-0 rounded-xl overflow-hidden pointer-events-none">
                             <div class="absolute inset-0 bg-gradient-to-br from-gray-50/50 to-transparent dark:from-gray-800/30 dark:to-transparent"></div>
                         </div>
 
                         <!-- Active Indicator - Elegant Checkmark -->
                         @if($themeName === $theme['name'])
-                            <div class="absolute -top-2 -right-2 z-10">
-                                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg flex items-center justify-center">
-                                    <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="absolute -top-1.5 -right-1.5 z-10">
+                                <div class="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg flex items-center justify-center">
+                                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
                                     </svg>
                                 </div>
                             </div>
                         @endif
 
-                        <div class="relative space-y-4">
+                        <div class="relative space-y-3">
                             <!-- Premium Icon Display -->
                             <div class="flex items-center justify-center">
                                 @php
@@ -132,13 +132,13 @@
                                         default => '🎨'
                                     };
                                 @endphp
-                                <div class="relative w-16 h-16 flex items-center justify-center">
+                                <div class="relative w-14 h-14 flex items-center justify-center">
                                     <!-- Ambient Glow -->
-                                    <div class="absolute inset-0 bg-gradient-to-br from-blue-400/20 via-purple-400/20 to-pink-400/20 rounded-full blur-xl scale-125 group-hover:scale-150 transition-transform duration-700"></div>
+                                    <div class="absolute inset-0 bg-gradient-to-br from-blue-400/20 via-purple-400/20 to-pink-400/20 rounded-full blur-lg scale-125 group-hover:scale-150 transition-transform duration-700"></div>
 
                                     <!-- Icon Container -->
-                                    <div class="relative w-14 h-14 flex items-center justify-center rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 shadow-inner">
-                                        <span class="text-3xl transform group-hover:scale-110 transition-transform duration-500 ease-out">
+                                    <div class="relative w-12 h-12 flex items-center justify-center rounded-lg bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 shadow-inner">
+                                        <span class="text-2xl transform group-hover:scale-110 transition-transform duration-500 ease-out">
                                             {{ $themeIcon }}
                                         </span>
                                     </div>
@@ -146,30 +146,30 @@
                             </div>
 
                             <!-- Theme Information -->
-                            <div class="text-center space-y-2">
+                            <div class="text-center space-y-1.5">
                                 <!-- Theme Name with Seasonal Indicator -->
-                                <div class="space-y-0.5">
-                                    <h3 class="text-sm font-semibold tracking-tight text-gray-900 dark:text-white">
+                                <div>
+                                    <h3 class="text-xs font-semibold tracking-tight text-gray-900 dark:text-white leading-tight">
                                         {{ $theme['display_name'] }}
                                     </h3>
 
                                     @if(($theme['category'] ?? '') === 'seasonal')
-                                        <div class="flex items-center justify-center gap-1">
+                                        <div class="flex items-center justify-center gap-1 mt-0.5">
                                             @switch($theme['season'] ?? '')
                                                 @case('summer')
-                                                    <span class="text-[10px] text-yellow-600 dark:text-yellow-400 font-medium">☀️ Seasonal</span>
+                                                    <span class="text-[9px] text-yellow-600 dark:text-yellow-400 font-medium">☀️ Seasonal</span>
                                                     @break
                                                 @case('winter')
-                                                    <span class="text-[10px] text-blue-600 dark:text-blue-400 font-medium">❄️ Seasonal</span>
+                                                    <span class="text-[9px] text-blue-600 dark:text-blue-400 font-medium">❄️ Seasonal</span>
                                                     @break
                                                 @case('halloween')
-                                                    <span class="text-[10px] text-orange-600 dark:text-orange-400 font-medium">🎃 Seasonal</span>
+                                                    <span class="text-[9px] text-orange-600 dark:text-orange-400 font-medium">🎃 Seasonal</span>
                                                     @break
                                                 @case('spring')
-                                                    <span class="text-[10px] text-green-600 dark:text-green-400 font-medium">🌸 Seasonal</span>
+                                                    <span class="text-[9px] text-green-600 dark:text-green-400 font-medium">🌸 Seasonal</span>
                                                     @break
                                                 @case('autumn')
-                                                    <span class="text-[10px] text-orange-700 dark:text-orange-400 font-medium">🍂 Seasonal</span>
+                                                    <span class="text-[9px] text-orange-700 dark:text-orange-400 font-medium">🍂 Seasonal</span>
                                                     @break
                                             @endswitch
                                         </div>
@@ -179,14 +179,14 @@
                                 <!-- Elegant Mode Indicator -->
                                 <div class="flex items-center justify-center">
                                     @if($theme['is_dark_mode'])
-                                        <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-gray-900/5 dark:bg-white/5 border border-gray-900/10 dark:border-white/10">
+                                        <div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-gray-900/5 dark:bg-white/5 border border-gray-900/10 dark:border-white/10">
                                             <div class="w-1 h-1 rounded-full bg-gray-900 dark:bg-gray-100"></div>
-                                            <span class="text-[10px] font-medium text-gray-700 dark:text-gray-300 tracking-wide">DARK</span>
+                                            <span class="text-[9px] font-medium text-gray-700 dark:text-gray-300 tracking-wide">DARK</span>
                                         </div>
                                     @else
-                                        <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-yellow-500/5 dark:bg-yellow-400/10 border border-yellow-500/20 dark:border-yellow-400/20">
+                                        <div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-yellow-500/5 dark:bg-yellow-400/10 border border-yellow-500/20 dark:border-yellow-400/20">
                                             <div class="w-1 h-1 rounded-full bg-yellow-500 dark:bg-yellow-400"></div>
-                                            <span class="text-[10px] font-medium text-yellow-700 dark:text-yellow-300 tracking-wide">LIGHT</span>
+                                            <span class="text-[9px] font-medium text-yellow-700 dark:text-yellow-300 tracking-wide">LIGHT</span>
                                         </div>
                                     @endif
                                 </div>
