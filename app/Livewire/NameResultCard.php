@@ -120,6 +120,79 @@ class NameResultCard extends Component
     }
 
     /**
+     * Check domain availability for this name suggestion.
+     *
+     * Only performs checks if domains haven't been checked yet.
+     * This is called when the user expands the card to view domains.
+     */
+    public function checkDomains(): void
+    {
+        $this->authorize('update', $this->suggestion->project);
+
+        // Check if domains have already been checked
+        if ($this->domainsAlreadyChecked()) {
+            return;
+        }
+
+        $domainCheckService = app(\App\Services\DomainCheckService::class);
+        $checkedDomains = [];
+
+        foreach ($this->suggestion->domains as $domainName => $domainData) {
+            try {
+                $result = $domainCheckService->checkDomain($domainName);
+                $checkedDomains[$domainName] = [
+                    'extension' => $domainData['extension'] ?? '',
+                    'available' => $result['available'] ?? null,
+                    'status' => $result['status'] ?? 'unknown',
+                    'has_dns_records' => $result['has_dns_records'] ?? null,
+                    'check_method' => $result['check_method'] ?? 'dns',
+                ];
+            } catch (\Exception $e) {
+                // If check fails, mark as error
+                $checkedDomains[$domainName] = [
+                    'extension' => $domainData['extension'] ?? '',
+                    'available' => null,
+                    'status' => 'error',
+                    'error' => $e->getMessage(),
+                ];
+            }
+        }
+
+        // Update the suggestion with checked domains
+        $this->suggestion->update(['domains' => $checkedDomains]);
+
+        // Refresh the suggestion to get updated data
+        $this->suggestion->refresh();
+
+        $this->dispatch('show-toast', [
+            'message' => 'Domain availability checked!',
+            'type' => 'success',
+        ]);
+    }
+
+    /**
+     * Check if domains have already been checked.
+     */
+    protected function domainsAlreadyChecked(): bool
+    {
+        if (! $this->suggestion->domains || empty($this->suggestion->domains)) {
+            return false;
+        }
+
+        // Check if at least one domain has availability info (not null and not 'pending')
+        foreach ($this->suggestion->domains as $domainData) {
+            if (isset($domainData['available']) && $domainData['available'] !== null) {
+                return true;
+            }
+            if (isset($domainData['status']) && ! in_array($domainData['status'], ['pending', 'unknown'], true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Check if this suggestion is currently selected.
      */
     public function getIsSelectedProperty(): bool
