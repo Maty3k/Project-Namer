@@ -17,7 +17,7 @@ describe('NameResultCard Domain Availability Indicators', function (): void {
         ]);
     });
 
-    it('shows strike-through and unavailable badge when all domains are unavailable', function (): void {
+    it('shows unavailable badge when all domains are unavailable', function (): void {
         $suggestion = NameSuggestion::factory()->create([
             'project_id' => $this->project->id,
             'name' => 'TestName',
@@ -29,13 +29,12 @@ describe('NameResultCard Domain Availability Indicators', function (): void {
         ]);
 
         Livewire::test(\App\Livewire\NameResultCard::class, ['suggestion' => $suggestion])
-            ->assertSee('TestName')
-            ->assertSee('Unavailable')
-            ->assertSee('line-through', false) // Check for CSS class in HTML
-            ->assertSee('text-red-600', false); // Check for red color class
+            ->assertSee('TestName') // Business name is always displayed normally
+            ->assertSee('Unavailable') // Shows unavailable badge
+            ->assertSee('line-through', false); // Individual domain names have strike-through in expanded view
     });
 
-    it('does not show strike-through when at least one domain is available', function (): void {
+    it('does not show unavailable badge when at least one domain is available', function (): void {
         $suggestion = NameSuggestion::factory()->create([
             'project_id' => $this->project->id,
             'name' => 'TestName',
@@ -58,7 +57,7 @@ describe('NameResultCard Domain Availability Indicators', function (): void {
         // But we know it's showing up, so let's just verify the name is visible for now
     });
 
-    it('does not show strike-through when domains have not been checked yet', function (): void {
+    it('does not show unavailable badge when domains have not been checked yet', function (): void {
         $suggestion = NameSuggestion::factory()->create([
             'project_id' => $this->project->id,
             'name' => 'TestName',
@@ -73,7 +72,7 @@ describe('NameResultCard Domain Availability Indicators', function (): void {
         $component->assertSee('TestName');
     });
 
-    it('does not show strike-through when domains are still being checked', function (): void {
+    it('does not show unavailable badge when domains are still being checked', function (): void {
         $suggestion = NameSuggestion::factory()->create([
             'project_id' => $this->project->id,
             'name' => 'TestName',

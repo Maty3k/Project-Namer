@@ -40,8 +40,7 @@
                 @endif
 
                 <!-- Name -->
-                <h3 class="text-lg font-semibold transition-all duration-300
-                           {{ $this->allDomainsUnavailable ? 'text-red-600 dark:text-red-400 line-through opacity-70' : 'text-gray-900 dark:text-white' }}
+                <h3 class="text-lg font-semibold transition-all duration-300 text-gray-900 dark:text-white
                            {{ $this->isSelected ? 'text-primary-900 dark:text-primary-100' : '' }}">
                     {{ $suggestion->name }}
                 </h3>
