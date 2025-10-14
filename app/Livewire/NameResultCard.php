@@ -25,6 +25,8 @@ class NameResultCard extends Component
 
     public ?int $suggestionId = null;
 
+    public ?int $domainsLastChecked = null; // Timestamp to force Livewire re-render
+
     /**
      * Mount the component with a name suggestion.
      */
@@ -162,6 +164,9 @@ class NameResultCard extends Component
         // Update all domains at once and refresh
         $this->suggestion->update(['domains' => $checkedDomains]);
         $this->suggestion->refresh();
+
+        // Update timestamp to force Livewire to detect change and re-render
+        $this->domainsLastChecked = time();
 
         $this->dispatch('show-toast', [
             'message' => 'Domain availability checked!',
