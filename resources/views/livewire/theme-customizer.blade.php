@@ -100,7 +100,7 @@
                         @endif
 
                         <!-- Icon -->
-                        <div class="mb-2">
+                        <div class="mb-2 mt-1">
                             @php
                                 $themeIcon = match($theme['name'] ?? '') {
                                     'default' => '🔵',
