@@ -182,6 +182,33 @@ class NameResultCard extends Component
     }
 
     /**
+     * Check if all domains are unavailable (none are available).
+     */
+    public function getAllDomainsUnavailableProperty(): bool
+    {
+        if (! $this->hasDomains) {
+            return false;
+        }
+
+        $domains = collect($this->suggestion->domains);
+
+        // Check if we have domain data with availability info
+        $domainsWithAvailability = $domains->filter(function ($domain) {
+            return isset($domain['available']);
+        });
+
+        // If no domains have availability info yet, return false
+        if ($domainsWithAvailability->isEmpty()) {
+            return false;
+        }
+
+        // Check if ALL domains with availability info are unavailable
+        return $domainsWithAvailability->every(function ($domain) {
+            return $domain['available'] === false;
+        });
+    }
+
+    /**
      * Get the AI model used for generation.
      */
     public function getAiModelProperty(): ?string
