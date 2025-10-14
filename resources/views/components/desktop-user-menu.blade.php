@@ -1,10 +1,5 @@
-@php
-    $userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
-@endphp
-
 <flux:dropdown {{ $attributes->class(['hidden lg:block']) }} position="bottom" align="start">
-    <div class="{{ $userTheme ? 'user-menu-wrapper' : '' }} transition-all duration-200 ease-out hover:scale-105 active:scale-95"
-         @if($userTheme) style="color: #374151 !important;" @endif>
+    <div class="transition-all duration-200 ease-out hover:scale-105 active:scale-95">
         <flux:profile
                 :name="auth()->user()->name"
                 :initials="auth()->user()->initials()"

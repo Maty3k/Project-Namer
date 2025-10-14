@@ -49,14 +49,14 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 5.5 Replace all hex values with CSS variable references
   - [x] 5.6 Verify all tests pass
 
-- [ ] 6. Remove Hex Colors from Templates (Batch 2: Sidebar & Navigation)
-  - [ ] 6.1 Update `resources/views/livewire/session-sidebar.blade.php`
-  - [ ] 6.2 Update `resources/views/livewire/sidebar.blade.php`
-  - [ ] 6.3 Update `resources/views/components/desktop-user-menu.blade.php`
-  - [ ] 6.4 Update `resources/views/components/layouts/app/sidebar.blade.php`
-  - [ ] 6.5 Update `resources/views/components/layouts/app/header.blade.php`
-  - [ ] 6.6 Replace all hex values with CSS variable references
-  - [ ] 6.7 Verify all tests pass
+- [x] 6. Remove Hex Colors from Templates (Batch 2: Sidebar & Navigation)
+  - [x] 6.1 Update `resources/views/livewire/session-sidebar.blade.php`
+  - [x] 6.2 Update `resources/views/livewire/sidebar.blade.php`
+  - [x] 6.3 Update `resources/views/components/desktop-user-menu.blade.php`
+  - [x] 6.4 Update `resources/views/components/layouts/app/sidebar.blade.php`
+  - [x] 6.5 Update `resources/views/components/layouts/app/header.blade.php`
+  - [x] 6.6 Replace all hex values with CSS variable references
+  - [x] 6.7 Verify all tests pass
 
 - [ ] 7. Remove Hex Colors from Templates (Batch 3: Components & Utilities)
   - [ ] 7.1 Update `resources/views/livewire/image-uploader.blade.php`

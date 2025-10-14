@@ -3,43 +3,6 @@
     <head>
         @include('partials.head')
 
-        @php
-            $userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
-        @endphp
-
-        @if($userTheme)
-        <style>
-            /* Override blue colors with user's theme primary color */
-            [class*="text-blue"],
-            .text-primary-600,
-            .text-primary-800,
-            .dark .text-blue-200,
-            .dark .text-blue-100,
-            .dark .text-blue-400 {
-                color: {{ $userTheme->primary_color }} !important;
-            }
-
-            [class*="bg-blue"]:not(.bg-blue-50):not(.bg-blue-100):not(.bg-blue-200),
-            .bg-primary-600,
-            .dark .bg-blue-400 {
-                background-color: {{ $userTheme->primary_color }} !important;
-            }
-
-            .bg-blue-50,
-            .bg-blue-100,
-            .bg-blue-200,
-            .bg-primary-100,
-            .bg-primary-50 {
-                background-color: {{ $userTheme->primary_color }}33 !important;
-            }
-
-            [class*="border-blue"],
-            .border-primary-500 {
-                border-color: {{ $userTheme->primary_color }} !important;
-            }
-        </style>
-        @endif
-
         <script>
             // Ensure theme persists correctly on page load
             (function() {

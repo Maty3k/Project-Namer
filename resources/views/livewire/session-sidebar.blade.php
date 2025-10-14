@@ -1,12 +1,6 @@
-@php
-    $userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
-@endphp
 <aside
-    class="h-full border-r flex flex-col transition-all duration-300 ease-in-out transform
+    class="h-full border-r border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-gray-100 flex flex-col transition-all duration-300 ease-in-out transform
            {{ $isCollapsed ? 'w-0 opacity-0 overflow-hidden invisible -translate-x-full' : 'w-80 opacity-100 translate-x-0' }}"
-    style="background-color: {{ $userTheme ? ($userTheme->is_dark_mode ? $userTheme->background_color : ($userTheme->surface_color ?? '#f8fafc')) : '' }};
-           border-color: {{ $userTheme ? $userTheme->primary_color . '50' : '' }};
-           color: {{ $userTheme ? $userTheme->text_color : '' }};"
     x-data="{
         showActionMenu: null,
         focusMode: $wire.isCollapsed,
@@ -21,10 +15,9 @@
     x-on:focus-mode-toggled="focusMode = $event.detail.enabled"
 >
     <!-- Header -->
-    <header class="p-4 border-b {{ $userTheme ? 'border-current border-opacity-20' : 'border-gray-200 dark:border-slate-600' }} flex-shrink-0">
+    <header class="p-4 border-b border-gray-200 dark:border-slate-600 flex-shrink-0">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold {{ $userTheme ? 'theme-text-primary' : 'text-gray-900 dark:text-white' }}"
-                @if($userTheme) style="color: {{ $userTheme->text_color }} !important;" @endif>Sessions</h2>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Sessions</h2>
             <div class="flex items-center gap-2">
                 <!-- Starred Filter Toggle -->
                 <button
@@ -45,9 +38,9 @@
             class="w-full rounded-lg px-4 py-3 transition-all duration-200
                    flex items-center justify-center gap-2 font-medium shadow-sm hover:shadow-md
                    hover:scale-[1.02] active:scale-[0.98]
+                   bg-blue-500 hover:bg-blue-600 text-white
+                   dark:bg-blue-600 dark:hover:bg-blue-700
                    @if($isCreatingSession) opacity-75 cursor-not-allowed @endif"
-            style="background-color: {{ $userTheme ? $userTheme->primary_color : '' }} !important;
-                   color: {{ $userTheme ? ($userTheme->is_dark_mode ? '#ffffff' : '#000000') : '' }} !important;"
         >
             @if($isCreatingSession)
                 <div class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
@@ -147,10 +140,7 @@
         @else
             @foreach($groupedSessions as $dateGroup => $sessions)
                 <!-- Date Group Header -->
-                <div class="sticky top-0 py-2 px-2 mb-2"
-                     @if($userTheme)
-                         style="background-color: {{ $userTheme->is_dark_mode ? $userTheme->background_color : ($userTheme->surface_color ?? '#f8fafc') }};"
-                     @endif>
+                <div class="sticky top-0 py-2 px-2 mb-2 bg-white dark:bg-slate-900">
                     <h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                         {{ $dateGroup }}
                     </h3>
@@ -312,11 +302,9 @@
         wire:click="toggleFocusMode"
         class="fixed top-4 left-4 z-50 p-3 rounded-lg shadow-lg
                transition-all duration-300 ease-in-out
-               hover:scale-105 transform animate-slide-in-left"
-        @if($userTheme)
-            style="background-color: {{ $userTheme->primary_color }} !important;
-                   color: {{ $userTheme->is_dark_mode ? '#ffffff' : '#000000' }} !important;"
-        @endif
+               hover:scale-105 transform animate-slide-in-left
+               bg-blue-500 hover:bg-blue-600 text-white
+               dark:bg-blue-600 dark:hover:bg-blue-700"
         title="Show sidebar (Cmd+/)"
     >
         <x-app-icon name="bars-3" size="sm" />
