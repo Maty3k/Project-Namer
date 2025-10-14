@@ -24,15 +24,15 @@
         @endif
 
         <script>
-            // Initialize dark mode from localStorage before page renders to prevent flash
+            // Initialize dark mode from database before page renders to prevent flash
             (function() {
                 try {
-                    const darkMode = localStorage.getItem('darkMode');
-                    const userPrefersDark = {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
+                    // Always trust the server preference (database) as the source of truth
+                    const serverThemePreference = {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
+                    const shouldBeDark = serverThemePreference;
 
-                    // Priority: localStorage > user preference (no system preference fallback)
-                    const shouldBeDark = darkMode === 'true' ||
-                                       (darkMode === null && userPrefersDark);
+                    // Sync localStorage to match the server preference
+                    localStorage.setItem('darkMode', shouldBeDark ? 'true' : 'false');
 
                     if (shouldBeDark) {
                         document.documentElement.classList.add('dark');
