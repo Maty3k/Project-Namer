@@ -14,6 +14,12 @@
         ? localStorageTheme === 'true'
         : serverThemePreference;
 
+    console.log('=== THEME DEBUG ===');
+    console.log('localStorage darkMode:', localStorageTheme);
+    console.log('Server preference:', serverThemePreference);
+    console.log('Final shouldBeDark:', shouldBeDark);
+    console.log('Applying dark class:', shouldBeDark ? 'YES' : 'NO');
+
     if (shouldBeDark) {
         document.documentElement.classList.add('dark');
     } else {
@@ -24,6 +30,11 @@
     const storedThemeName = localStorage.getItem('themeName');
     const serverThemeName = '{{ \App\Helpers\ThemeHelper::getThemeName() }}';
     const themeName = storedThemeName || serverThemeName;
+
+    console.log('localStorage themeName:', storedThemeName);
+    console.log('Server themeName:', serverThemeName);
+    console.log('Final themeName:', themeName);
+    console.log('Loading CSS:', '/css/themes/' + themeName + '.css');
 
     // Create or update theme CSS link
     let themeLink = document.getElementById('theme-css-link');
