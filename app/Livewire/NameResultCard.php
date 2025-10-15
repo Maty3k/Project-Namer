@@ -27,6 +27,7 @@ class NameResultCard extends Component
 
     public bool $isCheckingDomains = false;
 
+    /** @var array<string, mixed>|null */
     public ?array $displayDomains = null;
 
     /**
@@ -131,6 +132,8 @@ class NameResultCard extends Component
     /**
      * Get domains for display - uses displayDomains if set, otherwise falls back to suggestion domains.
      * This ensures Livewire properly tracks changes to the domains data.
+     *
+     * @return array<string, mixed>|null
      */
     public function getDomainsProperty(): ?array
     {
@@ -141,6 +144,8 @@ class NameResultCard extends Component
      * Get fresh domain data directly from database.
      * This method ensures we always have the latest domain data
      * without mutating the $suggestion model property.
+     *
+     * @return array<string, mixed>|null
      */
     protected function getFreshDomains(): ?array
     {
@@ -156,6 +161,8 @@ class NameResultCard extends Component
 
     /**
      * Computed property wrapper for blade templates.
+     *
+     * @return array<string, mixed>|null
      */
     #[Computed]
     public function freshDomains(): ?array
@@ -176,7 +183,16 @@ class NameResultCard extends Component
         $checkedDomains = [];
 
         // Check each domain synchronously for instant results
-        foreach ($this->suggestion->domains as $domainName => $domainData) {
+        $domains = $this->suggestion->domains;
+        if (! is_array($domains)) {
+            return;
+        }
+
+        foreach ($domains as $domainName => $domainData) {
+            if (! is_array($domainData)) {
+                continue;
+            }
+
             // Use synchronous dispatch for instant results (no queue worker needed)
             \App\Jobs\CheckDomainDNSJob::dispatchSync($domainName);
 
@@ -239,6 +255,10 @@ class NameResultCard extends Component
 
         // Check each domain in DomainCache for updated results
         foreach ($domains as $domainName => $domainData) {
+            if (! is_array($domainData)) {
+                continue;
+            }
+
             // Skip if already checked
             if (($domainData['status'] ?? 'checking') !== 'checking') {
                 continue;
@@ -279,10 +299,16 @@ class NameResultCard extends Component
 
     /**
      * Check if all domains have completed checking.
+     *
+     * @param  array<string, mixed>  $domains
      */
     protected function allDomainsChecked(array $domains): bool
     {
         foreach ($domains as $domainData) {
+            if (! is_array($domainData)) {
+                continue;
+            }
+
             if (($domainData['status'] ?? 'checking') === 'checking') {
                 return false;
             }
@@ -298,15 +324,20 @@ class NameResultCard extends Component
     {
         $domains = $this->getFreshDomains();
 
-        if (! $domains || empty($domains)) {
+        if ($domains === null || $domains === []) {
             return false;
         }
 
         // Check if at least one domain has availability info (not null and not 'pending' or 'checking')
         foreach ($domains as $domainData) {
-            if (isset($domainData['available']) && $domainData['available'] !== null) {
+            if (! is_array($domainData)) {
+                continue;
+            }
+
+            if (array_key_exists('available', $domainData) && $domainData['available'] !== null) {
                 return true;
             }
+
             if (isset($domainData['status']) && ! in_array($domainData['status'], ['pending', 'unknown', 'checking'], true)) {
                 return true;
             }
@@ -396,7 +427,7 @@ class NameResultCard extends Component
      */
     public function getAllDomainsUnavailableProperty(): bool
     {
-        if (! $this->hasDomains) {
+        if (! $this->getHasDomainsProperty()) {
             return false;
         }
 
@@ -404,7 +435,7 @@ class NameResultCard extends Component
 
         // Check if we have domain data with availability info
         $domainsWithAvailability = $domains->filter(function ($domain) {
-            return isset($domain['available']);
+            return is_array($domain) && isset($domain['available']);
         });
 
         // If no domains have availability info yet, return false
@@ -413,9 +444,7 @@ class NameResultCard extends Component
         }
 
         // Check if ALL domains with availability info are unavailable
-        return $domainsWithAvailability->every(function ($domain) {
-            return $domain['available'] === false;
-        });
+        return $domainsWithAvailability->every(fn ($domain) => $domain['available'] === false);
     }
 
     /**
@@ -427,7 +456,9 @@ class NameResultCard extends Component
             return null;
         }
 
-        return $this->suggestion->generation_metadata['ai_model'] ?? null;
+        $aiModel = $this->suggestion->generation_metadata['ai_model'] ?? null;
+
+        return is_string($aiModel) ? $aiModel : null;
     }
 
     public function render(): View
