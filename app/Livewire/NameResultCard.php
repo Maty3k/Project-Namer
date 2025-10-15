@@ -172,11 +172,14 @@ class NameResultCard extends Component
         // Save all checked domains to database
         $suggestion->update(['domains' => $checkedDomains]);
 
-        // CRITICAL: Update timestamp to trigger Livewire re-render
+        // CRITICAL: Force Livewire to completely refresh this component
+        unset($this->suggestion);
+
+        // Update timestamp to trigger change detection
         $this->domainsCheckedAt = time();
 
-        // Dispatch browser event to tell Alpine the domains have been checked
-        $this->dispatch('domains-checked', ['suggestionId' => $this->suggestionId]);
+        // Tell parent to refresh all cards
+        $this->dispatch('refresh-suggestions')->to('project-page');
 
         $this->dispatch('show-toast', [
             'message' => 'Domain availability checked!',

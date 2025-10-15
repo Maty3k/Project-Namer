@@ -94,6 +94,7 @@ class ProjectPage extends Component
         'suggestion-hidden' => 'handleSuggestionVisibilityChanged',
         'suggestion-shown' => 'handleSuggestionVisibilityChanged',
         'trigger-auto-generation' => 'handleAutoGeneration',
+        'refresh-suggestions' => '$refresh',
     ];
 
     /** @var array<string, string> */
