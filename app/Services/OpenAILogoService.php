@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Sleep;
 use InvalidArgumentException;
+use Prism\Prism\Prism;
 
 /**
  * OpenAI Logo Service.
@@ -52,7 +53,7 @@ final class OpenAILogoService
     /**
      * DALL-E 3 pricing in cents (as of 2024).
      */
-    private const DALLE_3_COST_CENTS = 400; // $0.04 per 1024x1024 image
+    private const DALLE_3_COST_CENTS = 160; // $0.016 per 512x512 image (estimated)
 
     /**
      * Maximum retry attempts for API calls.
@@ -156,42 +157,62 @@ final class OpenAILogoService
     }
 
     /**
-     * Make API request to DALL-E 3 with retry logic.
+     * Make API request to DALL-E 3 via Prism with retry logic.
      *
      * @return array<string, mixed>
      */
     private function makeApiRequest(string $prompt, string $style): array
     {
-        $apiKey = $this->getApiKey();
         $attemptCount = 0;
 
         while ($attemptCount < self::MAX_RETRY_ATTEMPTS) {
             $attemptCount++;
 
             try {
-                $response = Http::withHeaders([
-                    'Authorization' => "Bearer {$apiKey}",
-                    'Content-Type' => 'application/json',
-                ])
-                    ->timeout(120) // DALL-E can take a while
-                    ->post('https://api.openai.com/v1/images/generations', [
-                        'model' => 'dall-e-3',
-                        'prompt' => $prompt,
-                        'size' => '1024x1024',
+                $response = Prism::image()
+                    ->using('openai', 'dall-e-3')
+                    ->withPrompt($prompt)
+                    ->withClientOptions([
+                        'timeout' => 120, // DALL-E can take a while
+                    ])
+                    ->withProviderOptions([
+                        'size' => '512x512',
                         'quality' => 'standard',
                         'n' => 1,
-                    ]);
+                    ])
+                    ->generate();
 
-                if ($response->successful()) {
-                    return $this->processSuccessfulResponse($response->json(), $style);
+                // Check if we got images in the response
+                if (empty($response->images)) {
+                    return $this->errorResponse('No images generated in API response', 'api_response');
                 }
 
-                $errorData = $response->json();
-                $errorMessage = $errorData['error']['message'] ?? 'Unknown API error';
-                $errorType = $this->categorizeError($response->status(), $errorMessage);
+                // Extract image data from Prism response
+                $imageData = [
+                    'data' => [
+                        [
+                            'url' => $response->images[0]->url,
+                            'revised_prompt' => $response->images[0]->revisedPrompt,
+                        ],
+                    ],
+                ];
+
+                return $this->processSuccessfulResponse($imageData, $style);
+
+            } catch (RequestException $e) {
+                $errorMessage = $e->getMessage();
+                $statusCode = $e->response?->status() ?? 500;
+                $errorType = $this->categorizeError($statusCode, $errorMessage);
+
+                Log::error('OpenAI API request failed', [
+                    'attempt' => $attemptCount,
+                    'error' => $errorMessage,
+                    'style' => $style,
+                    'status' => $statusCode,
+                ]);
 
                 // Retry on transient errors
-                if ($this->shouldRetry($response->status()) && $attemptCount < self::MAX_RETRY_ATTEMPTS) {
+                if ($this->shouldRetry($statusCode) && $attemptCount < self::MAX_RETRY_ATTEMPTS) {
                     Sleep::for(2 ** $attemptCount)->seconds(); // Exponential backoff
 
                     continue;
@@ -199,7 +220,7 @@ final class OpenAILogoService
 
                 return $this->errorResponse($errorMessage, $errorType, $attemptCount);
 
-            } catch (RequestException|ConnectionException $e) {
+            } catch (ConnectionException|\Exception $e) {
                 Log::error('OpenAI API request failed', [
                     'attempt' => $attemptCount,
                     'error' => $e->getMessage(),

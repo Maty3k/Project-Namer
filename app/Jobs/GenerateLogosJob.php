@@ -28,7 +28,22 @@ use Illuminate\Support\Str;
  */
 final class GenerateLogosJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    /**
+     * Logo styles with their variation counts (total: 5 logos).
+     *
+     * @var array<string, int>
+     */
+    private const LOGO_STYLE_DISTRIBUTION = [
+        'minimalist' => 2,
+        'modern' => 1,
+        'playful' => 1,
+        'corporate' => 1,
+    ];
 
     /**
      * The number of times the job may be attempted.
@@ -39,18 +54,6 @@ final class GenerateLogosJob implements ShouldQueue
      * The maximum number of seconds the job can run.
      */
     public int $timeout = 1800; // 30 minutes
-
-    /**
-     * Logo styles to generate.
-     *
-     * @var array<string>
-     */
-    private const LOGO_STYLES = ['minimalist', 'modern', 'playful', 'corporate'];
-
-    /**
-     * Number of variations per style.
-     */
-    private const VARIATIONS_PER_STYLE = 3;
 
     /**
      * Create a new job instance.
@@ -81,8 +84,8 @@ final class GenerateLogosJob implements ShouldQueue
             $totalCost = 0;
             $successful = 0;
 
-            foreach (self::LOGO_STYLES as $style) {
-                for ($variation = 1; $variation <= self::VARIATIONS_PER_STYLE; $variation++) {
+            foreach (self::LOGO_STYLE_DISTRIBUTION as $style => $count) {
+                for ($variation = 1; $variation <= $count; $variation++) {
                     try {
                         $result = $this->generateSingleLogo($openAIService, $style, $variation);
 
@@ -178,6 +181,14 @@ final class GenerateLogosJob implements ShouldQueue
     public function backoff(): array
     {
         return [30, 60, 120]; // 30s, 1m, 2m
+    }
+
+    /**
+     * Update the generation progress.
+     */
+    protected function updateProgress(int $completed): void
+    {
+        $this->logoGeneration->update(['logos_completed' => $completed]);
     }
 
     /**
@@ -310,14 +321,6 @@ final class GenerateLogosJob implements ShouldQueue
     private function updateStatus(string $status): void
     {
         $this->logoGeneration->update(['status' => $status]);
-    }
-
-    /**
-     * Update the generation progress.
-     */
-    protected function updateProgress(int $completed): void
-    {
-        $this->logoGeneration->update(['logos_completed' => $completed]);
     }
 
     /**

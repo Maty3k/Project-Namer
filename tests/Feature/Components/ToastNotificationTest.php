@@ -11,7 +11,7 @@ describe('Toast Notification System', function (): void {
     describe('Success Notifications', function (): void {
         it('displays success toast for logo customization', function (): void {
             // Create a simple Volt component to test toast dispatching
-            $component = new class extends \Livewire\Component
+            $component = new class extends Livewire\Component
             {
                 public function triggerSuccessToast(): void
                 {
@@ -27,9 +27,9 @@ describe('Toast Notification System', function (): void {
                 }
             };
 
-            \Livewire\Livewire::component('test-toast-component', $component::class);
+            Livewire\Livewire::component('test-toast-component', $component::class);
 
-            \Livewire\Livewire::test('test-toast-component')
+            Livewire\Livewire::test('test-toast-component')
                 ->call('triggerSuccessToast')
                 ->assertDispatched('toast',
                     message: 'Logos customized successfully!',
@@ -38,7 +38,7 @@ describe('Toast Notification System', function (): void {
         });
 
         it('displays success toast for logo downloads', function (): void {
-            $component = new class extends \Livewire\Component
+            $component = new class extends Livewire\Component
             {
                 public function triggerDownloadToast(): void
                 {
@@ -54,9 +54,9 @@ describe('Toast Notification System', function (): void {
                 }
             };
 
-            \Livewire\Livewire::component('test-download-toast', $component::class);
+            Livewire\Livewire::component('test-download-toast', $component::class);
 
-            \Livewire\Livewire::test('test-download-toast')
+            Livewire\Livewire::test('test-download-toast')
                 ->call('triggerDownloadToast')
                 ->assertDispatched('toast',
                     message: 'Logo download started',
@@ -65,12 +65,12 @@ describe('Toast Notification System', function (): void {
         });
 
         it('displays success toast for generation completion', function (): void {
-            $component = new class extends \Livewire\Component
+            $component = new class extends Livewire\Component
             {
                 public function triggerCompletionToast(): void
                 {
                     $this->dispatch('toast',
-                        message: 'All 12 logos generated successfully!',
+                        message: 'All 5 logos generated successfully!',
                         type: 'success',
                         duration: 5000
                     );
@@ -82,12 +82,12 @@ describe('Toast Notification System', function (): void {
                 }
             };
 
-            \Livewire\Livewire::component('test-completion-toast', $component::class);
+            Livewire\Livewire::component('test-completion-toast', $component::class);
 
-            \Livewire\Livewire::test('test-completion-toast')
+            Livewire\Livewire::test('test-completion-toast')
                 ->call('triggerCompletionToast')
                 ->assertDispatched('toast',
-                    message: 'All 12 logos generated successfully!',
+                    message: 'All 5 logos generated successfully!',
                     type: 'success',
                     duration: 5000
                 );
@@ -96,7 +96,7 @@ describe('Toast Notification System', function (): void {
 
     describe('Error Notifications', function (): void {
         it('displays error toast for failed operations', function (): void {
-            $component = new class extends \Livewire\Component
+            $component = new class extends Livewire\Component
             {
                 public function triggerErrorToast(): void
                 {
@@ -113,9 +113,9 @@ describe('Toast Notification System', function (): void {
                 }
             };
 
-            \Livewire\Livewire::component('test-error-toast', $component::class);
+            Livewire\Livewire::component('test-error-toast', $component::class);
 
-            \Livewire\Livewire::test('test-error-toast')
+            Livewire\Livewire::test('test-error-toast')
                 ->call('triggerErrorToast')
                 ->assertDispatched('toast',
                     message: 'Failed to customize logos. Please try again.',
@@ -125,7 +125,7 @@ describe('Toast Notification System', function (): void {
         });
 
         it('displays error toast for file not found', function (): void {
-            $component = new class extends \Livewire\Component
+            $component = new class extends Livewire\Component
             {
                 public function triggerFileNotFoundToast(): void
                 {
@@ -141,9 +141,9 @@ describe('Toast Notification System', function (): void {
                 }
             };
 
-            \Livewire\Livewire::component('test-file-not-found-toast', $component::class);
+            Livewire\Livewire::component('test-file-not-found-toast', $component::class);
 
-            \Livewire\Livewire::test('test-file-not-found-toast')
+            Livewire\Livewire::test('test-file-not-found-toast')
                 ->call('triggerFileNotFoundToast')
                 ->assertDispatched('toast',
                     message: 'File not found. It may have been removed.',
@@ -152,7 +152,7 @@ describe('Toast Notification System', function (): void {
         });
 
         it('displays error toast for service unavailability', function (): void {
-            $component = new class extends \Livewire\Component
+            $component = new class extends Livewire\Component
             {
                 public function triggerServiceUnavailableToast(): void
                 {
@@ -169,9 +169,9 @@ describe('Toast Notification System', function (): void {
                 }
             };
 
-            \Livewire\Livewire::component('test-service-unavailable-toast', $component::class);
+            Livewire\Livewire::component('test-service-unavailable-toast', $component::class);
 
-            \Livewire\Livewire::test('test-service-unavailable-toast')
+            Livewire\Livewire::test('test-service-unavailable-toast')
                 ->call('triggerServiceUnavailableToast')
                 ->assertDispatched('toast',
                     message: 'Logo generation service is temporarily unavailable. Please try again in a few minutes.',
@@ -183,7 +183,7 @@ describe('Toast Notification System', function (): void {
 
     describe('Info and Warning Notifications', function (): void {
         it('displays info toast for processing status', function (): void {
-            $component = new class extends \Livewire\Component
+            $component = new class extends Livewire\Component
             {
                 public function triggerProcessingToast(): void
                 {
@@ -200,9 +200,9 @@ describe('Toast Notification System', function (): void {
                 }
             };
 
-            \Livewire\Livewire::component('test-processing-toast', $component::class);
+            Livewire\Livewire::component('test-processing-toast', $component::class);
 
-            \Livewire\Livewire::test('test-processing-toast')
+            Livewire\Livewire::test('test-processing-toast')
                 ->call('triggerProcessingToast')
                 ->assertDispatched('toast',
                     message: 'Your logos are being generated. This usually takes 2-3 minutes.',
@@ -212,7 +212,7 @@ describe('Toast Notification System', function (): void {
         });
 
         it('displays warning toast for high load conditions', function (): void {
-            $component = new class extends \Livewire\Component
+            $component = new class extends Livewire\Component
             {
                 public function triggerHighLoadToast(): void
                 {
@@ -229,9 +229,9 @@ describe('Toast Notification System', function (): void {
                 }
             };
 
-            \Livewire\Livewire::component('test-high-load-toast', $component::class);
+            Livewire\Livewire::component('test-high-load-toast', $component::class);
 
-            \Livewire\Livewire::test('test-high-load-toast')
+            Livewire\Livewire::test('test-high-load-toast')
                 ->call('triggerHighLoadToast')
                 ->assertDispatched('toast',
                     message: 'Due to high demand, logo generation may take longer than usual.',
@@ -241,12 +241,12 @@ describe('Toast Notification System', function (): void {
         });
 
         it('displays info toast for partial completion', function (): void {
-            $component = new class extends \Livewire\Component
+            $component = new class extends Livewire\Component
             {
                 public function triggerPartialToast(): void
                 {
                     $this->dispatch('toast',
-                        message: '8 out of 12 logos generated successfully. You can retry to generate the remaining ones.',
+                        message: '3 out of 5 logos generated successfully. You can retry to generate the remaining ones.',
                         type: 'info',
                         duration: 8000,
                         action: [
@@ -262,12 +262,12 @@ describe('Toast Notification System', function (): void {
                 }
             };
 
-            \Livewire\Livewire::component('test-partial-toast', $component::class);
+            Livewire\Livewire::component('test-partial-toast', $component::class);
 
-            \Livewire\Livewire::test('test-partial-toast')
+            Livewire\Livewire::test('test-partial-toast')
                 ->call('triggerPartialToast')
                 ->assertDispatched('toast',
-                    message: '8 out of 12 logos generated successfully. You can retry to generate the remaining ones.',
+                    message: '3 out of 5 logos generated successfully. You can retry to generate the remaining ones.',
                     type: 'info',
                     duration: 8000,
                     action: [
@@ -280,7 +280,7 @@ describe('Toast Notification System', function (): void {
 
     describe('Toast Message Formatting', function (): void {
         it('formats progress messages correctly', function (): void {
-            $component = new class extends \Livewire\Component
+            $component = new class extends Livewire\Component
             {
                 public function triggerProgressToast(int $completed, int $total): void
                 {
@@ -298,19 +298,19 @@ describe('Toast Notification System', function (): void {
                 }
             };
 
-            \Livewire\Livewire::component('test-progress-toast', $component::class);
+            Livewire\Livewire::component('test-progress-toast', $component::class);
 
-            \Livewire\Livewire::test('test-progress-toast')
-                ->call('triggerProgressToast', 7, 12)
+            Livewire\Livewire::test('test-progress-toast')
+                ->call('triggerProgressToast', 3, 5)
                 ->assertDispatched('toast',
-                    message: 'Generation progress: 7/12 logos completed (58%)',
+                    message: 'Generation progress: 3/5 logos completed (60%)',
                     type: 'info',
-                    progress: 58
+                    progress: 60
                 );
         });
 
         it('formats time estimates correctly', function (): void {
-            $component = new class extends \Livewire\Component
+            $component = new class extends Livewire\Component
             {
                 public function triggerTimeEstimateToast(int $secondsRemaining): void
                 {
@@ -333,10 +333,10 @@ describe('Toast Notification System', function (): void {
                 }
             };
 
-            \Livewire\Livewire::component('test-time-estimate-toast', $component::class);
+            Livewire\Livewire::component('test-time-estimate-toast', $component::class);
 
             // Test seconds
-            \Livewire\Livewire::test('test-time-estimate-toast')
+            Livewire\Livewire::test('test-time-estimate-toast')
                 ->call('triggerTimeEstimateToast', 45)
                 ->assertDispatched('toast',
                     message: 'Your logos will be ready in about 45 seconds',
@@ -344,7 +344,7 @@ describe('Toast Notification System', function (): void {
                 );
 
             // Test minutes (singular)
-            \Livewire\Livewire::test('test-time-estimate-toast')
+            Livewire\Livewire::test('test-time-estimate-toast')
                 ->call('triggerTimeEstimateToast', 90)
                 ->assertDispatched('toast',
                     message: 'Your logos will be ready in about 2 minutes',
@@ -352,7 +352,7 @@ describe('Toast Notification System', function (): void {
                 );
 
             // Test minutes (plural)
-            \Livewire\Livewire::test('test-time-estimate-toast')
+            Livewire\Livewire::test('test-time-estimate-toast')
                 ->call('triggerTimeEstimateToast', 300)
                 ->assertDispatched('toast',
                     message: 'Your logos will be ready in about 5 minutes',

@@ -42,8 +42,8 @@ describe('LogoGallery Component', function (): void {
     it('displays processing status with progress', function (): void {
         $logoGeneration = LogoGeneration::factory()->create([
             'status' => 'processing',
-            'total_logos_requested' => 12,
-            'logos_completed' => 6,
+            'total_logos_requested' => 5,
+            'logos_completed' => 3,
         ]);
 
         $component = Livewire::actingAs($this->user)
@@ -51,13 +51,13 @@ describe('LogoGallery Component', function (): void {
 
         $progress = $component->get('progress');
 
-        expect($progress['percentage'])->toBe(50.0);
-        expect($progress['completed'])->toBe(6);
-        expect($progress['total'])->toBe(12);
+        expect($progress['percentage'])->toBe(60.0);
+        expect($progress['completed'])->toBe(3);
+        expect($progress['total'])->toBe(5);
 
         $component->assertSee('Processing...')
-            ->assertSee('50% complete')
-            ->assertSee('6/12 logos');
+            ->assertSee('60% complete')
+            ->assertSee('3/5 logos');
     });
 
     it('displays completed logos in grid view', function (): void {

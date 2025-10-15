@@ -32,7 +32,7 @@ describe('LogoGallery Component', function (): void {
             'business_name' => 'Test Business',
         ]);
 
-        $logos = GeneratedLogo::factory()->count(12)->create([
+        $logos = GeneratedLogo::factory()->count(5)->create([
             'logo_generation_id' => $logoGeneration->id,
         ]);
 
@@ -44,11 +44,11 @@ describe('LogoGallery Component', function (): void {
         Volt::test('pages.logo-gallery', ['logoGenerationId' => $logoGeneration->id])
             ->assertOk()
             ->assertSee('Test Business')
-            ->assertSee('12 logos generated')
+            ->assertSee('5 logos generated')
             ->assertSee('Download All');
 
-        // Check that all 12 logos are displayed
-        expect($logos->count())->toBe(12);
+        // Check that all 5 logos are displayed
+        expect($logos->count())->toBe(5);
     });
 
     it('groups logos by style correctly', function (): void {

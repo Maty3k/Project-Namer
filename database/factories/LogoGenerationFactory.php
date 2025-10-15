@@ -31,7 +31,7 @@ final class LogoGenerationFactory extends Factory
             'session_id' => fake()->uuid(),
             'business_name' => fake()->company(),
             'status' => 'pending',
-            'total_logos_requested' => 12,
+            'total_logos_requested' => 5,
             'logos_completed' => 0,
             'api_provider' => 'openai',
             'cost_cents' => 0,
@@ -46,7 +46,7 @@ final class LogoGenerationFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'status' => 'completed',
             'logos_completed' => $attributes['total_logos_requested'],
-            'cost_cents' => $attributes['total_logos_requested'] * 400, // $4 per logo
+            'cost_cents' => $attributes['total_logos_requested'] * 160, // $1.60 per logo
         ]);
     }
 
