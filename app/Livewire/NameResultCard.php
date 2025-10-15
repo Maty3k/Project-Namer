@@ -195,6 +195,9 @@ class NameResultCard extends Component
         // Reload the suggestion to get fresh data
         $this->suggestion = NameSuggestion::find($this->suggestion->id);
 
+        // Clear the computed property cache to force re-render with fresh data
+        unset($this->freshDomains);
+
         // Dispatch completion event for Alpine.js to hide checking indicator
         $this->dispatch('domain-check-complete', id: $this->suggestion->id);
 
@@ -248,6 +251,9 @@ class NameResultCard extends Component
         if ($updated) {
             NameSuggestion::where('id', $this->suggestion->id)
                 ->update(['domains' => $domains]);
+
+            // Clear the computed property cache to force re-render with fresh data
+            unset($this->freshDomains);
         }
 
         // Check if all domains are done and update polling status
