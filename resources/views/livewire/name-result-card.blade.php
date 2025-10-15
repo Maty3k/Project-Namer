@@ -174,7 +174,7 @@
 
                 @if($this->hasDomains)
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                        @foreach($suggestion->domains as $key => $domainData)
+                        @foreach($this->freshDomains as $key => $domainData)
                             @php
                                 // Handle both formats: associative array (domain service) and indexed array (factory/tests)
                                 if (is_string($key) && !is_numeric($key)) {

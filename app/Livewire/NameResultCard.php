@@ -7,6 +7,7 @@ namespace App\Livewire;
 use App\Models\NameSuggestion;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\View\View;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 /**
@@ -122,6 +123,19 @@ class NameResultCard extends Component
      * Only performs checks if domains haven't been checked yet.
      * This is called when the user expands the card to view domains.
      */
+    /**
+     * Get fresh domain data directly from database.
+     * This computed property ensures we always have the latest domain data
+     * without mutating the $suggestion model property.
+     */
+    #[Computed]
+    public function freshDomains(): ?array
+    {
+        $fresh = NameSuggestion::find($this->suggestion->id);
+
+        return $fresh?->domains;
+    }
+
     public function checkDomains(): void
     {
         $this->authorize('update', $this->suggestion->project);
@@ -156,13 +170,12 @@ class NameResultCard extends Component
             }
         }
 
-        // Update the database directly
+        // Update the database directly - don't touch $this->suggestion
         NameSuggestion::where('id', $this->suggestion->id)
             ->update(['domains' => $checkedDomains]);
 
-        // Get a fresh model instance from database
-        // Using fresh() instead of refresh() to get a completely new instance
-        $this->suggestion = $this->suggestion->fresh();
+        // Clear the computed property cache to force fresh data on next access
+        unset($this->freshDomains);
 
         $this->dispatch('show-toast', [
             'message' => 'Domain availability checked!',
@@ -175,12 +188,14 @@ class NameResultCard extends Component
      */
     protected function domainsAlreadyChecked(): bool
     {
-        if (! $this->suggestion->domains || empty($this->suggestion->domains)) {
+        $domains = $this->freshDomains;
+
+        if (! $domains || empty($domains)) {
             return false;
         }
 
         // Check if at least one domain has availability info (not null and not 'pending')
-        foreach ($this->suggestion->domains as $domainData) {
+        foreach ($domains as $domainData) {
             if (isset($domainData['available']) && $domainData['available'] !== null) {
                 return true;
             }
@@ -213,11 +228,13 @@ class NameResultCard extends Component
      */
     public function getAvailableDomainsCountProperty(): int
     {
-        if (! $this->suggestion->domains) {
+        $domains = $this->freshDomains;
+
+        if (! $domains) {
             return 0;
         }
 
-        return collect($this->suggestion->domains)
+        return collect($domains)
             ->where('available', true)
             ->count();
     }
@@ -227,11 +244,13 @@ class NameResultCard extends Component
      */
     public function getTotalDomainsCountProperty(): int
     {
-        if (! $this->suggestion->domains) {
+        $domains = $this->freshDomains;
+
+        if (! $domains) {
             return 0;
         }
 
-        return count($this->suggestion->domains);
+        return count($domains);
     }
 
     /**
@@ -251,7 +270,9 @@ class NameResultCard extends Component
      */
     public function getHasDomainsProperty(): bool
     {
-        return $this->suggestion->domains !== null && ! empty($this->suggestion->domains);
+        $domains = $this->freshDomains;
+
+        return $domains !== null && ! empty($domains);
     }
 
     /**
@@ -271,7 +292,7 @@ class NameResultCard extends Component
             return false;
         }
 
-        $domains = collect($this->suggestion->domains);
+        $domains = collect($this->freshDomains);
 
         // Check if we have domain data with availability info
         $domainsWithAvailability = $domains->filter(function ($domain) {
