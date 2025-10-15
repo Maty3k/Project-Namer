@@ -28,7 +28,7 @@ describe('NameResultCard Domain Availability Indicators', function (): void {
             ],
         ]);
 
-        Livewire::test(\App\Livewire\NameResultCard::class, ['suggestionId' => $suggestion->id])
+        Livewire::test(\App\Livewire\NameResultCard::class, ['suggestion' => $suggestion])
             ->assertSee('TestName') // Business name is always displayed normally
             ->assertSee('line-through', false); // Individual domain names have strike-through in expanded view
     });
@@ -44,7 +44,7 @@ describe('NameResultCard Domain Availability Indicators', function (): void {
             ],
         ]);
 
-        $component = Livewire::test(\App\Livewire\NameResultCard::class, ['suggestionId' => $suggestion->id]);
+        $component = Livewire::test(\App\Livewire\NameResultCard::class, ['suggestion' => $suggestion]);
 
         // Verify computed property is correct
         expect($component->instance()->allDomainsUnavailable)->toBeFalse();
@@ -60,7 +60,7 @@ describe('NameResultCard Domain Availability Indicators', function (): void {
             'domains' => null,
         ]);
 
-        $component = Livewire::test(\App\Livewire\NameResultCard::class, ['suggestionId' => $suggestion->id]);
+        $component = Livewire::test(\App\Livewire\NameResultCard::class, ['suggestion' => $suggestion]);
 
         // Verify computed property returns false (no domains = not all unavailable)
         expect($component->instance()->allDomainsUnavailable)->toBeFalse();
@@ -78,7 +78,7 @@ describe('NameResultCard Domain Availability Indicators', function (): void {
             ],
         ]);
 
-        $component = Livewire::test(\App\Livewire\NameResultCard::class, ['suggestionId' => $suggestion->id]);
+        $component = Livewire::test(\App\Livewire\NameResultCard::class, ['suggestion' => $suggestion]);
 
         // Verify computed property returns false (no availability data yet)
         expect($component->instance()->allDomainsUnavailable)->toBeFalse();
@@ -96,7 +96,7 @@ describe('NameResultCard Domain Availability Indicators', function (): void {
             ],
         ]);
 
-        $component = Livewire::test(\App\Livewire\NameResultCard::class, ['suggestionId' => $suggestion->id]);
+        $component = Livewire::test(\App\Livewire\NameResultCard::class, ['suggestion' => $suggestion]);
 
         expect($component->instance()->allDomainsUnavailable)->toBeTrue();
     });
@@ -111,7 +111,7 @@ describe('NameResultCard Domain Availability Indicators', function (): void {
             ],
         ]);
 
-        $component = Livewire::test(\App\Livewire\NameResultCard::class, ['suggestionId' => $suggestion->id]);
+        $component = Livewire::test(\App\Livewire\NameResultCard::class, ['suggestion' => $suggestion]);
 
         expect($component->instance()->allDomainsUnavailable)->toBeFalse();
     });
@@ -123,7 +123,7 @@ describe('NameResultCard Domain Availability Indicators', function (): void {
             'domains' => null,
         ]);
 
-        $component = Livewire::test(\App\Livewire\NameResultCard::class, ['suggestionId' => $suggestion->id]);
+        $component = Livewire::test(\App\Livewire\NameResultCard::class, ['suggestion' => $suggestion]);
 
         expect($component->instance()->allDomainsUnavailable)->toBeFalse();
     });
@@ -138,7 +138,7 @@ describe('NameResultCard Domain Availability Indicators', function (): void {
             ],
         ]);
 
-        Livewire::test(\App\Livewire\NameResultCard::class, ['suggestionId' => $suggestion->id])
+        Livewire::test(\App\Livewire\NameResultCard::class, ['suggestion' => $suggestion])
             ->assertSee('TestName'); // Business name shown normally
     });
 
@@ -153,7 +153,7 @@ describe('NameResultCard Domain Availability Indicators', function (): void {
             ],
         ]);
 
-        $component = Livewire::test(\App\Livewire\NameResultCard::class, ['suggestionId' => $suggestion->id]);
+        $component = Livewire::test(\App\Livewire\NameResultCard::class, ['suggestion' => $suggestion]);
 
         // Should be true because all domains WITH availability info are unavailable
         expect($component->instance()->allDomainsUnavailable)->toBeTrue();
@@ -169,7 +169,7 @@ describe('NameResultCard Domain Availability Indicators', function (): void {
             ],
         ]);
 
-        $component = Livewire::test(\App\Livewire\NameResultCard::class, ['suggestionId' => $suggestion->id]);
+        $component = Livewire::test(\App\Livewire\NameResultCard::class, ['suggestion' => $suggestion]);
 
         expect($component->instance()->allDomainsUnavailable)->toBeTrue();
     });

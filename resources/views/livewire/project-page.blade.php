@@ -209,7 +209,7 @@
                     <div wire:loading.remove wire:target="setResultsFilter" class="space-y-6">
                         @foreach($this->filteredSuggestions as $suggestion)
                             <livewire:name-result-card
-                                :suggestion-id="$suggestion->id"
+                                :suggestion="$suggestion"
                                 :key="'name-card-' . $suggestion->id"
                             />
                         @endforeach

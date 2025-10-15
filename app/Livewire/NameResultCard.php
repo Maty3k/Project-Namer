@@ -7,7 +7,6 @@ namespace App\Livewire;
 use App\Models\NameSuggestion;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\View\View;
-use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 /**
@@ -20,27 +19,16 @@ class NameResultCard extends Component
 {
     use AuthorizesRequests;
 
-    public int $suggestionId;
+    public NameSuggestion $suggestion;
 
     public bool $expanded = false;
-
-    public int $domainsCheckedAt = 0;
 
     /**
      * Mount the component with a name suggestion.
      */
-    public function mount(int $suggestionId): void
+    public function mount(NameSuggestion $suggestion): void
     {
-        $this->suggestionId = $suggestionId;
-    }
-
-    /**
-     * Get the suggestion model (always fresh from database).
-     */
-    #[Computed]
-    public function suggestion(): NameSuggestion
-    {
-        return NameSuggestion::findOrFail($this->suggestionId);
+        $this->suggestion = $suggestion;
     }
 
     /**
@@ -136,8 +124,7 @@ class NameResultCard extends Component
      */
     public function checkDomains(): void
     {
-        $suggestion = $this->suggestion;
-        $this->authorize('update', $suggestion->project);
+        $this->authorize('update', $this->suggestion->project);
 
         // Check if domains have already been checked
         if ($this->domainsAlreadyChecked()) {
@@ -148,7 +135,7 @@ class NameResultCard extends Component
         $checkedDomains = [];
 
         // Check all domains
-        foreach ($suggestion->domains as $domainName => $domainData) {
+        foreach ($this->suggestion->domains as $domainName => $domainData) {
             try {
                 $result = $domainCheckService->checkDomain($domainName);
                 $checkedDomains[$domainName] = [
@@ -170,15 +157,9 @@ class NameResultCard extends Component
         }
 
         // Save all checked domains to database
-        $suggestion->update(['domains' => $checkedDomains]);
+        $this->suggestion->update(['domains' => $checkedDomains]);
 
-        // CRITICAL: Force Livewire to completely refresh this component
-        unset($this->suggestion);
-
-        // Update timestamp to trigger change detection
-        $this->domainsCheckedAt = time();
-
-        // Tell parent to refresh all cards
+        // Tell parent to refresh - this will re-render all cards with fresh data
         $this->dispatch('refresh-suggestions')->to('project-page');
 
         $this->dispatch('show-toast', [
