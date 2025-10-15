@@ -174,6 +174,9 @@ class NameResultCard extends Component
         NameSuggestion::where('id', $this->suggestion->id)
             ->update(['domains' => $checkedDomains]);
 
+        // Dispatch completion event for Alpine.js
+        $this->dispatch('domain-check-complete', id: $this->suggestion->id);
+
         $this->dispatch('show-toast', [
             'message' => 'Domain availability checked!',
             'type' => 'success',

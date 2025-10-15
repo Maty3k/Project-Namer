@@ -14,16 +14,16 @@
                  this.checkDomains();
              }
          },
-         async checkDomains() {
+         checkDomains() {
              // Only check if domains haven't been checked yet
              if (!this.checkingDomains && this.isExpanded) {
                  this.checkingDomains = true;
-                 await $wire.checkDomains();
-                 this.checkingDomains = false;
+                 // Trigger the hidden button click
+                 this.$refs.checkDomainsBtn.click();
              }
          }
      }"
-     @domains-checked.window="if ($event.detail.suggestionId === suggestionId) { checkingDomains = false; }"
+     @domain-check-complete.window="if ($event.detail.id === suggestionId) { checkingDomains = false; }"
  
     <!-- Card Header -->
     <div class="p-4 border-b border-gray-200 dark:border-gray-700">
@@ -171,6 +171,13 @@
                         </svg>
                         Checking domains...
                     </div>
+
+                    <!-- Hidden button for triggering domain check via wire:click -->
+                    <button x-ref="checkDomainsBtn"
+                            wire:click="checkDomains"
+                            type="button"
+                            class="hidden"
+                            aria-hidden="true"></button>
                 </div>
 
                 @if($this->hasDomains)
