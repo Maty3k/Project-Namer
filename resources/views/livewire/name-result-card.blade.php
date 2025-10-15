@@ -3,6 +3,7 @@
              {{ $this->isSelected ? 'ring-2 ring-blue-500 bg-primary-50 dark:bg-primary-900/10 shadow-lg shadow-blue-200/30 dark:shadow-blue-800/30' : 'hover:border-gray-300 dark:hover:border-gray-600' }}
              {{ $suggestion->is_hidden ? 'opacity-60 scale-95' : 'scale-100 hover:scale-[1.02]' }}
              focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:outline-none"
+     wire:poll.2s="isCheckingDomains ? refreshDomains() : null"
      x-data="{
          isExpanded: false,
          checkingDomains: false,
@@ -226,6 +227,13 @@
                                     @if($checkMethod === 'dns')
                                         <span class="px-1.5 py-0.5 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded">
                                             DNS
+                                        </span>
+                                    @endif
+
+                                    @if($hasDNS === true && isset($domainData['dns_records']) && !empty($domainData['dns_records']))
+                                        <span class="px-1.5 py-0.5 text-xs font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 rounded"
+                                              title="DNS records found: {{ count($domainData['dns_records']) }} records">
+                                            {{ count($domainData['dns_records']) }} records
                                         </span>
                                     @endif
                                 </div>

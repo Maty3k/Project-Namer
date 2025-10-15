@@ -25,6 +25,8 @@ class NameResultCard extends Component
 
     public bool $expanded = false;
 
+    public bool $isCheckingDomains = false;
+
     /**
      * Mount the component with a name suggestion.
      */
@@ -126,15 +128,23 @@ class NameResultCard extends Component
      */
     /**
      * Get fresh domain data directly from database.
-     * This computed property ensures we always have the latest domain data
+     * This method ensures we always have the latest domain data
      * without mutating the $suggestion model property.
      */
-    #[Computed]
-    public function freshDomains(): ?array
+    protected function getFreshDomains(): ?array
     {
         $fresh = NameSuggestion::find($this->suggestion->id);
 
         return $fresh?->domains;
+    }
+
+    /**
+     * Computed property wrapper for blade templates.
+     */
+    #[Computed]
+    public function freshDomains(): ?array
+    {
+        return $this->getFreshDomains();
     }
 
     #[On('check-domains-{suggestion.id}')]
@@ -147,37 +157,43 @@ class NameResultCard extends Component
             return;
         }
 
-        $domainCheckService = app(\App\Services\DomainCheckService::class);
         $checkedDomains = [];
 
-        // Check all domains
+        // Check each domain synchronously for instant results
         foreach ($this->suggestion->domains as $domainName => $domainData) {
-            try {
-                $result = $domainCheckService->checkDomain($domainName);
+            // Use synchronous dispatch for instant results (no queue worker needed)
+            \App\Jobs\CheckDomainDNSJob::dispatchSync($domainName);
+
+            // Get the cached result immediately after sync processing
+            $cached = \App\Models\DomainCache::findByDomain($domainName);
+
+            if ($cached) {
                 $checkedDomains[$domainName] = [
                     'extension' => $domainData['extension'] ?? '',
-                    'available' => $result['available'] ?? null,
-                    'status' => $result['status'] ?? 'unknown',
-                    'has_dns_records' => $result['has_dns_records'] ?? null,
-                    'check_method' => $result['check_method'] ?? 'dns',
+                    'available' => $cached->available,
+                    'status' => $cached->available ? 'available' : 'taken',
+                    'has_dns_records' => $cached->has_dns_records,
+                    'check_method' => $cached->check_method,
+                    'dns_records' => $cached->dns_records,
                 ];
-            } catch (\Exception $e) {
-                // If check fails, mark as error
+            } else {
+                // Fallback if caching failed
                 $checkedDomains[$domainName] = [
                     'extension' => $domainData['extension'] ?? '',
                     'available' => null,
                     'status' => 'error',
-                    'error' => $e->getMessage(),
+                    'has_dns_records' => null,
+                    'check_method' => null,
                 ];
             }
         }
 
-        // Update the database directly - don't touch $this->suggestion
+        // Update the database with checked results
         NameSuggestion::where('id', $this->suggestion->id)
             ->update(['domains' => $checkedDomains]);
 
-        // Dispatch completion event for Alpine.js
-        $this->dispatch('domain-check-complete', id: $this->suggestion->id);
+        // Reload the suggestion to get fresh data
+        $this->suggestion = NameSuggestion::find($this->suggestion->id);
 
         $this->dispatch('show-toast', [
             'message' => 'Domain availability checked!',
@@ -186,22 +202,89 @@ class NameResultCard extends Component
     }
 
     /**
+     * Refresh domain data when polling.
+     * This method is called periodically while isCheckingDomains is true.
+     * Checks DomainCache for updated results and syncs them to the suggestion.
+     */
+    public function refreshDomains(): void
+    {
+        // Get fresh domain data from database
+        $domains = $this->getFreshDomains();
+
+        if (! $domains) {
+            return;
+        }
+
+        $updated = false;
+
+        // Check each domain in DomainCache for updated results
+        foreach ($domains as $domainName => $domainData) {
+            // Skip if already checked
+            if (($domainData['status'] ?? 'checking') !== 'checking') {
+                continue;
+            }
+
+            // Look for cached result
+            $cachedDomain = \App\Models\DomainCache::findByDomain($domainName);
+
+            if ($cachedDomain && ! $cachedDomain->isExpired()) {
+                // Update the domain with cached results
+                $domains[$domainName] = [
+                    'extension' => $domainData['extension'] ?? '',
+                    'available' => $cachedDomain->available,
+                    'status' => $cachedDomain->available ? 'available' : 'taken',
+                    'has_dns_records' => $cachedDomain->has_dns_records,
+                    'check_method' => $cachedDomain->check_method,
+                    'dns_records' => $cachedDomain->dns_records,
+                ];
+                $updated = true;
+            }
+        }
+
+        // Update database if any domains were updated
+        if ($updated) {
+            NameSuggestion::where('id', $this->suggestion->id)
+                ->update(['domains' => $domains]);
+        }
+
+        // Check if all domains are done and update polling status
+        if ($this->allDomainsChecked($domains)) {
+            $this->isCheckingDomains = false;
+            $this->dispatch('domain-check-complete', id: $this->suggestion->id);
+        }
+    }
+
+    /**
+     * Check if all domains have completed checking.
+     */
+    protected function allDomainsChecked(array $domains): bool
+    {
+        foreach ($domains as $domainData) {
+            if (($domainData['status'] ?? 'checking') === 'checking') {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Check if domains have already been checked.
      */
     protected function domainsAlreadyChecked(): bool
     {
-        $domains = $this->freshDomains;
+        $domains = $this->getFreshDomains();
 
         if (! $domains || empty($domains)) {
             return false;
         }
 
-        // Check if at least one domain has availability info (not null and not 'pending')
+        // Check if at least one domain has availability info (not null and not 'pending' or 'checking')
         foreach ($domains as $domainData) {
             if (isset($domainData['available']) && $domainData['available'] !== null) {
                 return true;
             }
-            if (isset($domainData['status']) && ! in_array($domainData['status'], ['pending', 'unknown'], true)) {
+            if (isset($domainData['status']) && ! in_array($domainData['status'], ['pending', 'unknown', 'checking'], true)) {
                 return true;
             }
         }
@@ -230,7 +313,7 @@ class NameResultCard extends Component
      */
     public function getAvailableDomainsCountProperty(): int
     {
-        $domains = $this->freshDomains;
+        $domains = $this->getFreshDomains();
 
         if (! $domains) {
             return 0;
@@ -246,7 +329,7 @@ class NameResultCard extends Component
      */
     public function getTotalDomainsCountProperty(): int
     {
-        $domains = $this->freshDomains;
+        $domains = $this->getFreshDomains();
 
         if (! $domains) {
             return 0;
@@ -272,7 +355,7 @@ class NameResultCard extends Component
      */
     public function getHasDomainsProperty(): bool
     {
-        $domains = $this->freshDomains;
+        $domains = $this->getFreshDomains();
 
         return $domains !== null && ! empty($domains);
     }
@@ -294,7 +377,7 @@ class NameResultCard extends Component
             return false;
         }
 
-        $domains = collect($this->freshDomains);
+        $domains = collect($this->getFreshDomains());
 
         // Check if we have domain data with availability info
         $domainsWithAvailability = $domains->filter(function ($domain) {
@@ -323,7 +406,6 @@ class NameResultCard extends Component
 
         return $this->suggestion->generation_metadata['ai_model'] ?? null;
     }
-
 
     public function render(): View
     {
