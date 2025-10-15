@@ -159,8 +159,8 @@ class NameResultCard extends Component
         // Save all checked domains to database
         $this->suggestion->update(['domains' => $checkedDomains]);
 
-        // Tell parent to refresh - this will re-render all cards with fresh data
-        $this->dispatch('refresh-suggestions')->to('project-page');
+        // Refresh just this component to show updated domains
+        $this->suggestion->refresh();
 
         $this->dispatch('show-toast', [
             'message' => 'Domain availability checked!',
