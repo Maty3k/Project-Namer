@@ -131,10 +131,6 @@
 <!-- Toast Notifications -->
 @livewire('toastnotifications')
 
-{{-- Keyboard Shortcuts Components --}}
-<x-command-palette />
-<x-keyboard-shortcuts-help />
-
 {{-- Undo Toast Component --}}
 <x-undo-toast />
 
@@ -148,5 +144,9 @@
 @endauth
 
 @fluxScripts(['nonce' => \Illuminate\Support\Facades\Vite::cspNonce()])
+
+{{-- Keyboard Shortcuts Components - Load after Alpine is initialized --}}
+<x-command-palette />
+<x-keyboard-shortcuts-help />
 </body>
 </html>
