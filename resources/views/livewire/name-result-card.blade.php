@@ -14,11 +14,12 @@
                  this.checkDomains();
              }
          },
-         checkDomains() {
+         async checkDomains() {
              // Only check if domains haven't been checked yet
              if (!this.checkingDomains && this.isExpanded) {
                  this.checkingDomains = true;
-                 @this.call('checkDomains');
+                 await $wire.checkDomains();
+                 this.checkingDomains = false;
              }
          }
      }"

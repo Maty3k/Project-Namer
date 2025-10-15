@@ -174,9 +174,6 @@ class NameResultCard extends Component
         NameSuggestion::where('id', $this->suggestion->id)
             ->update(['domains' => $checkedDomains]);
 
-        // Clear the computed property cache to force fresh data on next access
-        unset($this->freshDomains);
-
         $this->dispatch('show-toast', [
             'message' => 'Domain availability checked!',
             'type' => 'success',
