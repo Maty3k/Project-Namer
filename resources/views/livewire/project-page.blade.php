@@ -210,7 +210,7 @@
                         @foreach($this->filteredSuggestions as $suggestion)
                             <livewire:name-result-card
                                 :suggestion="$suggestion"
-                                :key="'name-card-' . $suggestion->id"
+                                :key="'name-result-v2-' . $suggestion->id"
                             />
                         @endforeach
                     </div>

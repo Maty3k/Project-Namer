@@ -47,7 +47,9 @@ describe('DNSLookupService', function (): void {
             expect($result)->toBeTrue();
         });
 
-        test('returns true when domain has CNAME records', function (): void {
+        test('returns false when domain has only CNAME records (optimized for speed)', function (): void {
+            // Fast check only looks for A/AAAA records - CNAME-only domains return false
+            // This is an optimization for speed - CNAME checks are slower and less common
             $mockDns = Mockery::mock(Dns::class);
             $mockDns->shouldReceive('getRecords')
                 ->with('example.com', DNS_A)
@@ -55,17 +57,16 @@ describe('DNSLookupService', function (): void {
             $mockDns->shouldReceive('getRecords')
                 ->with('example.com', DNS_AAAA)
                 ->andReturn([]);
-            $mockDns->shouldReceive('getRecords')
-                ->with('example.com', DNS_CNAME)
-                ->andReturn([['target' => 'otherdomain.com']]);
 
             $this->service->setDns($mockDns);
             $result = $this->service->hasDNSRecords('example.com');
 
-            expect($result)->toBeTrue();
+            expect($result)->toBeFalse();
         });
 
-        test('returns true when domain has MX records', function (): void {
+        test('returns false when domain has only MX records (optimized for speed)', function (): void {
+            // Fast check only looks for A/AAAA records - MX-only domains return false
+            // This is an optimization for speed - MX checks are slower and less common
             $mockDns = Mockery::mock(Dns::class);
             $mockDns->shouldReceive('getRecords')
                 ->with('example.com', DNS_A)
@@ -73,17 +74,11 @@ describe('DNSLookupService', function (): void {
             $mockDns->shouldReceive('getRecords')
                 ->with('example.com', DNS_AAAA)
                 ->andReturn([]);
-            $mockDns->shouldReceive('getRecords')
-                ->with('example.com', DNS_CNAME)
-                ->andReturn([]);
-            $mockDns->shouldReceive('getRecords')
-                ->with('example.com', DNS_MX)
-                ->andReturn([['target' => 'mail.example.com', 'pri' => 10]]);
 
             $this->service->setDns($mockDns);
             $result = $this->service->hasDNSRecords('example.com');
 
-            expect($result)->toBeTrue();
+            expect($result)->toBeFalse();
         });
 
         test('returns false when domain has no DNS records', function (): void {

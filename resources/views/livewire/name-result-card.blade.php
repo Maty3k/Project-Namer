@@ -5,11 +5,26 @@
              focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:outline-none"
      x-data="{
          isExpanded: false,
+         checkingDomains: false,
+         suggestionId: {{ $suggestion->id }},
          toggle() {
              this.isExpanded = !this.isExpanded;
+             // Check domains when card is first expanded
+             if (this.isExpanded && !this.checkingDomains) {
+                 this.checkDomains();
+             }
+         },
+         checkDomains() {
+             // Only check if domains haven't been checked yet
+             if (!this.checkingDomains && this.isExpanded) {
+                 this.checkingDomains = true;
+                 // Use $dispatch to trigger the method on THIS specific component
+                 $wire.dispatch('check-domains-' + this.suggestionId);
+             }
          }
      }"
-    
+     @domain-check-complete.window="if ($event.detail.id === suggestionId) { checkingDomains = false; }"
+ 
     <!-- Card Header -->
     <div class="p-4 border-b border-gray-200 dark:border-gray-700">
         <div class="flex items-center justify-between">
@@ -24,9 +39,11 @@
                 @endif
 
                 <!-- Name -->
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white {{ $this->isSelected ? 'text-primary-900 dark:text-primary-100' : '' }}">
+                <h3 class="text-lg font-semibold transition-all duration-300 text-gray-900 dark:text-white
+                           {{ $this->isSelected ? 'text-primary-900 dark:text-primary-100' : '' }}">
                     {{ $suggestion->name }}
                 </h3>
+
 
                 <!-- AI Model Badge -->
                 @if($this->aiModel)
@@ -145,20 +162,20 @@
             <div>
                 <div class="flex items-center justify-between mb-3">
                     <h4 class="font-medium text-gray-900 dark:text-white">Domains</h4>
-                    @if(!$this->hasDomains)
-                        <flux:button
-                            variant="ghost"
-                            size="sm"
-                            class="text-primary-600 hover:text-primary-700"
-                        >
-                            Check Domains
-                        </flux:button>
-                    @endif
+
+                    <!-- Loading indicator -->
+                    <div x-show="checkingDomains" x-cloak class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                        <svg class="animate-spin w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Checking domains...
+                    </div>
                 </div>
 
                 @if($this->hasDomains)
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                        @foreach($suggestion->domains as $key => $domainData)
+                        @foreach($this->freshDomains as $key => $domainData)
                             @php
                                 // Handle both formats: associative array (domain service) and indexed array (factory/tests)
                                 if (is_string($key) && !is_numeric($key)) {
@@ -191,7 +208,8 @@
                                     $tooltipText = $available === true ? 'Domain appears available' : ($available === false ? 'Domain is taken' : 'Status unknown');
                                 }
                             @endphp
-                            <div class="group relative flex items-center justify-between p-2 rounded-lg border transition-all duration-300 ease-out hover:scale-105 hover:shadow-md transform
+                            <div wire:key="domain-{{ $suggestion->id }}-{{ $domainName }}"
+                                 class="group relative flex items-center justify-between p-2 rounded-lg border transition-all duration-300 ease-out hover:scale-105 hover:shadow-md transform
                                         {{ $available === true ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20 hover:border-green-300 hover:bg-green-100' : ($available === false ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20 hover:border-red-300 hover:bg-red-100' : 'border-gray-200 bg-gray-50 dark:border-gray-600 dark:bg-gray-800 hover:border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700') }}"
                                  x-data="{ showTooltip: false }"
                                  @mouseenter="showTooltip = true"
@@ -201,12 +219,28 @@
                                  x-transition:enter-end="opacity-100 scale-100 translate-y-0">
 
                                 <div class="flex items-center space-x-2 flex-1">
-                                    <span class="text-sm font-medium transition-colors duration-200 {{ $available === true ? 'text-green-800 dark:text-green-200' : ($available === false ? 'text-red-800 dark:text-red-200' : 'text-gray-800 dark:text-gray-200') }}">
+                                    <span class="text-sm font-medium transition-colors duration-200 {{ $available === true ? 'text-green-800 dark:text-green-200' : ($available === false ? 'text-red-800 dark:text-red-200 line-through opacity-70' : 'text-gray-800 dark:text-gray-200') }}">
                                         {{ $domainName }}
                                     </span>
 
-                                    @if($checkMethod === 'dns')
-                                        <span class="px-1.5 py-0.5 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded">
+                                    @if($hasDNS === true && isset($domainData['dns_records']) && !empty($domainData['dns_records']))
+                                        @php
+                                            $recordCount = count($domainData['dns_records']);
+                                            $recordTypes = array_keys($domainData['dns_records']);
+                                        @endphp
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-md border border-blue-200 dark:border-blue-800"
+                                              title="DNS records: {{ implode(', ', $recordTypes) }}">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
+                                            </svg>
+                                            {{ $recordCount }}
+                                        </span>
+                                    @elseif($checkMethod === 'dns')
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-md border border-gray-200 dark:border-gray-700"
+                                              title="DNS check performed">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
                                             DNS
                                         </span>
                                     @endif

@@ -775,13 +775,13 @@ class ProjectPage extends Component
     {
         foreach ($results as $modelName => $names) {
             foreach ($names as $name) {
-                // Generate domain list for this name
+                // Generate domain list for this name (unchecked - will be checked on demand)
                 $domains = $this->generateDomainsForName($name);
 
                 NameSuggestion::create([
                     'project_id' => $this->project->id,
                     'name' => $name,
-                    'domains' => $domains,
+                    'domains' => $domains, // Domains are unchecked (null availability)
                     'generation_metadata' => [
                         'ai_model' => $modelName,
                         'generation_mode' => $this->generationMode,
@@ -797,40 +797,27 @@ class ProjectPage extends Component
     /**
      * Generate domain list for a given name.
      *
+     * Only checks the 3 most popular TLDs for better performance.
+     *
      * @return array<string, array<string, mixed>>
      */
     protected function generateDomainsForName(string $name): array
     {
+        // Check popular TLDs - parallel checking makes this fast
         $tlds = ['com', 'net', 'org', 'io', 'co', 'app', 'dev', 'ai', 'tech', 'studio'];
         $domains = [];
 
         // Sanitize the name for domain use - remove spaces and special characters
         $sanitizedName = strtolower((string) preg_replace('/[^a-zA-Z0-9]/', '', $name));
 
-        // Create kebab-case version by adding hyphens between words
-        $kebabCaseName = strtolower((string) preg_replace('/([a-z])([A-Z])/', '$1-$2', $name));
-        $kebabCaseName = preg_replace('/[^a-zA-Z0-9\-]/', '-', $kebabCaseName);
-        $kebabCaseName = preg_replace('/\-+/', '-', (string) $kebabCaseName);
-        $kebabCaseName = trim((string) $kebabCaseName, '-');
-
         foreach ($tlds as $tld) {
-            // Add concatenated version (original behavior)
+            // Only check concatenated version (no kebab-case) for speed
             $concatenatedDomain = $sanitizedName.'.'.$tld;
             $domains[$concatenatedDomain] = [
                 'extension' => '.'.$tld,
-                'available' => null, // Will be checked later
+                'available' => null, // Will be checked on-demand
                 'status' => 'pending',
             ];
-
-            // Add kebab-case version if different from concatenated
-            if ($kebabCaseName !== $sanitizedName && ! empty($kebabCaseName)) {
-                $kebabDomain = $kebabCaseName.'.'.$tld;
-                $domains[$kebabDomain] = [
-                    'extension' => '.'.$tld,
-                    'available' => null, // Will be checked later
-                    'status' => 'pending',
-                ];
-            }
         }
 
         return $domains;

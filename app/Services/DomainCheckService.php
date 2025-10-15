@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\DomainCache;
-use Exception;
-use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 
@@ -21,8 +18,6 @@ use InvalidArgumentException;
 final readonly class DomainCheckService
 {
     private const SUPPORTED_TLDS = ['com', 'net', 'org', 'io', 'co', 'app', 'dev', 'ai', 'tech', 'studio'];
-
-    private const TIMEOUT_SECONDS = 5;
 
     private const CACHE_HOURS_API = 24;
 
@@ -61,7 +56,7 @@ final readonly class DomainCheckService
             ];
         }
 
-        // DNS pre-screening: Check if domain has DNS records
+        // DNS-only checking for speed (no slow API calls)
         $hasDNS = $this->dnsLookup->hasDNSRecords($domain);
 
         // If DNS records found, domain is definitely taken
@@ -79,31 +74,39 @@ final readonly class DomainCheckService
                 'status' => 'taken',
                 'cached' => false,
                 'check_method' => 'dns',
+                'has_dns_records' => true,
             ];
         }
 
-        // If no DNS records (or DNS check failed), fall back to API
-        try {
-            $result = $this->checkDomainViaAPI($domain);
+        // If no DNS records found, domain is likely available
+        // (We skip slow API calls for performance)
+        if ($hasDNS === false) {
+            Log::info('No DNS records found - marking as likely available', ['domain' => $domain]);
 
-            // Cache the result with DNS info
-            $this->cacheResult($domain, $result['available'], 'dns', $hasDNS === false);
-
-            return array_merge($result, ['cached' => false, 'check_method' => 'dns']);
-        } catch (Exception $e) {
-            Log::warning('Domain check failed', [
-                'domain' => $domain,
-                'error' => $e->getMessage(),
-            ]);
+            // Cache the DNS result
+            $this->cacheResult($domain, true, 'dns', false);
 
             return [
                 'domain' => $domain,
-                'available' => null,
-                'status' => 'error',
-                'error' => $e->getMessage(),
+                'available' => true,
+                'status' => 'available',
                 'cached' => false,
+                'check_method' => 'dns',
+                'has_dns_records' => false,
             ];
         }
+
+        // DNS check failed - mark as unknown
+        Log::warning('DNS check failed for domain', ['domain' => $domain]);
+
+        return [
+            'domain' => $domain,
+            'available' => null,
+            'status' => 'unknown',
+            'cached' => false,
+            'check_method' => 'dns',
+            'has_dns_records' => null,
+        ];
     }
 
     /**
@@ -154,19 +157,19 @@ final readonly class DomainCheckService
         $apiCutoff = now()->subHours(self::CACHE_HOURS_API);
         $dnsCutoff = now()->subDays(self::CACHE_DAYS_DNS);
 
-        $deleted = 0;
-
         // Clear expired API caches
-        $deleted += DomainCache::where('check_method', 'api')
+        $apiDeleted = DomainCache::where('check_method', 'api')
             ->where('checked_at', '<', $apiCutoff)
             ->delete();
 
         // Clear expired DNS caches
-        $deleted += DomainCache::where('check_method', 'dns')
+        $dnsDeleted = DomainCache::where('check_method', 'dns')
             ->where('checked_at', '<', $dnsCutoff)
             ->delete();
 
-        return $deleted;
+        return is_int($apiDeleted) && is_int($dnsDeleted)
+            ? $apiDeleted + $dnsDeleted
+            : 0;
     }
 
     /**
@@ -286,88 +289,5 @@ final readonly class DomainCheckService
                 'checked_at' => now(),
             ]
         );
-    }
-
-    /**
-     * Check domain availability via external API.
-     */
-    /**
-     * @return array<string, mixed>
-     */
-    private function checkDomainViaAPI(string $domain): array
-    {
-        try {
-            // Using a simple WHOIS-based check as a fallback
-            // In production, you would use a proper domain registrar API
-            $response = Http::timeout(self::TIMEOUT_SECONDS)
-                ->get('https://api.domainsdb.info/v1/domains/search', [
-                    'domain' => $domain,
-                    'zone' => 'com', // This would be dynamic based on TLD
-                ]);
-
-            if ($response->status() === 408) {
-                throw new Exception('Timeout checking domain availability');
-            }
-
-            if (! $response->successful()) {
-                $error = $response->json('error', 'Domain API request failed');
-                throw new Exception($error);
-            }
-
-            $data = $response->json();
-
-            // Check for expected response format
-            if (! isset($data['available']) && ! isset($data['domains'])) {
-                // Try alternative API check
-                return $this->checkViaWhoisAPI($domain);
-            }
-
-            $available = $data['available'] ?? false;
-
-            return [
-                'domain' => $domain,
-                'available' => $available,
-                'status' => $available ? 'available' : 'taken',
-            ];
-
-        } catch (ConnectionException $e) {
-            throw new Exception('Network error: '.$e->getMessage());
-        }
-    }
-
-    /**
-     * Fallback WHOIS API check.
-     *
-     * @return array<string, mixed>
-     */
-    private function checkViaWhoisAPI(string $domain): array
-    {
-        try {
-            $response = Http::timeout(self::TIMEOUT_SECONDS)
-                ->get('https://api.whoisjson.com/v1/whois', [
-                    'domain' => $domain,
-                ]);
-
-            if (! $response->successful()) {
-                throw new Exception('WHOIS API failed');
-            }
-
-            $data = $response->json();
-
-            if (! isset($data['available'])) {
-                throw new Exception('Invalid response format from domain API');
-            }
-
-            $available = $data['available'] === true;
-
-            return [
-                'domain' => $domain,
-                'available' => $available,
-                'status' => $available ? 'available' : 'taken',
-            ];
-
-        } catch (ConnectionException $e) {
-            throw new Exception('Network error: '.$e->getMessage());
-        }
     }
 }
