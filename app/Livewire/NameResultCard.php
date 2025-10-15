@@ -156,15 +156,13 @@ class NameResultCard extends Component
             }
         }
 
-        // Get the suggestion ID before we modify anything
-        $suggestionId = $this->suggestion->id;
+        // Update the database directly
+        NameSuggestion::where('id', $this->suggestion->id)
+            ->update(['domains' => $checkedDomains]);
 
-        // Save all checked domains to database
-        $this->suggestion->update(['domains' => $checkedDomains]);
-
-        // Unset the stale model reference and reload fresh from DB
-        unset($this->suggestion);
-        $this->suggestion = NameSuggestion::find($suggestionId);
+        // Get a fresh model instance from database
+        // Using fresh() instead of refresh() to get a completely new instance
+        $this->suggestion = $this->suggestion->fresh();
 
         $this->dispatch('show-toast', [
             'message' => 'Domain availability checked!',
