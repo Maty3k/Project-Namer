@@ -27,6 +27,8 @@ class NameResultCard extends Component
 
     public bool $isCheckingDomains = false;
 
+    public ?array $displayDomains = null;
+
     /**
      * Mount the component with a name suggestion.
      */
@@ -127,12 +129,26 @@ class NameResultCard extends Component
      * This is called when the user expands the card to view domains.
      */
     /**
+     * Get domains for display - uses displayDomains if set, otherwise falls back to suggestion domains.
+     * This ensures Livewire properly tracks changes to the domains data.
+     */
+    public function getDomainsProperty(): ?array
+    {
+        return $this->displayDomains ?? $this->suggestion->domains;
+    }
+
+    /**
      * Get fresh domain data directly from database.
      * This method ensures we always have the latest domain data
      * without mutating the $suggestion model property.
      */
     protected function getFreshDomains(): ?array
     {
+        // Use displayDomains if available, otherwise query database
+        if ($this->displayDomains !== null) {
+            return $this->displayDomains;
+        }
+
         $fresh = NameSuggestion::find($this->suggestion->id);
 
         return $fresh?->domains;
@@ -193,10 +209,10 @@ class NameResultCard extends Component
             ->update(['domains' => $checkedDomains]);
 
         // Reload the suggestion to get fresh data
-        $this->suggestion = NameSuggestion::find($this->suggestion->id);
+        $this->suggestion->refresh();
 
-        // Clear the computed property cache to force re-render with fresh data
-        unset($this->freshDomains);
+        // Update the display domains property to trigger Livewire re-render
+        $this->displayDomains = $checkedDomains;
 
         // Dispatch completion event for Alpine.js to hide checking indicator
         $this->dispatch('domain-check-complete', id: $this->suggestion->id);
@@ -252,8 +268,8 @@ class NameResultCard extends Component
             NameSuggestion::where('id', $this->suggestion->id)
                 ->update(['domains' => $domains]);
 
-            // Clear the computed property cache to force re-render with fresh data
-            unset($this->freshDomains);
+            // Update the display domains property to trigger Livewire re-render
+            $this->displayDomains = $domains;
         }
 
         // Check if all domains are done and update polling status
