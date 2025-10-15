@@ -224,16 +224,25 @@
                                         {{ $domainName }}
                                     </span>
 
-                                    @if($checkMethod === 'dns')
-                                        <span class="px-1.5 py-0.5 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded">
-                                            DNS
-                                        </span>
-                                    @endif
-
                                     @if($hasDNS === true && isset($domainData['dns_records']) && !empty($domainData['dns_records']))
-                                        <span class="px-1.5 py-0.5 text-xs font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 rounded"
-                                              title="DNS records found: {{ count($domainData['dns_records']) }} records">
-                                            {{ count($domainData['dns_records']) }} records
+                                        @php
+                                            $recordCount = count($domainData['dns_records']);
+                                            $recordTypes = array_keys($domainData['dns_records']);
+                                        @endphp
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-md border border-blue-200 dark:border-blue-800"
+                                              title="DNS records: {{ implode(', ', $recordTypes) }}">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
+                                            </svg>
+                                            {{ $recordCount }}
+                                        </span>
+                                    @elseif($checkMethod === 'dns')
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-md border border-gray-200 dark:border-gray-700"
+                                              title="DNS check performed">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            DNS
                                         </span>
                                     @endif
                                 </div>
