@@ -8,6 +8,7 @@ use App\Models\NameSuggestion;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 /**
@@ -136,6 +137,7 @@ class NameResultCard extends Component
         return $fresh?->domains;
     }
 
+    #[On('check-domains-{suggestion.id}')]
     public function checkDomains(): void
     {
         $this->authorize('update', $this->suggestion->project);

@@ -18,8 +18,8 @@
              // Only check if domains haven't been checked yet
              if (!this.checkingDomains && this.isExpanded) {
                  this.checkingDomains = true;
-                 // Trigger the hidden button click
-                 this.$refs.checkDomainsBtn.click();
+                 // Use $dispatch to trigger the method on THIS specific component
+                 $wire.dispatch('check-domains-' + this.suggestionId);
              }
          }
      }"
@@ -171,13 +171,6 @@
                         </svg>
                         Checking domains...
                     </div>
-
-                    <!-- Hidden button for triggering domain check via wire:click -->
-                    <button x-ref="checkDomainsBtn"
-                            wire:click="checkDomains"
-                            type="button"
-                            class="hidden"
-                            aria-hidden="true"></button>
                 </div>
 
                 @if($this->hasDomains)
