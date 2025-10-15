@@ -3,7 +3,6 @@
              {{ $this->isSelected ? 'ring-2 ring-blue-500 bg-primary-50 dark:bg-primary-900/10 shadow-lg shadow-blue-200/30 dark:shadow-blue-800/30' : 'hover:border-gray-300 dark:hover:border-gray-600' }}
              {{ $suggestion->is_hidden ? 'opacity-60 scale-95' : 'scale-100 hover:scale-[1.02]' }}
              focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:outline-none"
-     wire:poll.2s="isCheckingDomains ? $wire.refreshDomains() : null"
      x-data="{
          isExpanded: false,
          checkingDomains: false,
