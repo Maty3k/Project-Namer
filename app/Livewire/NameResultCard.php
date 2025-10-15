@@ -156,11 +156,15 @@ class NameResultCard extends Component
             }
         }
 
+        // Get the suggestion ID before we modify anything
+        $suggestionId = $this->suggestion->id;
+
         // Save all checked domains to database
         $this->suggestion->update(['domains' => $checkedDomains]);
 
-        // Refresh just this component to show updated domains
-        $this->suggestion->refresh();
+        // Unset the stale model reference and reload fresh from DB
+        unset($this->suggestion);
+        $this->suggestion = NameSuggestion::find($suggestionId);
 
         $this->dispatch('show-toast', [
             'message' => 'Domain availability checked!',

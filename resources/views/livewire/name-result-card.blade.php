@@ -207,7 +207,8 @@
                                     $tooltipText = $available === true ? 'Domain appears available' : ($available === false ? 'Domain is taken' : 'Status unknown');
                                 }
                             @endphp
-                            <div class="group relative flex items-center justify-between p-2 rounded-lg border transition-all duration-300 ease-out hover:scale-105 hover:shadow-md transform
+                            <div wire:key="domain-{{ $suggestion->id }}-{{ $domainName }}"
+                                 class="group relative flex items-center justify-between p-2 rounded-lg border transition-all duration-300 ease-out hover:scale-105 hover:shadow-md transform
                                         {{ $available === true ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20 hover:border-green-300 hover:bg-green-100' : ($available === false ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20 hover:border-red-300 hover:bg-red-100' : 'border-gray-200 bg-gray-50 dark:border-gray-600 dark:bg-gray-800 hover:border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700') }}"
                                  x-data="{ showTooltip: false }"
                                  @mouseenter="showTooltip = true"
