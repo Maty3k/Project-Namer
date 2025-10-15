@@ -195,6 +195,9 @@ class NameResultCard extends Component
         // Reload the suggestion to get fresh data
         $this->suggestion = NameSuggestion::find($this->suggestion->id);
 
+        // Dispatch completion event for Alpine.js to hide checking indicator
+        $this->dispatch('domain-check-complete', id: $this->suggestion->id);
+
         $this->dispatch('show-toast', [
             'message' => 'Domain availability checked!',
             'type' => 'success',

@@ -118,4 +118,18 @@ describe('NameResultCard Dropdown Interaction', function (): void {
 
         expect($component->get('isCheckingDomains'))->toBeFalse();
     });
+
+    it('dispatches domain-check-complete event after synchronous checking', function (): void {
+        $suggestion = NameSuggestion::factory()->create([
+            'project_id' => $this->project->id,
+            'name' => 'TestName',
+            'domains' => [
+                'testname.com' => ['extension' => '.com'],
+            ],
+        ]);
+
+        Livewire::test(NameResultCard::class, ['suggestion' => $suggestion])
+            ->dispatch('check-domains-'.$suggestion->id)
+            ->assertDispatched('domain-check-complete', id: $suggestion->id);
+    });
 });
