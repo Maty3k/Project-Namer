@@ -208,10 +208,8 @@ class NameResultCard extends Component
         NameSuggestion::where('id', $this->suggestion->id)
             ->update(['domains' => $checkedDomains]);
 
-        // Reload the suggestion to get fresh data
-        $this->suggestion->refresh();
-
         // Update the display domains property to trigger Livewire re-render
+        // No need to refresh $suggestion - using $displayDomains prevents snapshot issues
         $this->displayDomains = $checkedDomains;
 
         // Dispatch completion event for Alpine.js to hide checking indicator
