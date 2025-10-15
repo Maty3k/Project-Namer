@@ -434,9 +434,7 @@ class NameResultCard extends Component
         $domains = collect($this->getFreshDomains());
 
         // Check if we have domain data with availability info
-        $domainsWithAvailability = $domains->filter(function ($domain) {
-            return is_array($domain) && isset($domain['available']);
-        });
+        $domainsWithAvailability = $domains->filter(fn ($domain) => is_array($domain) && isset($domain['available']));
 
         // If no domains have availability info yet, return false
         if ($domainsWithAvailability->isEmpty()) {
