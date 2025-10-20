@@ -186,7 +186,7 @@
            if (!this.logoGenerationId) return;
 
            try {
-               const response = await fetch(`/api/logo-generation/${this.logoGenerationId}/status`, {
+               const response = await fetch(`/api/logos/${this.logoGenerationId}/status`, {
                    headers: {
                        'Accept': 'application/json',
                        'X-Requested-With': 'XMLHttpRequest'
