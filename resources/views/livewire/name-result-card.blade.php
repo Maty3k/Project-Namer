@@ -524,56 +524,107 @@
                         @endif
                         @if(!$this->hasLogos)
                         <button
-                            x-data="{ generating: false }"
-                            @click.prevent.stop="async (e) => {
-                                if (generating) return;
-                                generating = true;
-                                const btn = $el;
-                                const originalText = btn.textContent;
-                                btn.textContent = 'Generating...';
+                            x-data="{
+                                generating: false,
+                                logoGenerationId: null,
+                                pollInterval: null,
+                                async startGeneration() {
+                                    if (this.generating) return;
+                                    this.generating = true;
+                                    const btn = $el;
+                                    const originalText = btn.textContent;
+                                    btn.textContent = 'Generating...';
 
-                                try {
-                                    const response = await fetch('/api/suggestions/{{ $suggestion->id }}/request-logos', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
-                                            'Accept': 'application/json',
-                                        },
-                                    });
-                                    const data = await response.json();
-                                    if (data.success) {
-                                        btn.textContent = 'Logos Requested!';
-                                        // Show success toast
+                                    try {
+                                        const response = await fetch('/api/suggestions/{{ $suggestion->id }}/request-logos', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                                                'Accept': 'application/json',
+                                            },
+                                        });
+                                        const data = await response.json();
+                                        if (data.success) {
+                                            this.logoGenerationId = data.logo_generation_id;
+                                            btn.textContent = 'Generating...';
+                                            // Show success toast
+                                            if (window.Livewire) {
+                                                window.Livewire.dispatch('show-toast', {
+                                                    message: 'Logo generation started! This may take a minute...',
+                                                    type: 'success'
+                                                });
+                                            }
+                                            // Start polling for completion without refreshing the page
+                                            this.startPolling();
+                                        } else {
+                                            throw new Error(data.message || 'Failed to start logo generation');
+                                        }
+                                    } catch (error) {
+                                        console.error('Logo generation error:', error);
+                                        btn.textContent = originalText;
+                                        this.generating = false;
                                         if (window.Livewire) {
                                             window.Livewire.dispatch('show-toast', {
-                                                message: 'Logo generation started! This may take a minute...',
-                                                type: 'success'
+                                                message: 'Failed to start logo generation. Please try again.',
+                                                type: 'error'
                                             });
                                         }
-                                        // Reload the component after a delay to show generated logos
-                                        setTimeout(() => {
+                                    }
+                                },
+                                startPolling() {
+                                    // Poll every 5 seconds to check if logos are ready
+                                    this.pollInterval = setInterval(async () => {
+                                        await this.checkLogoStatus();
+                                    }, 5000);
+                                },
+                                async checkLogoStatus() {
+                                    if (!this.logoGenerationId) return;
+
+                                    try {
+                                        const response = await fetch(`/api/logo-generation/${this.logoGenerationId}/status`, {
+                                            headers: {
+                                                'Accept': 'application/json',
+                                                'X-Requested-With': 'XMLHttpRequest'
+                                            }
+                                        });
+                                        const data = await response.json();
+
+                                        if (data.data && data.data.status === 'completed') {
+                                            // Stop polling
+                                            clearInterval(this.pollInterval);
+                                            this.generating = false;
+
+                                            // Show completion toast
+                                            if (window.Livewire) {
+                                                window.Livewire.dispatch('show-toast', {
+                                                    message: 'Logos generated successfully! Refresh to see them.',
+                                                    type: 'success'
+                                                });
+                                            }
+
+                                            // Refresh only this specific component's data without wiping names
                                             if ($wire) {
                                                 $wire.$refresh();
-                                            } else {
-                                                window.location.reload();
                                             }
-                                        }, 60000);
-                                    } else {
-                                        throw new Error(data.message || 'Failed to start logo generation');
-                                    }
-                                } catch (error) {
-                                    console.error('Logo generation error:', error);
-                                    btn.textContent = originalText;
-                                    generating = false;
-                                    if (window.Livewire) {
-                                        window.Livewire.dispatch('show-toast', {
-                                            message: 'Failed to start logo generation. Please try again.',
-                                            type: 'error'
-                                        });
+                                        } else if (data.data && data.data.status === 'failed') {
+                                            // Stop polling on failure
+                                            clearInterval(this.pollInterval);
+                                            this.generating = false;
+
+                                            if (window.Livewire) {
+                                                window.Livewire.dispatch('show-toast', {
+                                                    message: 'Logo generation failed. Please try again.',
+                                                    type: 'error'
+                                                });
+                                            }
+                                        }
+                                    } catch (error) {
+                                        console.error('Error checking logo status:', error);
                                     }
                                 }
                             }"
+                            @click.prevent.stop="startGeneration()"
                             type="button"
                             class="text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             :disabled="generating"
