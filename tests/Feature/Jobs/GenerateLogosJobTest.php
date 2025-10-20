@@ -19,6 +19,9 @@ beforeEach(function (): void {
     Queue::fake();
     Event::fake();
 
+    // Prevent actual sleeping during retry logic in tests
+    \Illuminate\Support\Sleep::fake();
+
     // Set up OpenAI API key for testing
     Config::set('services.openai.api_key', 'test-api-key');
 
