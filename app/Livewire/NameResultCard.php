@@ -449,6 +449,24 @@ class NameResultCard extends Component
         return is_string($aiModel) ? $aiModel : null;
     }
 
+    /**
+     * Get the LogoGeneration ID associated with this name suggestion.
+     */
+    public function getLogoGenerationIdProperty(): ?int
+    {
+        if (! $this->hasLogos) {
+            return null;
+        }
+
+        // Find the most recent LogoGeneration for this name
+        $logoGeneration = \App\Models\LogoGeneration::where('business_name', $this->suggestion->name)
+            ->where('status', 'completed')
+            ->latest()
+            ->first();
+
+        return $logoGeneration?->id;
+    }
+
     public function render(): View
     {
         return view('livewire.name-result-card');
