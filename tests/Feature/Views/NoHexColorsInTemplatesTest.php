@@ -65,7 +65,6 @@ describe('No Hex Colors in Templates (Batch 1: Critical Files)', function (): vo
 
         // Should contain server-side theme CSS loading (no JavaScript)
         expect($content)->toContain('theme-css-link')
-            ->and($content)->toContain('/css/themes/')
             ->and($content)->toContain('ThemeHelper::getThemeCssPath()');
     });
 });

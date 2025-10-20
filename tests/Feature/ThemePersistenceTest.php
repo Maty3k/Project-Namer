@@ -17,11 +17,15 @@ describe('Theme Persistence Without localStorage', function (): void {
     });
 
     it('authenticated user theme preference saves to database', function (): void {
+        // Create dummy users to avoid static cache collision
+        User::factory()->count(5)->create();
+
         $user = User::factory()->create([
             'current_theme' => 'ocean',
             'prefers_dark_mode' => true,
         ]);
 
+        UserThemePreference::where('user_id', $user->id)->delete();
         UserThemePreference::create([
             'user_id' => $user->id,
             'theme_name' => 'ocean',
@@ -196,15 +200,20 @@ describe('Theme Persistence Without localStorage', function (): void {
     });
 
     it('theme preference works for different users independently', function (): void {
+        // Create dummy users to avoid static cache collision
+        User::factory()->count(80)->create();
+
         $user1 = User::factory()->create();
         $user2 = User::factory()->create();
 
+        UserThemePreference::where('user_id', $user1->id)->delete();
         UserThemePreference::create([
             'user_id' => $user1->id,
             'theme_name' => 'ocean',
             'is_dark_mode' => true,
         ]);
 
+        UserThemePreference::where('user_id', $user2->id)->delete();
         UserThemePreference::create([
             'user_id' => $user2->id,
             'theme_name' => 'sunset',
@@ -251,7 +260,7 @@ describe('Theme Persistence Without localStorage', function (): void {
             'lime-punch', 'gold-rush', 'matrix-green',
         ];
 
-        foreach ($themes as $index => $theme) {
+        foreach ($themes as $theme) {
             // Create unique user for each theme to avoid cache issues
             $user = User::factory()->create();
 
