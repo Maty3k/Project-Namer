@@ -197,7 +197,7 @@ class ProjectImage extends Model
      * @return Builder<ProjectImage> */
     protected function scopeRecent(Builder $query): Builder
     {
-        return $query->orderBy('created_at', 'desc');
+        return $query->latest();
     }
 
     public function isCompleted(): bool

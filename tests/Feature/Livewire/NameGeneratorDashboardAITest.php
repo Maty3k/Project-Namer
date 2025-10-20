@@ -7,6 +7,7 @@ use App\Models\AIGeneration;
 use App\Models\AIModelPerformance;
 use App\Models\User;
 use App\Models\UserAIPreferences;
+use App\Models\UserThemePreference;
 use App\Services\DNSLookupService;
 use App\Services\OpenAINameService;
 use Illuminate\Support\Facades\Http;
@@ -20,6 +21,13 @@ use Prism\Prism\Testing\TextResponseFake;
  */
 beforeEach(function (): void {
     $this->user = User::factory()->create();
+
+    // Create UserThemePreference for this user
+    UserThemePreference::create([
+        'user_id' => $this->user->id,
+        'theme_mode' => 'system',
+    ]);
+
     $this->actingAs($this->user);
 
     // Prevent external HTTP calls

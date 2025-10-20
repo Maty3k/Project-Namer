@@ -19,8 +19,7 @@ describe('Lazy Loading Gallery Performance', function (): void {
 
         $startTime = microtime(true);
         $paginated = GeneratedLogo::with('logoGeneration')
-            ->where('logo_generation_id', $logoGeneration->id)
-            ->orderBy('created_at', 'desc')
+            ->where('logo_generation_id', $logoGeneration->id)->latest()
             ->paginate(12);
         $paginationTime = microtime(true) - $startTime;
 
@@ -42,8 +41,7 @@ describe('Lazy Loading Gallery Performance', function (): void {
         for ($page = 1; $page <= $totalPages; $page++) {
             $startTime = microtime(true);
             $results = GeneratedLogo::with('logoGeneration')
-                ->where('logo_generation_id', $logoGeneration->id)
-                ->orderBy('created_at', 'desc')
+                ->where('logo_generation_id', $logoGeneration->id)->latest()
                 ->skip(($page - 1) * $pageSize)
                 ->take($pageSize)
                 ->get();

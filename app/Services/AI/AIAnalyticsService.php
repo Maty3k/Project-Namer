@@ -274,11 +274,11 @@ class AIAnalyticsService
         $end = now();
 
         $start = match ($period) {
-            'day' => now()->startOfDay(),
+            'day' => today(),
             'week' => now()->startOfWeek(),
             'month' => now()->startOfMonth(),
             'year' => now()->startOfYear(),
-            'all' => Carbon::create(2020, 1, 1), // Arbitrary early date
+            'all' => \Illuminate\Support\Facades\Date::create(2020, 1, 1), // Arbitrary early date
             default => now()->startOfMonth(),
         };
 

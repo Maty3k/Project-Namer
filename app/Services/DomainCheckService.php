@@ -132,6 +132,7 @@ final readonly class DomainCheckService
             } catch (\InvalidArgumentException $e) {
                 // Skip invalid domains
                 Log::warning('Invalid domain skipped', ['domain' => $domain, 'error' => $e->getMessage()]);
+
                 continue;
             }
         }

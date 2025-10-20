@@ -201,7 +201,7 @@ final class OpenAILogoService
 
             } catch (RequestException $e) {
                 $errorMessage = $e->getMessage();
-                $statusCode = $e->response?->status() ?? 500;
+                $statusCode = $e->response->status();
                 $errorType = $this->categorizeError($statusCode, $errorMessage);
 
                 Log::error('OpenAI API request failed', [

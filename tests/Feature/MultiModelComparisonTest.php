@@ -8,12 +8,20 @@ use App\Models\AIGeneration;
 use App\Models\NameSuggestion;
 use App\Models\Project;
 use App\Models\User;
+use App\Models\UserThemePreference;
 use App\Services\AI\AIGenerationService;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Livewire;
 
 beforeEach(function (): void {
     $this->user = User::factory()->create();
+
+    // Create UserThemePreference for this user
+    UserThemePreference::create([
+        'user_id' => $this->user->id,
+        'theme_mode' => 'system',
+    ]);
+
     $this->project = Project::factory()->create([
         'user_id' => $this->user->id,
         'name' => 'Test Multi-Model Project',

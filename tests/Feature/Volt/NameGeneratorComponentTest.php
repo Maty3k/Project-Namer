@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Models\User;
+use App\Models\UserThemePreference;
 use App\Services\DNSLookupService;
 use App\Services\OpenAINameService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -17,6 +18,13 @@ uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
     $this->user = User::factory()->create();
+
+    // Create UserThemePreference for this user
+    UserThemePreference::create([
+        'user_id' => $this->user->id,
+        'theme_mode' => 'system',
+    ]);
+
     $this->actingAs($this->user);
 
     // Fake sleep to speed up tests with retry logic

@@ -213,7 +213,7 @@ final readonly class SessionManager
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(fn (GenerationSession $session) => $session->getStatusSnapshot())
-            ->toArray();
+            ->all();
     }
 
     /**
@@ -228,7 +228,7 @@ final readonly class SessionManager
             ->limit($limit)
             ->get()
             ->map(fn (GenerationSession $session) => $session->getStatusSnapshot())
-            ->toArray();
+            ->all();
     }
 
     /**

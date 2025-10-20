@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Livewire\NameGeneratorDashboard;
 use App\Models\NamingSession;
 use App\Models\User;
+use App\Models\UserThemePreference;
 use App\Services\SessionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -14,6 +15,13 @@ uses(RefreshDatabase::class)->group('slow');
 describe('Dashboard Session Integration', function (): void {
     beforeEach(function (): void {
         $this->user = User::factory()->create();
+
+        // Create UserThemePreference for this user
+        UserThemePreference::create([
+            'user_id' => $this->user->id,
+            'theme_mode' => 'system',
+        ]);
+
         $this->actingAs($this->user);
         $this->sessionService = app(SessionService::class);
     });

@@ -85,7 +85,7 @@ final class PublicShareController extends Controller
         $validation = $this->shareService->validateShareAccess($uuid, $password);
 
         if (! $validation['success']) {
-            return redirect()->route('public-share.show', $uuid)->withErrors([
+            return to_route('public-share.show', $uuid)->withErrors([
                 'password' => $validation['error'],
             ]);
         }
@@ -96,7 +96,7 @@ final class PublicShareController extends Controller
         // Set session flag for authentication
         session(["share_authenticated_{$share->uuid}" => true]);
 
-        return redirect()->route('public-share.show', $share->uuid);
+        return to_route('public-share.show', $share->uuid);
     }
 
     /**

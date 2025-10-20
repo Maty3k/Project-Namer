@@ -5,10 +5,18 @@ declare(strict_types=1);
 use App\Models\LogoGeneration;
 use App\Models\Share;
 use App\Models\User;
+use App\Models\UserThemePreference;
 
 describe('Responsive Design Cross-Device Testing', function (): void {
     beforeEach(function (): void {
         $this->user = User::factory()->create();
+
+        // Create UserThemePreference for this user
+        UserThemePreference::create([
+            'user_id' => $this->user->id,
+            'theme_mode' => 'system',
+        ]);
+
         $this->actingAs($this->user);
     });
 

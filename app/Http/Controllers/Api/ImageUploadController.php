@@ -6,7 +6,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\UploadProjectImagesRequest;
-use App\Jobs\ProcessUploadedImageJob;
 use App\Models\Project;
 use App\Models\ProjectImage;
 use Illuminate\Http\JsonResponse;
@@ -56,7 +55,7 @@ class ImageUploadController extends Controller
             ]);
 
             // Dispatch job for background processing
-            ProcessUploadedImageJob::dispatch($image);
+            dispatch(new \App\Jobs\ProcessUploadedImageJob($image));
 
             $uploadedImages[] = [
                 'id' => $image->id,

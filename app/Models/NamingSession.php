@@ -149,7 +149,7 @@ class NamingSession extends Model
      */
     protected function scopeRecent(Builder $query): Builder
     {
-        return $query->orderBy('created_at', 'desc');
+        return $query->latest();
     }
 
     /**

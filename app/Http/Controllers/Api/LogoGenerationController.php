@@ -8,7 +8,6 @@ use App\Exceptions\LogoGenerationException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\CustomizeLogosRequest;
 use App\Http\Requests\LogoGenerationRequest;
-use App\Jobs\GenerateLogosJob;
 use App\Models\LogoGeneration;
 use App\Services\ColorPaletteService;
 use App\Services\LogoVariantCacheService;
@@ -69,7 +68,7 @@ class LogoGenerationController extends Controller
             ]);
 
             // Dispatch the logo generation job
-            GenerateLogosJob::dispatch($logoGeneration);
+            dispatch(new \App\Jobs\GenerateLogosJob($logoGeneration));
 
             $response = [
                 'data' => $this->formatLogoGenerationResponse($logoGeneration),
@@ -354,7 +353,7 @@ class LogoGenerationController extends Controller
             'started_at' => now(),
         ]);
 
-        GenerateLogosJob::dispatch($logoGeneration);
+        dispatch(new \App\Jobs\GenerateLogosJob($logoGeneration));
 
         return response()->json([
             'message' => 'Logo generation has been restarted.',
@@ -380,7 +379,7 @@ class LogoGenerationController extends Controller
             'started_at' => now(),
         ]);
 
-        GenerateLogosJob::dispatch($logoGeneration);
+        dispatch(new \App\Jobs\GenerateLogosJob($logoGeneration));
 
         return response()->json([
             'message' => 'Generating remaining logos...',

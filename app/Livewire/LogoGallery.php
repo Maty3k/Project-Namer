@@ -722,7 +722,7 @@ class LogoGallery extends Component
                 'style' => $style,
                 'display_name' => ucfirst((string) $style),
                 'logos' => $logos,
-            ])->values()->toArray();
+            ])->values()->all();
     }
 
     /**
@@ -745,7 +745,7 @@ class LogoGallery extends Component
                 'style' => $style,
                 'display_name' => ucfirst((string) $style),
                 'logos' => $logos,
-            ])->values()->toArray();
+            ])->values()->all();
     }
 
     /**

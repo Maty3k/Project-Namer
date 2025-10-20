@@ -405,7 +405,7 @@ new class extends Component {
                                 ];
                             } else {
                                 // Exponential backoff: wait 1s, then 2s, then 4s
-                                sleep(2 ** ($currentRetries - 1));
+                                \Illuminate\Support\Sleep::sleep(2 ** ($currentRetries - 1));
                             }
                         }
                     }
@@ -656,7 +656,7 @@ new class extends Component {
             ]);
 
             // Dispatch the logo generation job
-            GenerateLogosJob::dispatch($logoGeneration);
+            dispatch(new \App\Jobs\GenerateLogosJob($logoGeneration));
 
             // Redirect to logo gallery to show progress
             if (!app()->environment('testing')) {
@@ -824,7 +824,7 @@ new class extends Component {
     private function isDomainAvailable(array $domains, string $tld): bool
     {
         foreach ($domains as $domain => $data) {
-            if (str_ends_with($domain, ".{$tld}")) {
+            if (str_ends_with((string) $domain, ".{$tld}")) {
                 return ($data['status'] ?? '') === 'available' && ($data['available'] ?? false);
             }
         }

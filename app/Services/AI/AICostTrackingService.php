@@ -131,7 +131,7 @@ class AICostTrackingService
                     'tokens' => (int) $item->tokens,
                     'cost' => (float) $item->cost,
                 ])
-                ->toArray();
+                ->all();
 
             return [
                 'period' => $period,
@@ -229,7 +229,7 @@ class AICostTrackingService
                     'cost' => (float) $item->cost,
                     'avg_response_time' => round((float) $item->avg_response_time, 3),
                 ])
-                ->toArray();
+                ->all();
 
             return [
                 'period' => $period,
@@ -321,7 +321,7 @@ class AICostTrackingService
                     ? round($user->total_cost / $user->total_requests, 4)
                     : 0,
             ])
-            ->toArray();
+            ->all();
     }
 
     /**
@@ -425,12 +425,12 @@ class AICostTrackingService
     {
         return match ($period) {
             'hour' => now()->subHour(),
-            'day' => now()->startOfDay(),
+            'day' => today(),
             'week' => now()->startOfWeek(),
             'month' => now()->startOfMonth(),
             'quarter' => now()->startOfQuarter(),
             'year' => now()->startOfYear(),
-            default => now()->startOfDay(),
+            default => today(),
         };
     }
 

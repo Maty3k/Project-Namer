@@ -10,6 +10,7 @@ use App\Models\NameSuggestion;
 use App\Models\Project;
 use App\Models\User;
 use App\Models\UserAIPreferences;
+use App\Models\UserThemePreference;
 use App\Services\AI\AIGenerationService;
 use App\Services\DNSLookupService;
 use App\Services\OpenAINameService;
@@ -38,6 +39,12 @@ class AIWorkflowIntegrationTest extends TestCase
 
         $this->user = User::factory()->create();
         $this->project = Project::factory()->create(['user_id' => $this->user->id]);
+
+        // Create UserThemePreference for this user
+        UserThemePreference::create([
+            'user_id' => $this->user->id,
+            'theme_mode' => 'system',
+        ]);
 
         // Prevent any external HTTP calls
         Http::preventStrayRequests();

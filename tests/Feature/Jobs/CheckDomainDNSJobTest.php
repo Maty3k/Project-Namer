@@ -16,7 +16,7 @@ describe('CheckDomainDNSJob', function (): void {
     it('dispatches DNS check for a domain', function (): void {
         Queue::fake();
 
-        CheckDomainDNSJob::dispatch('example.com');
+        dispatch(new \App\Jobs\CheckDomainDNSJob('example.com'));
 
         Queue::assertPushed(CheckDomainDNSJob::class, fn ($job) => $job->domain === 'example.com');
     });
@@ -94,7 +94,7 @@ describe('CheckDomainDNSJob', function (): void {
         $domains = ['example.com', 'test.io', 'sample.net'];
 
         foreach ($domains as $domain) {
-            CheckDomainDNSJob::dispatch($domain);
+            dispatch(new \App\Jobs\CheckDomainDNSJob($domain));
         }
 
         Queue::assertPushed(CheckDomainDNSJob::class, 3);

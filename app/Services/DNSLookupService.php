@@ -123,7 +123,7 @@ class DNSLookupService
     private function queryWithTimeout(callable $query): mixed
     {
         // Set error handler to catch timeouts
-        set_error_handler(function ($severity, $message) {
+        set_error_handler(function ($severity, $message): void {
             throw new \ErrorException($message, 0, $severity);
         });
 
@@ -133,8 +133,9 @@ class DNSLookupService
             restore_error_handler();
 
             return $result;
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             restore_error_handler();
+
             // Return empty on any error for speed
             return [];
         }

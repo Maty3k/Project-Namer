@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use App\Jobs\CleanupOldFilesJob;
 use App\Models\LogoGeneration;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 
@@ -19,13 +18,13 @@ describe('Cleanup Old Files Job', function (): void {
         // Create old completed generation
         $oldGeneration = LogoGeneration::factory()->create([
             'status' => 'completed',
-            'created_at' => Carbon::now()->subDays(35),
+            'created_at' => \Illuminate\Support\Facades\Date::now()->subDays(35),
         ]);
 
         // Create recent completed generation
         $recentGeneration = LogoGeneration::factory()->create([
             'status' => 'completed',
-            'created_at' => Carbon::now()->subDays(15),
+            'created_at' => \Illuminate\Support\Facades\Date::now()->subDays(15),
         ]);
 
         // Create files for both generations
@@ -46,7 +45,7 @@ describe('Cleanup Old Files Job', function (): void {
         // Create old but active generation
         $activeGeneration = LogoGeneration::factory()->create([
             'status' => 'processing',
-            'created_at' => Carbon::now()->subDays(35),
+            'created_at' => \Illuminate\Support\Facades\Date::now()->subDays(35),
         ]);
 
         // Create files
@@ -96,7 +95,7 @@ describe('Cleanup Old Files Job', function (): void {
         // Create failed generation older than 7 days
         $failedGeneration = LogoGeneration::factory()->create([
             'status' => 'failed',
-            'created_at' => Carbon::now()->subDays(10),
+            'created_at' => \Illuminate\Support\Facades\Date::now()->subDays(10),
         ]);
 
         // Create files
@@ -115,7 +114,7 @@ describe('Cleanup Old Files Job', function (): void {
         // Create recently failed generation (less than 7 days)
         $recentFailedGeneration = LogoGeneration::factory()->create([
             'status' => 'failed',
-            'created_at' => Carbon::now()->subDays(3),
+            'created_at' => \Illuminate\Support\Facades\Date::now()->subDays(3),
         ]);
 
         // Create files
@@ -132,7 +131,7 @@ describe('Cleanup Old Files Job', function (): void {
         // Create old failed generation
         $failedGeneration = LogoGeneration::factory()->create([
             'status' => 'failed',
-            'created_at' => Carbon::now()->subDays(40), // Older than max age
+            'created_at' => \Illuminate\Support\Facades\Date::now()->subDays(40), // Older than max age
         ]);
 
         // Create files
@@ -150,7 +149,7 @@ describe('Cleanup Old Files Job', function (): void {
         // Create a generation that might cause issues (mock scenario)
         $problematicGeneration = LogoGeneration::factory()->create([
             'status' => 'completed',
-            'created_at' => Carbon::now()->subDays(35),
+            'created_at' => \Illuminate\Support\Facades\Date::now()->subDays(35),
         ]);
 
         // Create files in a way that might cause permission issues (in real scenario)
@@ -166,7 +165,7 @@ describe('Cleanup Old Files Job', function (): void {
         // Create old generation with known file sizes
         $oldGeneration = LogoGeneration::factory()->create([
             'status' => 'completed',
-            'created_at' => Carbon::now()->subDays(35),
+            'created_at' => \Illuminate\Support\Facades\Date::now()->subDays(35),
         ]);
 
         // Create files with known content sizes

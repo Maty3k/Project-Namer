@@ -111,8 +111,7 @@ describe('Database Query Performance', function (): void {
         // Measure paginated query performance
         $startTime = microtime(true);
         $results = GeneratedLogo::with('logoGeneration')
-            ->where('logo_generation_id', $logoGeneration->id)
-            ->orderBy('created_at', 'desc')
+            ->where('logo_generation_id', $logoGeneration->id)->latest()
             ->limit(12)
             ->get();
         $queryTime = microtime(true) - $startTime;

@@ -27,7 +27,7 @@ test('job can be dispatched and queued', function (): void {
         'user_id' => $this->user->id,
     ]);
 
-    AnalyzeImageWithAIJob::dispatch($image);
+    dispatch(new \App\Jobs\AnalyzeImageWithAIJob($image));
 
     Queue::assertPushed(AnalyzeImageWithAIJob::class, fn ($job) => $job->image->id === $image->id);
 });

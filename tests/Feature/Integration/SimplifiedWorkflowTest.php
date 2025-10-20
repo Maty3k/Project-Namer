@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\DomainCache;
 use App\Models\GenerationCache;
 use App\Models\User;
+use App\Models\UserThemePreference;
 use App\Services\DNSLookupService;
 use App\Services\OpenAINameService;
 use Illuminate\Support\Facades\Http;
@@ -17,6 +18,12 @@ describe('Simplified Integration Workflow Tests', function (): void {
     beforeEach(function (): void {
         $this->user = User::factory()->create();
         $this->actingAs($this->user);
+
+        // Create UserThemePreference for this user
+        UserThemePreference::create([
+            'user_id' => $this->user->id,
+            'theme_mode' => 'system',
+        ]);
 
         // Clear cache for clean test state
         DomainCache::query()->delete();

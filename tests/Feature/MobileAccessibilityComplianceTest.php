@@ -3,10 +3,18 @@
 declare(strict_types=1);
 
 use App\Models\User;
+use App\Models\UserThemePreference;
 
 describe('Mobile Accessibility Compliance Testing', function (): void {
     beforeEach(function (): void {
         $this->user = User::factory()->create();
+
+        // Create UserThemePreference for this user
+        UserThemePreference::create([
+            'user_id' => $this->user->id,
+            'theme_mode' => 'system',
+        ]);
+
         $this->actingAs($this->user);
     });
 

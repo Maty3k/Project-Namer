@@ -321,7 +321,7 @@ Route::middleware('api')->group(function (): void {
         ]);
 
         // Dispatch logo generation job to queue
-        \App\Jobs\GenerateLogosJob::dispatch($logoGeneration);
+        dispatch(new \App\Jobs\GenerateLogosJob($logoGeneration));
 
         return response()->json([
             'success' => true,

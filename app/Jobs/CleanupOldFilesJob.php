@@ -59,7 +59,7 @@ final class CleanupOldFilesJob implements ShouldQueue
         ]);
 
         $fileManagement = app(FileManagementService::class);
-        $cutoffDate = Carbon::now()->subDays($this->maxAgeDays);
+        $cutoffDate = \Illuminate\Support\Facades\Date::now()->subDays($this->maxAgeDays);
 
         $stats = [
             'logo_generations_processed' => 0,
@@ -234,7 +234,7 @@ final class CleanupOldFilesJob implements ShouldQueue
     private function cleanupFailedGenerations(FileManagementService $fileManagement): int
     {
         $failedGenerations = LogoGeneration::where('status', 'failed')
-            ->where('created_at', '<', Carbon::now()->subDays(7)) // Keep failed for 7 days for debugging
+            ->where('created_at', '<', \Illuminate\Support\Facades\Date::now()->subDays(7)) // Keep failed for 7 days for debugging
             ->get();
 
         $cleanedCount = 0;

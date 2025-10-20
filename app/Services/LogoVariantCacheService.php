@@ -112,11 +112,11 @@ final class LogoVariantCacheService
                             'file_path' => $variant->file_path,
                             'preview_url' => asset('storage/'.$variant->file_path),
                             'file_size' => $variant->file_size,
-                        ])->toArray(),
-                    ])->toArray(),
+                        ])->all(),
+                    ])->all(),
                 ])
                 ->values()
-                ->toArray();
+                ->all();
         });
     }
 
@@ -135,7 +135,7 @@ final class LogoVariantCacheService
             return $variants
                 ->groupBy('color_scheme')
                 ->map(fn ($variants) => $variants->count())
-                ->toArray();
+                ->all();
         });
     }
 

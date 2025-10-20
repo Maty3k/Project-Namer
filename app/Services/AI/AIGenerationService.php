@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Services\AI;
 
-use App\Jobs\GenerateNamesWithModelJob;
 use App\Models\AIGeneration;
 use App\Models\Project;
 use App\Models\User;
@@ -113,7 +112,7 @@ class AIGenerationService
                 }
 
                 return $available;
-            })->values()->toArray();
+            })->values()->all();
 
             if (empty($availableModels)) {
                 throw new Exception('No AI models available for generation');
@@ -131,7 +130,7 @@ class AIGenerationService
 
             // Dispatch jobs for each model in parallel
             foreach ($availableModels as $modelId) {
-                GenerateNamesWithModelJob::dispatch($aiGeneration, $modelId, $prompt, $parameters);
+                dispatch(new \App\Jobs\GenerateNamesWithModelJob($aiGeneration, $modelId, $prompt, $parameters));
             }
 
             // Wait for all jobs to complete and collect results

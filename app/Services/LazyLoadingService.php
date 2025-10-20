@@ -325,9 +325,9 @@ final readonly class LazyLoadingService
                 'file_path' => $variant->file_path,
                 'preview_url' => asset('storage/'.$variant->file_path),
                 'file_size' => $variant->file_size,
-            ])->toArray(),
+            ])->all(),
             'placeholder' => $this->generatePlaceholderData($logo->image_width, $logo->image_height),
-        ])->toArray();
+        ])->all();
     }
 
     /**

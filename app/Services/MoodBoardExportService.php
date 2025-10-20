@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\MoodBoard;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -29,7 +28,7 @@ class MoodBoardExportService
         };
 
         $downloadUrl = Storage::disk('public')->url($filePath);
-        $expiresAt = Carbon::now()->addHours(24)->toISOString();
+        $expiresAt = \Illuminate\Support\Facades\Date::now()->addHours(24)->toISOString();
 
         return [
             'download_url' => $downloadUrl,

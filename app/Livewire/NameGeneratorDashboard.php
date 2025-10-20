@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Helpers\ThemeHelper;
-use App\Jobs\CheckDomainDNSJob;
-use App\Jobs\GenerateLogosJob;
 use App\Models\AIGeneration;
 use App\Models\AIModelPerformance;
 use App\Models\GenerationCache;
@@ -298,7 +296,7 @@ class NameGeneratorDashboard extends Component
                 // Dispatch background jobs for async DNS checks per TLD
                 // This allows for real-time updates as DNS checks complete
                 foreach ($results as $domain => $result) {
-                    CheckDomainDNSJob::dispatch($domain);
+                    dispatch(new \App\Jobs\CheckDomainDNSJob($domain));
                 }
             }
         } catch (Exception $e) {
@@ -335,7 +333,7 @@ class NameGeneratorDashboard extends Component
             ]);
 
             // Dispatch logo generation job
-            GenerateLogosJob::dispatch($this->currentLogoGeneration);
+            dispatch(new \App\Jobs\GenerateLogosJob($this->currentLogoGeneration));
 
             $this->showLogoGeneration = true;
             $this->activeTab = 'logos';
@@ -536,7 +534,7 @@ class NameGeneratorDashboard extends Component
             $this->currentLogoGeneration = $logoGeneration;
 
             // Dispatch logo generation job
-            GenerateLogosJob::dispatch($logoGeneration);
+            dispatch(new \App\Jobs\GenerateLogosJob($logoGeneration));
 
             // Show success message
             $this->dispatch('show-toast', [

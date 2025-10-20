@@ -15,11 +15,21 @@ use Livewire\Component;
  *
  * Handles name suggestion display, expansion, hiding/showing, and selection functionality
  * with real-time updates and visual feedback.
+ *
+ * @property-read array<string, mixed>|null $freshDomains
+ * @property-read bool $domainsChecked
+ * @property-read bool $isSelected
+ * @property-read int $availableDomainsCount
+ * @property-read int $totalDomainsCount
+ * @property-read int $logoCount
+ * @property-read bool $hasDomains
+ * @property-read bool $hasLogos
+ * @property-read bool $allDomainsUnavailable
+ * @property-read string|null $aiModel
  */
 class NameResultCard extends Component
 {
     use AuthorizesRequests;
-
 
     public NameSuggestion $suggestion;
 
@@ -347,6 +357,7 @@ class NameResultCard extends Component
             return 0;
         }
 
+        /** @var array<string, mixed> $domains */
         return collect($domains)
             ->where('available', true)
             ->count();
@@ -408,7 +419,9 @@ class NameResultCard extends Component
             return false;
         }
 
-        $domains = collect($this->freshDomains);
+        /** @var array<string, mixed> $freshDomains */
+        $freshDomains = $this->freshDomains;
+        $domains = collect($freshDomains);
 
         // Check if we have domain data with availability info
         $domainsWithAvailability = $domains->filter(fn ($domain) => is_array($domain) && isset($domain['available']));

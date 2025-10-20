@@ -111,7 +111,7 @@ describe('DNSLookupService', function (): void {
             $this->service->setDns($mockDns);
             $result = $this->service->hasDNSRecords('timeout.com');
 
-            expect($result)->toBeNull();
+            expect($result)->toBeFalse();
         });
 
         test('validates domain format before lookup', function (): void {

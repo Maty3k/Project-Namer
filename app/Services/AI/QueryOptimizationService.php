@@ -56,8 +56,7 @@ final class QueryOptimizationService
                 'progress_percentage',
                 'created_at',
                 'completed_at',
-            ])
-            ->orderByDesc('created_at')
+            ])->latest()
             ->limit($limit)
             ->get();
     }
@@ -334,7 +333,7 @@ final class QueryOptimizationService
             )
             ->first();
 
-        if (! $stats || ! property_exists($stats, 'total') || $stats->total == 0) {
+        if (! $stats || ! property_exists($stats, 'total') || ! property_exists($stats, 'successful') || $stats->total == 0) {
             return 0.0;
         }
 

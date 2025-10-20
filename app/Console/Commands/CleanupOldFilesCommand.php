@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Jobs\CleanupOldFilesJob;
 use Illuminate\Console\Command;
 
 final class CleanupOldFilesCommand extends Command
@@ -52,7 +51,7 @@ final class CleanupOldFilesCommand extends Command
 
         try {
             // Dispatch the cleanup job immediately
-            CleanupOldFilesJob::dispatchSync($days, $includeFailed);
+            dispatch_sync(new \App\Jobs\CleanupOldFilesJob($days, $includeFailed));
 
             $this->info('File cleanup completed successfully!');
 

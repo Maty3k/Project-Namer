@@ -7,7 +7,7 @@ describe('Performance Utilities', function (): void {
         $startTime = microtime(true);
 
         // Simulate some work
-        usleep(10000); // 10ms
+        \Illuminate\Support\Sleep::usleep(10000); // 10ms
 
         $executionTime = microtime(true) - $startTime;
 
@@ -66,7 +66,7 @@ describe('Performance Utilities', function (): void {
         $collectionResult = collect($data)
             ->filter(fn ($item) => $item % 2 === 0)
             ->map(fn ($item) => $item * 2)
-            ->toArray();
+            ->all();
         $collectionTime = microtime(true) - $startTime;
 
         // Both should be reasonably fast

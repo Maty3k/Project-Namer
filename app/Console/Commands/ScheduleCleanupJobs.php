@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Jobs\CleanupExpiredExports;
-use App\Jobs\CleanupExpiredShares;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -49,14 +47,14 @@ final class ScheduleCleanupJobs extends Command
         try {
             // Schedule shares cleanup if not exports-only
             if (! $exportsOnly) {
-                CleanupExpiredShares::dispatch();
+                dispatch(new \App\Jobs\CleanupExpiredShares);
                 $this->info('✓ Scheduled expired shares cleanup job');
                 Log::info('Expired shares cleanup job scheduled via command');
             }
 
             // Schedule exports cleanup if not shares-only
             if (! $sharesOnly) {
-                CleanupExpiredExports::dispatch();
+                dispatch(new \App\Jobs\CleanupExpiredExports);
                 $this->info('✓ Scheduled expired exports cleanup job');
                 Log::info('Expired exports cleanup job scheduled via command');
             }
