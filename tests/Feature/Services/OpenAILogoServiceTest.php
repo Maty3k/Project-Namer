@@ -76,7 +76,7 @@ describe('OpenAI Logo Service', function (): void {
             ->toThrow(InvalidArgumentException::class, 'Invalid style: invalid');
     });
 
-    it('can make successful API request to DALL-E 3', function (): void {
+    it('can make successful API request to DALL-E 2', function (): void {
         Prism::fake([
             ImageResponseFake::make()->withImages([
                 new GeneratedImage(
