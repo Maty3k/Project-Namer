@@ -230,6 +230,7 @@
        },
        async fetchLogos() {
            try {
+               console.log('🔄 Fetching logos for suggestion:', this.suggestionId);
                // Refresh the suggestion data from API to get updated logos
                const response = await fetch(`/api/suggestions/${this.suggestionId}/domains`, {
                    headers: {
@@ -238,13 +239,35 @@
                    }
                });
 
+               console.log('📡 Fetch logos response status:', response.status);
+
                if (response.ok) {
                    const data = await response.json();
+                   console.log('📦 Fetched data:', data);
+
                    // Update logos with fresh data from server
-                   if (data.logos) {
+                   if (data.logos && Array.isArray(data.logos) && data.logos.length > 0) {
+                       // Force Alpine reactivity by creating a new array reference
                        this.logos = [...data.logos];
-                       console.log('🎨 Logos updated:', this.logos);
+                       console.log('🎨 Logos array updated! Count:', this.logos.length);
+                       console.log('🎨 Logo styles:', this.logos.map(l => l.style));
+                       console.log('✅ hasLogos computed:', this.hasLogos);
+
+                       // Update logoGenerationId if provided
+                       if (data.logoGenerationId) {
+                           this.logoGenerationId = data.logoGenerationId;
+                           console.log('🆔 LogoGenerationId updated:', this.logoGenerationId);
+                       }
+
+                       // Force Alpine to detect the change
+                       this.$nextTick(() => {
+                           console.log('🔄 Next tick - Alpine should have updated UI');
+                       });
+                   } else {
+                       console.log('⚠️ No logos in response or empty array');
                    }
+               } else {
+                   console.error('❌ Failed to fetch logos:', response.status);
                }
            } catch (error) {
                console.error('❌ Error fetching logos:', error);
@@ -692,35 +715,33 @@
                     </div>
                 </div>
 
-                <div wire:ignore>
-                    <template x-if="hasLogos">
-                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                            <template x-for="(logo, logoIndex) in logos" :key="`logo-{{ $suggestion->id }}-${logoIndex}`">
-                                <div class="relative aspect-square rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow">
-                                    <template x-if="logo.url">
-                                        <img
-                                            :src="logo.url"
-                                            :alt="`Logo for {{ $suggestion->name }}`"
-                                            class="w-full h-full object-cover"
-                                            loading="lazy"
-                                        />
-                                    </template>
-                                    <template x-if="logo.style">
-                                        <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 text-center" x-text="logo.style ? logo.style.charAt(0).toUpperCase() + logo.style.slice(1) : ''"></div>
-                                    </template>
-                                </div>
-                            </template>
-                        </div>
-                    </template>
-                    <template x-if="!hasLogos">
-                        <div class="text-center py-4 text-gray-500 dark:text-gray-400">
-                            <svg class="w-8 h-8 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                            <p class="text-sm">No logos generated yet</p>
-                        </div>
-                    </template>
-                </div>
+                <template x-if="hasLogos">
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                        <template x-for="(logo, logoIndex) in logos" :key="`logo-{{ $suggestion->id }}-${logoIndex}`">
+                            <div class="relative aspect-square rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow">
+                                <template x-if="logo.url">
+                                    <img
+                                        :src="logo.url"
+                                        :alt="`Logo for {{ $suggestion->name }}`"
+                                        class="w-full h-full object-cover"
+                                        loading="lazy"
+                                    />
+                                </template>
+                                <template x-if="logo.style">
+                                    <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 text-center" x-text="logo.style ? logo.style.charAt(0).toUpperCase() + logo.style.slice(1) : ''"></div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+                <template x-if="!hasLogos">
+                    <div class="text-center py-4 text-gray-500 dark:text-gray-400">
+                        <svg class="w-8 h-8 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <p class="text-sm">No logos generated yet</p>
+                    </div>
+                </template>
             </div>
 
             <!-- Generation Metadata (if available) -->

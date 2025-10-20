@@ -374,11 +374,18 @@ final class GenerateLogosJob implements ShouldQueue
                 return;
             }
 
-            // Get all successful generated logos for this generation
+            // Get all successful generated logos for THIS SPECIFIC generation only
             $generatedLogos = $this->logoGeneration->generatedLogos()
                 ->whereNotNull('original_file_path')
                 ->where('file_size', '>', 0)
                 ->get();
+
+            Log::info('Updating NameSuggestion logos', [
+                'suggestion_id' => $nameSuggestion->id,
+                'generation_id' => $this->logoGeneration->id,
+                'logos_count' => $generatedLogos->count(),
+                'logo_styles' => $generatedLogos->pluck('style')->toArray(),
+            ]);
 
             $logosData = [];
             foreach ($generatedLogos as $logo) {
@@ -393,7 +400,7 @@ final class GenerateLogosJob implements ShouldQueue
                 ];
             }
 
-            // Update the NameSuggestion with logo data
+            // REPLACE (not append) the NameSuggestion logos with the new data
             $nameSuggestion->update(['logos' => $logosData]);
 
             Log::info('Updated NameSuggestion with logo data', [
