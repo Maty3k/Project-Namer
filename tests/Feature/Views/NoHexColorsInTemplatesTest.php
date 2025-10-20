@@ -59,13 +59,13 @@ describe('No Hex Colors in Templates (Batch 1: Critical Files)', function (): vo
             ->and($content)->not->toContain('$userTheme->surface_color');
     });
 
-    it('head.blade.php uses dynamic JavaScript theme loading', function (): void {
+    it('head.blade.php uses server-side theme loading', function (): void {
         $filePath = resource_path('views/partials/head.blade.php');
         $content = File::get($filePath);
 
-        // Should contain JavaScript that dynamically loads theme CSS
+        // Should contain server-side theme CSS loading (no JavaScript)
         expect($content)->toContain('theme-css-link')
             ->and($content)->toContain('/css/themes/')
-            ->and($content)->toContain('ThemeHelper::getThemeName()');
+            ->and($content)->toContain('ThemeHelper::getThemeCssPath()');
     });
 });
