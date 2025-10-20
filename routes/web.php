@@ -58,7 +58,7 @@ Route::get('logos', App\Livewire\LogoGalleryIndex::class)
     ->middleware(['auth', 'verified'])
     ->name('logos.index');
 
-Route::get('logo-gallery/{logoGeneration}', App\Livewire\LogoGallery::class)
+Route::get('logo-gallery/{logoGenerationId}', App\Livewire\LogoGallery::class)
     ->middleware(['auth', 'verified'])
     ->name('logo-gallery');
 
