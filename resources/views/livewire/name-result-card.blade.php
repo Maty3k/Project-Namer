@@ -11,6 +11,11 @@
        suggestionName: {{ Js::from($suggestion->name) }},
        domainsChecked: false,
        domains: {},
+       // Logo state - similar to domains
+       generatingLogos: false,
+       logos: {{ Js::from($suggestion->logos ?? []) }},
+       logoGenerationId: null,
+       pollInterval: null,
        get availableCount() {
            return Object.values(this.domains || {}).filter(d => d?.available === true).length;
        },
@@ -19,6 +24,9 @@
        },
        get totalCount() {
            return Object.keys(this.domains || {}).length;
+       },
+       get hasLogos() {
+           return Array.isArray(this.logos) && this.logos.length > 0;
        },
        getDomainName(key, domainData) {
            // Handle both formats: associative (domain service) and indexed (factory/tests)
@@ -102,6 +110,146 @@
                this.checkingDomains = false;
            }
        },
+       async startLogoGeneration() {
+           if (this.generatingLogos) return;
+           this.generatingLogos = true;
+           console.log('🎨 Starting logo generation for suggestion:', this.suggestionId);
+
+           try {
+               const csrfMeta = document.querySelector('meta[name=csrf-token]');
+               const csrfToken = csrfMeta ? csrfMeta.content : '';
+               const response = await fetch(`/api/suggestions/${this.suggestionId}/request-logos`, {
+                   method: 'POST',
+                   headers: {
+                       'Content-Type': 'application/json',
+                       'X-CSRF-TOKEN': csrfToken,
+                       'Accept': 'application/json',
+                       'X-Requested-With': 'XMLHttpRequest'
+                   },
+                   credentials: 'same-origin'
+               });
+
+               console.log('📡 Logo generation response status:', response.status);
+
+               if (response.ok) {
+                   const data = await response.json();
+                   console.log('📦 Logo generation data:', data);
+
+                   if (data.success && data.logo_generation_id) {
+                       this.logoGenerationId = data.logo_generation_id;
+                       console.log('✅ Logo generation started with ID:', this.logoGenerationId);
+
+                       // Show success toast
+                       if (window.Livewire) {
+                           window.Livewire.dispatch('show-toast', {
+                               message: 'Logo generation started! This may take a minute...',
+                               type: 'success'
+                           });
+                       }
+
+                       // Start polling for completion
+                       this.startLogoPolling();
+                   } else {
+                       console.warn('⚠️ Invalid logo generation response:', data);
+                       this.generatingLogos = false;
+                   }
+               } else {
+                   const errorText = await response.text();
+                   console.error('❌ Failed to start logo generation:', response.status, errorText);
+                   this.generatingLogos = false;
+                   if (window.Livewire) {
+                       window.Livewire.dispatch('show-toast', {
+                           message: 'Failed to start logo generation. Please try again.',
+                           type: 'error'
+                       });
+                   }
+               }
+           } catch (error) {
+               console.error('❌ Error starting logo generation:', error);
+               this.generatingLogos = false;
+               if (window.Livewire) {
+                   window.Livewire.dispatch('show-toast', {
+                       message: 'Failed to start logo generation. Please try again.',
+                       type: 'error'
+                   });
+               }
+           }
+       },
+       startLogoPolling() {
+           // Poll every 5 seconds to check logo generation status
+           this.pollInterval = setInterval(async () => {
+               await this.checkLogoStatus();
+           }, 5000);
+           console.log('⏰ Started polling for logo completion');
+       },
+       async checkLogoStatus() {
+           if (!this.logoGenerationId) return;
+
+           try {
+               const response = await fetch(`/api/logo-generation/${this.logoGenerationId}/status`, {
+                   headers: {
+                       'Accept': 'application/json',
+                       'X-Requested-With': 'XMLHttpRequest'
+                   }
+               });
+
+               if (response.ok) {
+                   const data = await response.json();
+
+                   if (data.data && data.data.status === 'completed') {
+                       console.log('✅ Logo generation completed!');
+                       clearInterval(this.pollInterval);
+                       this.generatingLogos = false;
+
+                       // Fetch the updated suggestion data to get logos
+                       await this.fetchLogos();
+
+                       // Show completion toast
+                       if (window.Livewire) {
+                           window.Livewire.dispatch('show-toast', {
+                               message: 'Logos generated successfully!',
+                               type: 'success'
+                           });
+                       }
+                   } else if (data.data && data.data.status === 'failed') {
+                       console.error('❌ Logo generation failed');
+                       clearInterval(this.pollInterval);
+                       this.generatingLogos = false;
+
+                       if (window.Livewire) {
+                           window.Livewire.dispatch('show-toast', {
+                               message: 'Logo generation failed. Please try again.',
+                               type: 'error'
+                           });
+                       }
+                   }
+               }
+           } catch (error) {
+               console.error('❌ Error checking logo status:', error);
+           }
+       },
+       async fetchLogos() {
+           try {
+               // Refresh the suggestion data from API to get updated logos
+               const response = await fetch(`/api/suggestions/${this.suggestionId}/domains`, {
+                   headers: {
+                       'Accept': 'application/json',
+                       'X-Requested-With': 'XMLHttpRequest'
+                   }
+               });
+
+               if (response.ok) {
+                   const data = await response.json();
+                   // Update logos with fresh data from server
+                   if (data.logos) {
+                       this.logos = [...data.logos];
+                       console.log('🎨 Logos updated:', this.logos);
+                   }
+               }
+           } catch (error) {
+               console.error('❌ Error fetching logos:', error);
+           }
+       },
        init() {
            // Load existing domains on mount without triggering Livewire
            (async () => {
@@ -121,16 +269,25 @@
 
                    try {
                        const data = JSON.parse(text);
-                       console.log('📦 Domains API data:', data);
+                       console.log('📦 Suggestion API data:', data);
+
+                       // Load domains if they exist
                        if (data.domains && Object.keys(data.domains).length > 0) {
-                           // Force Alpine reactivity by creating a new object reference
                            this.domains = {...data.domains};
                            this.domainsChecked = true;
                            console.log('✅ Loaded existing domains:', this.domains);
-                           console.log('🔍 Alpine this.domains:', this.domains);
-                           console.log('🔄 Domain count on init:', Object.keys(this.domains).length);
-                       } else {
-                           console.log('⚠️ No domains in response or empty domains');
+                       }
+
+                       // Load logos if they exist
+                       if (data.logos && Array.isArray(data.logos) && data.logos.length > 0) {
+                           this.logos = [...data.logos];
+                           console.log('🎨 Loaded existing logos:', this.logos);
+                       }
+
+                       // Load logoGenerationId if it exists
+                       if (data.logoGenerationId) {
+                           this.logoGenerationId = data.logoGenerationId;
+                           console.log('🆔 Loaded logoGenerationId:', this.logoGenerationId);
                        }
                    } catch (parseError) {
                        console.log('❌ JSON parse error:', parseError);
@@ -510,10 +667,10 @@
             <div>
                 <div class="flex items-center justify-between mb-3">
                     <h4 class="font-medium text-gray-900 dark:text-white">Logos</h4>
-                    <div class="flex items-center gap-2">
-                        @if($this->hasLogos && $this->logoGenerationId)
+                    <div class="flex items-center gap-2" wire:ignore>
+                        <template x-if="hasLogos && logoGenerationId">
                             <a
-                                href="{{ route('logo-gallery', $this->logoGenerationId) }}"
+                                :href="`/logo-gallery/${logoGenerationId}`"
                                 class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 rounded-lg transition-colors shadow-sm hover:shadow-md"
                             >
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -521,153 +678,49 @@
                                 </svg>
                                 View in Gallery
                             </a>
-                        @endif
-                        @if(!$this->hasLogos)
-                        <button
-                            x-data="{
-                                generating: false,
-                                logoGenerationId: null,
-                                pollInterval: null,
-                                async startGeneration() {
-                                    if (this.generating) return;
-                                    this.generating = true;
-                                    const btn = $el;
-                                    const originalText = btn.textContent;
-                                    btn.textContent = 'Generating...';
-
-                                    try {
-                                        const response = await fetch('/api/suggestions/{{ $suggestion->id }}/request-logos', {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
-                                                'Accept': 'application/json',
-                                            },
-                                        });
-                                        const data = await response.json();
-                                        if (data.success) {
-                                            this.logoGenerationId = data.logo_generation_id;
-                                            btn.textContent = 'Generating...';
-                                            // Show success toast
-                                            if (window.Livewire) {
-                                                window.Livewire.dispatch('show-toast', {
-                                                    message: 'Logo generation started! This may take a minute...',
-                                                    type: 'success'
-                                                });
-                                            }
-                                            // Start polling for completion without refreshing the page
-                                            this.startPolling();
-                                        } else {
-                                            throw new Error(data.message || 'Failed to start logo generation');
-                                        }
-                                    } catch (error) {
-                                        console.error('Logo generation error:', error);
-                                        btn.textContent = originalText;
-                                        this.generating = false;
-                                        if (window.Livewire) {
-                                            window.Livewire.dispatch('show-toast', {
-                                                message: 'Failed to start logo generation. Please try again.',
-                                                type: 'error'
-                                            });
-                                        }
-                                    }
-                                },
-                                startPolling() {
-                                    // Poll every 5 seconds to check if logos are ready
-                                    this.pollInterval = setInterval(async () => {
-                                        await this.checkLogoStatus();
-                                    }, 5000);
-                                },
-                                async checkLogoStatus() {
-                                    if (!this.logoGenerationId) return;
-
-                                    try {
-                                        const response = await fetch(`/api/logo-generation/${this.logoGenerationId}/status`, {
-                                            headers: {
-                                                'Accept': 'application/json',
-                                                'X-Requested-With': 'XMLHttpRequest'
-                                            }
-                                        });
-                                        const data = await response.json();
-
-                                        if (data.data && data.data.status === 'completed') {
-                                            // Stop polling
-                                            clearInterval(this.pollInterval);
-                                            this.generating = false;
-
-                                            // Show completion toast
-                                            if (window.Livewire) {
-                                                window.Livewire.dispatch('show-toast', {
-                                                    message: 'Logos generated successfully! Refresh to see them.',
-                                                    type: 'success'
-                                                });
-                                            }
-
-                                            // Refresh only this specific component's data without wiping names
-                                            if ($wire) {
-                                                $wire.$refresh();
-                                            }
-                                        } else if (data.data && data.data.status === 'failed') {
-                                            // Stop polling on failure
-                                            clearInterval(this.pollInterval);
-                                            this.generating = false;
-
-                                            if (window.Livewire) {
-                                                window.Livewire.dispatch('show-toast', {
-                                                    message: 'Logo generation failed. Please try again.',
-                                                    type: 'error'
-                                                });
-                                            }
-                                        }
-                                    } catch (error) {
-                                        console.error('Error checking logo status:', error);
-                                    }
-                                }
-                            }"
-                            @click.prevent.stop="startGeneration()"
-                            type="button"
-                            class="text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            :disabled="generating"
-                            x-text="generating ? 'Generating...' : 'Generate Logos'"
-                        >
-                        </button>
-                        @endif
+                        </template>
+                        <template x-if="!hasLogos">
+                            <button
+                                @click.prevent.stop="startLogoGeneration()"
+                                type="button"
+                                class="text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                :disabled="generatingLogos"
+                                x-text="generatingLogos ? 'Generating...' : 'Generate Logos'"
+                            >
+                            </button>
+                        </template>
                     </div>
                 </div>
 
-                @if($this->hasLogos)
-                    @php
-                        // Get fresh logos from database
-                        $freshSuggestion = \App\Models\NameSuggestion::find($suggestion->id);
-                        $logos = $freshSuggestion ? $freshSuggestion->logos : [];
-                    @endphp
-                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                        @foreach($logos as $logoIndex => $logo)
-                            <div wire:key="logo-{{ $suggestion->id }}-{{ $logoIndex }}" class="relative aspect-square rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow">
-                                @if(isset($logo['url']))
-                                    <img
-                                        src="{{ $logo['url'] }}"
-                                        alt="Logo for {{ $suggestion->name }}"
-                                        class="w-full h-full object-cover"
-                                        loading="lazy"
-                                    />
-                                @endif
-                                @if(isset($logo['style']))
-                                    <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 text-center">
-                                        {{ ucfirst($logo['style']) }}
-                                    </div>
-                                @endif
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    <div class="text-center py-4 text-gray-500 dark:text-gray-400">
-                        <svg class="w-8 h-8 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <p class="text-sm">No logos generated yet</p>
-                    </div>
-                @endif
+                <div wire:ignore>
+                    <template x-if="hasLogos">
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                            <template x-for="(logo, logoIndex) in logos" :key="`logo-{{ $suggestion->id }}-${logoIndex}`">
+                                <div class="relative aspect-square rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow">
+                                    <template x-if="logo.url">
+                                        <img
+                                            :src="logo.url"
+                                            :alt="`Logo for {{ $suggestion->name }}`"
+                                            class="w-full h-full object-cover"
+                                            loading="lazy"
+                                        />
+                                    </template>
+                                    <template x-if="logo.style">
+                                        <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 text-center" x-text="logo.style ? logo.style.charAt(0).toUpperCase() + logo.style.slice(1) : ''"></div>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                    <template x-if="!hasLogos">
+                        <div class="text-center py-4 text-gray-500 dark:text-gray-400">
+                            <svg class="w-8 h-8 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <p class="text-sm">No logos generated yet</p>
+                        </div>
+                    </template>
+                </div>
             </div>
 
             <!-- Generation Metadata (if available) -->
