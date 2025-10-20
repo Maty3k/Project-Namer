@@ -84,14 +84,50 @@ final class GenerateLogosJob implements ShouldQueue
             $totalCost = 0;
             $successful = 0;
 
+            // Log the distribution we're using
+            Log::info('Logo generation starting with distribution', [
+                'generation_id' => $this->logoGeneration->id,
+                'distribution' => self::LOGO_STYLE_DISTRIBUTION,
+                'expected_total' => array_sum(self::LOGO_STYLE_DISTRIBUTION),
+            ]);
+
+            // Track generated styles to prevent duplicates
+            $generatedStyles = [];
+
             foreach (self::LOGO_STYLE_DISTRIBUTION as $style => $count) {
+                Log::info('Generating logos for style', [
+                    'generation_id' => $this->logoGeneration->id,
+                    'style' => $style,
+                    'count' => $count,
+                ]);
+
                 for ($variation = 1; $variation <= $count; $variation++) {
+                    // Defensive check: prevent duplicate styles if count=1
+                    $styleKey = "{$style}-{$variation}";
+                    if (isset($generatedStyles[$styleKey])) {
+                        Log::warning('Skipping duplicate style generation', [
+                            'generation_id' => $this->logoGeneration->id,
+                            'style' => $style,
+                            'variation' => $variation,
+                        ]);
+
+                        continue;
+                    }
+
                     try {
+                        Log::info('Generating single logo', [
+                            'generation_id' => $this->logoGeneration->id,
+                            'style' => $style,
+                            'variation' => $variation,
+                            'iteration' => $totalLogos + 1,
+                        ]);
+
                         $result = $this->generateSingleLogo($openAIService, $style, $variation);
 
                         if ($result['success']) {
                             $successful++;
                             $totalCost += $result['cost_cents'];
+                            $generatedStyles[$styleKey] = true;
                         }
 
                         $totalLogos++;
@@ -110,6 +146,13 @@ final class GenerateLogosJob implements ShouldQueue
                     }
                 }
             }
+
+            Log::info('Logo generation loop completed', [
+                'generation_id' => $this->logoGeneration->id,
+                'total_iterations' => $totalLogos,
+                'successful' => $successful,
+                'generated_styles' => array_keys($generatedStyles),
+            ]);
 
             // Update final status
             $this->logoGeneration->update([
@@ -374,11 +417,18 @@ final class GenerateLogosJob implements ShouldQueue
                 return;
             }
 
-            // Get all successful generated logos for this generation
+            // Get all successful generated logos for THIS SPECIFIC generation only
             $generatedLogos = $this->logoGeneration->generatedLogos()
                 ->whereNotNull('original_file_path')
                 ->where('file_size', '>', 0)
                 ->get();
+
+            Log::info('Updating NameSuggestion logos', [
+                'suggestion_id' => $nameSuggestion->id,
+                'generation_id' => $this->logoGeneration->id,
+                'logos_count' => $generatedLogos->count(),
+                'logo_styles' => $generatedLogos->pluck('style')->toArray(),
+            ]);
 
             $logosData = [];
             foreach ($generatedLogos as $logo) {
@@ -393,7 +443,7 @@ final class GenerateLogosJob implements ShouldQueue
                 ];
             }
 
-            // Update the NameSuggestion with logo data
+            // REPLACE (not append) the NameSuggestion logos with the new data
             $nameSuggestion->update(['logos' => $logosData]);
 
             Log::info('Updated NameSuggestion with logo data', [

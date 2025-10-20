@@ -316,7 +316,7 @@ Route::middleware('api')->group(function (): void {
             'business_description' => $suggestion->project->description ?? $suggestion->explanation ?? '',
             'generation_mode' => 'creative',
             'status' => 'processing',
-            'total_logos_requested' => 5, // Generate 5 logos
+            'total_logos_requested' => 4, // Generate 4 logos (minimalist, modern, playful, corporate)
             'logos_completed' => 0,
         ]);
 
