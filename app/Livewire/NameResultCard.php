@@ -7,7 +7,6 @@ namespace App\Livewire;
 use App\Models\NameSuggestion;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\View\View;
-use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -21,14 +20,12 @@ class NameResultCard extends Component
 {
     use AuthorizesRequests;
 
+
     public NameSuggestion $suggestion;
 
     public bool $expanded = false;
 
     public bool $isCheckingDomains = false;
-
-    /** @var array<string, mixed>|null */
-    public ?array $displayDomains = null;
 
     /**
      * Mount the component with a name suggestion.
@@ -130,44 +127,17 @@ class NameResultCard extends Component
      * This is called when the user expands the card to view domains.
      */
     /**
-     * Get domains for display - uses displayDomains if set, otherwise falls back to suggestion domains.
-     * This ensures Livewire properly tracks changes to the domains data.
+     * Get fresh domain data directly from the database.
+     * This bypasses the in-memory model to avoid triggering Livewire updates.
      *
      * @return array<string, mixed>|null
      */
-    public function getDomainsProperty(): ?array
+    public function getFreshDomainsProperty(): ?array
     {
-        return $this->displayDomains ?? $this->suggestion->domains;
-    }
-
-    /**
-     * Get fresh domain data directly from database.
-     * This method ensures we always have the latest domain data
-     * without mutating the $suggestion model property.
-     *
-     * @return array<string, mixed>|null
-     */
-    protected function getFreshDomains(): ?array
-    {
-        // Use displayDomains if available, otherwise query database
-        if ($this->displayDomains !== null) {
-            return $this->displayDomains;
-        }
-
-        $fresh = NameSuggestion::find($this->suggestion->id);
+        // Reload from database to get latest domains without triggering Livewire updates
+        $fresh = NameSuggestion::where('id', $this->suggestion->id)->first();
 
         return $fresh?->domains;
-    }
-
-    /**
-     * Computed property wrapper for blade templates.
-     *
-     * @return array<string, mixed>|null
-     */
-    #[Computed]
-    public function freshDomains(): ?array
-    {
-        return $this->getFreshDomains();
     }
 
     #[On('check-domains-{suggestion.id}')]
@@ -180,36 +150,39 @@ class NameResultCard extends Component
             return;
         }
 
-        $checkedDomains = [];
-
-        // Check each domain synchronously for instant results
-        $domains = $this->suggestion->domains;
+        // Get domains from fresh database data to avoid triggering Livewire updates
+        $domains = $this->freshDomains;
         if (! is_array($domains)) {
             return;
         }
 
+        // OPTIMIZATION: Extract domain names for batch processing
+        $domainNames = array_keys($domains);
+
+        // OPTIMIZATION: Use DomainCheckService for batch processing with cache
+        $domainCheckService = app(\App\Services\DomainCheckService::class);
+        $checkResults = $domainCheckService->checkMultipleDomains($domainNames);
+
+        // Build checked domains array with results
+        $checkedDomains = [];
         foreach ($domains as $domainName => $domainData) {
             if (! is_array($domainData)) {
                 continue;
             }
 
-            // Use synchronous dispatch for instant results (no queue worker needed)
-            \App\Jobs\CheckDomainDNSJob::dispatchSync($domainName);
+            $result = $checkResults[$domainName] ?? null;
 
-            // Get the cached result immediately after sync processing
-            $cached = \App\Models\DomainCache::findByDomain($domainName);
-
-            if ($cached) {
+            if ($result) {
                 $checkedDomains[$domainName] = [
                     'extension' => $domainData['extension'] ?? '',
-                    'available' => $cached->available,
-                    'status' => $cached->available ? 'available' : 'taken',
-                    'has_dns_records' => $cached->has_dns_records,
-                    'check_method' => $cached->check_method,
-                    'dns_records' => $cached->dns_records,
+                    'available' => $result['available'],
+                    'status' => $result['status'] ?? ($result['available'] ? 'available' : 'taken'),
+                    'has_dns_records' => $result['has_dns_records'] ?? null,
+                    'check_method' => $result['check_method'] ?? null,
+                    'dns_records' => $result['dns_records'] ?? null,
                 ];
             } else {
-                // Fallback if caching failed
+                // Fallback if check failed
                 $checkedDomains[$domainName] = [
                     'extension' => $domainData['extension'] ?? '',
                     'available' => null,
@@ -224,17 +197,18 @@ class NameResultCard extends Component
         NameSuggestion::where('id', $this->suggestion->id)
             ->update(['domains' => $checkedDomains]);
 
-        // Update the display domains property to trigger Livewire re-render
-        // No need to refresh $suggestion - using $displayDomains prevents snapshot issues
-        $this->displayDomains = $checkedDomains;
+        // DO NOT update $this->suggestion->domains - it triggers Livewire DOM morphing
+        // Alpine.js will handle ALL UI updates via the domains-updated event
 
-        // Dispatch completion event for Alpine.js to hide checking indicator
-        $this->dispatch('domain-check-complete', id: $this->suggestion->id);
-
-        $this->dispatch('show-toast', [
-            'message' => 'Domain availability checked!',
-            'type' => 'success',
+        // Dispatch browser event to Alpine.js with domain data
+        // Alpine will update the UI without Livewire touching the DOM
+        $this->dispatch('domains-updated', [
+            'suggestionId' => $this->suggestion->id,
+            'domains' => $checkedDomains,
         ]);
+
+        // Dispatch completion event for tests and other listeners
+        $this->dispatch('domain-check-complete', id: $this->suggestion->id);
     }
 
     /**
@@ -245,7 +219,7 @@ class NameResultCard extends Component
     public function refreshDomains(): void
     {
         // Get fresh domain data from database
-        $domains = $this->getFreshDomains();
+        $domains = $this->freshDomains;
 
         if (! $domains) {
             return;
@@ -286,8 +260,7 @@ class NameResultCard extends Component
             NameSuggestion::where('id', $this->suggestion->id)
                 ->update(['domains' => $domains]);
 
-            // Update the display domains property to trigger Livewire re-render
-            $this->displayDomains = $domains;
+            // DO NOT update $this->suggestion->domains - it triggers Livewire DOM morphing
         }
 
         // Check if all domains are done and update polling status
@@ -322,7 +295,8 @@ class NameResultCard extends Component
      */
     protected function domainsAlreadyChecked(): bool
     {
-        $domains = $this->getFreshDomains();
+        // Get fresh data from database to avoid triggering Livewire updates
+        $domains = $this->freshDomains;
 
         if ($domains === null || $domains === []) {
             return false;
@@ -367,7 +341,7 @@ class NameResultCard extends Component
      */
     public function getAvailableDomainsCountProperty(): int
     {
-        $domains = $this->getFreshDomains();
+        $domains = $this->freshDomains;
 
         if (! $domains) {
             return 0;
@@ -383,7 +357,7 @@ class NameResultCard extends Component
      */
     public function getTotalDomainsCountProperty(): int
     {
-        $domains = $this->getFreshDomains();
+        $domains = $this->freshDomains;
 
         if (! $domains) {
             return 0;
@@ -409,7 +383,7 @@ class NameResultCard extends Component
      */
     public function getHasDomainsProperty(): bool
     {
-        $domains = $this->getFreshDomains();
+        $domains = $this->freshDomains;
 
         return $domains !== null && ! empty($domains);
     }
@@ -419,7 +393,10 @@ class NameResultCard extends Component
      */
     public function getHasLogosProperty(): bool
     {
-        return $this->suggestion->logos !== null && ! empty($this->suggestion->logos);
+        // Refresh suggestion from database to get latest logos
+        $fresh = NameSuggestion::find($this->suggestion->id);
+
+        return $fresh && $fresh->logos !== null && ! empty($fresh->logos);
     }
 
     /**
@@ -431,7 +408,7 @@ class NameResultCard extends Component
             return false;
         }
 
-        $domains = collect($this->getFreshDomains());
+        $domains = collect($this->freshDomains);
 
         // Check if we have domain data with availability info
         $domainsWithAvailability = $domains->filter(fn ($domain) => is_array($domain) && isset($domain['available']));

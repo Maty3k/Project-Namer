@@ -1,5 +1,6 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="csrf-token" content="{{ csrf_token() }}" />
 
 <title>{{ $title ?? config('app.name') }}</title>
 
@@ -15,14 +16,24 @@
     // Determine final theme name (localStorage takes precedence)
     const themeName = localStorageThemeName || serverThemeName;
 
-    // Determine dark mode state
+    // ALWAYS trust localStorage as source of truth if it exists
+    // Server preference is only used for first-time initialization
     let shouldBeDark;
-    if (localStorageTheme !== null) {
-        // localStorage exists, use it
+    if (localStorageTheme !== null && localStorageTheme !== 'null') {
+        // localStorage exists and is valid, ALWAYS use it
         shouldBeDark = localStorageTheme === 'true';
+        console.log('Using localStorage darkMode (trusted source)');
     } else {
-        // No localStorage, use server preference
+        // No localStorage, use server preference and save it
         shouldBeDark = serverThemePreference;
+        localStorage.setItem('darkMode', shouldBeDark ? 'true' : 'false');
+        console.log('Using server preference (first time), saved to localStorage');
+    }
+
+    // Also save theme name if not present
+    if (!localStorageThemeName || localStorageThemeName === 'null') {
+        localStorage.setItem('themeName', serverThemeName);
+        console.log('Saved server theme name to localStorage:', serverThemeName);
     }
 
     console.log('=== THEME INITIALIZATION ===');
@@ -82,41 +93,81 @@
         console.log('=== END VERIFICATION ===\n');
     });
 
-    // CRITICAL: Prevent Flux UI or other libraries from overriding theme
-    // Monitor for unauthorized dark class changes and block them immediately
-    const darkModeObserver = new MutationObserver(function(mutations) {
+    // Listen for Livewire navigation events to temporarily pause protection
+    let isNavigating = false;
+
+    document.addEventListener('livewire:navigating', function() {
+        isNavigating = true;
+        window.__allowingThemeChange = true;
+
+        // Apply theme IMMEDIATELY during navigation to prevent flash
+        if (shouldBeDark) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        console.log('🔄 Livewire navigation started - theme pre-applied:', shouldBeDark ? 'dark' : 'light');
+    });
+
+    document.addEventListener('livewire:navigated', function() {
+        // Ensure theme is still correct after navigation completes
+        const currentDarkClass = document.documentElement.classList.contains('dark');
+        if (currentDarkClass !== shouldBeDark) {
+            console.log('🔧 Correcting theme after navigation:', shouldBeDark ? 'dark' : 'light');
+            if (shouldBeDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+
+        // Short delay before resuming protection
+        setTimeout(function() {
+            isNavigating = false;
+            window.__allowingThemeChange = false;
+            console.log('✓ Livewire navigation complete - theme protection resumed');
+        }, 150); // Reduced from 300ms since theme is pre-applied
+    });
+
+    // LIGHTER theme protection - only enforce after page is stable
+    const darkModeProtector = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
             if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                 const hasDarkClass = document.documentElement.classList.contains('dark');
 
-                // Only correct if there's a mismatch and we're not in the middle of a manual change
-                if (hasDarkClass !== shouldBeDark && !window.__allowingThemeChange) {
-                    console.warn('🚫 BLOCKED: Something tried to change dark class!');
-                    console.warn('   Expected:', shouldBeDark, 'Found:', hasDarkClass);
-                    console.warn('   Reverting immediately...');
+                // Don't interfere during navigation or authorized changes
+                if (hasDarkClass !== shouldBeDark && !window.__allowingThemeChange && !isNavigating) {
+                    console.warn('⚠️ Unexpected theme change detected! Fixing...');
 
-                    if (shouldBeDark) {
-                        document.documentElement.classList.add('dark');
-                    } else {
-                        document.documentElement.classList.remove('dark');
-                    }
+                    // Fix the theme immediately
+                    setTimeout(function() {
+                        // Double-check the flags before applying fix
+                        if (!window.__allowingThemeChange && !isNavigating) {
+                            if (shouldBeDark) {
+                                document.documentElement.classList.add('dark');
+                            } else {
+                                document.documentElement.classList.remove('dark');
+                            }
+                            console.log('✓ Theme corrected to user preference');
+                        }
+                    }, 50); // Minimal debounce for instant correction
                 }
             }
         });
     });
 
-    // Start monitoring immediately
-    darkModeObserver.observe(document.documentElement, {
+    // Start monitoring (but allow navigation)
+    darkModeProtector.observe(document.documentElement, {
         attributes: true,
         attributeFilter: ['class']
     });
-    console.log('✓ Dark class protection active (MutationObserver monitoring)');
+    console.log('✓ Smart theme protection active');
 })();
 </script>
 
-<link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+<link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+<link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
 
 <link rel="preconnect" href="https://fonts.bunny.net">
 <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />

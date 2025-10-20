@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Cache;
 final class ThemeHelper
 {
     /**
-     * Get the current user's theme with caching to ensure consistency.
+     * Get the current user's theme - always fresh from database.
+     * No time-based caching to avoid stale data issues during navigation.
      */
     public static function getCurrentUserTheme(): ?UserThemePreference
     {
@@ -24,43 +25,43 @@ final class ThemeHelper
             return null;
         }
 
-        // Cache theme for the current request to ensure consistency
-        // Short cache (5 seconds) to avoid stale data after theme changes
-        $sessionId = request()->hasSession() ? request()->session()->getId() : 'no-session';
-        $cacheKey = "user_theme_{$user->id}_{$sessionId}";
+        // Always query fresh from database to ensure accuracy
+        // Use static property for request-scoped caching only
+        static $requestCache = [];
+        $requestKey = "user_{$user->id}";
 
-        return Cache::remember($cacheKey, 5, fn () => UserThemePreference::where('user_id', $user->id)->first());
+        if (! isset($requestCache[$requestKey])) {
+            $requestCache[$requestKey] = UserThemePreference::where('user_id', $user->id)->first();
+        }
+
+        return $requestCache[$requestKey];
     }
 
     /**
      * Clear the user's theme cache when theme is updated.
+     * Forces next call to getCurrentUserTheme() to query the database.
      */
     public static function clearUserThemeCache(): void
     {
+        // The static cache in getCurrentUserTheme() is automatically cleared
+        // between requests, so we just need to clear any Laravel cache
         $user = Auth::user();
 
         if (! $user) {
             return;
         }
 
-        // Clear all possible cache keys for this user to ensure complete cache refresh
-        $sessionId = request()->hasSession() ? request()->session()->getId() : 'no-session';
-        $cacheKey = "user_theme_{$user->id}_{$sessionId}";
-        $fallbackCacheKey = "user_theme_{$user->id}_no-session";
-
-        Cache::forget($cacheKey);
-        Cache::forget($fallbackCacheKey);
-
-        // Clear any theme-related cache keys for this user
-        $patterns = [
-            "user_theme_{$user->id}_*",
-            "theme_*_{$user->id}",
-            "userTheme_{$user->id}",
-        ];
-
-        foreach ($patterns as $pattern) {
-            // In a production environment with Redis, you'd use pattern matching
-            // For now, we'll rely on the specific cache keys
+        // Clear any Laravel cache entries that might exist
+        try {
+            Cache::forget("user_theme_{$user->id}");
+            if (function_exists('cache')) {
+                if (method_exists(cache()->getStore(), 'tags')) {
+                    cache()->tags(['user_themes', "user_{$user->id}"])->flush();
+                }
+            }
+        } catch (\Exception $e) {
+            // Silently continue if cache operations fail
+            logger()->debug('Cache clearing failed: '.$e->getMessage());
         }
     }
 

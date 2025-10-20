@@ -2,12 +2,10 @@
 
 declare(strict_types=1);
 
-use App\Livewire\NameResultCard;
 use App\Models\DomainCache;
 use App\Models\NameSuggestion;
 use App\Models\Project;
 use App\Models\User;
-use Livewire\Livewire;
 
 describe('NameResultCard Dropdown Interaction', function (): void {
     beforeEach(function (): void {
@@ -19,7 +17,7 @@ describe('NameResultCard Dropdown Interaction', function (): void {
         ]);
     });
 
-    it('triggers domain checking when check-domains event is dispatched', function (): void {
+    it('triggers domain checking via API endpoint', function (): void {
         $suggestion = NameSuggestion::factory()->create([
             'project_id' => $this->project->id,
             'name' => 'TestName',
@@ -29,8 +27,14 @@ describe('NameResultCard Dropdown Interaction', function (): void {
             ],
         ]);
 
-        $component = Livewire::test(NameResultCard::class, ['suggestion' => $suggestion])
-            ->dispatch('check-domains-'.$suggestion->id);
+        // Call the API endpoint directly
+        $response = $this->postJson("/api/suggestions/{$suggestion->id}/check-domains");
+
+        $response->assertOk()
+            ->assertJson([
+                'success' => true,
+                'already_checked' => false,
+            ]);
 
         // Verify domains were checked and cached
         $cachedCom = DomainCache::where('domain', 'testname.com')->first();
@@ -60,20 +64,30 @@ describe('NameResultCard Dropdown Interaction', function (): void {
             ],
         ]);
 
-        // First dispatch
-        Livewire::test(NameResultCard::class, ['suggestion' => $suggestion])
-            ->dispatch('check-domains-'.$suggestion->id);
+        // First API call
+        $response = $this->postJson("/api/suggestions/{$suggestion->id}/check-domains");
+
+        $response->assertOk()
+            ->assertJson([
+                'success' => true,
+                'already_checked' => true,
+            ]);
 
         $firstCheck = DomainCache::where('domain', 'testname.com')->first();
 
-        // Second dispatch (should not re-check)
-        Livewire::test(NameResultCard::class, ['suggestion' => $suggestion])
-            ->dispatch('check-domains-'.$suggestion->id);
+        // Second API call (should return cached data)
+        $secondResponse = $this->postJson("/api/suggestions/{$suggestion->id}/check-domains");
+
+        $secondResponse->assertOk()
+            ->assertJson([
+                'success' => true,
+                'already_checked' => true,
+            ]);
 
         $secondCheck = DomainCache::where('domain', 'testname.com')->first();
 
-        // Verify no new checks were made
-        if ($firstCheck) {
+        // Verify no new checks were made - timestamp should be the same
+        if ($firstCheck && $secondCheck) {
             expect($secondCheck->checked_at->timestamp)->toBe($firstCheck->checked_at->timestamp);
         }
     });
@@ -87,18 +101,21 @@ describe('NameResultCard Dropdown Interaction', function (): void {
             ],
         ]);
 
-        $component = Livewire::test(NameResultCard::class, ['suggestion' => $suggestion])
-            ->dispatch('check-domains-'.$suggestion->id);
+        // Call API to check domains
+        $response = $this->postJson("/api/suggestions/{$suggestion->id}/check-domains");
 
-        // Access the computed property
-        $freshDomains = $component->get('freshDomains');
+        $response->assertOk();
 
-        expect($freshDomains)->toBeArray();
-        expect($freshDomains['testname.com'])->toHaveKey('available');
-        expect($freshDomains['testname.com'])->toHaveKey('status');
+        // Reload from database to verify domains were checked and updated
+        $suggestion->refresh();
+        $domains = $suggestion->domains;
+
+        expect($domains)->toBeArray();
+        expect($domains['testname.com'])->toHaveKey('available');
+        expect($domains['testname.com'])->toHaveKey('status');
     });
 
-    it('updates isCheckingDomains to false after all domains complete', function (): void {
+    it('returns domain data in API response', function (): void {
         $suggestion = NameSuggestion::factory()->create([
             'project_id' => $this->project->id,
             'name' => 'TestName',
@@ -107,19 +124,24 @@ describe('NameResultCard Dropdown Interaction', function (): void {
             ],
         ]);
 
-        $component = Livewire::test(NameResultCard::class, ['suggestion' => $suggestion])
-            ->set('isCheckingDomains', true)
-            ->dispatch('check-domains-'.$suggestion->id);
+        $response = $this->postJson("/api/suggestions/{$suggestion->id}/check-domains");
 
-        // Since we use dispatchSync, checking should complete immediately
-        // But isCheckingDomains is only changed by refreshDomains
-        // So let's call refreshDomains to update the flag
-        $component->call('refreshDomains');
-
-        expect($component->get('isCheckingDomains'))->toBeFalse();
+        $response->assertOk()
+            ->assertJsonStructure([
+                'success',
+                'message',
+                'domains' => [
+                    'testname.com' => [
+                        'extension',
+                        'available',
+                        'status',
+                    ],
+                ],
+                'already_checked',
+            ]);
     });
 
-    it('dispatches domain-check-complete event after synchronous checking', function (): void {
+    it('requires authentication to check domains', function (): void {
         $suggestion = NameSuggestion::factory()->create([
             'project_id' => $this->project->id,
             'name' => 'TestName',
@@ -128,8 +150,11 @@ describe('NameResultCard Dropdown Interaction', function (): void {
             ],
         ]);
 
-        Livewire::test(NameResultCard::class, ['suggestion' => $suggestion])
-            ->dispatch('check-domains-'.$suggestion->id)
-            ->assertDispatched('domain-check-complete', id: $suggestion->id);
+        // Logout
+        auth()->logout();
+
+        $response = $this->postJson("/api/suggestions/{$suggestion->id}/check-domains");
+
+        $response->assertUnauthorized();
     });
 });

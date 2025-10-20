@@ -37,10 +37,16 @@ test('name result card displays domain information', function (): void {
 
     $this->actingAs($user);
 
-    Livewire::test(NameResultCard::class, ['suggestion' => $suggestion])
-        ->call('toggleExpanded') // Expand to show domains
-        ->assertSee('.com')
-        ->assertSee('.io');
+    // Domains are now rendered client-side via Alpine.js, so we verify the API endpoint instead
+    $response = $this->getJson("/api/suggestions/{$suggestion->id}/domains");
+
+    $response->assertOk()
+        ->assertJson([
+            'domains' => [
+                ['extension' => '.com', 'available' => true],
+                ['extension' => '.io', 'available' => false],
+            ],
+        ]);
 });
 
 test('name result card can be expanded and collapsed', function (): void {

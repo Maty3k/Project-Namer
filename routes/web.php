@@ -12,6 +12,11 @@ use App\Livewire\Settings\Profile;
 use App\Livewire\Settings\TwoFactorAuthenticationPage;
 use Illuminate\Support\Facades\Route;
 
+// Favicon is served by Nginx directly from public/favicon.ico
+// Note: Herd/Valet returns 404 status for all static files by design,
+// but the file content IS served correctly. This is expected development behavior.
+// In production with proper Nginx config, this will return 200 status.
+
 Route::get('/', fn () => view('welcome'))->name('home');
 
 // Debug route for testing name generation

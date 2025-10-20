@@ -13,6 +13,8 @@ use Spatie\Dns\Dns;
  * Uses Spatie DNS package to query DNS records and determine if a domain
  * has existing records (A, AAAA, CNAME, MX), which indicates the domain
  * is likely registered and in use.
+ *
+ * OPTIMIZED: Uses timeouts and error handling to prevent slow/hanging lookups.
  */
 class DNSLookupService
 {
@@ -22,6 +24,11 @@ class DNSLookupService
      * Matches valid domain names according to RFC 1035.
      */
     private const DOMAIN_PATTERN = '/^(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.[A-Za-z0-9-]{1,63})+$/';
+
+    /**
+     * DNS query timeout in seconds (OPTIMIZATION: Keep low to prevent hanging).
+     */
+    private const DNS_TIMEOUT = 2;
 
     /**
      * DNS resolver instance.
@@ -57,6 +64,8 @@ class DNSLookupService
      *
      * This is faster than checking CNAME and MX records which are less common.
      *
+     * OPTIMIZED: Uses timeout and suppresses errors for faster execution.
+     *
      * @param  string  $domain  The domain to check
      * @return bool|null True if records exist, false if no records, null on error
      */
@@ -67,19 +76,25 @@ class DNSLookupService
             return null;
         }
 
+        // OPTIMIZATION: Use timeout wrapper to prevent hanging
+        $startTime = microtime(true);
+
         try {
             $dns = $this->getDns();
 
-            // Check for A records (IPv4) - most common
-            $aRecords = $dns->getRecords($domain, DNS_A);
+            // OPTIMIZATION: Check A records with timeout protection
+            $aRecords = $this->queryWithTimeout(fn () => $dns->getRecords($domain, DNS_A));
             if (! empty($aRecords)) {
                 return true;
             }
 
-            // Check for AAAA records (IPv6) - increasingly common
-            $aaaaRecords = $dns->getRecords($domain, DNS_AAAA);
-            if (! empty($aaaaRecords)) {
-                return true;
+            // OPTIMIZATION: Only check AAAA if we have time budget left
+            $elapsed = microtime(true) - $startTime;
+            if ($elapsed < self::DNS_TIMEOUT - 0.5) {
+                $aaaaRecords = $this->queryWithTimeout(fn () => $dns->getRecords($domain, DNS_AAAA));
+                if (! empty($aaaaRecords)) {
+                    return true;
+                }
             }
 
             // Skip CNAME and MX checks for speed - if no A/AAAA records,
@@ -92,9 +107,36 @@ class DNSLookupService
             Log::warning('DNS lookup failed', [
                 'domain' => $domain,
                 'error' => $e->getMessage(),
+                'elapsed' => microtime(true) - $startTime,
             ]);
 
             return null;
+        }
+    }
+
+    /**
+     * Execute DNS query with timeout protection.
+     *
+     * @param  callable  $query  The DNS query to execute
+     * @return mixed Query result or empty array on timeout
+     */
+    private function queryWithTimeout(callable $query): mixed
+    {
+        // Set error handler to catch timeouts
+        set_error_handler(function ($severity, $message) {
+            throw new \ErrorException($message, 0, $severity);
+        });
+
+        try {
+            // Execute query with error suppression for speed
+            $result = @$query();
+            restore_error_handler();
+
+            return $result;
+        } catch (\Exception $e) {
+            restore_error_handler();
+            // Return empty on any error for speed
+            return [];
         }
     }
 

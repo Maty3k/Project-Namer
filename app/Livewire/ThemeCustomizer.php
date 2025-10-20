@@ -27,15 +27,19 @@ final class ThemeCustomizer extends Component
 
     /**
      * Initialize component with user's current theme.
+     * Refresh from database to ensure we have the latest saved state.
      */
     public function mount(): void
     {
         $user = auth()->user();
 
         if ($user) {
+            // Force fresh query to get latest theme state from database
             $preference = UserThemePreference::where('user_id', $user->id)->first();
 
             if ($preference) {
+                // Always refresh the in-memory model from database
+                $preference->refresh();
                 $this->themeName = $preference->theme_name;
                 $this->isDarkMode = $preference->is_dark_mode;
             } else {
@@ -139,8 +143,9 @@ final class ThemeCustomizer extends Component
 
                 console.log('THEME CUSTOMIZER: Applying theme', '{$this->themeName}', isDark ? 'DARK' : 'LIGHT');
 
-                // Allow this theme change (bypass MutationObserver blocking)
+                // Authorize this theme change (bypass MutationObserver protection)
                 window.__allowingThemeChange = true;
+                console.log('✓ Theme change authorized for 2 seconds');
 
                 // Update theme CSS link
                 let themeLink = document.getElementById('theme-css-link');
@@ -166,10 +171,11 @@ final class ThemeCustomizer extends Component
 
                 console.log('✓ Theme saved to localStorage:', '{$this->themeName}', isDark ? 'DARK' : 'LIGHT');
 
-                // Re-enable blocking after a short delay
+                // Re-enable protection after theme change completes
                 setTimeout(function() {
                     window.__allowingThemeChange = false;
-                }, 200);
+                    console.log('✓ Theme protection re-enabled');
+                }, 2000); // 2 seconds to allow Livewire/Flux to settle
 
                 // Update the global current theme preference
                 window.currentThemePreference = isDark;
@@ -251,6 +257,17 @@ final class ThemeCustomizer extends Component
         }
 
         $this->dispatch('theme-updated');
+    }
+
+    /**
+     * Listen for theme component refresh requests.
+     * Reloads theme state from database to ensure consistency.
+     */
+    #[On('refresh-theme-components')]
+    public function refreshThemeComponents(): void
+    {
+        // Force reload theme from database
+        $this->mount();
     }
 
     /**

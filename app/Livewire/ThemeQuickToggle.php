@@ -75,10 +75,9 @@ final class ThemeQuickToggle extends Component
 
             console.log('THEME QUICK TOGGLE: Switching to', isDark ? 'DARK' : 'LIGHT');
 
-            // Authorize this theme change with the protection system
-            if (window.authorizeThemeChange) {
-                window.authorizeThemeChange(isDark, 10000); // 10 second authorization for quick toggle
-            }
+            // Authorize this theme change (bypass MutationObserver protection)
+            window.__allowingThemeChange = true;
+            console.log('✓ Theme change authorized for 2 seconds');
 
             // Update theme CSS link (ensure it's loaded)
             let themeLink = document.getElementById('theme-css-link');
@@ -117,6 +116,12 @@ final class ThemeQuickToggle extends Component
                     window.Livewire.dispatch('refresh-theme-components');
                 }
             }, 100);
+
+            // Re-enable theme protection after change completes
+            setTimeout(() => {
+                window.__allowingThemeChange = false;
+                console.log('✓ Theme protection re-enabled');
+            }, 2000);
         ");
 
         // Dispatch events for UI updates and theme customizer synchronization

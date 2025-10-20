@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\AIGenerationController;
+use App\Http\Controllers\Api\DomainCheckController;
 use App\Http\Controllers\Api\ErrorExplanationController;
 use App\Http\Controllers\Api\ExportController;
 use App\Http\Controllers\Api\ImageUploadController;
@@ -12,9 +13,11 @@ use App\Http\Controllers\Api\LogoGenerationController;
 use App\Http\Controllers\Api\MoodBoardController;
 use App\Http\Controllers\Api\PhotoGalleryController;
 use App\Http\Controllers\Api\ShareController;
+use App\Http\Controllers\Api\SuggestionDomainsController;
 use App\Http\Controllers\Api\ThemeController;
 use App\Http\Controllers\Api\UserPreferencesController;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('api')->group(function (): void {
@@ -290,6 +293,43 @@ Route::middleware('api')->group(function (): void {
     Route::get('keyboard-shortcuts', [KeyboardShortcutsController::class, 'index'])
         ->middleware(['auth'])
         ->name('api.keyboard-shortcuts');
+
+    // Suggestion domains API endpoint - uses web middleware for session auth
+    Route::get('suggestions/{suggestion}/domains', [SuggestionDomainsController::class, 'show'])
+        ->middleware(['web', 'auth'])
+        ->name('api.suggestions.domains');
+
+    // Domain checking API endpoint - uses web middleware for session auth
+    Route::post('suggestions/{suggestion}/check-domains', [DomainCheckController::class, 'check'])
+        ->middleware(['web', 'auth'])
+        ->name('api.suggestions.check-domains');
+
+    // Logo generation request for name suggestion
+    Route::post('suggestions/{suggestion}/request-logos', function (\App\Models\NameSuggestion $suggestion) {
+        Gate::authorize('update', $suggestion->project);
+
+        // Create logo generation record for this specific name
+        $logoGeneration = \App\Models\LogoGeneration::create([
+            'user_id' => auth()->id(),
+            'session_id' => session()->getId(),
+            'business_name' => $suggestion->name,
+            'business_description' => $suggestion->project->description ?? $suggestion->explanation ?? '',
+            'generation_mode' => 'creative',
+            'status' => 'processing',
+            'total_logos_requested' => 5, // Generate 5 logos
+            'logos_completed' => 0,
+        ]);
+
+        // Dispatch logo generation job to queue
+        \App\Jobs\GenerateLogosJob::dispatch($logoGeneration);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Logo generation started',
+            'suggestion_id' => $suggestion->id,
+            'logo_generation_id' => $logoGeneration->id,
+        ]);
+    })->middleware(['web', 'auth'])->name('api.suggestions.request-logos');
 
     // Logo styles endpoint with graceful degradation
     Route::get('logo-styles', function () {

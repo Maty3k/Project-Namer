@@ -65,7 +65,7 @@ $domain = $dataArray['domain'] ?? 'Unknown';
             <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Related Domains</h5>
             <div class="space-y-2">
                 @foreach($dataArray['related_domains'] as $domain => $status)
-                    <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded">
+                    <div wire:key="related-domain-{{ md5($domain) }}" class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded">
                         <span class="text-sm font-medium">{{ $domain }}</span>
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                             {{ $status === 'available' ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' }}">

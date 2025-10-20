@@ -112,14 +112,51 @@ final readonly class DomainCheckService
     /**
      * Check availability for multiple domains concurrently.
      *
+     * OPTIMIZED: Batch queries cache first, then only checks uncached domains.
+     * This reduces database queries from N to 1 and improves performance significantly.
+     *
      * @param  array<int, string>  $domains  Array of domain names to check
      * @return array<string, array<string, mixed>> Associative array with domain as key and result as value
      */
     public function checkMultipleDomains(array $domains): array
     {
         $results = [];
+        $formattedDomains = [];
 
+        // Format and validate all domains first
         foreach ($domains as $domain) {
+            try {
+                $formatted = $this->formatDomain($domain);
+                $this->validateDomain($formatted);
+                $formattedDomains[$formatted] = $domain;
+            } catch (\InvalidArgumentException $e) {
+                // Skip invalid domains
+                Log::warning('Invalid domain skipped', ['domain' => $domain, 'error' => $e->getMessage()]);
+                continue;
+            }
+        }
+
+        // OPTIMIZATION: Batch query cache for all domains at once (1 query instead of N)
+        $cachedResults = $this->getCachedResultsForMultipleDomains(array_keys($formattedDomains));
+
+        // Process cached results
+        foreach ($cachedResults as $domain => $cached) {
+            $results[$domain] = [
+                'domain' => $domain,
+                'available' => $cached->available,
+                'status' => $cached->available ? 'available' : 'taken',
+                'cached' => true,
+                'checked_at' => $cached->checked_at->toISOString(),
+                'has_dns_records' => $cached->has_dns_records,
+                'check_method' => $cached->check_method,
+                'dns_records' => $cached->dns_records,
+            ];
+        }
+
+        // Check uncached domains (only domains not in cache)
+        $uncachedDomains = array_diff(array_keys($formattedDomains), array_keys($cachedResults));
+
+        foreach ($uncachedDomains as $domain) {
             $results[$domain] = $this->checkDomain($domain);
         }
 
@@ -261,6 +298,42 @@ final readonly class DomainCheckService
         }
 
         return $cache;
+    }
+
+    /**
+     * Get cached results for multiple domains in a single query (OPTIMIZED).
+     *
+     * @param  array<int, string>  $domains  Array of domain names
+     * @return array<string, DomainCache> Associative array with domain as key
+     */
+    private function getCachedResultsForMultipleDomains(array $domains): array
+    {
+        if (empty($domains)) {
+            return [];
+        }
+
+        // Batch query all domains at once (1 query instead of N)
+        $caches = DomainCache::whereIn('domain', $domains)->get();
+
+        $results = [];
+        $dnsCutoff = now()->subDays(self::CACHE_DAYS_DNS);
+        $apiCutoff = now()->subHours(self::CACHE_HOURS_API);
+
+        foreach ($caches as $cache) {
+            // Determine cutoff based on check method
+            $cutoff = match ($cache->check_method) {
+                'dns' => $dnsCutoff,
+                'api' => $apiCutoff,
+                default => $apiCutoff,
+            };
+
+            // Only include if cache is still valid
+            if ($cache->checked_at->gte($cutoff)) {
+                $results[$cache->domain] = $cache;
+            }
+        }
+
+        return $results;
     }
 
     /**

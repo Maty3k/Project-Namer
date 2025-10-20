@@ -53,7 +53,7 @@ final class OpenAILogoService
     /**
      * DALL-E 3 pricing in cents (as of 2024).
      */
-    private const DALLE_3_COST_CENTS = 160; // $0.016 per 512x512 image (estimated)
+    private const DALLE_3_COST_CENTS = 400; // $0.040 per 1024x1024 standard quality image
 
     /**
      * Maximum retry attempts for API calls.
@@ -176,7 +176,7 @@ final class OpenAILogoService
                         'timeout' => 120, // DALL-E can take a while
                     ])
                     ->withProviderOptions([
-                        'size' => '512x512',
+                        'size' => '1024x1024',
                         'quality' => 'standard',
                         'n' => 1,
                     ])
