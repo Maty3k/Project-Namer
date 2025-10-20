@@ -97,7 +97,7 @@ describe('OpenAI Logo Service', function (): void {
             ->and($result['success'])->toBeTrue()
             ->and($result['image_url'])->toBe('https://example.com/generated-logo.png')
             ->and($result['revised_prompt'])->toBe('A minimalist logo design for a coffee shop')
-            ->and($result['cost_cents'])->toBe(400); // DALL-E 3 1024x1024 standard quality
+            ->and($result['cost_cents'])->toBe(16); // DALL-E 2 256x256
     });
 
     it('handles API errors gracefully', function (): void {
@@ -191,7 +191,7 @@ describe('OpenAI Logo Service', function (): void {
         $result = $this->service->generateLogo('Test business', 'minimalist');
 
         expect($result)->toHaveKey('cost_cents')
-            ->and($result['cost_cents'])->toBe(400); // DALL-E 3 1024x1024 standard quality
+            ->and($result['cost_cents'])->toBe(16); // DALL-E 2 256x256
     });
 
     it('can generate multiple logos in batch', function (): void {
@@ -270,7 +270,7 @@ describe('OpenAI Logo Service', function (): void {
 
         $totalCost = array_sum(array_column($results, 'cost_cents'));
 
-        expect($totalCost)->toBe(1200); // 3 logos × 400 cents each
+        expect($totalCost)->toBe(48); // 3 logos × 16 cents each
     });
 
     it('validates business idea is not empty', function (): void {

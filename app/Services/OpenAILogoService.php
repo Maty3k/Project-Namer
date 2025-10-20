@@ -17,7 +17,7 @@ use Prism\Prism\Prism;
 /**
  * OpenAI Logo Service.
  *
- * Handles logo generation using OpenAI's DALL-E 3 API with intelligent
+ * Handles logo generation using OpenAI's DALL-E 2 API with intelligent
  * prompt generation, error handling, rate limiting, and cost tracking.
  */
 final class OpenAILogoService
@@ -51,9 +51,9 @@ final class OpenAILogoService
     ];
 
     /**
-     * DALL-E 3 pricing in cents (as of 2024).
+     * DALL-E 2 pricing in cents (as of 2024).
      */
-    private const DALLE_3_COST_CENTS = 400; // $0.040 per 1024x1024 standard quality image
+    private const DALLE_2_COST_CENTS = 16; // $0.016 per 256x256 image
 
     /**
      * Maximum retry attempts for API calls.
@@ -170,14 +170,13 @@ final class OpenAILogoService
 
             try {
                 $response = Prism::image()
-                    ->using('openai', 'dall-e-3')
+                    ->using('openai', 'dall-e-2')
                     ->withPrompt($prompt)
                     ->withClientOptions([
-                        'timeout' => 120, // DALL-E can take a while
+                        'timeout' => 60, // DALL-E 2 is faster than DALL-E 3
                     ])
                     ->withProviderOptions([
-                        'size' => '1024x1024',
-                        'quality' => 'standard',
+                        'size' => '256x256',
                         'n' => 1,
                     ])
                     ->generate();
@@ -261,7 +260,7 @@ final class OpenAILogoService
             'style' => $style,
             'image_url' => $imageData['url'],
             'revised_prompt' => $imageData['revised_prompt'] ?? null,
-            'cost_cents' => self::DALLE_3_COST_CENTS,
+            'cost_cents' => self::DALLE_2_COST_CENTS,
             'generated_at' => now()->toISOString(),
         ];
     }

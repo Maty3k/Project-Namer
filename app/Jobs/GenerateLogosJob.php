@@ -34,12 +34,12 @@ final class GenerateLogosJob implements ShouldQueue
     use SerializesModels;
 
     /**
-     * Logo styles with their variation counts (total: 5 logos).
+     * Logo styles with their variation counts (total: 4 logos).
      *
      * @var array<string, int>
      */
     private const LOGO_STYLE_DISTRIBUTION = [
-        'minimalist' => 2,
+        'minimalist' => 1,
         'modern' => 1,
         'playful' => 1,
         'corporate' => 1,

@@ -25,7 +25,7 @@ beforeEach(function (): void {
     $this->logoGeneration = LogoGeneration::factory()->create([
         'business_name' => 'Modern coffee shop serving artisanal beverages',
         'status' => 'pending',
-        'total_logos_requested' => 12,
+        'total_logos_requested' => 4,
         'logos_completed' => 0,
     ]);
 });
@@ -84,7 +84,7 @@ describe('GenerateLogosJob', function (): void {
         expect($result['success'])->toBeTrue();
     });
 
-    it('generates logos for all 4 styles with 3 variations each', function (): void {
+    it('generates logos for all 4 styles with 1 variation each', function (): void {
         // Set up HTTP fakes for both OpenAI API and image download
         Http::fake([
             'api.openai.com/*' => Http::response([
@@ -107,17 +107,17 @@ describe('GenerateLogosJob', function (): void {
         $this->logoGeneration->refresh();
 
         expect($this->logoGeneration->status)->toBe('completed')
-            ->and($this->logoGeneration->logos_completed)->toBe(12)
-            ->and($this->logoGeneration->generatedLogos)->toHaveCount(12);
+            ->and($this->logoGeneration->logos_completed)->toBe(4)
+            ->and($this->logoGeneration->generatedLogos)->toHaveCount(4);
 
         // Verify all styles are generated
         $styles = $this->logoGeneration->generatedLogos->pluck('style')->unique();
         expect($styles->sort()->values()->toArray())->toBe(['corporate', 'minimalist', 'modern', 'playful']);
 
-        // Verify 3 variations per style
+        // Verify 1 variation per style
         foreach (['minimalist', 'modern', 'playful', 'corporate'] as $style) {
             $styleCount = $this->logoGeneration->generatedLogos->where('style', $style)->count();
-            expect($styleCount)->toBe(3);
+            expect($styleCount)->toBe(1);
         }
     })->skip('Job execution requires actual sleep behavior for retries');
 
@@ -203,10 +203,10 @@ describe('GenerateLogosJob', function (): void {
 
         $this->logoGeneration->refresh();
 
-        // Should have generated 9 successful logos (12 - 3 failures)
-        expect($this->logoGeneration->logos_completed)->toBe(9)
+        // Should have generated 1 successful logo (4 - 3 failures)
+        expect($this->logoGeneration->logos_completed)->toBe(1)
             ->and($this->logoGeneration->status)->toBe('completed')
-            ->and($this->logoGeneration->generatedLogos)->toHaveCount(9);
+            ->and($this->logoGeneration->generatedLogos)->toHaveCount(1);
     })->skip('Job execution requires actual sleep behavior for retries');
 
     it('updates cost tracking during generation', function (): void {
@@ -227,8 +227,8 @@ describe('GenerateLogosJob', function (): void {
 
         $this->logoGeneration->refresh();
 
-        // 12 successful generations × 400 cents each = 4800 cents
-        expect($this->logoGeneration->cost_cents)->toBe(4800);
+        // 4 successful generations × 16 cents each = 64 cents
+        expect($this->logoGeneration->cost_cents)->toBe(64);
     })->skip('Job execution requires actual sleep behavior for retries');
 
     it('handles image download failures', function (): void {
@@ -250,7 +250,7 @@ describe('GenerateLogosJob', function (): void {
         $this->logoGeneration->refresh();
 
         // Should still create database records even if download fails
-        expect($this->logoGeneration->generatedLogos)->toHaveCount(12)
+        expect($this->logoGeneration->generatedLogos)->toHaveCount(4)
             ->and($this->logoGeneration->status)->toBe('completed');
 
         // But files shouldn't exist
@@ -408,8 +408,8 @@ describe('GenerateLogosJob', function (): void {
 
         expect($this->logoGeneration->status)->toBe('completed')
             ->and($logoGeneration2->status)->toBe('completed')
-            ->and($this->logoGeneration->generatedLogos)->toHaveCount(12)
-            ->and($logoGeneration2->generatedLogos)->toHaveCount(12);
+            ->and($this->logoGeneration->generatedLogos)->toHaveCount(4)
+            ->and($logoGeneration2->generatedLogos)->toHaveCount(4);
 
         // Verify files are stored in separate directories
         $paths1 = $this->logoGeneration->generatedLogos->pluck('original_file_path');
@@ -437,7 +437,7 @@ describe('GenerateLogosJob', function (): void {
         $this->logoGeneration->refresh();
 
         // Verify that progress was tracked correctly
-        expect($this->logoGeneration->logos_completed)->toBe(12)
+        expect($this->logoGeneration->logos_completed)->toBe(4)
             ->and($this->logoGeneration->status)->toBe('completed');
     })->skip('Job execution requires actual sleep behavior for retries');
 
@@ -453,7 +453,7 @@ describe('GenerateLogosJob', function (): void {
     it('respects timeout configuration', function (): void {
         $job = new GenerateLogosJob($this->logoGeneration);
 
-        // Should have a reasonable timeout for processing 12 logos
+        // Should have a reasonable timeout for processing 4 logos
         expect($job->timeout)->toBe(1800); // 30 minutes
     });
 
