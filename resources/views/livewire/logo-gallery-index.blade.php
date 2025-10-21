@@ -104,17 +104,12 @@
                                             @endif
                                         @endforeach
                                     </div>
-                                    @if($generation->generatedLogos->count() > 4)
-                                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 text-center">
-                                            +{{ $generation->generatedLogos->count() - 4 }} more logos
-                                        </p>
-                                    @endif
                                 </div>
                             @endif
 
                             <!-- Stats -->
                             <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-                                <span>Logos: {{ $generation->logos_completed }}/{{ $generation->total_logos_requested }}</span>
+                                <span>{{ $generation->generatedLogos->count() }} {{ Str::plural('logo', $generation->generatedLogos->count()) }}</span>
                             </div>
 
                             <!-- Actions -->
