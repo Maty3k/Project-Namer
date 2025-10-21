@@ -145,6 +145,7 @@ class LogoGallery extends Component
                 'logo_generation_id' => $this->logoGenerationId,
                 'user_id' => Auth::id(),
             ]);
+
             return;
         }
 
@@ -156,6 +157,7 @@ class LogoGallery extends Component
                 'logo_generation_user_id' => $logoGen->user_id,
                 'current_user_id' => Auth::id(),
             ]);
+
             return;
         }
 

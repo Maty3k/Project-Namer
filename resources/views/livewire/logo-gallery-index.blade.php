@@ -122,21 +122,32 @@
 
                             <!-- Actions -->
                             <div class="flex justify-between items-center">
-                                @if($generation->status === 'completed')
-                                    <flux:button 
-                                        variant="primary" 
+                                <div class="flex items-center gap-2">
+                                    @if($generation->status === 'completed')
+                                        <flux:button
+                                            variant="primary"
+                                            size="sm"
+                                            href="{{ route('logo-gallery', $generation) }}"
+                                            wire:navigate
+                                        >
+                                            View Gallery
+                                        </flux:button>
+                                    @else
+                                        <flux:button variant="ghost" size="sm" disabled>
+                                            {{ ucfirst($generation->status) }}
+                                        </flux:button>
+                                    @endif
+
+                                    <flux:button
+                                        variant="danger"
                                         size="sm"
-                                        href="{{ route('logo-gallery', $generation) }}"
-                                        wire:navigate
+                                        wire:click="deleteGeneration({{ $generation->id }})"
+                                        wire:confirm="Are you sure you want to delete the logos for '{{ $generation->business_name }}'? This action cannot be undone."
                                     >
-                                        View Gallery
+                                        <flux:icon.trash class="size-4" />
                                     </flux:button>
-                                @else
-                                    <flux:button variant="ghost" size="sm" disabled>
-                                        {{ ucfirst($generation->status) }}
-                                    </flux:button>
-                                @endif
-                                
+                                </div>
+
                                 <div class="text-xs text-gray-500 dark:text-gray-400">
                                     ID: {{ $generation->id }}
                                 </div>

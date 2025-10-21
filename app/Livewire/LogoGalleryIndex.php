@@ -63,6 +63,29 @@ class LogoGalleryIndex extends Component
         }
     }
 
+    /**
+     * Delete a logo generation and all its associated logos.
+     */
+    public function deleteGeneration(int $generationId): void
+    {
+        $generation = LogoGeneration::where('id', $generationId)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (! $generation) {
+            $this->dispatch('toast', message: 'Logo generation not found', type: 'error');
+
+            return;
+        }
+
+        $businessName = $generation->business_name;
+
+        // Delete the generation (cascades to logos via model events)
+        $generation->delete();
+
+        $this->dispatch('toast', message: "Deleted logos for '{$businessName}'", type: 'success');
+    }
+
     public function render(): View
     {
         return view('livewire.logo-gallery-index', [
