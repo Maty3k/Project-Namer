@@ -61,6 +61,16 @@ final class GeneratedLogoFactory extends Factory
     }
 
     /**
+     * Indicate that the logo is completed.
+     */
+    public function completed(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'completed',
+        ]);
+    }
+
+    /**
      * Indicate that the logo generation failed.
      */
     public function failed(): static

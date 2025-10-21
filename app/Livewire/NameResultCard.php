@@ -467,6 +467,25 @@ class NameResultCard extends Component
         return $logoGeneration?->id;
     }
 
+    /**
+     * Get the total count of logos generated for this business name.
+     */
+    public function getTotalGeneratedLogosCountProperty(): int
+    {
+        return \App\Models\LogoGeneration::where('business_name', $this->suggestion->name)
+            ->where('user_id', auth()->id())
+            ->where('status', 'completed')
+            ->sum('logos_completed');
+    }
+
+    /**
+     * Check if logos have been generated for this business name.
+     */
+    public function getHasGeneratedLogosProperty(): bool
+    {
+        return $this->totalGeneratedLogosCount > 0;
+    }
+
     public function render(): View
     {
         return view('livewire.name-result-card');

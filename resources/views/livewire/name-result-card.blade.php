@@ -696,7 +696,14 @@
             <!-- Logos Section -->
             <div>
                 <div class="flex items-center justify-between mb-3">
-                    <h4 class="font-medium text-gray-900 dark:text-white">Logos</h4>
+                    <div class="flex items-center gap-2">
+                        <h4 class="font-medium text-gray-900 dark:text-white">Logos</h4>
+                        @if($this->hasGeneratedLogos)
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300">
+                                {{ $this->totalGeneratedLogosCount }} generated
+                            </span>
+                        @endif
+                    </div>
                     <div class="flex items-center gap-2" wire:ignore>
                         <template x-if="hasLogos && logoGenerationId">
                             <a

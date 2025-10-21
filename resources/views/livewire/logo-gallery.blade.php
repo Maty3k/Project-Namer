@@ -1,0 +1,190 @@
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+        {{-- Header --}}
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+                        Logo Gallery
+                    </h1>
+                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                        {{ $logoGeneration->business_name }}
+                    </p>
+                    @if($logoGeneration->business_description)
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-500">
+                            {{ $logoGeneration->business_description }}
+                        </p>
+                    @endif
+                </div>
+
+                {{-- Action Buttons --}}
+                @if($logos->isNotEmpty())
+                    <div class="flex gap-3">
+                        <button
+                            wire:click="downloadAll"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white font-medium rounded-lg transition-colors shadow-sm hover:shadow-md"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                            Download All (ZIP)
+                        </button>
+
+                        <button
+                            wire:click="toggleSaved"
+                            class="inline-flex items-center gap-2 px-4 py-2 {{ $logoGeneration->is_saved ? 'bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600' : 'bg-gray-600 hover:bg-gray-700 dark:bg-gray-500 dark:hover:bg-gray-600' }} text-white font-medium rounded-lg transition-colors shadow-sm hover:shadow-md"
+                        >
+                            <svg class="w-5 h-5" fill="{{ $logoGeneration->is_saved ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                            </svg>
+                            {{ $logoGeneration->is_saved ? 'Saved' : 'Save to Gallery' }}
+                        </button>
+                    </div>
+                @endif
+            </div>
+
+            {{-- Status Badge --}}
+            <div class="mt-4 flex items-center gap-3">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium
+                    {{ $logoGeneration->status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : '' }}
+                    {{ $logoGeneration->status === 'processing' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' : '' }}
+                    {{ $logoGeneration->status === 'failed' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' : '' }}
+                ">
+                    @if($logoGeneration->status === 'completed')
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    @endif
+                    {{ ucfirst($logoGeneration->status) }}
+                </span>
+
+                <span class="text-sm text-gray-600 dark:text-gray-400">
+                    {{ $logoGeneration->logos_completed }} / {{ $logoGeneration->total_logos_requested }} logos
+                </span>
+            </div>
+        </div>
+
+        {{-- Logo Grid --}}
+        @if($logos->isEmpty())
+            <div class="text-center py-16">
+                <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <p class="mt-4 text-lg font-medium text-gray-900 dark:text-white">No logos yet</p>
+                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    Logos are still being generated or generation failed.
+                </p>
+            </div>
+        @else
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8">
+                @foreach($logos as $logo)
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                        {{-- Logo Image --}}
+                        <div class="aspect-square bg-gray-100 dark:bg-gray-700 flex items-center justify-center p-3">
+                            @if($logo->file_path && $logo->status === 'completed')
+                                <img
+                                    src="{{ $logo->url }}"
+                                    alt="{{ $logo->style }} logo"
+                                    class="max-w-full max-h-full object-contain"
+                                >
+                            @else
+                                <div class="text-center">
+                                    <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ ucfirst($logo->status) }}</p>
+                                </div>
+                            @endif
+                        </div>
+
+                        {{-- Logo Info --}}
+                        <div class="p-3">
+                            <h3 class="text-xs font-semibold text-gray-900 dark:text-white capitalize">
+                                {{ $logo->style }}
+                            </h3>
+                            <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                                256x256
+                            </p>
+
+                            {{-- Action Buttons --}}
+                            @if($logo->status === 'completed')
+                                <div class="mt-3 flex gap-1.5">
+                                    <button
+                                        wire:click="downloadLogo({{ $logo->id }})"
+                                        class="flex-1 inline-flex items-center justify-center gap-1 px-2 py-1.5 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white text-xs font-medium rounded-md transition-colors"
+                                    >
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                        </svg>
+                                    </button>
+
+                                    <button
+                                        wire:click="confirmDelete({{ $logo->id }})"
+                                        class="inline-flex items-center justify-center px-2 py-1.5 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white text-xs font-medium rounded-md transition-colors"
+                                        title="Delete logo"
+                                    >
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+    </div>
+
+    {{-- Delete Confirmation Modal --}}
+    @if($showDeleteModal && $logoToDelete)
+        <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
+                {{-- Background overlay --}}
+                <div
+                    class="fixed inset-0 bg-gray-500 bg-opacity-75 dark:bg-gray-900 dark:bg-opacity-75 transition-opacity"
+                    wire:click="cancelDelete"
+                ></div>
+
+                {{-- Modal panel --}}
+                <div class="inline-block transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
+                    <div class="bg-white dark:bg-gray-800 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900 sm:mx-0 sm:h-10 sm:w-10">
+                                <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                </svg>
+                            </div>
+                            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                <h3 class="text-lg font-semibold leading-6 text-gray-900 dark:text-white" id="modal-title">
+                                    Delete Logo
+                                </h3>
+                                <div class="mt-2">
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                                        Are you sure you want to delete this <strong class="capitalize">{{ $logoToDelete->style }}</strong> logo? This action cannot be undone.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-900 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-2">
+                        <button
+                            type="button"
+                            wire:click="deleteLogo"
+                            class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 sm:w-auto"
+                        >
+                            Delete
+                        </button>
+                        <button
+                            type="button"
+                            wire:click="cancelDelete"
+                            class="mt-3 inline-flex w-full justify-center rounded-md bg-white dark:bg-gray-700 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 sm:mt-0 sm:w-auto"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+</div>

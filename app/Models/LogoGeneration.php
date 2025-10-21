@@ -24,6 +24,7 @@ class LogoGeneration extends Model
         'total_logos_requested',
         'logos_completed',
         'error_message',
+        'is_saved',
     ];
 
     /**
@@ -34,6 +35,7 @@ class LogoGeneration extends Model
         return [
             'total_logos_requested' => 'integer',
             'logos_completed' => 'integer',
+            'is_saved' => 'boolean',
         ];
     }
 
@@ -122,5 +124,29 @@ class LogoGeneration extends Model
         }
 
         return (int) (($this->logos_completed / $this->total_logos_requested) * 100);
+    }
+
+    /**
+     * Toggle the saved status.
+     */
+    public function toggleSaved(): void
+    {
+        $this->update(['is_saved' => ! $this->is_saved]);
+    }
+
+    /**
+     * Mark as saved.
+     */
+    public function markAsSaved(): void
+    {
+        $this->update(['is_saved' => true]);
+    }
+
+    /**
+     * Mark as not saved.
+     */
+    public function markAsNotSaved(): void
+    {
+        $this->update(['is_saved' => false]);
     }
 }

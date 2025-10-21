@@ -254,6 +254,97 @@ test('name result card triggers logo generation', function (): void {
         ->assertDispatched('logos-requested', $suggestion->id);
 });
 
+test('name result card shows total generated logos count for business name', function (): void {
+    $user = User::factory()->create();
+    $project = Project::factory()->create(['user_id' => $user->id]);
+    $suggestion = NameSuggestion::factory()->create([
+        'project_id' => $project->id,
+        'name' => 'MyBusiness',
+    ]);
+
+    $this->actingAs($user);
+
+    // Create logo generations for this business name
+    \App\Models\LogoGeneration::factory()
+        ->for($user)
+        ->completed()
+        ->create([
+            'business_name' => 'MyBusiness',
+            'logos_completed' => 4,
+        ]);
+
+    \App\Models\LogoGeneration::factory()
+        ->for($user)
+        ->completed()
+        ->create([
+            'business_name' => 'MyBusiness',
+            'logos_completed' => 4,
+        ]);
+
+    $component = Livewire::test(NameResultCard::class, ['suggestion' => $suggestion]);
+
+    expect($component->get('totalGeneratedLogosCount'))->toBe(8);
+    expect($component->get('hasGeneratedLogos'))->toBeTrue();
+});
+
+test('name result card shows zero logos when none generated', function (): void {
+    $user = User::factory()->create();
+    $project = Project::factory()->create(['user_id' => $user->id]);
+    $suggestion = NameSuggestion::factory()->create([
+        'project_id' => $project->id,
+        'name' => 'MyBusiness',
+    ]);
+
+    $this->actingAs($user);
+
+    $component = Livewire::test(NameResultCard::class, ['suggestion' => $suggestion]);
+
+    expect($component->get('totalGeneratedLogosCount'))->toBe(0);
+    expect($component->get('hasGeneratedLogos'))->toBeFalse();
+});
+
+test('name result card only counts completed logo generations', function (): void {
+    $user = User::factory()->create();
+    $project = Project::factory()->create(['user_id' => $user->id]);
+    $suggestion = NameSuggestion::factory()->create([
+        'project_id' => $project->id,
+        'name' => 'MyBusiness',
+    ]);
+
+    $this->actingAs($user);
+
+    // Create completed generation
+    \App\Models\LogoGeneration::factory()
+        ->for($user)
+        ->completed()
+        ->create([
+            'business_name' => 'MyBusiness',
+            'logos_completed' => 4,
+        ]);
+
+    // Create processing generation (should not be counted)
+    \App\Models\LogoGeneration::factory()
+        ->for($user)
+        ->create([
+            'business_name' => 'MyBusiness',
+            'status' => 'processing',
+            'logos_completed' => 2,
+        ]);
+
+    // Create failed generation (should not be counted)
+    \App\Models\LogoGeneration::factory()
+        ->for($user)
+        ->create([
+            'business_name' => 'MyBusiness',
+            'status' => 'failed',
+            'logos_completed' => 0,
+        ]);
+
+    $component = Livewire::test(NameResultCard::class, ['suggestion' => $suggestion]);
+
+    expect($component->get('totalGeneratedLogosCount'))->toBe(4);
+});
+
 test('name result card only allows project owner to modify', function (): void {
     $owner = User::factory()->create();
     $otherUser = User::factory()->create();

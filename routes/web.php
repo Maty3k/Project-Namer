@@ -58,6 +58,14 @@ Route::get('project/{uuid}/gallery', App\Livewire\PhotoGallery::class)
     ->middleware(['auth', 'verified'])
     ->name('project.gallery');
 
+Route::get('logos', App\Livewire\LogoGenerations::class)
+    ->middleware(['auth', 'verified'])
+    ->name('logos.index');
+
+Route::get('logo-gallery/{logoGeneration}', App\Livewire\LogoGallery::class)
+    ->middleware(['auth', 'verified'])
+    ->name('logo.gallery');
+
 Route::middleware(['auth'])->group(function (): void {
     Route::redirect('settings', 'settings/profile');
 

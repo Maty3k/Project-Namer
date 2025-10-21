@@ -158,6 +158,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the user's logo generations
+     *
+     * @return HasMany<LogoGeneration, $this>
+     */
+    public function logoGenerations(): HasMany
+    {
+        return $this->hasMany(LogoGeneration::class);
+    }
+
+    /**
      * Get the user's initials
      */
     public function initials(): string
