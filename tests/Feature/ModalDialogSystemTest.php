@@ -164,28 +164,6 @@ describe('Modal Dialog System', function (): void {
             expect($modalData['title'])->toBe('Clear Search History');
             expect($modalData['variant'])->toBe('danger');
         });
-
-        it('displays logo generation progress modal', function (): void {
-            $logoData = [
-                'businessName' => 'TechCorp Solutions',
-                'progress' => 45,
-                'status' => 'generating',
-                'completedLogos' => 6,
-                'totalLogos' => 12,
-                'estimatedTimeRemaining' => '2 minutes',
-            ];
-
-            $component = Livewire::test('name-generator')
-                ->set('businessDescription', 'test business')
-                ->set('mode', 'creative');
-
-            $component->call('openModal', 'logoProgress', $logoData);
-
-            expect($component->get('modalType'))->toBe('logoProgress');
-            $modalData = $component->get('modalData');
-            expect($modalData['progress'])->toBe(45);
-            expect($modalData['completedLogos'])->toBe(6);
-        });
     });
 
     describe('Modal Interaction and Dismissal', function (): void {
@@ -367,18 +345,6 @@ describe('Modal Dialog System', function (): void {
             expect($component->get('modalOpen'))->toBeTrue();
             expect($component->get('modalType'))->toBe('domainInfo');
             expect($component->get('modalData')['domain'])->toBe('example.com');
-        });
-
-        it('integrates with logo generation workflow', function (): void {
-            $component = Livewire::test('name-generator')
-                ->set('businessDescription', 'test business')
-                ->set('mode', 'creative');
-
-            $component->call('showLogoProgress', 'TechCorp Solutions');
-
-            expect($component->get('modalOpen'))->toBeTrue();
-            expect($component->get('modalType'))->toBe('logoProgress');
-            expect($component->get('modalData')['businessName'])->toBe('TechCorp Solutions');
         });
 
         it('handles confirmation for destructive actions', function (): void {

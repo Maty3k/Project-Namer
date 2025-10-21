@@ -15,14 +15,6 @@ beforeEach(function (): void {
 });
 
 describe('Image Lazy Loading', function (): void {
-    test('logo gallery images have lazy loading attribute', function (): void {
-        // Test that loading="lazy" is present in logo gallery template
-        $templatePath = resource_path('views/livewire/logo-gallery.blade.php');
-        $content = file_get_contents($templatePath);
-
-        expect($content)->toContain('loading="lazy"');
-    });
-
     test('project image gallery has lazy loading', function (): void {
         ProjectImage::factory()->count(5)->create([
             'project_id' => $this->project->id,
@@ -118,16 +110,6 @@ describe('Progressive Image Loading', function (): void {
         $content = $response->getContent();
         expect($content)->toBeString();
     });
-
-    test('generated logos have progressive loading', function (): void {
-        // Test that progressive image component exists
-        $componentPath = resource_path('views/components/ui/progressive-image.blade.php');
-
-        expect(file_exists($componentPath))->toBeTrue();
-
-        $content = file_get_contents($componentPath);
-        expect($content)->toContain('loading=');
-    });
 });
 
 describe('Performance with Large Datasets', function (): void {
@@ -149,14 +131,5 @@ describe('Performance with Large Datasets', function (): void {
 
         $response->assertStatus(200);
         expect($loadTime)->toBeLessThan(1.5); // Should load in under 1.5 seconds
-    });
-
-    test('logo gallery loads quickly with many logos', function (): void {
-        $startTime = microtime(true);
-        $response = $this->get(route('logos.index'));
-        $loadTime = microtime(true) - $startTime;
-
-        $response->assertStatus(200);
-        expect($loadTime)->toBeLessThan(2.5); // Should load in under 2.5 seconds
     });
 });

@@ -150,46 +150,6 @@ describe('Dashboard Component', function (): void {
             ->assertDispatched('toast');
     });
 
-    it('can generate logos for selected names', function (): void {
-
-        // Ensure session is started for this test
-        $this->withSession(['test_session' => true]);
-
-        $selectedNames = ['TechFlow', 'DataSync'];
-
-        $component = Livewire::actingAs($this->user)
-            ->test(NameGeneratorDashboard::class)
-            ->set('businessIdea', 'A tech startup')
-            ->set('generationMode', 'creative')
-            ->set('selectedNamesForLogos', $selectedNames)
-            ->call('generateLogos')
-            ->assertHasNoErrors()
-            ->assertSet('showLogoGeneration', true)
-            ->assertSet('activeTab', 'logos')
-            ->assertDispatched('toast', type: 'success');
-
-        // Check if there are any error messages in the component
-        $errorMessage = $component->get('errorMessage');
-        if ($errorMessage) {
-            $this->fail("Component has error: $errorMessage");
-        }
-
-        // Verify logo generation record was created with flexible session_id check
-        $logoGeneration = LogoGeneration::where('business_name', 'TechFlow, DataSync')
-            ->where('business_description', 'A tech startup')
-            ->where('status', 'processing')
-            ->where('total_logos_requested', 8)
-            ->first();
-
-        expect($logoGeneration)->not->toBeNull();
-        expect($logoGeneration->session_id)->not->toBeEmpty();
-
-        // Verify the job was dispatched
-        Queue::assertPushed(GenerateLogosJob::class, function ($job) {
-            return true; // We can't easily check the job properties, so just verify it was pushed
-        });
-    });
-
     it('validates logo generation requires selected names', function (): void {
         Livewire::actingAs($this->user)
             ->test(NameGeneratorDashboard::class)

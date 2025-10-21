@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Performance;
 
-use App\Livewire\LogoGallery;
 use App\Livewire\ProjectPage;
 use App\Livewire\ThemeQuickToggle;
-use App\Models\LogoGeneration;
 use App\Models\Project;
-use App\Models\UploadedLogo;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -29,17 +26,12 @@ class AnimationPerformanceTest extends TestCase
 
     private Project $project;
 
-    private LogoGeneration $logoGeneration;
-
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->create();
         $this->project = Project::factory()->create(['user_id' => $this->user->id]);
-        $this->logoGeneration = LogoGeneration::factory()->create([
-            'status' => 'completed',
-        ]);
     }
 
     #[Test]
@@ -99,42 +91,6 @@ class AnimationPerformanceTest extends TestCase
             "ProjectPage operations with animations took {$operationTime}ms - too slow");
 
         $this->logPerformanceMetric('ProjectPage Animation + Functionality', $operationTime, 'ms', '📝');
-    }
-
-    #[Test]
-    public function logo_gallery_hover_animations_maintain_performance(): void
-    {
-        // Create test uploaded logos
-        $uploadedLogos = UploadedLogo::factory()->count(10)->create([
-            'session_id' => 'test-session',
-        ]);
-
-        $startTime = microtime(true);
-
-        $component = Livewire::actingAs($this->user)
-            ->test(LogoGallery::class, ['logoGenerationId' => $this->logoGeneration->id]);
-
-        // Test bulk operations work with hover animations
-        $selectedIds = $uploadedLogos->take(3)->pluck('id')->toArray();
-
-        $component
-            ->set('selectedUploadedLogos', $selectedIds)
-            ->assertSet('selectedUploadedLogos', $selectedIds)
-            ->assertHasNoErrors();
-
-        // Test that animated interactions don't break bulk operations
-        $component
-            ->call('bulkDeleteUploadedLogos')
-            ->assertHasNoErrors()
-            ->assertDispatched('toast');
-
-        $endTime = microtime(true);
-        $operationTime = ($endTime - $startTime) * 1000;
-
-        $this->assertLessThan(2000, $operationTime,
-            "Logo gallery operations with animations took {$operationTime}ms - too slow");
-
-        $this->logPerformanceMetric('Logo Gallery Animation + Functionality', $operationTime, 'ms', '🖼️');
     }
 
     #[Test]

@@ -31,37 +31,44 @@ final class GeneratedLogoFactory extends Factory
 
         return [
             'logo_generation_id' => LogoGeneration::factory(),
+            'file_path' => 'logos/'.$this->faker->numberBetween(1, 1000).'/'.$this->faker->slug().'.png',
             'style' => $this->faker->randomElement($styles),
-            'variation_number' => $this->faker->numberBetween(1, 3),
-            'prompt_used' => $this->faker->sentence(12),
-            'original_file_path' => 'logos/'.$this->faker->numberBetween(1, 1000).'/originals/'.$this->faker->slug().'.png',
-            'file_size' => $this->faker->numberBetween(50000, 500000),
-            'image_width' => 1024,
-            'image_height' => 1024,
-            'generation_time_ms' => $this->faker->numberBetween(15000, 45000),
-            'api_image_url' => $this->faker->imageUrl(1024, 1024, 'logo'),
+            'prompt' => $this->faker->sentence(12),
+            'status' => 'completed',
         ];
     }
 
     /**
-     * Indicate that the logo has a local file.
+     * Indicate that the logo is pending.
      */
-    public function withFile(): static
+    public function pending(): static
     {
         return $this->state(fn (array $attributes) => [
-            'original_file_path' => 'logos/'.$this->faker->numberBetween(1, 1000).'/originals/'.$this->faker->slug().'.png',
-            'file_size' => $this->faker->numberBetween(50000, 500000),
+            'status' => 'pending',
+            'file_path' => null,
         ]);
     }
 
     /**
-     * Indicate that the logo download failed.
+     * Indicate that the logo is processing.
      */
-    public function downloadFailed(): static
+    public function processing(): static
     {
         return $this->state(fn (array $attributes) => [
-            'original_file_path' => null,
-            'file_size' => 0,
+            'status' => 'processing',
+            'file_path' => null,
+        ]);
+    }
+
+    /**
+     * Indicate that the logo generation failed.
+     */
+    public function failed(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'failed',
+            'file_path' => null,
+            'error_message' => 'Failed to generate logo',
         ]);
     }
 

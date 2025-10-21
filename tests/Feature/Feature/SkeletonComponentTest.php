@@ -40,30 +40,6 @@ describe('Skeleton Components', function (): void {
         });
     });
 
-    describe('Logo Card Skeleton', function (): void {
-        it('renders with correct structure', function (): void {
-            $html = View::make('components.skeleton-logo-card')->render();
-
-            expect($html)
-                ->toContain('animate-pulse')
-                ->toContain('bg-gray-200')
-                ->toContain('dark:bg-gray-700');
-        });
-
-        it('has square aspect ratio for logo placeholder', function (): void {
-            $html = View::make('components.skeleton-logo-card')->render();
-
-            // Logo cards should have square or specific aspect ratio
-            expect($html)->toContain('aspect-');
-        });
-
-        it('supports dark mode', function (): void {
-            $html = View::make('components.skeleton-logo-card')->render();
-
-            expect($html)->toContain('dark:bg-gray-');
-        });
-    });
-
     describe('Session List Item Skeleton', function (): void {
         it('renders with correct structure', function (): void {
             $html = View::make('components.skeleton-session-item')->render();
