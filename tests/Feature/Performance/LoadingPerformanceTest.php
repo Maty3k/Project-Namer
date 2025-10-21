@@ -230,7 +230,7 @@ class LoadingPerformanceTest extends TestCase
         $routes = [
             '/dashboard',
             "/project/{$this->project->uuid}",
-            '/settings/appearance',
+            '/appearance',
         ];
 
         $totalStartTime = microtime(true);
