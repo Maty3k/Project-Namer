@@ -114,30 +114,27 @@
 
                             <!-- Stats -->
                             <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-                                <div class="flex justify-between">
-                                    <span>Logos: {{ $generation->logos_completed }}/{{ $generation->total_logos_requested }}</span>
-                                    <span>{{ $generation->created_at->format('M j, Y') }}</span>
-                                </div>
+                                <span>Logos: {{ $generation->logos_completed }}/{{ $generation->total_logos_requested }}</span>
                             </div>
 
                             <!-- Actions -->
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center gap-2">
+                            <div class="flex flex-col gap-3">
+                                <div class="flex items-center justify-between gap-2">
                                     @if($generation->status === 'completed' && $generation->generatedLogos->count() > 0)
                                         <flux:button
                                             variant="primary"
                                             size="sm"
                                             wire:click="downloadLogos({{ $generation->id }})"
-                                            class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 dark:from-primary-500 dark:to-primary-600 dark:hover:from-primary-600 dark:hover:to-primary-700 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                                            class="flex-1 inline-flex items-center justify-center gap-2.5 px-5 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 dark:from-primary-500 dark:to-primary-600 dark:hover:from-primary-600 dark:hover:to-primary-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
                                         >
-                                            <flux:icon.arrow-down-tray class="size-4" />
-                                            <span>Download</span>
-                                            <span class="px-2 py-0.5 bg-white/20 rounded-full text-xs font-semibold">
+                                            <flux:icon.arrow-down-tray class="size-5" />
+                                            <span class="text-sm">Download All Logos</span>
+                                            <span class="px-2.5 py-1 bg-white/20 rounded-full text-xs font-bold">
                                                 {{ $generation->generatedLogos->count() }}
                                             </span>
                                         </flux:button>
                                     @else
-                                        <flux:button variant="ghost" size="sm" disabled>
+                                        <flux:button variant="ghost" size="sm" disabled class="flex-1">
                                             {{ ucfirst($generation->status) }}
                                         </flux:button>
                                     @endif
@@ -147,13 +144,19 @@
                                         size="sm"
                                         wire:click="deleteGeneration({{ $generation->id }})"
                                         wire:confirm="Are you sure you want to delete the logos for '{{ $generation->business_name }}'? This action cannot be undone."
+                                        class="px-3 py-2.5"
                                     >
-                                        <flux:icon.trash class="size-4" />
+                                        <flux:icon.trash class="size-5" />
                                     </flux:button>
                                 </div>
 
-                                <div class="text-xs text-gray-500 dark:text-gray-400">
-                                    {{ $generation->created_at->format('M j, Y') }}
+                                <div class="flex items-center justify-between px-1">
+                                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                                        Generated on
+                                    </span>
+                                    <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                                        {{ $generation->created_at->format('M j, Y') }}
+                                    </span>
                                 </div>
                             </div>
                         </div>
