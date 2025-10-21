@@ -28000,10 +28000,6 @@ namespace App\Livewire {
      */
     class PhotoGallery extends \Livewire\Component {
             }
-    /**
-     */
-    class ThemeCustomizer extends \Livewire\Component {
-            }
     }
 
 namespace App\Livewire\Settings {

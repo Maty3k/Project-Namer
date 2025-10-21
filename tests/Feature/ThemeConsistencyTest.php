@@ -3,10 +3,8 @@
 declare(strict_types=1);
 
 use App\Livewire\NameGeneratorDashboard;
-use App\Livewire\ThemeCustomizer;
 use App\Models\User;
 use App\Models\UserThemePreference;
-use Livewire\Livewire;
 
 test('theme preferences are consistently applied across components', function (): void {
     // Create a user with a theme preference

@@ -14,6 +14,13 @@ use Illuminate\Support\Facades\Cache;
 final class ThemeHelper
 {
     /**
+     * Request-scoped cache for theme preferences.
+     *
+     * @var array<string, UserThemePreference|null>
+     */
+    private static array $requestCache = [];
+
+    /**
      * Get the current user's theme - always fresh from database.
      * No time-based caching to avoid stale data issues during navigation.
      */
@@ -27,14 +34,13 @@ final class ThemeHelper
 
         // Always query fresh from database to ensure accuracy
         // Use static property for request-scoped caching only
-        static $requestCache = [];
         $requestKey = "user_{$user->id}";
 
-        if (! isset($requestCache[$requestKey])) {
-            $requestCache[$requestKey] = UserThemePreference::where('user_id', $user->id)->first();
+        if (! isset(self::$requestCache[$requestKey])) {
+            self::$requestCache[$requestKey] = UserThemePreference::where('user_id', $user->id)->first();
         }
 
-        return $requestCache[$requestKey];
+        return self::$requestCache[$requestKey];
     }
 
     /**
@@ -43,8 +49,9 @@ final class ThemeHelper
      */
     public static function clearUserThemeCache(): void
     {
-        // The static cache in getCurrentUserTheme() is automatically cleared
-        // between requests, so we just need to clear any Laravel cache
+        // Clear the static request cache
+        self::$requestCache = [];
+
         $user = Auth::user();
 
         if (! $user) {

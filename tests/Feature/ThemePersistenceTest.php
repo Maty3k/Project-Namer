@@ -159,7 +159,7 @@ describe('Theme Persistence Without localStorage', function (): void {
 
     it('user without preference falls back to user model values', function (): void {
         // Create dummy users to avoid static cache collision
-        User::factory()->count(50)->create();
+        User::factory()->count(150)->create();
 
         $user = User::factory()->create([
             'current_theme' => 'midnight-teal',

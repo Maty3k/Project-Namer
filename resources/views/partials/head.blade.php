@@ -14,5 +14,8 @@
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 <link rel="stylesheet" href="{{ asset('css/smooth-animations.css') }}">
 
+{{-- Preload theme CSS to prevent render blocking --}}
+<link rel="preload" href="{{ \App\Helpers\ThemeHelper::getThemeCssPath() }}" as="style">
+
 {{-- Apply theme server-side to prevent flash --}}
 <link rel="stylesheet" href="{{ \App\Helpers\ThemeHelper::getThemeCssPath() }}" id="theme-css-link">

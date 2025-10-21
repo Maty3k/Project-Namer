@@ -131,27 +131,6 @@ class LoadingPerformanceTest extends TestCase
     }
 
     #[Test]
-    public function theme_customizer_performance(): void
-    {
-        // Test theme customizer loading performance
-        $startTime = microtime(true);
-
-        $response = $this->actingAs($this->user)
-            ->get('/themes');
-
-        $endTime = microtime(true);
-        $loadTime = ($endTime - $startTime) * 1000;
-
-        $response->assertStatus(200);
-
-        // Theme customizer should load under 2.5 seconds
-        $this->assertLessThan(2500, $loadTime,
-            "Theme customizer load time ({$loadTime}ms) exceeds target");
-
-        $this->logPerformanceMetric('Theme Customizer Load', $loadTime, 'ms');
-    }
-
-    #[Test]
     public function api_response_times_are_acceptable(): void
     {
         // Test API endpoint performance (if any)
@@ -251,7 +230,7 @@ class LoadingPerformanceTest extends TestCase
         $routes = [
             '/dashboard',
             "/project/{$this->project->uuid}",
-            '/themes',
+            '/settings/appearance',
         ];
 
         $totalStartTime = microtime(true);

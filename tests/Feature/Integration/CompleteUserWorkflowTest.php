@@ -6,7 +6,7 @@ namespace Tests\Feature\Integration;
 
 use App\Livewire\LogoGallery;
 use App\Livewire\ProjectPage;
-use App\Livewire\ThemeCustomizer;
+use App\Livewire\ThemeQuickToggle;
 use App\Models\LogoGeneration;
 use App\Models\Project;
 use App\Models\UploadedLogo;
@@ -184,20 +184,15 @@ class CompleteUserWorkflowTest extends TestCase
 
         $this->logWorkflowStep('✅ Bulk operations working');
 
-        // Step 11: Test theme customization workflow
-        $themeComponent = Livewire::actingAs($this->user)->test(ThemeCustomizer::class);
+        // Step 11: Test theme toggle workflow
+        $themeComponent = Livewire::actingAs($this->user)->test(ThemeQuickToggle::class);
 
         $themeComponent
-            ->set('themeName', 'ocean')
-            ->set('isDarkMode', false)
-            ->assertHasNoErrors();
-
-        $themeComponent
-            ->call('save')
+            ->call('toggleTheme')
             ->assertHasNoErrors()
-            ->assertDispatched('theme-saved');
+            ->assertDispatched('theme-updated');
 
-        $this->logWorkflowStep('✅ Theme customization completed');
+        $this->logWorkflowStep('✅ Theme toggle completed');
 
         // Step 12: Verify data persistence
         $this->project->refresh();
@@ -439,16 +434,14 @@ class CompleteUserWorkflowTest extends TestCase
         $this->logWorkflowStep("✅ Enhanced file upload: {$uploadTime}ms");
 
         // Test smooth theme transitions
-        $themeComponent = Livewire::actingAs($this->user)->test(ThemeCustomizer::class);
+        $themeComponent = Livewire::actingAs($this->user)->test(ThemeQuickToggle::class);
 
         $startTime = microtime(true);
 
         $themeComponent
-            ->set('themeName', 'sunset')
-            ->set('isDarkMode', false)
-            ->call('save')
+            ->call('toggleTheme')
             ->assertHasNoErrors()
-            ->assertDispatched('theme-saved');
+            ->assertDispatched('theme-updated');
 
         $endTime = microtime(true);
         $themeTime = ($endTime - $startTime) * 1000;

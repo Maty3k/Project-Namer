@@ -6,7 +6,7 @@ namespace Tests\Feature\Performance;
 
 use App\Livewire\LogoGallery;
 use App\Livewire\ProjectPage;
-use App\Livewire\ThemeCustomizer;
+use App\Livewire\ThemeQuickToggle;
 use App\Models\LogoGeneration;
 use App\Models\Project;
 use App\Models\UploadedLogo;
@@ -45,23 +45,22 @@ class AnimationPerformanceTest extends TestCase
     #[Test]
     public function theme_animations_do_not_break_functionality(): void
     {
-        // Test that theme customizer animations don't interfere with core functionality
+        // Test that theme toggle animations don't interfere with core functionality
         $startTime = microtime(true);
 
         $component = Livewire::actingAs($this->user)
-            ->test(ThemeCustomizer::class);
+            ->test(ThemeQuickToggle::class);
 
-        // Test theme changes (which trigger animations)
+        // Test theme toggle (which triggers animations)
         $component
-            ->set('themeName', 'sunset')
-            ->set('isDarkMode', false)
+            ->call('toggleTheme')
             ->assertHasNoErrors();
 
-        // Test theme save functionality works with animations
+        // Test toggling back works with animations
         $component
-            ->call('save')
+            ->call('toggleTheme')
             ->assertHasNoErrors()
-            ->assertDispatched('theme-saved');
+            ->assertDispatched('theme-updated');
 
         $endTime = microtime(true);
         $operationTime = ($endTime - $startTime) * 1000;
@@ -203,13 +202,12 @@ class AnimationPerformanceTest extends TestCase
 
         // Simulate animation-heavy interactions
         $component = Livewire::actingAs($this->user)
-            ->test(ThemeCustomizer::class);
+            ->test(ThemeQuickToggle::class);
 
-        // Multiple rapid theme changes (which trigger animations)
-        $themes = ['default', 'ocean', 'sunset', 'forest', 'dark'];
+        // Multiple rapid theme toggles (which trigger animations)
         for ($i = 0; $i < 10; $i++) {
             $component
-                ->set('themeName', $themes[$i % count($themes)])
+                ->call('toggleTheme')
                 ->assertHasNoErrors();
         }
 
@@ -262,12 +260,10 @@ class AnimationPerformanceTest extends TestCase
         // Create and destroy components multiple times
         for ($i = 0; $i < 5; $i++) {
             $component = Livewire::actingAs($this->user)
-                ->test(ThemeCustomizer::class);
+                ->test(ThemeQuickToggle::class);
 
             $component
-                ->set('themeName', 'sunset')
-                ->set('isDarkMode', false)
-                ->call('save');
+                ->call('toggleTheme');
 
             // Simulate component cleanup
             unset($component);

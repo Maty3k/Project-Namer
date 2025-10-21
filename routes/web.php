@@ -66,10 +66,6 @@ Route::get('project/{uuid}/gallery', App\Livewire\PhotoGallery::class)
     ->middleware(['auth', 'verified'])
     ->name('project.gallery');
 
-Route::get('themes', App\Livewire\ThemeCustomizer::class)
-    ->middleware(['auth', 'verified'])
-    ->name('themes.customizer');
-
 Route::middleware(['auth'])->group(function (): void {
     Route::redirect('settings', 'settings/profile');
 
