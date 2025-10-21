@@ -20,6 +20,7 @@ beforeEach(function (): void {
 describe('LogoGallery Component', function (): void {
     it('can mount with valid logo generation', function (): void {
         $logoGeneration = LogoGeneration::factory()->create([
+            'user_id' => $this->user->id,
             'business_name' => 'Test Company',
             'status' => 'completed',
         ]);
@@ -41,6 +42,7 @@ describe('LogoGallery Component', function (): void {
 
     it('displays processing status with progress', function (): void {
         $logoGeneration = LogoGeneration::factory()->create([
+            'user_id' => $this->user->id,
             'status' => 'processing',
             'total_logos_requested' => 5,
             'logos_completed' => 3,
@@ -62,6 +64,7 @@ describe('LogoGallery Component', function (): void {
 
     it('displays completed logos in grid view', function (): void {
         $logoGeneration = LogoGeneration::factory()->create([
+            'user_id' => $this->user->id,
             'status' => 'completed',
         ]);
 
@@ -82,7 +85,7 @@ describe('LogoGallery Component', function (): void {
     });
 
     it('can toggle between grid and list view modes', function (): void {
-        $logoGeneration = LogoGeneration::factory()->create(['status' => 'completed']);
+        $logoGeneration = LogoGeneration::factory()->create(['user_id' => $this->user->id, 'status' => 'completed']);
 
         Livewire::actingAs($this->user)
             ->test(LogoGallery::class, ['logoGenerationId' => $logoGeneration->id])
@@ -94,7 +97,7 @@ describe('LogoGallery Component', function (): void {
     });
 
     it('can select logos for customization', function (): void {
-        $logoGeneration = LogoGeneration::factory()->create(['status' => 'completed']);
+        $logoGeneration = LogoGeneration::factory()->create(['user_id' => $this->user->id, 'status' => 'completed']);
         $logo = GeneratedLogo::factory()->create([
             'logo_generation_id' => $logoGeneration->id,
         ]);
@@ -108,7 +111,7 @@ describe('LogoGallery Component', function (): void {
     });
 
     it('can clear logo selection', function (): void {
-        $logoGeneration = LogoGeneration::factory()->create(['status' => 'completed']);
+        $logoGeneration = LogoGeneration::factory()->create(['user_id' => $this->user->id, 'status' => 'completed']);
         $logo = GeneratedLogo::factory()->create([
             'logo_generation_id' => $logoGeneration->id,
         ]);
@@ -124,7 +127,7 @@ describe('LogoGallery Component', function (): void {
     });
 
     it('validates color scheme application', function (): void {
-        $logoGeneration = LogoGeneration::factory()->create(['status' => 'completed']);
+        $logoGeneration = LogoGeneration::factory()->create(['user_id' => $this->user->id, 'status' => 'completed']);
 
         // Test missing color scheme
         Livewire::actingAs($this->user)
@@ -152,7 +155,7 @@ describe('LogoGallery Component', function (): void {
     });
 
     it('can download individual logos', function (): void {
-        $logoGeneration = LogoGeneration::factory()->create(['status' => 'completed']);
+        $logoGeneration = LogoGeneration::factory()->create(['user_id' => $this->user->id, 'status' => 'completed']);
         $logo = GeneratedLogo::factory()->create([
             'logo_generation_id' => $logoGeneration->id,
         ]);
@@ -164,7 +167,7 @@ describe('LogoGallery Component', function (): void {
     });
 
     it('can download batch of logos', function (): void {
-        $logoGeneration = LogoGeneration::factory()->create(['status' => 'completed']);
+        $logoGeneration = LogoGeneration::factory()->create(['user_id' => $this->user->id, 'status' => 'completed']);
         $logos = GeneratedLogo::factory()->count(3)->create([
             'logo_generation_id' => $logoGeneration->id,
         ]);
@@ -186,7 +189,7 @@ describe('LogoGallery Component', function (): void {
     });
 
     it('prevents batch download with no logos', function (): void {
-        $logoGeneration = LogoGeneration::factory()->create(['status' => 'completed']);
+        $logoGeneration = LogoGeneration::factory()->create(['user_id' => $this->user->id, 'status' => 'completed']);
 
         Livewire::actingAs($this->user)
             ->test(LogoGallery::class, ['logoGenerationId' => $logoGeneration->id])
@@ -195,7 +198,7 @@ describe('LogoGallery Component', function (): void {
     });
 
     it('refreshes status when triggered', function (): void {
-        $logoGeneration = LogoGeneration::factory()->create(['status' => 'processing']);
+        $logoGeneration = LogoGeneration::factory()->create(['user_id' => $this->user->id, 'status' => 'processing']);
 
         Livewire::actingAs($this->user)
             ->test(LogoGallery::class, ['logoGenerationId' => $logoGeneration->id])
@@ -204,7 +207,7 @@ describe('LogoGallery Component', function (): void {
     });
 
     it('shows completion toast when status changes to completed', function (): void {
-        $logoGeneration = LogoGeneration::factory()->create(['status' => 'completed']);
+        $logoGeneration = LogoGeneration::factory()->create(['user_id' => $this->user->id, 'status' => 'completed']);
 
         Livewire::actingAs($this->user)
             ->test(LogoGallery::class, ['logoGenerationId' => $logoGeneration->id])
@@ -213,7 +216,7 @@ describe('LogoGallery Component', function (): void {
     });
 
     it('groups logos by style correctly', function (): void {
-        $logoGeneration = LogoGeneration::factory()->create(['status' => 'completed']);
+        $logoGeneration = LogoGeneration::factory()->create(['user_id' => $this->user->id, 'status' => 'completed']);
 
         // Create logos with different styles
         GeneratedLogo::factory()->count(2)->create([
@@ -245,6 +248,7 @@ describe('LogoGallery Component', function (): void {
 
     it('displays failed status with error message', function (): void {
         $logoGeneration = LogoGeneration::factory()->create([
+            'user_id' => $this->user->id,
             'status' => 'failed',
             'error_message' => 'API quota exceeded',
         ]);
@@ -257,7 +261,7 @@ describe('LogoGallery Component', function (): void {
     });
 
     it('displays empty state when no logos generated', function (): void {
-        $logoGeneration = LogoGeneration::factory()->create(['status' => 'completed']);
+        $logoGeneration = LogoGeneration::factory()->create(['user_id' => $this->user->id, 'status' => 'completed']);
 
         Livewire::actingAs($this->user)
             ->test(LogoGallery::class, ['logoGenerationId' => $logoGeneration->id])
@@ -266,7 +270,7 @@ describe('LogoGallery Component', function (): void {
     });
 
     it('prevents download of non-existent logo', function (): void {
-        $logoGeneration = LogoGeneration::factory()->create(['status' => 'completed']);
+        $logoGeneration = LogoGeneration::factory()->create(['user_id' => $this->user->id, 'status' => 'completed']);
 
         Livewire::actingAs($this->user)
             ->test(LogoGallery::class, ['logoGenerationId' => $logoGeneration->id])

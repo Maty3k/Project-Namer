@@ -17,6 +17,7 @@ uses(RefreshDatabase::class)->group('slow');
 beforeEach(function (): void {
     $this->user = User::factory()->create();
     $this->logoGeneration = LogoGeneration::factory()->create([
+        'user_id' => $this->user->id,
         'business_name' => 'Test Company',
         'status' => 'completed',
         'session_id' => session()->getId(),
