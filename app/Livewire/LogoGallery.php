@@ -137,7 +137,9 @@ class LogoGallery extends Component
     public function loadLogoGeneration(): void
     {
         $this->logoGeneration = LogoGeneration::with(['generatedLogos.colorVariants'])
-            ->find($this->logoGenerationId);
+            ->where('id', $this->logoGenerationId)
+            ->where('user_id', Auth::id())
+            ->first();
 
         if (! $this->logoGeneration) {
             $this->errorMessage = 'Logo generation not found.';
