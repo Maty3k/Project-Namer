@@ -67,6 +67,35 @@ class Appearance extends Component
         $this->dispatch('$refresh');
     }
 
+    /**
+     * Get emoji icon for each theme.
+     */
+    protected function getThemeEmojis(): array
+    {
+        return [
+            'default' => '🔵',
+            'dark' => '🌙',
+            'ocean' => '🌊',
+            'sunset' => '🌅',
+            'forest' => '🌲',
+            'cosmic-violet' => '🌌',
+            'coral-reef' => '🪸',
+            'midnight-teal' => '🌃',
+            'summer' => '🏖️',
+            'winter' => '❄️',
+            'halloween' => '🎃',
+            'spring' => '🌸',
+            'autumn' => '🍂',
+            'neon-cyber' => '🤖',
+            'electric-blue' => '⚡',
+            'hot-pink' => '💗',
+            'lava-red' => '🌋',
+            'lime-punch' => '🍋',
+            'gold-rush' => '💰',
+            'matrix-green' => '🟢',
+        ];
+    }
+
     public function render(): \Illuminate\View\View
     {
         $themeService = app(ThemeService::class);
@@ -74,6 +103,7 @@ class Appearance extends Component
         return view('livewire.appearance', [
             'themes' => $themeService->getPredefinedThemes(),
             'isDarkMode' => ThemeHelper::isDarkMode(),
+            'themeEmojis' => $this->getThemeEmojis(),
         ]);
     }
 }

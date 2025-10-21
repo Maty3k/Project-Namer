@@ -52,11 +52,7 @@
                                         {{ $currentTheme === $theme['name']
                                            ? 'ring-2 ring-blue-400 ring-offset-2 dark:ring-blue-500 dark:ring-offset-zinc-900'
                                            : 'group-hover:scale-110' }}">
-                                @if($theme['is_dark_mode'])
-                                    🌙
-                                @else
-                                    ☀️
-                                @endif
+                                {{ $themeEmojis[$theme['name']] ?? '🎨' }}
                             </div>
 
                             {{-- Theme Name --}}
