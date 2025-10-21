@@ -1,4 +1,7 @@
-<div class="max-w-7xl mx-auto w-full space-y-6">
+<div class="max-w-7xl mx-auto w-full space-y-6"
+     @if($this->logoGeneration && in_array($this->logoGeneration->status, ['processing', 'pending']))
+     wire:poll.2s="refreshStatus"
+     @endif>
     @if($this->logoGeneration)
         {{-- Breadcrumb Navigation --}}
         <nav class="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
