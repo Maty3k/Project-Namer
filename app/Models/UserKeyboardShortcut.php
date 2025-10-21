@@ -72,10 +72,10 @@ final class UserKeyboardShortcut extends Model
                 'description' => 'Open settings',
                 'enabled' => true,
             ],
-            'themeCustomizer' => [
+            'appearance' => [
                 'key' => 't',
                 'modifiers' => ['ctrl'],
-                'description' => 'Theme customizer',
+                'description' => 'Appearance settings',
                 'enabled' => true,
             ],
             'logoGallery' => [

@@ -23,7 +23,7 @@ test('component displays all default shortcuts', function (): void {
         ->test(KeyboardShortcuts::class)
         ->assertSee('New project')
         ->assertSee('Open settings')
-        ->assertSee('Theme customizer')
+        ->assertSee('Appearance settings')
         ->assertSee('Logo gallery')
         ->assertSee('Show keyboard shortcuts')
         ->assertSee('Close modals');

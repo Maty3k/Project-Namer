@@ -19,7 +19,7 @@ test('returns default shortcuts configuration', function (): void {
     $defaults = UserKeyboardShortcut::getDefaultShortcuts();
 
     expect($defaults)->toBeArray()
-        ->toHaveKeys(['newProject', 'settings', 'themeCustomizer', 'logoGallery', 'help', 'escape'])
+        ->toHaveKeys(['newProject', 'settings', 'appearance', 'logoGallery', 'help', 'escape'])
         ->and($defaults['newProject'])->toHaveKeys(['key', 'modifiers', 'description', 'enabled'])
         ->and($defaults['newProject']['key'])->toBe('n')
         ->and($defaults['newProject']['modifiers'])->toBe(['ctrl'])
@@ -44,13 +44,13 @@ test('disables individual shortcuts correctly', function (): void {
     $shortcuts = UserKeyboardShortcut::findOrCreateForUser($user->id);
 
     $shortcuts->update([
-        'disabled_shortcuts' => ['newProject', 'themeCustomizer'],
+        'disabled_shortcuts' => ['newProject', 'appearance'],
     ]);
 
     $merged = $shortcuts->getMergedShortcuts();
 
     expect($merged['newProject']['enabled'])->toBeFalse()
-        ->and($merged['themeCustomizer']['enabled'])->toBeFalse()
+        ->and($merged['appearance']['enabled'])->toBeFalse()
         ->and($merged['logoGallery']['enabled'])->toBeTrue()
         ->and($merged['help']['enabled'])->toBeTrue();
 });

@@ -17,12 +17,10 @@ uses(RefreshDatabase::class);
  */
 function clearThemeHelperStaticCache(): void
 {
-    // Since we can't reliably clear the static variable inside getCurrentUserTheme(),
-    // and the static cache is keyed by user ID, we need to ensure each test gets
-    // a fresh query. The only way to do this without modifying ThemeHelper is to
-    // ensure getCurrentUserTheme() is never called before we set up our test data.
+    // Clear the static cache in ThemeHelper
+    ThemeHelper::clearUserThemeCache();
 
-    // For now, just clear any Laravel caches that might exist
+    // Also clear any Laravel caches that might exist
     Cache::flush();
 }
 

@@ -64,11 +64,11 @@ describe('Disabled Keyboard Shortcuts', function (): void {
         $userShortcuts = UserKeyboardShortcut::findOrCreateForUser($this->user->id);
 
         $userShortcuts->toggleShortcut('settings');
-        $userShortcuts->toggleShortcut('themeCustomizer');
+        $userShortcuts->toggleShortcut('appearance');
         $userShortcuts->toggleShortcut('logoGallery');
 
         $userShortcuts->refresh();
-        expect($userShortcuts->disabled_shortcuts)->toBe(['settings', 'themeCustomizer', 'logoGallery']);
+        expect($userShortcuts->disabled_shortcuts)->toBe(['settings', 'appearance', 'logoGallery']);
     });
 
     test('getMergedShortcuts marks disabled shortcuts as not enabled', function (): void {
@@ -79,7 +79,7 @@ describe('Disabled Keyboard Shortcuts', function (): void {
 
         expect($shortcuts['settings']['enabled'])->toBeFalse();
         expect($shortcuts['newProject']['enabled'])->toBeTrue();
-        expect($shortcuts['themeCustomizer']['enabled'])->toBeTrue();
+        expect($shortcuts['appearance']['enabled'])->toBeTrue();
     });
 
     test('isShortcutEnabled returns false for disabled shortcut', function (): void {
