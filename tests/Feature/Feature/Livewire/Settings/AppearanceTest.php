@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Helpers\ThemeHelper;
-use App\Livewire\Settings\Appearance;
+use App\Livewire\Appearance;
 use App\Models\User;
 use App\Models\UserThemePreference;
 use App\Services\ThemeService;

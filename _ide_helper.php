@@ -28000,6 +28000,10 @@ namespace App\Livewire {
      */
     class PhotoGallery extends \Livewire\Component {
             }
+    /**
+     */
+    class Appearance extends \Livewire\Component {
+            }
     }
 
 namespace App\Livewire\Settings {
@@ -28014,10 +28018,6 @@ namespace App\Livewire\Settings {
     /**
      */
     class TwoFactorAuthenticationPage extends \Livewire\Component {
-            }
-    /**
-     */
-    class Appearance extends \Livewire\Component {
             }
     /**
      */

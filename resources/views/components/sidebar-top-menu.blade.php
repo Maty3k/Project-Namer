@@ -35,8 +35,8 @@
         </flux:navlist.item>
 
         <flux:navlist.item icon="swatch"
-                           :href="route('settings.appearance')"
-                           :current="request()->routeIs('settings.appearance')"
+                           :href="route('appearance')"
+                           :current="request()->routeIs('appearance')"
                            wire:navigate
                            class="touch-target interactive focus-modern">
             {{ __('Appearance') }}

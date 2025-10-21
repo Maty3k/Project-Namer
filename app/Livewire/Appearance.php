@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Livewire\Settings;
+namespace App\Livewire;
 
 use App\Helpers\ThemeHelper;
 use App\Models\UserThemePreference;
@@ -71,7 +71,7 @@ class Appearance extends Component
     {
         $themeService = app(ThemeService::class);
 
-        return view('livewire.settings.appearance', [
+        return view('livewire.appearance', [
             'themes' => $themeService->getPredefinedThemes(),
             'isDarkMode' => ThemeHelper::isDarkMode(),
         ]);

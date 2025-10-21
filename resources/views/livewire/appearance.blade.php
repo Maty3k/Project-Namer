@@ -1,7 +1,14 @@
 <section class="w-full">
-    @include('partials.settings-heading')
+    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
+                {{ __('Appearance') }}
+            </h1>
+            <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                {{ __('Choose your theme and mode preferences') }}
+            </p>
+        </div>
 
-    <x-settings.layout :heading="__('Appearance')" :subheading="__('Choose your theme and mode preferences')">
         <div class="space-y-6">
             {{-- Current Theme Info --}}
             <div class="flex items-center justify-between rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900">
@@ -74,5 +81,5 @@
                 </div>
             </div>
         </div>
-    </x-settings.layout>
+    </div>
 </section>
