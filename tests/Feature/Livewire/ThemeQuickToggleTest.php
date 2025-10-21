@@ -56,7 +56,7 @@ it('can toggle from dark to light mode', function (): void {
     $preference = UserThemePreference::where('user_id', $user->id)->first();
     expect($preference->is_dark_mode)->toBeFalse();
     expect($preference->theme_name)->toBe('dark');
-})->skip('Theme toggle logic requires complex mocking');
+});
 
 it('displays correct icon and text for current theme', function (): void {
     $user = User::factory()->create([
@@ -77,7 +77,7 @@ it('displays correct icon and text for current theme', function (): void {
     // Verify the user preference was updated
     $user->refresh();
     expect($user->prefers_dark_mode)->toBeTrue();
-})->skip('Theme toggle logic requires complex mocking');
+});
 
 it('does nothing when user is not authenticated', function (): void {
     Livewire::test(ThemeQuickToggle::class)
@@ -123,7 +123,7 @@ it('updates existing preference when toggling', function (): void {
     $preference->refresh();
     expect($preference->is_dark_mode)->toBeTrue();
     expect($preference->theme_name)->toBe('ocean'); // Theme name should persist
-})->skip('Theme toggle logic requires complex mocking');
+});
 
 it('disables auto-switching when manually toggling', function (): void {
     $user = User::factory()->create([
@@ -155,7 +155,7 @@ it('creates preference with correct theme name from user', function (): void {
     $preference = UserThemePreference::where('user_id', $user->id)->first();
     expect($preference->theme_name)->toBe('sunset');
     expect($preference->is_dark_mode)->toBeTrue();
-})->skip('Theme toggle logic requires complex mocking');
+});
 
 it('toggle works multiple times in succession', function (): void {
     $user = User::factory()->create([
@@ -181,4 +181,4 @@ it('toggle works multiple times in succession', function (): void {
     $component->call('toggleTheme');
     $user->refresh();
     expect($user->prefers_dark_mode)->toBeTrue();
-})->skip('Theme toggle logic requires complex mocking');
+});

@@ -37,15 +37,15 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 3.7 Simplify script to ~20 lines with no defensive logic
   - [x] 3.8 Verify tests pass and no flash of wrong theme on page load
 
-- [ ] 4. Refactor ThemeQuickToggle for Database-Only Updates
-  - [ ] 4.1 Write tests for ThemeQuickToggle with database persistence
-  - [ ] 4.2 Update toggleTheme() method to only update database (User and UserThemePreference)
-  - [ ] 4.3 Remove any localStorage manipulation from ThemeQuickToggle
-  - [ ] 4.4 Clear theme cache after database update
-  - [ ] 4.5 Dispatch Livewire $refresh event to reload page with new theme
-  - [ ] 4.6 Remove any manual DOM manipulation or authorization flags
-  - [ ] 4.7 Ensure both User.prefers_dark_mode and UserThemePreference.is_dark_mode stay synchronized
-  - [ ] 4.8 Verify tests pass and theme switching works smoothly
+- [x] 4. Refactor ThemeQuickToggle for Database-Only Updates
+  - [x] 4.1 Write tests for ThemeQuickToggle with database persistence
+  - [x] 4.2 Update toggleTheme() method to only update database (User and UserThemePreference)
+  - [x] 4.3 Remove any localStorage manipulation from ThemeQuickToggle
+  - [x] 4.4 Clear theme cache after database update
+  - [x] 4.5 Dispatch Livewire $refresh event to reload page with new theme
+  - [x] 4.6 Remove any manual DOM manipulation or authorization flags
+  - [x] 4.7 Ensure both User.prefers_dark_mode and UserThemePreference.is_dark_mode stay synchronized
+  - [x] 4.8 Verify tests pass and theme switching works smoothly
 
 - [ ] 5. Verify Complete System Integration
   - [ ] 5.1 Run full test suite to ensure no regressions
