@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\ShareController;
 use App\Http\Controllers\Api\SuggestionDomainsController;
 use App\Http\Controllers\Api\ThemeController;
 use App\Http\Controllers\Api\UserPreferencesController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
@@ -310,7 +311,7 @@ Route::middleware('api')->group(function (): void {
 
         // Create logo generation record for this specific name
         $logoGeneration = \App\Models\LogoGeneration::create([
-            'user_id' => auth()->id(),
+            'user_id' => Auth::guard('web')->id(),
             'session_id' => session()->getId(),
             'business_name' => $suggestion->name,
             'business_description' => $suggestion->project->description ?? $suggestion->explanation ?? '',
