@@ -98,10 +98,10 @@ test('selectTheme does nothing for invalid theme name', function (): void {
     expect(UserThemePreference::where('user_id', $this->user->id)->exists())->toBeFalse();
 });
 
-test('selectTheme dispatches refresh event', function (): void {
+test('selectTheme redirects to reload page', function (): void {
     Livewire::test(Appearance::class)
         ->call('selectTheme', 'ocean')
-        ->assertDispatched('$refresh');
+        ->assertRedirect(route('appearance'));
 });
 
 test('render passes all themes to view', function (): void {

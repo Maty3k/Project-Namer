@@ -63,8 +63,8 @@ class Appearance extends Component
         // Update current theme for UI
         $this->currentTheme = $themeName;
 
-        // Refresh page to apply theme server-side
-        $this->dispatch('$refresh');
+        // Reload page to apply theme immediately
+        $this->redirect(route('appearance'), navigate: true);
     }
 
     /**
