@@ -89,10 +89,10 @@
                             </div>
 
                             <!-- Logo Preview -->
-                            @if($generation->status === 'completed' && $generation->logos->count() > 0)
+                            @if($generation->status === 'completed' && $generation->generatedLogos->count() > 0)
                                 <div class="mb-4">
                                     <div class="grid grid-cols-2 gap-2">
-                                        @foreach($generation->logos->take(4) as $logo)
+                                        @foreach($generation->generatedLogos->take(4) as $logo)
                                             @if($logo->original_file_path && file_exists(storage_path('app/public/' . $logo->original_file_path)))
                                                 <div class="aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
                                                     <img 
@@ -104,9 +104,9 @@
                                             @endif
                                         @endforeach
                                     </div>
-                                    @if($generation->logos->count() > 4)
+                                    @if($generation->generatedLogos->count() > 4)
                                         <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 text-center">
-                                            +{{ $generation->logos->count() - 4 }} more logos
+                                            +{{ $generation->generatedLogos->count() - 4 }} more logos
                                         </p>
                                     @endif
                                 </div>
