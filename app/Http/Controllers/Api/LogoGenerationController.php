@@ -14,6 +14,7 @@ use App\Services\LogoVariantCacheService;
 use App\Services\SvgColorProcessor;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -55,6 +56,7 @@ class LogoGenerationController extends Controller
 
         try {
             $logoGeneration = LogoGeneration::create([
+                'user_id' => Auth::id(),
                 'session_id' => $request->validated('session_id'),
                 'business_name' => $request->validated('business_name'),
                 'business_description' => $request->validated('business_description'),

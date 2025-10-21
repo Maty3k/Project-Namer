@@ -323,6 +323,7 @@ class NameGeneratorDashboard extends Component
         try {
             // Create logo generation record
             $this->currentLogoGeneration = LogoGeneration::create([
+                'user_id' => Auth::id(),
                 'session_id' => session()->getId(),
                 'business_name' => implode(', ', $this->selectedNamesForLogos),
                 'business_description' => $this->businessIdea,

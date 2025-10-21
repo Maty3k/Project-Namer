@@ -645,6 +645,7 @@ new class extends Component {
         try {
             // Create logo generation request
             $logoGeneration = LogoGeneration::create([
+                'user_id' => auth()->id(),
                 'session_id' => $this->sessionId,
                 'business_name' => $selectedName,
                 'business_description' => $this->businessDescription,
