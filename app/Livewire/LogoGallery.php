@@ -136,14 +136,32 @@ class LogoGallery extends Component
      */
     public function loadLogoGeneration(): void
     {
-        $this->logoGeneration = LogoGeneration::with(['generatedLogos.colorVariants'])
-            ->where('id', $this->logoGenerationId)
-            ->where('user_id', Auth::id())
-            ->first();
+        // Check if logo generation exists
+        $logoGen = LogoGeneration::find($this->logoGenerationId);
 
-        if (! $this->logoGeneration) {
-            $this->errorMessage = 'Logo generation not found.';
+        if (! $logoGen) {
+            $this->errorMessage = 'Logo generation not found. The logo generation ID may be invalid.';
+            Log::warning('Logo generation not found', [
+                'logo_generation_id' => $this->logoGenerationId,
+                'user_id' => Auth::id(),
+            ]);
+            return;
         }
+
+        // Check if user owns this logo generation
+        if ($logoGen->user_id !== Auth::id()) {
+            $this->errorMessage = 'Logo generation not found. You do not have permission to view this logo generation.';
+            Log::warning('User attempted to access logo generation owned by different user', [
+                'logo_generation_id' => $this->logoGenerationId,
+                'logo_generation_user_id' => $logoGen->user_id,
+                'current_user_id' => Auth::id(),
+            ]);
+            return;
+        }
+
+        // Load with relationships
+        $this->logoGeneration = LogoGeneration::with(['generatedLogos.colorVariants'])
+            ->find($this->logoGenerationId);
     }
 
     /**
