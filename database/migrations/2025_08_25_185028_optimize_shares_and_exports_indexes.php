@@ -64,17 +64,6 @@ return new class extends Migration
             $table->index(['exportable_type', 'exportable_id'], 'exports_morphed_idx');
         });
 
-        // Add indexes to logo_generations table for better performance
-        Schema::table('logo_generations', function (Blueprint $table): void {
-            // Index for user-based queries with status
-            $table->index(['user_id', 'status'], 'logo_generations_user_status_idx');
-
-            // Index for completion status filtering
-            $table->index('status', 'logo_generations_status_idx');
-
-            // Index for date-based queries
-            $table->index(['user_id', 'created_at'], 'logo_generations_user_date_idx');
-        });
     }
 
     /**
@@ -108,11 +97,5 @@ return new class extends Migration
             $table->dropIndex('exports_morphed_idx');
         });
 
-        // Drop logo_generations table indexes
-        Schema::table('logo_generations', function (Blueprint $table): void {
-            $table->dropIndex('logo_generations_user_status_idx');
-            $table->dropIndex('logo_generations_status_idx');
-            $table->dropIndex('logo_generations_user_date_idx');
-        });
     }
 };

@@ -54,14 +54,6 @@ Route::get('project/{uuid}', ProjectPage::class)
     ->middleware(['auth', 'verified'])
     ->name('project.show');
 
-Route::get('logos', App\Livewire\LogoGalleryIndex::class)
-    ->middleware(['auth', 'verified'])
-    ->name('logos.index');
-
-Route::get('logo-gallery/{logoGenerationId}', App\Livewire\LogoGallery::class)
-    ->middleware(['auth', 'verified'])
-    ->name('logo-gallery');
-
 Route::get('project/{uuid}/gallery', App\Livewire\PhotoGallery::class)
     ->middleware(['auth', 'verified'])
     ->name('project.gallery');

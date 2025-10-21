@@ -8,7 +8,6 @@ use App\Http\Controllers\Api\ErrorExplanationController;
 use App\Http\Controllers\Api\ExportController;
 use App\Http\Controllers\Api\ImageUploadController;
 use App\Http\Controllers\Api\KeyboardShortcutsController;
-use App\Http\Controllers\Api\LogoDownloadController;
 use App\Http\Controllers\Api\LogoGenerationController;
 use App\Http\Controllers\Api\MoodBoardController;
 use App\Http\Controllers\Api\PhotoGalleryController;
@@ -50,54 +49,6 @@ Route::middleware('api')->group(function (): void {
         // Generation history
         Route::get('history', [UserPreferencesController::class, 'history'])
             ->name('api.ai.history');
-    });
-
-    // Logo Generation API Routes
-    Route::prefix('logos')->group(function (): void {
-        // Generate logos for a business idea - more restrictive rate limiting
-        Route::post('generate', [LogoGenerationController::class, 'generate'])
-            ->middleware('throttle.logos')
-            ->name('api.logos.generate');
-
-        // Get generation status and progress
-        Route::get('{logoGeneration}/status', [LogoGenerationController::class, 'status'])
-            ->name('api.logos.status');
-
-        // Get generated logos with color scheme information
-        Route::get('{logoGeneration}', [LogoGenerationController::class, 'show'])
-            ->name('api.logos.show');
-
-        // Apply color customization to logos
-        Route::post('{logoGeneration}/customize', [LogoGenerationController::class, 'customize'])
-            ->middleware('throttle.logos')
-            ->name('api.logos.customize');
-
-        // Retry failed logo generation
-        Route::post('{logoGeneration}/retry', [LogoGenerationController::class, 'retry'])
-            ->middleware('throttle.logos')
-            ->name('api.logos.retry');
-
-        // Complete partial logo generation
-        Route::post('{logoGeneration}/complete', [LogoGenerationController::class, 'complete'])
-            ->middleware('throttle.logos')
-            ->name('api.logos.complete');
-
-        // Download individual logo files - moderate rate limiting
-        Route::get('{logoGeneration}/download/{generatedLogo}', [LogoDownloadController::class, 'download'])
-            ->middleware('throttle.downloads')
-            ->name('api.logos.download');
-
-        // Download all logos as ZIP - moderate rate limiting
-        Route::get('{logoGeneration}/download-batch', [LogoDownloadController::class, 'downloadBatch'])
-            ->middleware('throttle.downloads')
-            ->name('api.logos.download-batch');
-    });
-
-    // Uploaded Logo Download Routes
-    Route::prefix('uploaded-logos')->group(function (): void {
-        Route::get('{uploadedLogo}/download', [LogoDownloadController::class, 'downloadUploaded'])
-            ->middleware('throttle.downloads')
-            ->name('api.uploaded-logos.download');
     });
 
     // Sharing API Routes - CSRF protected state-changing operations
@@ -304,49 +255,15 @@ Route::middleware('api')->group(function (): void {
         ->middleware(['web', 'auth'])
         ->name('api.suggestions.check-domains');
 
-    // Logo generation request for name suggestion
-    Route::post('suggestions/{suggestion}/request-logos', function (\App\Models\NameSuggestion $suggestion) {
-        Gate::authorize('update', $suggestion->project);
+    // Logo Generation API Routes
+    Route::prefix('logos')->middleware(['auth'])->group(function (): void {
+        // Generate logos for a business idea
+        Route::post('generate', [LogoGenerationController::class, 'generate'])
+            ->middleware('throttle:10,1') // 10 requests per minute
+            ->name('api.logos.generate');
 
-        // Create logo generation record for this specific name
-        $logoGeneration = \App\Models\LogoGeneration::create([
-            'user_id' => auth()->id(),
-            'session_id' => session()->getId(),
-            'business_name' => $suggestion->name,
-            'business_description' => $suggestion->project->description ?? $suggestion->explanation ?? '',
-            'generation_mode' => 'creative',
-            'status' => 'processing',
-            'total_logos_requested' => 4, // Generate 4 logos (minimalist, modern, playful, corporate)
-            'logos_completed' => 0,
-        ]);
-
-        // Dispatch logo generation job to queue
-        dispatch(new \App\Jobs\GenerateLogosJob($logoGeneration));
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Logo generation started',
-            'suggestion_id' => $suggestion->id,
-            'logo_generation_id' => $logoGeneration->id,
-        ]);
-    })->middleware(['web', 'auth'])->name('api.suggestions.request-logos');
-
-    // Logo styles endpoint with graceful degradation
-    Route::get('logo-styles', function () {
-        // Check cache first for graceful degradation
-        $styles = Cache::get('logo_styles');
-
-        if ($styles) {
-            return response()->json([
-                'styles' => $styles,
-                'from_cache' => true,
-                'message' => 'Showing cached options. Live updates temporarily unavailable.',
-            ]);
-        }
-
-        return response()->json([
-            'styles' => ['minimalist', 'modern', 'playful', 'corporate'],
-            'from_cache' => false,
-        ]);
-    })->name('api.logo-styles');
+        // Get logo generation status and results
+        Route::get('{logoGeneration}', [LogoGenerationController::class, 'show'])
+            ->name('api.logos.show');
+    });
 });
