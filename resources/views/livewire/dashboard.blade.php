@@ -1,29 +1,10 @@
 <div class="max-w-2xl mx-auto p-6">
-    <div class="rounded-lg shadow-lg p-8 transition-all duration-300 themed-create-box"
-         @php
-             $userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
-         @endphp
-         @if($userTheme)
-             style="background-color: {{ $userTheme->background_color }};
-                    box-shadow: 0 10px 25px {{ $userTheme->primary_color }}20;
-                    color: {{ $userTheme->text_color }};"
-         @else
-             class="bg-white dark:bg-gray-900"
-         @endif>
+    <div class="rounded-lg shadow-lg p-8 transition-all duration-300 bg-white dark:bg-zinc-900">
         <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold mb-2"
-                @if($userTheme)
-                    style="color: {{ $userTheme->text_color }};"
-                @else
-                    class="text-gray-900 dark:text-white"
-                @endif>
+            <h1 class="text-3xl font-bold mb-2 text-zinc-900 dark:text-zinc-100">
                 Create New Project
             </h1>
-            <p @if($userTheme)
-                   style="color: {{ $userTheme->text_color }}; opacity: 0.8;"
-               @else
-                   class="text-gray-600 dark:text-gray-400"
-               @endif>
+            <p class="text-zinc-600 dark:text-zinc-400">
                 Describe your business idea to get started with name generation
             </p>
         </div>
@@ -48,12 +29,7 @@
             </div>
 
             <div class="flex justify-between items-center">
-                <div class="text-sm"
-                     @if($userTheme)
-                         style="color: {{ $userTheme->text_color }}; opacity: 0.7;"
-                     @else
-                         class="text-gray-500 dark:text-gray-400"
-                     @endif>
+                <div class="text-sm text-zinc-500 dark:text-zinc-400">
                     Your project will be saved automatically
                 </div>
                 <flux:button 
