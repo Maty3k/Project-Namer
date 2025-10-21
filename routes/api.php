@@ -311,7 +311,7 @@ Route::middleware('api')->group(function (): void {
 
         // Create logo generation record for this specific name
         $logoGeneration = \App\Models\LogoGeneration::create([
-            'user_id' => Auth::guard('web')->id(),
+            'user_id' => Auth::id(),
             'session_id' => session()->getId(),
             'business_name' => $suggestion->name,
             'business_description' => $suggestion->project->description ?? $suggestion->explanation ?? '',
