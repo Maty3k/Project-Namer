@@ -69,6 +69,8 @@ class Appearance extends Component
 
     /**
      * Get emoji icon for each theme.
+     *
+     * @return array<string, string>
      */
     protected function getThemeEmojis(): array
     {
