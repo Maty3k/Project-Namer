@@ -34,19 +34,6 @@
 
             <flux:menu.separator/>
 
-            <flux:menu.radio.group>
-                <flux:menu.item
-                    :href="route('settings.profile')"
-                    icon="cog"
-                    wire:navigate.hover
-                    class="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-sm"
-                >
-                    {{ __('Settings') }}
-                </flux:menu.item>
-            </flux:menu.radio.group>
-
-            <flux:menu.separator/>
-
             <form method="POST" action="{{ route('logout') }}" class="w-full">
                 @csrf
                 <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-sm hover:bg-red-50 dark:hover:bg-red-900/20">
