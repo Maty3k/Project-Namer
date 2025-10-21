@@ -43,8 +43,8 @@
         </flux:navlist.item>
 
         <flux:navlist.item icon="command-line"
-                           href="{{ route('settings.keyboard-shortcuts') }}"
-                           :current="request()->routeIs('settings.keyboard-shortcuts')"
+                           :href="route('keyboard-shortcuts')"
+                           :current="request()->routeIs('keyboard-shortcuts')"
                            wire:navigate
                            class="touch-target interactive focus-modern">
             {{ __('Keyboard Shortcuts') }}

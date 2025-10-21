@@ -11,7 +11,7 @@ const SHORTCUTS = [
     { action: 'settings', key: 's', modifiers: ['ctrl'], description: 'Open settings', route: '/settings/profile' },
     { action: 'appearance', key: 't', modifiers: ['ctrl'], description: 'Appearance settings', route: '/appearance' },
     { action: 'logoGallery', key: 'l', modifiers: ['ctrl'], description: 'Logo gallery', route: '/logos' },
-    { action: 'keyboardShortcuts', key: 'k', modifiers: ['ctrl'], description: 'Keyboard shortcuts settings', route: '/settings/keyboard-shortcuts' },
+    { action: 'keyboardShortcuts', key: 'k', modifiers: ['ctrl'], description: 'Keyboard shortcuts settings', route: '/keyboard-shortcuts' },
     { action: 'help', key: 'h', modifiers: ['ctrl'], description: 'Show keyboard shortcuts', dispatchEvent: 'toggle-help-overlay' },
     { action: 'escape', key: 'Escape', modifiers: [], description: 'Close modals', dispatchEvent: 'close-modals' },
 ];

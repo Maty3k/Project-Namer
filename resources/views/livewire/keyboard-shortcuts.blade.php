@@ -1,12 +1,15 @@
-<div>
-    <div class="relative mb-6 w-full max-w-4xl mx-auto">
-        <flux:heading size="xl" level="1">{{ __('Keyboard Shortcuts') }}</flux:heading>
-        <flux:subheading size="lg" class="mb-6">{{ __('Customize and manage keyboard shortcuts') }}</flux:subheading>
-        <flux:separator variant="subtle" />
-    </div>
+<section class="w-full">
+    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
+                {{ __('Keyboard Shortcuts') }}
+            </h1>
+            <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                {{ __('Customize and manage keyboard shortcuts') }}
+            </p>
+        </div>
 
-    <div class="max-w-4xl mx-auto">
-        <div class="my-6 w-full space-y-8">
+        <div class="space-y-8">
             {{-- Shortcuts List --}}
             <div class="space-y-4">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
@@ -78,5 +81,4 @@
             </div>
         </div>
     </div>
-
-</div>
+</section>

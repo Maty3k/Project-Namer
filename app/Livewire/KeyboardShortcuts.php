@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Livewire\Settings;
+namespace App\Livewire;
 
 use App\Models\UserKeyboardShortcut;
 use Illuminate\Support\Facades\Auth;

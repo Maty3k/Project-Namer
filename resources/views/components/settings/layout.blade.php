@@ -4,7 +4,6 @@
             <flux:navlist.item icon="user" :href="route('settings.profile')" wire:navigate>{{ __('Profile') }}</flux:navlist.item>
             <flux:navlist.item icon="key" :href="route('settings.password')" wire:navigate>{{ __('Password') }}</flux:navlist.item>
             <flux:navlist.item icon="shield-check" :href="route('settings.two-factor-authentication')" wire:navigate>{{ __('Two-Factor Authentication') }}</flux:navlist.item>
-            <flux:navlist.item icon="command-line" :href="route('settings.keyboard-shortcuts')" wire:navigate>{{ __('Keyboard Shortcuts') }}</flux:navlist.item>
         </flux:navlist>
     </div>
 

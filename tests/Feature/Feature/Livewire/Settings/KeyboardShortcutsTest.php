@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Livewire\Settings\KeyboardShortcuts;
+use App\Livewire\KeyboardShortcuts;
 use App\Models\User;
 use App\Models\UserKeyboardShortcut;
 use Livewire\Livewire;
@@ -157,15 +157,15 @@ test('shows disabled state for individually disabled shortcuts', function (): vo
 });
 
 test('only authenticated users can access', function (): void {
-    $this->get(route('settings.keyboard-shortcuts'))
+    $this->get(route('keyboard-shortcuts'))
         ->assertRedirect(route('login'));
 });
 
-test('authenticated users can access settings page', function (): void {
+test('authenticated users can access keyboard shortcuts page', function (): void {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)
-        ->get(route('settings.keyboard-shortcuts'))
+        ->get(route('keyboard-shortcuts'))
         ->assertOk();
 
     expect($response->content())->toContain('Keyboard Shortcuts');
