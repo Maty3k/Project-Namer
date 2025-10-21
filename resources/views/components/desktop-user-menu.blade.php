@@ -4,7 +4,7 @@
                 :name="auth()->user()->name"
                 :initials="auth()->user()->initials()"
                 icon:trailing="chevrons-up-down"
-                class="transition-all duration-200 ease-out"
+                class="transition-all duration-200 ease-out [&_span.truncate]:!text-zinc-900 [&_span.truncate]:dark:!text-zinc-100"
         />
     </div>
 
