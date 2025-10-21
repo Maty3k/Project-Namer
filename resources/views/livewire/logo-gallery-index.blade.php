@@ -190,3 +190,12 @@
         </div>
     </div>
 </div>
+
+@script
+<script>
+    // Handle download-file event to trigger logo downloads
+    window.addEventListener('download-file', (event) => {
+        window.open(event.detail.url, '_blank');
+    });
+</script>
+@endscript
