@@ -28004,6 +28004,10 @@ namespace App\Livewire {
      */
     class Appearance extends \Livewire\Component {
             }
+    /**
+     */
+    class KeyboardShortcuts extends \Livewire\Component {
+            }
     }
 
 namespace App\Livewire\Settings {
@@ -28018,10 +28022,6 @@ namespace App\Livewire\Settings {
     /**
      */
     class TwoFactorAuthenticationPage extends \Livewire\Component {
-            }
-    /**
-     */
-    class KeyboardShortcuts extends \Livewire\Component {
             }
     }
 
