@@ -187,8 +187,8 @@ class OpenAILogoService
         $filename = Str::slug("{$logoGenerationId}-{$style}").'-'.Str::random(8).'.png';
         $filePath = "logos/{$logoGenerationId}/{$filename}";
 
-        // Save to storage
-        Storage::put($filePath, $imageContent);
+        // Save to public storage so it's accessible via web
+        Storage::disk('public')->put($filePath, $imageContent);
 
         return $filePath;
     }

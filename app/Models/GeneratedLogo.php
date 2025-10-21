@@ -38,7 +38,7 @@ class GeneratedLogo extends Model
      */
     public function getUrlAttribute(): string
     {
-        return Storage::url($this->file_path);
+        return Storage::disk('public')->url($this->file_path);
     }
 
     /**
@@ -89,8 +89,8 @@ class GeneratedLogo extends Model
      */
     public function deleteFile(): void
     {
-        if (Storage::exists($this->file_path)) {
-            Storage::delete($this->file_path);
+        if (Storage::disk('public')->exists($this->file_path)) {
+            Storage::disk('public')->delete($this->file_path);
         }
     }
 }
