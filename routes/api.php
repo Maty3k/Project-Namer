@@ -255,8 +255,8 @@ Route::middleware('api')->group(function (): void {
         ->middleware(['web', 'auth'])
         ->name('api.suggestions.check-domains');
 
-    // Logo Generation API Routes
-    Route::prefix('logos')->middleware(['auth'])->group(function (): void {
+    // Logo Generation API Routes - uses web middleware for session auth
+    Route::prefix('logos')->middleware(['web', 'auth'])->group(function (): void {
         // Generate logos for a business idea
         Route::post('generate', [LogoGenerationController::class, 'generate'])
             ->middleware('throttle:10,1') // 10 requests per minute
