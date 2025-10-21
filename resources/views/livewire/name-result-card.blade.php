@@ -113,12 +113,12 @@
        async startLogoGeneration() {
            if (this.generatingLogos) return;
            this.generatingLogos = true;
-           console.log('🎨 Starting logo generation for suggestion:', this.suggestionId);
+           console.log('🎨 Starting logo generation for suggestion:', this.suggestionName);
 
            try {
                const csrfMeta = document.querySelector('meta[name=csrf-token]');
                const csrfToken = csrfMeta ? csrfMeta.content : '';
-               const response = await fetch(`/api/suggestions/${this.suggestionId}/request-logos`, {
+               const response = await fetch(`/api/logos/generate`, {
                    method: 'POST',
                    headers: {
                        'Content-Type': 'application/json',
@@ -126,7 +126,11 @@
                        'Accept': 'application/json',
                        'X-Requested-With': 'XMLHttpRequest'
                    },
-                   credentials: 'same-origin'
+                   credentials: 'same-origin',
+                   body: JSON.stringify({
+                       business_name: this.suggestionName,
+                       business_description: ''
+                   })
                });
 
                console.log('📡 Logo generation response status:', response.status);
@@ -142,7 +146,7 @@
                        // Show success toast
                        if (window.Livewire) {
                            window.Livewire.dispatch('show-toast', {
-                               message: 'Logo generation started! This may take a minute...',
+                               message: 'Generating 4 logos! This may take a minute...',
                                type: 'success'
                            });
                        }
@@ -186,7 +190,7 @@
            if (!this.logoGenerationId) return;
 
            try {
-               const response = await fetch(`/api/logos/${this.logoGenerationId}/status`, {
+               const response = await fetch(`/api/logos/${this.logoGenerationId}`, {
                    headers: {
                        'Accept': 'application/json',
                        'X-Requested-With': 'XMLHttpRequest'
@@ -196,22 +200,25 @@
                if (response.ok) {
                    const data = await response.json();
 
-                   if (data.data && data.data.status === 'completed') {
+                   if (data.status === 'completed') {
                        console.log('✅ Logo generation completed!');
                        clearInterval(this.pollInterval);
                        this.generatingLogos = false;
 
-                       // Fetch the updated suggestion data to get logos
-                       await this.fetchLogos();
+                       // Update logos array with the generated logos
+                       if (data.logos && Array.isArray(data.logos)) {
+                           this.logos = data.logos;
+                           console.log('🎨 Loaded 4 logos:', this.logos);
+                       }
 
                        // Show completion toast
                        if (window.Livewire) {
                            window.Livewire.dispatch('show-toast', {
-                               message: 'Logos generated successfully!',
+                               message: '4 logos generated successfully!',
                                type: 'success'
                            });
                        }
-                   } else if (data.data && data.data.status === 'failed') {
+                   } else if (data.status === 'failed') {
                        console.error('❌ Logo generation failed');
                        clearInterval(this.pollInterval);
                        this.generatingLogos = false;
