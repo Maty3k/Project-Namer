@@ -136,8 +136,7 @@
                                     <flux:button
                                         variant="danger"
                                         size="sm"
-                                        wire:click="deleteGeneration({{ $generation->id }})"
-                                        wire:confirm="Are you sure you want to delete the logos for '{{ $generation->business_name }}'? This action cannot be undone."
+                                        wire:click="confirmDelete({{ $generation->id }})"
                                         class="px-3 py-2"
                                     >
                                         <flux:icon.trash class="size-4" />
@@ -189,6 +188,50 @@
             @endif
         </div>
     </div>
+
+    <!-- Delete Confirmation Modal -->
+    @if($showDeleteConfirmation)
+        <flux:modal wire:model="showDeleteConfirmation" class="min-w-96">
+            <div class="space-y-6">
+                <div>
+                    <flux:heading size="lg">Delete Logo Generation</flux:heading>
+                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                        Are you sure you want to delete these logos? This action cannot be undone.
+                    </p>
+
+                    @if($generationToDelete)
+                        @php
+                            $generation = $logoGenerations->firstWhere('id', $generationToDelete);
+                        @endphp
+                        @if($generation)
+                            <div class="mt-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                <p class="font-medium text-sm">{{ $generation->business_name }}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $generation->business_description }}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                    {{ $generation->generatedLogos->count() }} {{ Str::plural('logo', $generation->generatedLogos->count()) }}
+                                </p>
+                            </div>
+                        @endif
+                    @endif
+                </div>
+
+                <div class="flex justify-end space-x-2">
+                    <flux:button
+                        wire:click="cancelDelete"
+                        variant="ghost"
+                    >
+                        Cancel
+                    </flux:button>
+                    <flux:button
+                        wire:click="deleteGeneration"
+                        variant="danger"
+                    >
+                        Delete Logos
+                    </flux:button>
+                </div>
+            </div>
+        </flux:modal>
+    @endif
 </div>
 
 @script

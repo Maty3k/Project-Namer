@@ -21,6 +21,10 @@ class LogoGalleryIndex extends Component
 
     public string $statusFilter = '';
 
+    public bool $showDeleteConfirmation = false;
+
+    public ?int $generationToDelete = null;
+
     /**
      * Get the user's logo generations.
      */
@@ -91,16 +95,39 @@ class LogoGalleryIndex extends Component
     }
 
     /**
+     * Show delete confirmation modal.
+     */
+    public function confirmDelete(int $generationId): void
+    {
+        $this->generationToDelete = $generationId;
+        $this->showDeleteConfirmation = true;
+    }
+
+    /**
+     * Cancel delete operation.
+     */
+    public function cancelDelete(): void
+    {
+        $this->showDeleteConfirmation = false;
+        $this->generationToDelete = null;
+    }
+
+    /**
      * Delete a logo generation and all its associated logos.
      */
-    public function deleteGeneration(int $generationId): void
+    public function deleteGeneration(): void
     {
-        $generation = LogoGeneration::where('id', $generationId)
+        if (! $this->generationToDelete) {
+            return;
+        }
+
+        $generation = LogoGeneration::where('id', $this->generationToDelete)
             ->where('user_id', Auth::id())
             ->first();
 
         if (! $generation) {
             $this->dispatch('toast', message: 'Logo generation not found', type: 'error');
+            $this->cancelDelete();
 
             return;
         }
@@ -111,6 +138,7 @@ class LogoGalleryIndex extends Component
         $generation->delete();
 
         $this->dispatch('toast', message: "Deleted logos for '{$businessName}'", type: 'success');
+        $this->cancelDelete();
     }
 
     public function render(): View

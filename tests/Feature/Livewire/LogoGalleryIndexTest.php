@@ -206,7 +206,12 @@ describe('LogoGalleryIndex Delete Functionality', function (): void {
 
         Livewire::actingAs($this->user)
             ->test(LogoGalleryIndex::class)
-            ->call('deleteGeneration', $logoGeneration->id)
+            ->call('confirmDelete', $logoGeneration->id)
+            ->assertSet('showDeleteConfirmation', true)
+            ->assertSet('generationToDelete', $logoGeneration->id)
+            ->call('deleteGeneration')
+            ->assertSet('showDeleteConfirmation', false)
+            ->assertSet('generationToDelete', null)
             ->assertDispatched('toast', message: "Deleted logos for 'Test Company'", type: 'success');
 
         expect(LogoGeneration::count())->toBe(0);
@@ -226,7 +231,8 @@ describe('LogoGalleryIndex Delete Functionality', function (): void {
 
         Livewire::actingAs($this->user)
             ->test(LogoGalleryIndex::class)
-            ->call('deleteGeneration', $logoGeneration->id);
+            ->call('confirmDelete', $logoGeneration->id)
+            ->call('deleteGeneration');
 
         expect(LogoGeneration::count())->toBe(0);
         expect(GeneratedLogo::count())->toBe(0);
@@ -242,7 +248,8 @@ describe('LogoGalleryIndex Delete Functionality', function (): void {
 
         Livewire::actingAs($this->user)
             ->test(LogoGalleryIndex::class)
-            ->call('deleteGeneration', $logoGeneration->id)
+            ->call('confirmDelete', $logoGeneration->id)
+            ->call('deleteGeneration')
             ->assertDispatched('toast', message: 'Logo generation not found', type: 'error');
 
         expect(LogoGeneration::count())->toBe(1);
@@ -251,7 +258,26 @@ describe('LogoGalleryIndex Delete Functionality', function (): void {
     it('handles deletion of non-existent logo generation gracefully', function (): void {
         Livewire::actingAs($this->user)
             ->test(LogoGalleryIndex::class)
-            ->call('deleteGeneration', 99999)
+            ->call('confirmDelete', 99999)
+            ->call('deleteGeneration')
             ->assertDispatched('toast', message: 'Logo generation not found', type: 'error');
+    });
+
+    it('can cancel delete operation', function (): void {
+        $logoGeneration = LogoGeneration::factory()->create([
+            'user_id' => $this->user->id,
+            'business_name' => 'Test Company',
+        ]);
+
+        Livewire::actingAs($this->user)
+            ->test(LogoGalleryIndex::class)
+            ->call('confirmDelete', $logoGeneration->id)
+            ->assertSet('showDeleteConfirmation', true)
+            ->assertSet('generationToDelete', $logoGeneration->id)
+            ->call('cancelDelete')
+            ->assertSet('showDeleteConfirmation', false)
+            ->assertSet('generationToDelete', null);
+
+        expect(LogoGeneration::count())->toBe(1);
     });
 });
