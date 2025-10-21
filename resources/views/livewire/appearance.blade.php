@@ -9,24 +9,8 @@
             </p>
         </div>
 
+        {{-- Theme Grid --}}
         <div class="space-y-6">
-            {{-- Current Theme Info --}}
-            <div class="flex items-center justify-between rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900">
-                <div>
-                    <div class="font-medium text-zinc-900 dark:text-zinc-100">
-                        {{ __('Current Theme') }}
-                    </div>
-                    <div class="text-sm text-zinc-600 dark:text-zinc-400">
-                        {{ collect($themes)->firstWhere('name', $currentTheme)['display_name'] ?? 'Default Blue' }}
-                        <span class="ml-1">
-                            ({{ $isDarkMode ? __('Dark Mode') : __('Light Mode') }})
-                        </span>
-                    </div>
-                </div>
-                <livewire:theme-quick-toggle />
-            </div>
-
-            {{-- Theme Grid --}}
             <div>
                 <h3 class="mb-4 font-semibold text-zinc-900 dark:text-zinc-100">
                     {{ __('Available Themes') }}
