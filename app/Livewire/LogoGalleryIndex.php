@@ -64,6 +64,33 @@ class LogoGalleryIndex extends Component
     }
 
     /**
+     * Download all logos for a logo generation as ZIP.
+     */
+    public function downloadLogos(int $generationId): void
+    {
+        $generation = LogoGeneration::where('id', $generationId)
+            ->where('user_id', Auth::id())
+            ->with('generatedLogos')
+            ->first();
+
+        if (! $generation) {
+            $this->dispatch('toast', message: 'Logo generation not found', type: 'error');
+
+            return;
+        }
+
+        if ($generation->generatedLogos->isEmpty()) {
+            $this->dispatch('toast', message: 'No logos available for download', type: 'error');
+
+            return;
+        }
+
+        $downloadUrl = route('api.logos.download-batch', $generationId);
+        $this->dispatch('download-file', url: $downloadUrl);
+        $this->dispatch('toast', message: 'Download started!', type: 'success');
+    }
+
+    /**
      * Delete a logo generation and all its associated logos.
      */
     public function deleteGeneration(int $generationId): void

@@ -123,14 +123,14 @@
                             <!-- Actions -->
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center gap-2">
-                                    @if($generation->status === 'completed')
+                                    @if($generation->status === 'completed' && $generation->generatedLogos->count() > 0)
                                         <flux:button
                                             variant="primary"
                                             size="sm"
-                                            href="{{ route('logo-gallery', $generation) }}"
-                                            wire:navigate
+                                            wire:click="downloadLogos({{ $generation->id }})"
                                         >
-                                            View Gallery
+                                            <flux:icon.arrow-down-tray class="size-4 mr-1" />
+                                            Download
                                         </flux:button>
                                     @else
                                         <flux:button variant="ghost" size="sm" disabled>

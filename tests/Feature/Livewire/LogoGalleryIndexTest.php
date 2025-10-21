@@ -133,6 +133,68 @@ describe('LogoGalleryIndex Component', function (): void {
     });
 });
 
+describe('LogoGalleryIndex Download Functionality', function (): void {
+    it('can download logos for a logo generation', function (): void {
+        $logoGeneration = LogoGeneration::factory()->create([
+            'user_id' => $this->user->id,
+            'business_name' => 'Test Company',
+            'status' => 'completed',
+        ]);
+
+        GeneratedLogo::factory()->count(3)->create([
+            'logo_generation_id' => $logoGeneration->id,
+        ]);
+
+        Livewire::actingAs($this->user)
+            ->test(LogoGalleryIndex::class)
+            ->call('downloadLogos', $logoGeneration->id)
+            ->assertDispatched('download-file')
+            ->assertDispatched('toast', message: 'Download started!', type: 'success');
+    });
+
+    it('cannot download logos for another users logo generation', function (): void {
+        $otherUser = User::factory()->create();
+
+        $logoGeneration = LogoGeneration::factory()->create([
+            'user_id' => $otherUser->id,
+            'business_name' => 'Other Company',
+            'status' => 'completed',
+        ]);
+
+        GeneratedLogo::factory()->count(3)->create([
+            'logo_generation_id' => $logoGeneration->id,
+        ]);
+
+        Livewire::actingAs($this->user)
+            ->test(LogoGalleryIndex::class)
+            ->call('downloadLogos', $logoGeneration->id)
+            ->assertDispatched('toast', message: 'Logo generation not found', type: 'error')
+            ->assertNotDispatched('download-file');
+    });
+
+    it('handles download of logo generation with no logos gracefully', function (): void {
+        $logoGeneration = LogoGeneration::factory()->create([
+            'user_id' => $this->user->id,
+            'business_name' => 'Test Company',
+            'status' => 'completed',
+        ]);
+
+        Livewire::actingAs($this->user)
+            ->test(LogoGalleryIndex::class)
+            ->call('downloadLogos', $logoGeneration->id)
+            ->assertDispatched('toast', message: 'No logos available for download', type: 'error')
+            ->assertNotDispatched('download-file');
+    });
+
+    it('handles download of non-existent logo generation gracefully', function (): void {
+        Livewire::actingAs($this->user)
+            ->test(LogoGalleryIndex::class)
+            ->call('downloadLogos', 99999)
+            ->assertDispatched('toast', message: 'Logo generation not found', type: 'error')
+            ->assertNotDispatched('download-file');
+    });
+});
+
 describe('LogoGalleryIndex Delete Functionality', function (): void {
     it('can delete a logo generation', function (): void {
         $logoGeneration = LogoGeneration::factory()->create([
