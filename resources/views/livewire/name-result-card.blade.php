@@ -693,7 +693,7 @@
                     <div class="flex items-center gap-2" wire:ignore>
                         <template x-if="hasLogos">
                             <a
-                                href="/logos"
+                                href="{{ route('logos.index') }}"
                                 wire:navigate
                                 class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 rounded-lg transition-colors shadow-sm hover:shadow-md"
                             >

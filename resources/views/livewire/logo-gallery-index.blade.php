@@ -10,7 +10,6 @@
             <!-- Actions -->
             <div class="mt-4 md:mt-0 flex items-center space-x-4">
                 <flux:button variant="primary" href="{{ route('dashboard') }}" wire:navigate>
-                    <flux:icon.plus class="size-4 mr-2" />
                     Generate New Logos
                 </flux:button>
             </div>
