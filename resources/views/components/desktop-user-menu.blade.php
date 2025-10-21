@@ -1,10 +1,10 @@
 <flux:dropdown {{ $attributes->class(['hidden lg:block']) }} position="bottom" align="start">
-    <div class="transition-all duration-200 ease-out hover:scale-105 active:scale-95">
+    <div class="transition-all duration-200 ease-out hover:scale-105 active:scale-95 [&_span.truncate]:!text-zinc-900 dark:[&_span.truncate]:!text-zinc-100">
         <flux:profile
                 :name="auth()->user()->name"
                 :initials="auth()->user()->initials()"
                 icon:trailing="chevrons-up-down"
-                class="transition-all duration-200 ease-out [&_span.truncate]:!text-zinc-900 [&_span.truncate]:dark:!text-zinc-100"
+                class="transition-all duration-200 ease-out"
         />
     </div>
 

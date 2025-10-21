@@ -249,41 +249,15 @@ select:focus[data-flux-control] {
         color: color-mix(in srgb, var(--color-text, #111827) 90%, black);
     }
     
-    /* Better visibility for header elements in custom themes */
-    header [data-flux-profile] {
-        color: color-mix(in srgb, var(--color-text, #111827) 90%, #374151) !important;
+    /* Fix user name visibility in header - very specific selector */
+    header button[data-flux-profile] span.truncate {
+        color: #18181b !important; /* zinc-900 for light mode */
         font-weight: 600 !important;
     }
-    
-    header [data-flux-profile] * {
-        color: color-mix(in srgb, var(--color-text, #111827) 90%, #374151) !important;
+
+    .dark header button[data-flux-profile] span.truncate {
+        color: #f4f4f5 !important; /* zinc-100 for dark mode */
         font-weight: 600 !important;
-    }
-    
-    /* Specifically target user name text */
-    header [data-flux-profile] [data-flux-text] {
-        color: #374151 !important;
-        font-weight: 700 !important;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
-    }
-    
-    /* User menu wrapper with strong text visibility */
-    .user-menu-wrapper {
-        color: #374151 !important;
-    }
-    
-    .user-menu-wrapper * {
-        color: #374151 !important;
-        font-weight: 600 !important;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
-    }
-    
-    .user-menu-wrapper button {
-        color: #374151 !important;
-    }
-    
-    .user-menu-wrapper button * {
-        color: #374151 !important;
     }
     
     /* Glass Morphism Effects */
