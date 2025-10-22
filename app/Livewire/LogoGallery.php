@@ -145,8 +145,8 @@ class LogoGallery extends Component
 
         $this->dispatch('show-toast', [
             'message' => $this->logoGeneration->is_saved
-                ? 'Saved to gallery successfully'
-                : 'Removed from saved gallery',
+                ? 'Added to favorites successfully'
+                : 'Removed from favorites',
             'type' => 'success',
         ]);
     }

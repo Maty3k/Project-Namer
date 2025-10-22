@@ -8,6 +8,41 @@
             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 View all your AI-generated logo collections
             </p>
+
+            {{-- Search and Filter --}}
+            <div class="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                {{-- Search Bar --}}
+                <div class="relative flex-1 max-w-md">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <input
+                        type="text"
+                        wire:model.live.debounce.300ms="search"
+                        placeholder="Search by business name..."
+                        class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    >
+                </div>
+
+                {{-- Filter Dropdown --}}
+                <div class="flex items-center gap-3">
+                    <label for="filter" class="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                        Sort by:
+                    </label>
+                    <select
+                        id="filter"
+                        wire:model.live="filterBy"
+                        class="block w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    >
+                        <option value="newest">Newest</option>
+                        <option value="oldest">Oldest</option>
+                        <option value="alphabetical">A-Z</option>
+                        <option value="favorited">Favorited</option>
+                    </select>
+                </div>
+            </div>
         </div>
 
         {{-- Logo Generations Grid --}}
