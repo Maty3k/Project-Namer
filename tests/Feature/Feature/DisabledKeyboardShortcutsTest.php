@@ -110,7 +110,8 @@ describe('Disabled Keyboard Shortcuts', function (): void {
 
         // Verify that disabled shortcuts are checked
         expect($content)->toContain('disabledShortcuts.includes(shortcut.action)');
-        expect($content)->toContain('is disabled - ignoring');
+        // Console logging removed for quieter console output
+        expect($content)->toContain('event.preventDefault()');
     });
 
     test('global keyboard shortcuts loads from injected data on init', function (): void {
