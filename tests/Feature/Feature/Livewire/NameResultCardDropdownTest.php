@@ -11,6 +11,7 @@ describe('NameResultCard Dropdown Interaction', function (): void {
     beforeEach(function (): void {
         $this->user = User::factory()->create();
         $this->actingAs($this->user);
+        $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class);
 
         $this->project = Project::factory()->create([
             'user_id' => $this->user->id,
