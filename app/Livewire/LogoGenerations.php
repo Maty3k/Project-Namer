@@ -60,6 +60,7 @@ class LogoGenerations extends Component
             return;
         }
 
+        $businessName = $this->generationToDelete->business_name;
         $logos = $this->generationToDelete->generatedLogos;
         $count = $logos->count();
 
@@ -69,11 +70,11 @@ class LogoGenerations extends Component
             $logo->delete();
         }
 
-        // Reset the completed logos count to 0
-        $this->generationToDelete->update(['logos_completed' => 0]);
+        // Delete the logo generation record itself
+        $this->generationToDelete->delete();
 
         $this->dispatch('show-toast', [
-            'message' => "All {$count} logos deleted successfully",
+            'message' => "All {$count} logos for \"{$businessName}\" deleted successfully",
             'type' => 'success',
         ]);
 
