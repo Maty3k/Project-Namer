@@ -28,7 +28,7 @@
                         {{-- Delete Button --}}
                         <button
                             wire:click.prevent="confirmDelete({{ $generation->id }})"
-                            class="absolute top-2 right-2 z-10 p-1.5 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white rounded-md transition-colors"
+                            class="absolute bottom-2 right-2 z-10 p-1.5 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white rounded-md transition-colors"
                             title="Delete all logos"
                         >
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
