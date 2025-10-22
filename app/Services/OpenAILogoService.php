@@ -195,6 +195,8 @@ class OpenAILogoService
 
     /**
      * Get available logo styles.
+     *
+     * @return array<int, string>
      */
     public static function getAvailableStyles(): array
     {

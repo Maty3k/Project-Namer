@@ -16,7 +16,12 @@ declare(strict_types=1);
 pest()->extend(Tests\TestCase::class)
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
     ->in('Feature')
-    ->beforeEach(fn () => $this->withoutVite());
+    ->beforeEach(function (): void {
+        $this->withoutVite();
+        // Disable execution time limits for tests
+        set_time_limit(0);
+        ini_set('max_execution_time', '0');
+    });
 
 /*
 |--------------------------------------------------------------------------

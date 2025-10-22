@@ -220,7 +220,7 @@ describe('PublicShareController', function (): void {
         // Create a generated logo with file
         $logo = \App\Models\GeneratedLogo::factory()->create([
             'logo_generation_id' => $logoGeneration->id,
-            'original_file_path' => 'logos/test-logo.svg',
+            'file_path' => 'logos/test-logo.svg',
             'style' => 'modern',
         ]);
 

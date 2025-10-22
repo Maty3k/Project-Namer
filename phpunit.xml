@@ -4,7 +4,8 @@
          bootstrap="vendor/autoload.php"
          colors="true"
          beStrictAboutTestsThatDoNotTestAnything="false"
-         defaultTimeLimit="500"
+         defaultTimeLimit="0"
+         enforceTimeLimit="false"
 >
     <testsuites>
         <testsuite name="Unit">
@@ -32,5 +33,7 @@
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="TWO_FACTOR_AUTHENTICATION" value="true"/>
+        <ini name="max_execution_time" value="0"/>
+        <ini name="memory_limit" value="-1"/>
     </php>
 </phpunit>

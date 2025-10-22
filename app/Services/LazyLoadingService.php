@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Cache;
  *
  * Provides efficient lazy loading mechanisms for logo galleries,
  * supporting pagination, infinite scroll, and progressive loading.
+ *
+ * Legacy service for color variants feature (not currently implemented).
+ * References non-existent LogoVariantCacheService and colorVariants relationship.
  */
 final readonly class LazyLoadingService
 {
@@ -23,7 +26,7 @@ final readonly class LazyLoadingService
     private const CACHE_TTL = 1800; // 30 minutes
 
     public function __construct(
-        private LogoVariantCacheService $cacheService
+        private LogoVariantCacheService $cacheService // @phpstan-ignore-line class.notFound
     ) {}
 
     /**
@@ -41,9 +44,8 @@ final readonly class LazyLoadingService
 
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($generationId, $page, $perPage, $style): array {
             $query = GeneratedLogo::where('logo_generation_id', $generationId)
-                ->with(['logoGeneration', 'colorVariants'])
-                ->orderBy('style')
-                ->orderBy('variation_number');
+                ->with(['logoGeneration'])
+                ->orderBy('style');
 
             if ($style) {
                 $query->where('style', $style);
@@ -84,9 +86,8 @@ final readonly class LazyLoadingService
 
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($generationId, $lastId, $limit, $style): array {
             $query = GeneratedLogo::where('logo_generation_id', $generationId)
-                ->with(['logoGeneration', 'colorVariants'])
+                ->with(['logoGeneration'])
                 ->orderBy('style')
-                ->orderBy('variation_number')
                 ->orderBy('id');
 
             if ($lastId) {
@@ -145,8 +146,7 @@ final readonly class LazyLoadingService
             foreach ($styles as $style) {
                 $query = GeneratedLogo::where('logo_generation_id', $generationId)
                     ->where('style', $style)
-                    ->with(['logoGeneration', 'colorVariants'])
-                    ->orderBy('variation_number');
+                    ->with(['logoGeneration']);
 
                 if (! $loadAll) {
                     $logos = $query->take($logosPerStyle)->get();
@@ -191,8 +191,7 @@ final readonly class LazyLoadingService
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($generationId, $style, $offset, $limit): array {
             $logos = GeneratedLogo::where('logo_generation_id', $generationId)
                 ->where('style', $style)
-                ->with(['logoGeneration', 'colorVariants'])
-                ->orderBy('variation_number')
+                ->with(['logoGeneration'])
                 ->skip($offset)
                 ->take($limit)
                 ->get();
@@ -244,7 +243,7 @@ final readonly class LazyLoadingService
 
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($generationId, $logoIds): array {
             $query = GeneratedLogo::where('logo_generation_id', $generationId)
-                ->select(['id', 'style', 'variation_number', 'original_file_path', 'file_size', 'image_width', 'image_height']);
+                ->select(['id', 'style', 'file_path']);
 
             if (! empty($logoIds)) {
                 $query->whereIn('id', $logoIds);
@@ -255,15 +254,9 @@ final readonly class LazyLoadingService
             return $logos->map(fn ($logo): array => [
                 'id' => $logo->id,
                 'style' => $logo->style,
-                'variation_number' => $logo->variation_number,
-                'preview_url' => $logo->original_file_path ? asset('storage/'.$logo->original_file_path) : null,
-                'file_size' => $logo->file_size,
-                'dimensions' => [
-                    'width' => $logo->image_width,
-                    'height' => $logo->image_height,
-                ],
-                // Generate placeholder data for progressive loading
-                'placeholder' => $this->generatePlaceholderData($logo->image_width, $logo->image_height),
+                'preview_url' => $logo->file_path ? asset('storage/'.$logo->file_path) : null,
+                // Placeholder for legacy properties
+                'placeholder' => $this->generatePlaceholderData(512, 512),
             ])->toArray();
         });
     }
@@ -291,8 +284,8 @@ final readonly class LazyLoadingService
             }
         }
 
-        // Clear the cache service as well
-        $this->cacheService->invalidateGenerationCache($generationId);
+        // Cache service is legacy and not currently used
+        // $this->cacheService->invalidateGenerationCache($generationId);
     }
 
     /**
@@ -308,25 +301,10 @@ final readonly class LazyLoadingService
         return $logosCollection->map(fn ($logo): array => [
             'id' => $logo->id,
             'style' => $logo->style,
-            'variation_number' => $logo->variation_number,
-            'original_file_path' => $logo->original_file_path,
-            'preview_url' => $logo->original_file_path ? asset('storage/'.$logo->original_file_path) : null,
-            'file_size' => $logo->file_size,
-            'formatted_file_size' => $logo->getFormattedFileSize(),
-            'dimensions' => [
-                'width' => $logo->image_width,
-                'height' => $logo->image_height,
-            ],
-            'generation_time_ms' => $logo->generation_time_ms,
-            'color_variants' => $logo->colorVariants->map(fn ($variant) => [
-                'id' => $variant->id,
-                'color_scheme' => $variant->color_scheme,
-                'display_name' => $variant->getColorSchemeDisplayName(),
-                'file_path' => $variant->file_path,
-                'preview_url' => asset('storage/'.$variant->file_path),
-                'file_size' => $variant->file_size,
-            ])->all(),
-            'placeholder' => $this->generatePlaceholderData($logo->image_width, $logo->image_height),
+            'file_path' => $logo->file_path,
+            'preview_url' => $logo->file_path ? asset('storage/'.$logo->file_path) : null,
+            // Legacy properties removed: variation_number, original_file_path, file_size, dimensions, generation_time_ms, color_variants
+            'placeholder' => $this->generatePlaceholderData(512, 512),
         ])->all();
     }
 

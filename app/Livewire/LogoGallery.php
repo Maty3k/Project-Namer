@@ -13,6 +13,9 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ * @property \Illuminate\Database\Eloquent\Collection<int, GeneratedLogo> $logos
+ */
 class LogoGallery extends Component
 {
     public LogoGeneration $logoGeneration;
@@ -34,11 +37,12 @@ class LogoGallery extends Component
 
     /**
      * Get the logos for this generation.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, GeneratedLogo>
      */
     public function getLogosProperty(): \Illuminate\Database\Eloquent\Collection
     {
-        return $this->logoGeneration->generatedLogos()
-            ->orderBy('created_at', 'asc')
+        return $this->logoGeneration->generatedLogos()->oldest()
             ->get();
     }
 
@@ -64,7 +68,7 @@ class LogoGallery extends Component
             abort(404);
         }
 
-        $filename = basename($filePath);
+        $filename = basename((string) $filePath);
 
         return Storage::disk('public')->download($filePath, $filename);
     }
@@ -72,7 +76,7 @@ class LogoGallery extends Component
     /**
      * Download all logos as a zip file.
      */
-    public function downloadAll(): BinaryFileResponse
+    public function downloadAll(): StreamedResponse|BinaryFileResponse
     {
         $logos = $this->logos;
 
@@ -99,7 +103,7 @@ class LogoGallery extends Component
             foreach ($logos as $logo) {
                 if ($logo->file_path && Storage::disk('public')->exists($logo->file_path)) {
                     $fileContents = Storage::disk('public')->get($logo->file_path);
-                    $zip->addFromString(basename($logo->file_path), $fileContents);
+                    $zip->addFromString(basename((string) $logo->file_path), $fileContents);
                 }
             }
             $zip->close();

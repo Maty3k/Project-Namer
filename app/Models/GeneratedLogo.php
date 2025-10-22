@@ -4,13 +4,45 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\GeneratedLogoFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * @property int $id
+ * @property int $logo_generation_id
+ * @property string|null $file_path
+ * @property string $style
+ * @property string|null $prompt
+ * @property string $status
+ * @property string|null $error_message
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\LogoGeneration $logoGeneration
+ * @property-read mixed $url
+ *
+ * @method static \Database\Factories\GeneratedLogoFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo whereErrorMessage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo whereFilePath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo whereLogoGenerationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo wherePrompt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo whereStyle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo whereUpdatedAt($value)
+ *
+ * @mixin \Eloquent
+ */
 class GeneratedLogo extends Model
 {
+    /** @use HasFactory<GeneratedLogoFactory> */
     use HasFactory;
 
     /**
@@ -27,6 +59,8 @@ class GeneratedLogo extends Model
 
     /**
      * Get the logo generation that owns this logo.
+     *
+     * @return BelongsTo<LogoGeneration, $this>
      */
     public function logoGeneration(): BelongsTo
     {
@@ -35,10 +69,12 @@ class GeneratedLogo extends Model
 
     /**
      * Get the full URL to the logo file.
+     *
+     * @return Attribute<string, never>
      */
-    public function getUrlAttribute(): string
+    protected function url(): Attribute
     {
-        return Storage::disk('public')->url($this->file_path);
+        return Attribute::make(get: fn () => Storage::disk('public')->url($this->file_path));
     }
 
     /**

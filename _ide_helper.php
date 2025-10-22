@@ -27982,27 +27982,25 @@ namespace App\Livewire {
     class ProjectPage extends \Livewire\Component {
             }
     /**
-     * Logo Gallery Index component for displaying all user logo generations.
-     *
-     */
-    class LogoGalleryIndex extends \Livewire\Component {
-            }
-    /**
-     * Logo Gallery component for displaying and managing generated logos.
-     * 
-     * Handles logo display, color customization, and download functionality
-     * with real-time updates during generation process.
-     *
-     */
-    class LogoGallery extends \Livewire\Component {
-            }
-    /**
      */
     class PhotoGallery extends \Livewire\Component {
             }
     /**
      */
+    class LogoGenerations extends \Livewire\Component {
+            }
+    /**
+     * @property \Illuminate\Database\Eloquent\Collection<int, GeneratedLogo> $logos
+     */
+    class LogoGallery extends \Livewire\Component {
+            }
+    /**
+     */
     class Appearance extends \Livewire\Component {
+            }
+    /**
+     */
+    class KeyboardShortcuts extends \Livewire\Component {
             }
     }
 
@@ -28018,10 +28016,6 @@ namespace App\Livewire\Settings {
     /**
      */
     class TwoFactorAuthenticationPage extends \Livewire\Component {
-            }
-    /**
-     */
-    class KeyboardShortcuts extends \Livewire\Component {
             }
     }
 

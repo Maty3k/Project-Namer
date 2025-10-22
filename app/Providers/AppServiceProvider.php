@@ -22,11 +22,9 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Register OpenAI Logo Service with API key from config
-        $this->app->singleton(OpenAILogoService::class, function ($app) {
-            return new OpenAILogoService(
-                apiKey: config('services.openai.api_key')
-            );
-        });
+        $this->app->singleton(fn ($app): \App\Services\OpenAILogoService => new OpenAILogoService(
+            apiKey: config('services.openai.api_key')
+        ));
     }
 
     /**

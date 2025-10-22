@@ -29,6 +29,8 @@ use Illuminate\Support\Str;
  * @property bool $prefers_dark_mode
  * @property bool $theme_auto_switch
  * @property-read bool $two_factor_enabled
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LogoGeneration> $logoGenerations
+ * @property-read int|null $logo_generations_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MoodBoard> $moodBoards
  * @property-read int|null $mood_boards_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\NamingSession> $namingSessions

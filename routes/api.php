@@ -15,8 +15,6 @@ use App\Http\Controllers\Api\ShareController;
 use App\Http\Controllers\Api\SuggestionDomainsController;
 use App\Http\Controllers\Api\ThemeController;
 use App\Http\Controllers\Api\UserPreferencesController;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('api')->group(function (): void {

@@ -26,6 +26,8 @@ use Livewire\Component;
  * @property-read bool $hasLogos
  * @property-read bool $allDomainsUnavailable
  * @property-read string|null $aiModel
+ * @property-read int $totalGeneratedLogosCount
+ * @property-read bool $hasGeneratedLogos
  */
 class NameResultCard extends Component
 {

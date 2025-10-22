@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Jobs\GenerateLogosJob;
 use App\Livewire\NameGeneratorDashboard;
 use App\Models\GenerationCache;
 use App\Models\LogoGeneration;

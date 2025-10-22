@@ -18,8 +18,8 @@ class LogoGenerationController extends Controller
     public function generate(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'business_name' => 'required|string|max:255',
-            'business_description' => 'nullable|string|max:1000',
+            'business_name' => ['required', 'string', 'max:255'],
+            'business_description' => ['nullable', 'string', 'max:1000'],
         ]);
 
         // Create logo generation record

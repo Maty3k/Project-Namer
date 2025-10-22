@@ -183,28 +183,16 @@ final class PublicShareController extends Controller
 
             // Load generated logos if available
             if ($logoGeneration->generatedLogos()->exists()) {
-                $logoGeneration->load('generatedLogos.colorVariants');
+                $logoGeneration->load('generatedLogos');
 
                 $logos = [];
                 foreach ($logoGeneration->generatedLogos as $logo) {
-                    $colorVariants = [];
-                    foreach ($logo->colorVariants as $variant) {
-                        $colorVariants[] = [
-                            'id' => $variant->id,
-                            'color_scheme' => $variant->color_scheme,
-                            'preview_url' => $this->getAssetUrl($variant->file_path),
-                            'download_url' => $this->getAssetUrl($variant->file_path),
-                            'is_original' => $variant->color_scheme === 'original',
-                        ];
-                    }
-
                     $logos[] = [
                         'id' => $logo->id,
                         'style' => $logo->style,
-                        'prompt' => $logo->prompt_used,
-                        'preview_url' => $this->getAssetUrl($logo->original_file_path),
-                        'download_url' => $this->getAssetUrl($logo->original_file_path),
-                        'color_variants' => $colorVariants,
+                        'prompt' => $logo->prompt,
+                        'preview_url' => $this->getAssetUrl($logo->file_path),
+                        'download_url' => $this->getAssetUrl($logo->file_path),
                     ];
                 }
 

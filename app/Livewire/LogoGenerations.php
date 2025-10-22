@@ -11,6 +11,8 @@ class LogoGenerations extends Component
 {
     /**
      * Get all logo generations for the authenticated user.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, LogoGeneration>
      */
     public function getLogoGenerationsProperty(): \Illuminate\Database\Eloquent\Collection
     {

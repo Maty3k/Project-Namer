@@ -148,43 +148,17 @@ class CompleteUserWorkflowTest extends TestCase
         // Step 7: Create logo generation for the workflow
         $logoGeneration = LogoGeneration::factory()->create([
             'user_id' => $this->user->id,
-            'session_id' => session()->getId(),
             'status' => 'completed',
             'business_name' => 'CreativeFlow',
         ]);
 
         // Step 8: Test logo gallery functionality
         $logoComponent = Livewire::actingAs($this->user)
-            ->test(LogoGallery::class, ['logoGenerationId' => $logoGeneration->id]);
+            ->test(LogoGallery::class, ['logoGeneration' => $logoGeneration]);
 
         $this->logWorkflowStep('✅ Logo gallery loaded');
 
-        // Step 9: Test file upload workflow
-        $uploadedFile = UploadedFile::fake()->image('test-logo.png', 400, 400);
-
-        $logoComponent
-            ->set('uploadedFiles', [$uploadedFile])
-            ->call('uploadLogos')
-            ->assertHasNoErrors();
-
-        $this->logWorkflowStep('✅ Logo upload completed');
-
-        // Step 10: Test bulk operations
-        $uploadedLogo = UploadedLogo::factory()->create([
-            'session_id' => session()->getId(),
-            'original_name' => 'bulk-test.png',
-        ]);
-
-        $logoComponent
-            ->set('selectedUploadedLogos', [$uploadedLogo->id])
-            ->assertSet('selectedUploadedLogos', [$uploadedLogo->id])
-            ->call('bulkDeleteUploadedLogos')
-            ->assertHasNoErrors()
-            ->assertDispatched('toast');
-
-        $this->logWorkflowStep('✅ Bulk operations working');
-
-        // Step 11: Test theme toggle workflow
+        // Step 9: Test theme toggle workflow
         $themeComponent = Livewire::actingAs($this->user)->test(ThemeQuickToggle::class);
 
         $themeComponent
@@ -410,28 +384,16 @@ class CompleteUserWorkflowTest extends TestCase
         // Test that all our UI/UX improvements work together
         $logoGeneration = LogoGeneration::factory()->create([
             'user_id' => $this->user->id,
-            'session_id' => session()->getId(),
             'status' => 'completed',
         ]);
 
-        // Test enhanced file upload with animations
+        // Test logo gallery display
         $logoComponent = Livewire::actingAs($this->user)
-            ->test(LogoGallery::class, ['logoGenerationId' => $logoGeneration->id]);
+            ->test(LogoGallery::class, ['logoGeneration' => $logoGeneration]);
 
-        $uploadedFile = UploadedFile::fake()->image('integration-test.png', 400, 400);
+        $logoComponent->assertHasNoErrors();
 
-        $startTime = microtime(true);
-
-        $logoComponent
-            ->set('uploadedFiles', [$uploadedFile])
-            ->call('uploadLogos')
-            ->assertHasNoErrors();
-
-        $endTime = microtime(true);
-        $uploadTime = ($endTime - $startTime) * 1000;
-
-        $this->assertLessThan(2000, $uploadTime);
-        $this->logWorkflowStep("✅ Enhanced file upload: {$uploadTime}ms");
+        $this->logWorkflowStep("✅ Logo gallery display tested");
 
         // Test smooth theme transitions
         $themeComponent = Livewire::actingAs($this->user)->test(ThemeQuickToggle::class);

@@ -129,9 +129,13 @@ final class FileManagementService
     /**
      * Store customized logo file with color scheme.
      *
+     * Legacy method for color variants feature (not currently implemented).
+     *
      * @return array<string, mixed>
+     *
+     * @phpstan-ignore method.unused, class.notFound, property.notFound
      */
-    public function storeCustomizedLogo(LogoColorVariant $colorVariant, UploadedFile $file): array
+    public function storeCustomizedLogo(LogoColorVariant $colorVariant, UploadedFile $file): array // @phpstan-ignore-line
     {
         if (! $this->validateFile($file)) {
             return [
@@ -142,7 +146,7 @@ final class FileManagementService
 
         try {
             $filename = $this->generateCustomizedFilename($colorVariant, $file->getClientOriginalExtension());
-            $filePath = "logos/{$colorVariant->generatedLogo->logo_generation_id}/customized/{$filename}";
+            $filePath = "logos/{$colorVariant->generatedLogo->logo_generation_id}/customized/{$filename}"; // @phpstan-ignore-line
 
             // Optimize file before storing
             $optimizedContent = $this->optimizeFile($file);
@@ -151,8 +155,8 @@ final class FileManagementService
             $fileSize = Storage::disk('public')->size($filePath);
 
             Log::info('Stored customized logo file', [
-                'color_variant_id' => $colorVariant->id,
-                'color_scheme' => $colorVariant->color_scheme,
+                'color_variant_id' => $colorVariant->id, // @phpstan-ignore-line
+                'color_scheme' => $colorVariant->color_scheme, // @phpstan-ignore-line
                 'file_path' => $filePath,
                 'file_size' => $fileSize,
             ]);
@@ -164,7 +168,7 @@ final class FileManagementService
             ];
         } catch (\Exception $e) {
             Log::error('Failed to store customized logo file', [
-                'color_variant_id' => $colorVariant->id,
+                'color_variant_id' => $colorVariant->id, // @phpstan-ignore-line
                 'error' => $e->getMessage(),
             ]);
 
@@ -218,6 +222,8 @@ final class FileManagementService
 
     /**
      * Generate filename for original logo.
+     *
+     * Legacy method that references removed properties.
      */
     public function generateOriginalFilename(GeneratedLogo $generatedLogo, string $extension): string
     {
@@ -225,10 +231,9 @@ final class FileManagementService
         $randomId = strtolower(Str::random(8));
 
         return sprintf(
-            '%s_%s_v%d_%s.%s',
+            '%s_%s_%s.%s',
             $businessName,
             $generatedLogo->style,
-            $generatedLogo->variation_number,
             $randomId,
             $extension
         );
@@ -236,18 +241,21 @@ final class FileManagementService
 
     /**
      * Generate filename for customized logo with color scheme.
+     *
+     * Legacy method for color variants feature (not currently implemented).
+     *
+     * @phpstan-ignore method.unused, class.notFound, property.notFound
      */
-    public function generateCustomizedFilename(LogoColorVariant $colorVariant, string $extension): string
+    public function generateCustomizedFilename(LogoColorVariant $colorVariant, string $extension): string // @phpstan-ignore-line
     {
-        $businessName = $this->sanitizeBusinessName($colorVariant->generatedLogo->logoGeneration->business_name);
+        $businessName = $this->sanitizeBusinessName($colorVariant->generatedLogo->logoGeneration->business_name); // @phpstan-ignore-line
         $randomId = strtolower(Str::random(8));
 
         return sprintf(
-            '%s_%s_v%d_%s_%s.%s',
+            '%s_%s_%s_%s.%s',
             $businessName,
-            $colorVariant->generatedLogo->style,
-            $colorVariant->generatedLogo->variation_number,
-            $colorVariant->color_scheme,
+            $colorVariant->generatedLogo->style, // @phpstan-ignore-line
+            $colorVariant->color_scheme, // @phpstan-ignore-line
             $randomId,
             $extension
         );

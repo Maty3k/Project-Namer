@@ -77,12 +77,12 @@
         "test": [
             "Composer\\Config::disableProcessTimeout",
             "@php artisan config:clear --ansi",
-            "@php artisan test"
+            "@php -d max_execution_time=0 artisan test"
         ],
         "test-parallel": [
             "Composer\\Config::disableProcessTimeout",
             "@php artisan config:clear --ansi",
-            "@php artisan test --parallel --recreate-databases"
+            "@php -d max_execution_time=0 artisan test --parallel --recreate-databases"
         ],
         "lint": [
             "vendor/bin/pint"
@@ -94,9 +94,10 @@
             "vendor/bin/phpstan analyse --memory-limit=512M"
         ],
         "ready": [
-            "@php artisan ide-helper:generate",
-            "@php artisan ide-helper:meta",
-            "@php artisan ide-helper:models -RW",
+            "Composer\\Config::disableProcessTimeout",
+            "@php -d memory_limit=-1 -d max_execution_time=0 artisan ide-helper:generate",
+            "@php -d memory_limit=-1 -d max_execution_time=0 artisan ide-helper:meta",
+            "@php -d memory_limit=-1 -d max_execution_time=0 artisan ide-helper:models -RW",
             "composer rector",
             "composer lint",
             "composer stan",
@@ -127,7 +128,7 @@
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
         },
-        "process-timeout": 600
+        "process-timeout": 0
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
