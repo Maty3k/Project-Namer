@@ -13,6 +13,10 @@ class LogoGenerations extends Component
 
     public ?LogoGeneration $generationToDelete = null;
 
+    public string $search = '';
+
+    public string $filterBy = 'newest';
+
     /**
      * Get all logo generations for the authenticated user.
      *
@@ -20,11 +24,24 @@ class LogoGenerations extends Component
      */
     public function getLogoGenerationsProperty(): \Illuminate\Database\Eloquent\Collection
     {
-        return auth()->user()
+        $query = auth()->user()
             ->logoGenerations()
-            ->with('generatedLogos')
-            ->orderBy('created_at', 'desc')
-            ->get();
+            ->with('generatedLogos');
+
+        // Apply search filter
+        if ($this->search) {
+            $query->where('business_name', 'like', '%'.$this->search.'%');
+        }
+
+        // Apply sorting based on filter
+        match ($this->filterBy) {
+            'oldest' => $query->orderBy('created_at', 'asc'),
+            'alphabetical' => $query->orderBy('business_name', 'asc'),
+            'favorited' => $query->orderBy('is_saved', 'desc')->orderBy('created_at', 'desc'),
+            default => $query->orderBy('created_at', 'desc'), // newest
+        };
+
+        return $query->get();
     }
 
     /**
