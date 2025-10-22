@@ -24,8 +24,6 @@ class LogoGallery extends Component
 
     public ?GeneratedLogo $logoToDelete = null;
 
-    public bool $isDeleteAll = false;
-
     /**
      * Mount the component with a logo generation.
      */
@@ -130,31 +128,12 @@ class LogoGallery extends Component
     }
 
     /**
-     * Open delete all confirmation modal.
-     */
-    public function confirmDeleteAll(): void
-    {
-        if ($this->logos->isEmpty()) {
-            $this->dispatch('show-toast', [
-                'message' => 'No logos to delete',
-                'type' => 'error',
-            ]);
-
-            return;
-        }
-
-        $this->isDeleteAll = true;
-        $this->showDeleteModal = true;
-    }
-
-    /**
      * Cancel delete operation.
      */
     public function cancelDelete(): void
     {
         $this->showDeleteModal = false;
         $this->logoToDelete = null;
-        $this->isDeleteAll = false;
     }
 
     /**
@@ -173,16 +152,10 @@ class LogoGallery extends Component
     }
 
     /**
-     * Delete a specific logo or all logos.
+     * Delete a specific logo.
      */
     public function deleteLogo(): void
     {
-        if ($this->isDeleteAll) {
-            $this->deleteAllLogos();
-
-            return;
-        }
-
         if (! $this->logoToDelete) {
             return;
         }
@@ -203,45 +176,6 @@ class LogoGallery extends Component
 
         $this->showDeleteModal = false;
         $this->logoToDelete = null;
-
-        // Refresh the component
-        $this->dispatch('$refresh');
-    }
-
-    /**
-     * Delete all logos for this generation.
-     */
-    protected function deleteAllLogos(): void
-    {
-        $logos = $this->logos;
-
-        if ($logos->isEmpty()) {
-            $this->dispatch('show-toast', [
-                'message' => 'No logos to delete',
-                'type' => 'error',
-            ]);
-
-            return;
-        }
-
-        $count = $logos->count();
-
-        // Delete all files and database records
-        foreach ($logos as $logo) {
-            $logo->deleteFile();
-            $logo->delete();
-        }
-
-        // Reset the completed logos count to 0
-        $this->logoGeneration->update(['logos_completed' => 0]);
-
-        $this->dispatch('show-toast', [
-            'message' => "All {$count} logos deleted successfully",
-            'type' => 'success',
-        ]);
-
-        $this->showDeleteModal = false;
-        $this->isDeleteAll = false;
 
         // Refresh the component
         $this->dispatch('$refresh');

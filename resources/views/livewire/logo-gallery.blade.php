@@ -76,20 +76,6 @@
                 </p>
             </div>
         @else
-            {{-- Delete All Button Above Grid --}}
-            <div class="mb-4 flex justify-end">
-                <button
-                    wire:click="confirmDeleteAll"
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white font-medium rounded-md transition-colors"
-                    title="Delete all logos"
-                >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                    </svg>
-                    Delete All
-                </button>
-            </div>
-
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8">
                 @foreach($logos as $logo)
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
@@ -151,7 +137,7 @@
     </div>
 
     {{-- Delete Confirmation Modal --}}
-    @if($showDeleteModal)
+    @if($showDeleteModal && $logoToDelete)
         <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
                 {{-- Background overlay --}}
@@ -171,19 +157,11 @@
                             </div>
                             <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                                 <h3 class="text-lg font-semibold leading-6 text-gray-900 dark:text-white" id="modal-title">
-                                    @if($isDeleteAll)
-                                        Delete All Logos
-                                    @else
-                                        Delete Logo
-                                    @endif
+                                    Delete Logo
                                 </h3>
                                 <div class="mt-2">
                                     <p class="text-sm text-gray-500 dark:text-gray-400">
-                                        @if($isDeleteAll)
-                                            Are you sure you want to delete <strong>all {{ $logos->count() }} logos</strong>? This action cannot be undone.
-                                        @elseif($logoToDelete)
-                                            Are you sure you want to delete this <strong class="capitalize">{{ $logoToDelete->style }}</strong> logo? This action cannot be undone.
-                                        @endif
+                                        Are you sure you want to delete this <strong class="capitalize">{{ $logoToDelete->style }}</strong> logo? This action cannot be undone.
                                     </p>
                                 </div>
                             </div>
@@ -195,11 +173,7 @@
                             wire:click="deleteLogo"
                             class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 sm:w-auto"
                         >
-                            @if($isDeleteAll)
-                                Delete All
-                            @else
-                                Delete
-                            @endif
+                            Delete
                         </button>
                         <button
                             type="button"

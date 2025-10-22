@@ -24,9 +24,21 @@
         @else
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8">
                 @foreach($logoGenerations as $generation)
-                    <a href="{{ route('logo.gallery', $generation) }}"
-                       wire:navigate
-                       class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow block">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow relative">
+                        {{-- Delete Button --}}
+                        <button
+                            wire:click.prevent="confirmDelete({{ $generation->id }})"
+                            class="absolute top-2 right-2 z-10 p-1.5 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white rounded-md transition-colors"
+                            title="Delete all logos"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+
+                        <a href="{{ route('logo.gallery', $generation) }}"
+                           wire:navigate
+                           class="block">
 
                         {{-- Preview Grid --}}
                         <div class="aspect-square bg-gray-100 dark:bg-gray-700 p-3">
@@ -88,9 +100,62 @@
                                 </p>
                             </div>
                         </div>
-                    </a>
+                        </a>
+                    </div>
                 @endforeach
             </div>
         @endif
     </div>
+
+    {{-- Delete Confirmation Modal --}}
+    @if($showDeleteModal && $generationToDelete)
+        <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
+                {{-- Background overlay --}}
+                <div
+                    class="fixed inset-0 bg-gray-500 bg-opacity-75 dark:bg-gray-900 dark:bg-opacity-75 transition-opacity"
+                    wire:click="cancelDelete"
+                ></div>
+
+                {{-- Modal panel --}}
+                <div class="inline-block transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
+                    <div class="bg-white dark:bg-gray-800 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900 sm:mx-0 sm:h-10 sm:w-10">
+                                <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                </svg>
+                            </div>
+                            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                <h3 class="text-lg font-semibold leading-6 text-gray-900 dark:text-white" id="modal-title">
+                                    Delete All Logos
+                                </h3>
+                                <div class="mt-2">
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                                        Are you sure you want to delete <strong>all {{ $generationToDelete->generatedLogos->count() }} logos</strong> for "{{ $generationToDelete->business_name }}"? This action cannot be undone.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-900 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-2">
+                        <button
+                            type="button"
+                            wire:click="deleteAllLogos"
+                            class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 sm:w-auto"
+                        >
+                            Delete All
+                        </button>
+                        <button
+                            type="button"
+                            wire:click="cancelDelete"
+                            class="mt-3 inline-flex w-full justify-center rounded-md bg-white dark:bg-gray-700 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 sm:mt-0 sm:w-auto"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
