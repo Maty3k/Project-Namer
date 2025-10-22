@@ -212,7 +212,7 @@ it('can toggle saved status', function (): void {
         ->create(['is_saved' => false]);
 
     Livewire::test(LogoGallery::class, ['logoGeneration' => $logoGeneration])
-        ->assertSee('Save to Gallery')
+        ->assertSee('Favorite')
         ->call('toggleSaved')
         ->assertDispatched('show-toast');
 
@@ -227,7 +227,7 @@ it('shows saved status when already saved', function (): void {
         ->create(['is_saved' => true]);
 
     Livewire::test(LogoGallery::class, ['logoGeneration' => $logoGeneration])
-        ->assertSee('Saved');
+        ->assertSee('Favorited');
 });
 
 it('can unsave a saved logo generation', function (): void {
