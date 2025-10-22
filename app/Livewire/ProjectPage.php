@@ -684,6 +684,9 @@ class ProjectPage extends Component
                 'type' => 'success',
             ]);
 
+            // Reload AI generation history to show the new generation
+            $this->loadAIGenerationHistory();
+
         } catch (\Exception $e) {
             Log::error('AI generation failed in ProjectPage', [
                 'project_id' => $this->project->id,
