@@ -24,9 +24,21 @@
         @else
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8">
                 @foreach($logoGenerations as $generation)
-                    <a href="{{ route('logo.gallery', $generation) }}"
-                       wire:navigate
-                       class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow block">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow relative">
+                        {{-- Delete Button --}}
+                        <button
+                            wire:click.prevent="confirmDelete({{ $generation->id }})"
+                            class="absolute bottom-2 right-2 z-10 p-1.5 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white rounded-md transition-colors"
+                            title="Delete all logos"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+
+                        <a href="{{ route('logo.gallery', $generation) }}"
+                           wire:navigate
+                           class="block">
 
                         {{-- Preview Grid --}}
                         <div class="aspect-square bg-gray-100 dark:bg-gray-700 p-3">
@@ -88,9 +100,51 @@
                                 </p>
                             </div>
                         </div>
-                    </a>
+                        </a>
+                    </div>
                 @endforeach
             </div>
         @endif
     </div>
+
+    {{-- Delete Confirmation Modal --}}
+    @if($showDeleteModal)
+        <flux:modal wire:model="showDeleteModal" class="min-w-96">
+            <div class="space-y-6">
+                <div>
+                    <flux:heading size="lg">Delete All Logos</flux:heading>
+                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                        Are you sure you want to delete all logos for this generation? This action cannot be undone.
+                    </p>
+
+                    @if($generationToDelete)
+                        <div class="mt-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <p class="font-medium text-sm">{{ $generationToDelete->business_name }}</p>
+                            @if($generationToDelete->business_description)
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $generationToDelete->business_description }}</p>
+                            @endif
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                <strong>{{ $generationToDelete->generatedLogos->count() }}</strong> {{ $generationToDelete->generatedLogos->count() === 1 ? 'logo' : 'logos' }} will be deleted
+                            </p>
+                        </div>
+                    @endif
+                </div>
+
+                <div class="flex justify-end space-x-2">
+                    <flux:button
+                        wire:click="cancelDelete"
+                        variant="ghost"
+                    >
+                        Cancel
+                    </flux:button>
+                    <flux:button
+                        wire:click="deleteAllLogos"
+                        variant="danger"
+                    >
+                        Delete All Logos
+                    </flux:button>
+                </div>
+            </div>
+        </flux:modal>
+    @endif
 </div>

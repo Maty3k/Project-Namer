@@ -9,6 +9,10 @@ use Livewire\Component;
 
 class LogoGenerations extends Component
 {
+    public bool $showDeleteModal = false;
+
+    public ?LogoGeneration $generationToDelete = null;
+
     /**
      * Get all logo generations for the authenticated user.
      *
@@ -21,6 +25,64 @@ class LogoGenerations extends Component
             ->with('generatedLogos')
             ->orderBy('created_at', 'desc')
             ->get();
+    }
+
+    /**
+     * Open delete confirmation modal.
+     */
+    public function confirmDelete(int $generationId): void
+    {
+        $this->generationToDelete = LogoGeneration::findOrFail($generationId);
+
+        // Verify this generation belongs to the current user
+        if ($this->generationToDelete->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $this->showDeleteModal = true;
+    }
+
+    /**
+     * Cancel delete operation.
+     */
+    public function cancelDelete(): void
+    {
+        $this->showDeleteModal = false;
+        $this->generationToDelete = null;
+    }
+
+    /**
+     * Delete all logos for a specific generation.
+     */
+    public function deleteAllLogos(): void
+    {
+        if (! $this->generationToDelete) {
+            return;
+        }
+
+        $businessName = $this->generationToDelete->business_name;
+        $logos = $this->generationToDelete->generatedLogos;
+        $count = $logos->count();
+
+        // Delete all files and database records
+        foreach ($logos as $logo) {
+            $logo->deleteFile();
+            $logo->delete();
+        }
+
+        // Delete the logo generation record itself
+        $this->generationToDelete->delete();
+
+        $this->dispatch('show-toast', [
+            'message' => "All {$count} logos for \"{$businessName}\" deleted successfully",
+            'type' => 'success',
+        ]);
+
+        $this->showDeleteModal = false;
+        $this->generationToDelete = null;
+
+        // Refresh the component
+        $this->dispatch('$refresh');
     }
 
     /**

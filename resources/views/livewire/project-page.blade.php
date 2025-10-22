@@ -76,21 +76,7 @@
                     </p>
                 </div>
 
-                <!-- Generate More Names Button - Mobile: Above filters, Desktop: Floating -->
-                @if($this->suggestionCounts['total'] > 0 && !$showAIControls)
-                    <div class="sm:hidden w-full">
-                        <flux:button
-                            wire:click="$set('showAIControls', true)"
-                            variant="primary"
-                            class="w-full"
-                        >
-                            <div class="flex items-center justify-center gap-2">
-                                <x-app-icon name="refresh" size="md" />
-                                Generate More Names
-                            </div>
-                        </flux:button>
-                    </div>
-                @endif
+                <!-- Generate More Names Button - Removed: Users can only generate once per project -->
 
                 <!-- Filter Controls -->
                 @if($this->suggestionCounts['total'] > 0)
@@ -218,25 +204,11 @@
             @endif
             </div>
 
-            <!-- Generate More Names Floating Button (Desktop Only) -->
-            @if($this->suggestionCounts['total'] > 0 && !$showAIControls)
-                <div class="mt-10 hidden sm:flex justify-center">
-                    <flux:button
-                        wire:click="$set('showAIControls', true)"
-                        variant="primary"
-                        class="fixed bottom-6 right-6 z-40 shadow-lg text-lg px-6 py-3"
-                    >
-                        <div class="flex items-center gap-2">
-                            <x-app-icon name="refresh" size="md" />
-                            Generate More Names
-                        </div>
-                    </flux:button>
-                </div>
-            @endif
+            <!-- Generate More Names Floating Button - Removed: Users can only generate once per project -->
         </div>
 
         <!-- AI Generation Controls Modal/Section -->
-        @if($showAIControls)
+        @if($showAIControls && $this->suggestionCounts['total'] === 0)
             <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
                 <div class="bg-primary-50 dark:bg-gray-800 rounded-lg p-6">
                     <div class="mb-6">
@@ -392,11 +364,7 @@
                                     </svg>
                                     
                                     <span wire:loading.remove wire:target="generateMoreNames" class="transition-all duration-200">
-                                        @if($this->suggestionCounts['total'] === 0)
-                                            Start Generating Names
-                                        @else
-                                            Generate More Names
-                                        @endif
+                                        Generate Names
                                     </span>
                                     <span wire:loading wire:target="generateMoreNames" class="animate-pulse">Generating...</span>
                                 </div>

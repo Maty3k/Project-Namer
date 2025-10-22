@@ -137,54 +137,38 @@
     </div>
 
     {{-- Delete Confirmation Modal --}}
-    @if($showDeleteModal && $logoToDelete)
-        <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-            <div class="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
-                {{-- Background overlay --}}
-                <div
-                    class="fixed inset-0 bg-gray-500 bg-opacity-75 dark:bg-gray-900 dark:bg-opacity-75 transition-opacity"
-                    wire:click="cancelDelete"
-                ></div>
+    @if($showDeleteModal)
+        <flux:modal wire:model="showDeleteModal" class="min-w-96">
+            <div class="space-y-6">
+                <div>
+                    <flux:heading size="lg">Delete Logo</flux:heading>
+                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                        Are you sure you want to delete this logo? This action cannot be undone.
+                    </p>
 
-                {{-- Modal panel --}}
-                <div class="inline-block transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
-                    <div class="bg-white dark:bg-gray-800 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                        <div class="sm:flex sm:items-start">
-                            <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900 sm:mx-0 sm:h-10 sm:w-10">
-                                <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                                </svg>
-                            </div>
-                            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                                <h3 class="text-lg font-semibold leading-6 text-gray-900 dark:text-white" id="modal-title">
-                                    Delete Logo
-                                </h3>
-                                <div class="mt-2">
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">
-                                        Are you sure you want to delete this <strong class="capitalize">{{ $logoToDelete->style }}</strong> logo? This action cannot be undone.
-                                    </p>
-                                </div>
-                            </div>
+                    @if($logoToDelete)
+                        <div class="mt-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <p class="font-medium text-sm capitalize">{{ $logoToDelete->style }} Style</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $logoGeneration->business_name }}</p>
                         </div>
-                    </div>
-                    <div class="bg-gray-50 dark:bg-gray-900 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-2">
-                        <button
-                            type="button"
-                            wire:click="deleteLogo"
-                            class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 sm:w-auto"
-                        >
-                            Delete
-                        </button>
-                        <button
-                            type="button"
-                            wire:click="cancelDelete"
-                            class="mt-3 inline-flex w-full justify-center rounded-md bg-white dark:bg-gray-700 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 sm:mt-0 sm:w-auto"
-                        >
-                            Cancel
-                        </button>
-                    </div>
+                    @endif
+                </div>
+
+                <div class="flex justify-end space-x-2">
+                    <flux:button
+                        wire:click="cancelDelete"
+                        variant="ghost"
+                    >
+                        Cancel
+                    </flux:button>
+                    <flux:button
+                        wire:click="deleteLogo"
+                        variant="danger"
+                    >
+                        Delete Logo
+                    </flux:button>
                 </div>
             </div>
-        </div>
+        </flux:modal>
     @endif
 </div>
