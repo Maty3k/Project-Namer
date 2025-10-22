@@ -12,8 +12,6 @@
                     // Get ONLY the server's authoritative theme preference (ignore everything else)
                     const SERVER_THEME_PREFERENCE = {{ \App\Helpers\ThemeHelper::isDarkMode() ? 'true' : 'false' }};
 
-                    console.log('AUTH THEME LOCK: Server preference is', SERVER_THEME_PREFERENCE ? 'DARK' : 'LIGHT');
-
                     // Apply theme immediately and lock it permanently
                     const applyAndLockTheme = () => {
                         if (SERVER_THEME_PREFERENCE) {
@@ -37,7 +35,7 @@
                     window.__allowThemeChange = false;
 
                 } catch (error) {
-                    console.warn('Auth theme lock initialization failed:', error);
+                    // Silently fail - theme lock will use default
                 }
             })();
 

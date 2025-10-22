@@ -265,12 +265,9 @@ new class extends Component {
         if ($this->userTheme) {
             $isDark = $this->userTheme->is_dark_mode ? 'true' : 'false';
             $this->js("
-                console.log('🔒 NAME GENERATOR: Theme preservation activated for', {$isDark} ? 'DARK' : 'LIGHT');
-
                 // Authorize theme change with the protection system
                 if (window.authorizeThemeChange) {
                     window.authorizeThemeChange({$isDark}, 30000); // 30 second authorization
-                    console.log('✅ Theme authorization granted from name generator');
                 }
 
                 // Set preservation variables
@@ -311,7 +308,6 @@ new class extends Component {
         if ($this->userTheme) {
             $isDark = $this->userTheme->is_dark_mode ? 'true' : 'false';
             $this->js("
-                console.log('🎯 NAME GENERATOR: Theme consistency enforced for', {$isDark} ? 'DARK' : 'LIGHT');
                 const isDark = {$isDark};
 
                 // Re-authorize theme change
@@ -350,7 +346,6 @@ new class extends Component {
                 // Keep preservation mode active for 5 seconds
                 setTimeout(() => {
                     window.__themePreservationMode = false;
-                    console.log('🔓 Name generator theme preservation deactivated');
                 }, 5000);
             ");
         }
@@ -2461,12 +2456,9 @@ new class extends Component {
                         const isDarkMode = {{ $userTheme && $userTheme->is_dark_mode ? 'true' : 'false' }};
 
                         if (userTheme) {
-                            console.log('🔒 BUTTON CLICK: Theme preservation activated for', isDarkMode ? 'DARK' : 'LIGHT');
-
                             // Authorize theme change with the protection system
                             if (window.authorizeThemeChange) {
                                 window.authorizeThemeChange(isDarkMode, 25000); // 25 second authorization
-                                console.log('✅ Theme authorization granted from generate button');
                             }
 
                             // Set all theme lock variables
@@ -3042,17 +3034,14 @@ new class extends Component {
             // Modern touch event APIs with passive listeners
             container.addEventListener('touchstart', function(e) {
                 // Handle touchstart
-                console.log('Touch started');
             }, { passive: true });
 
             container.addEventListener('touchmove', function(e) {
                 // Handle touchmove
-                console.log('Touch moving');
             }, { passive: true });
 
             container.addEventListener('touchend', function(e) {
                 // Handle touchend
-                console.log('Touch ended');
             }, { passive: true });
         });
     </script>
