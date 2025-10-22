@@ -46,12 +46,10 @@
         async checkDomains() {
             // Check if already checking to prevent duplicate requests
            if (this.checkingDomains) {
-               console.log('⏳ Already checking domains, skipping duplicate request');
                return;
            }
 
            this.checkingDomains = true;
-           console.log('🔍 Checking domains for suggestion:', this.suggestionId);
 
            try {
                // Call API directly instead of Livewire event
@@ -68,52 +66,26 @@
                    credentials: 'same-origin'
                });
 
-               console.log('📡 Check domains response status:', response.status);
-
                if (response.ok) {
                    const data = await response.json();
-                   console.log('📦 Check domains data:', data);
 
                    if (data.domains && typeof data.domains === 'object') {
                        // Force Alpine reactivity by creating a new object reference
                        this.domains = {...data.domains};
                        this.domainsChecked = true;
-                       console.log('✅ Domains checked successfully:', this.domains);
-                       console.log('🔄 Domain keys:', Object.keys(this.domains));
-                       console.log('🔄 Domain count:', Object.keys(this.domains).length);
-
-                       // Count domains with DNS records
-                       const withDNS = Object.values(this.domains).filter(d => d?.has_dns_records === true).length;
-                       const available = Object.values(this.domains).filter(d => d?.available === true).length;
-                       const unavailable = Object.values(this.domains).filter(d => d?.available === false).length;
-
-                       console.log('🔵 Domains with DNS records:', withDNS);
-                       console.log('✅ Available domains:', available);
-                       console.log('❌ Unavailable domains:', unavailable);
-
-                       // Force Alpine to update the UI
-                       this.$nextTick(() => {
-                           console.log('🎨 Alpine UI should update now');
-                       });
-                   } else {
-                       console.warn('⚠️ Invalid domains data:', data);
                    }
 
                    this.checkingDomains = false;
                } else {
-                   const errorText = await response.text();
-                   console.error('❌ Failed to check domains:', response.status, errorText);
                    this.checkingDomains = false;
                }
            } catch (error) {
-               console.error('❌ Error checking domains:', error);
                this.checkingDomains = false;
            }
        },
        async startLogoGeneration() {
            if (this.generatingLogos) return;
            this.generatingLogos = true;
-           console.log('🎨 Starting logo generation for suggestion:', this.suggestionName);
 
            try {
                const csrfMeta = document.querySelector('meta[name=csrf-token]');
@@ -133,15 +105,11 @@
                    })
                });
 
-               console.log('📡 Logo generation response status:', response.status);
-
                if (response.ok) {
                    const data = await response.json();
-                   console.log('📦 Logo generation data:', data);
 
                    if (data.success && data.logo_generation_id) {
                        this.logoGenerationId = data.logo_generation_id;
-                       console.log('✅ Logo generation started with ID:', this.logoGenerationId);
 
                        // Show success toast
                        if (window.Livewire) {
@@ -154,12 +122,9 @@
                        // Start polling for completion
                        this.startLogoPolling();
                    } else {
-                       console.warn('⚠️ Invalid logo generation response:', data);
                        this.generatingLogos = false;
                    }
                } else {
-                   const errorText = await response.text();
-                   console.error('❌ Failed to start logo generation:', response.status, errorText);
                    this.generatingLogos = false;
                    if (window.Livewire) {
                        window.Livewire.dispatch('show-toast', {
@@ -169,7 +134,6 @@
                    }
                }
            } catch (error) {
-               console.error('❌ Error starting logo generation:', error);
                this.generatingLogos = false;
                if (window.Livewire) {
                    window.Livewire.dispatch('show-toast', {
@@ -184,7 +148,6 @@
            this.pollInterval = setInterval(async () => {
                await this.checkLogoStatus();
            }, 5000);
-           console.log('⏰ Started polling for logo completion');
        },
        async checkLogoStatus() {
            if (!this.logoGenerationId) return;
@@ -201,14 +164,12 @@
                    const data = await response.json();
 
                    if (data.status === 'completed') {
-                       console.log('✅ Logo generation completed!');
                        clearInterval(this.pollInterval);
                        this.generatingLogos = false;
 
                        // Update logos array with the generated logos
                        if (data.logos && Array.isArray(data.logos)) {
                            this.logos = data.logos;
-                           console.log('🎨 Loaded 4 logos:', this.logos);
                        }
 
                        // Show completion toast
@@ -219,7 +180,6 @@
                            });
                        }
                    } else if (data.status === 'failed') {
-                       console.error('❌ Logo generation failed');
                        clearInterval(this.pollInterval);
                        this.generatingLogos = false;
 
@@ -232,12 +192,11 @@
                    }
                }
            } catch (error) {
-               console.error('❌ Error checking logo status:', error);
+               // Silently fail - polling will continue
            }
        },
        async fetchLogos() {
            try {
-               console.log('🔄 Fetching logos for suggestion:', this.suggestionId);
                // Refresh the suggestion data from API to get updated logos
                const response = await fetch(`/api/suggestions/${this.suggestionId}/domains`, {
                    headers: {
@@ -246,38 +205,22 @@
                    }
                });
 
-               console.log('📡 Fetch logos response status:', response.status);
-
                if (response.ok) {
                    const data = await response.json();
-                   console.log('📦 Fetched data:', data);
 
                    // Update logos with fresh data from server
                    if (data.logos && Array.isArray(data.logos) && data.logos.length > 0) {
                        // Force Alpine reactivity by creating a new array reference
                        this.logos = [...data.logos];
-                       console.log('🎨 Logos array updated! Count:', this.logos.length);
-                       console.log('🎨 Logo styles:', this.logos.map(l => l.style));
-                       console.log('✅ hasLogos computed:', this.hasLogos);
 
                        // Update logoGenerationId if provided
                        if (data.logoGenerationId) {
                            this.logoGenerationId = data.logoGenerationId;
-                           console.log('🆔 LogoGenerationId updated:', this.logoGenerationId);
                        }
-
-                       // Force Alpine to detect the change
-                       this.$nextTick(() => {
-                           console.log('🔄 Next tick - Alpine should have updated UI');
-                       });
-                   } else {
-                       console.log('⚠️ No logos in response or empty array');
                    }
-               } else {
-                   console.error('❌ Failed to fetch logos:', response.status);
                }
            } catch (error) {
-               console.error('❌ Error fetching logos:', error);
+               // Silently fail
            }
        },
        init() {
@@ -291,40 +234,32 @@
                        },
                        credentials: 'same-origin'
                    });
-                   console.log('📡 Domains API response status:', response.status);
-                   console.log('📋 Response headers:', Object.fromEntries(response.headers.entries()));
 
                    const text = await response.text();
-                   console.log('📄 Response text (first 200 chars):', text.substring(0, 200));
 
                    try {
                        const data = JSON.parse(text);
-                       console.log('📦 Suggestion API data:', data);
 
                        // Load domains if they exist
                        if (data.domains && Object.keys(data.domains).length > 0) {
                            this.domains = {...data.domains};
                            this.domainsChecked = true;
-                           console.log('✅ Loaded existing domains:', this.domains);
                        }
 
                        // Load logos if they exist
                        if (data.logos && Array.isArray(data.logos) && data.logos.length > 0) {
                            this.logos = [...data.logos];
-                           console.log('🎨 Loaded existing logos:', this.logos);
                        }
 
                        // Load logoGenerationId if it exists
                        if (data.logoGenerationId) {
                            this.logoGenerationId = data.logoGenerationId;
-                           console.log('🆔 Loaded logoGenerationId:', this.logoGenerationId);
                        }
                    } catch (parseError) {
-                       console.log('❌ JSON parse error:', parseError);
-                       console.log('📄 Full response text:', text);
+                       // Silently fail - card will work without initial data
                    }
                } catch (error) {
-                   console.log('❌ Error loading domains:', error);
+                   // Silently fail - card will work without initial data
                }
            })();
        }
@@ -443,7 +378,6 @@
                                     isExpanded = !isExpanded;
                                     // Always trigger domain check when expanding to ensure fresh DNS data
                                     if (isExpanded && typeof checkingDomains !== 'undefined' && !checkingDomains && typeof checkDomains === 'function') {
-                                        console.log('🎯 Expanding card - checking domains now');
                                         checkDomains();
                                     }
                                 }
@@ -527,8 +461,7 @@
                     </div>
                 </div>
 
-                <div x-show="typeof domains !== 'undefined' && domains && Object.keys(domains).length > 0"
-                     x-effect="console.log('🎨 Domains display x-show evaluated:', typeof domains !== 'undefined' && domains && Object.keys(domains).length > 0, 'domain count:', Object.keys(domains || {}).length)">
+                <div x-show="typeof domains !== 'undefined' && domains && Object.keys(domains).length > 0">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                         <template x-for="[domainKey, domainData] in Object.entries(typeof domains !== 'undefined' ? domains : {})" :key="'domain-' + (typeof suggestionId !== 'undefined' ? suggestionId : 0) + '-' + domainKey">
                             <div x-data="{

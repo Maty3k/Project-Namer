@@ -52,12 +52,6 @@ final class CachingService
                 'response_size' => strlen(json_encode($response)),
             ],
         ], $ttl ?? self::API_RESPONSE_TTL);
-
-        Log::info('AI API response cached', [
-            'cache_key' => $cacheKey,
-            'model' => $model,
-            'ttl' => $ttl ?? self::API_RESPONSE_TTL,
-        ]);
     }
 
     /**
@@ -76,12 +70,6 @@ final class CachingService
         $cached = Cache::get($cacheKey);
 
         if ($cached) {
-            Log::info('AI API response cache hit', [
-                'cache_key' => $cacheKey,
-                'model' => $model,
-                'cached_at' => $cached['cached_at'],
-            ]);
-
             return $cached['response'];
         }
 

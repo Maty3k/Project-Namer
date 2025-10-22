@@ -9,7 +9,8 @@ class PerformanceMonitor {
         this.observers = {};
         this.measurements = [];
         this.isMonitoring = false;
-        
+        this.isDevelopment = window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1');
+
         // Initialize performance monitoring
         this.init();
     }
@@ -44,7 +45,7 @@ class PerformanceMonitor {
                 lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
                 this.observers.lcp = lcpObserver;
             } catch (e) {
-                console.warn('LCP monitoring not supported:', e);
+                // LCP monitoring not supported
             }
 
             // First Input Delay (FID)
@@ -62,7 +63,7 @@ class PerformanceMonitor {
                 fidObserver.observe({ entryTypes: ['first-input'] });
                 this.observers.fid = fidObserver;
             } catch (e) {
-                console.warn('FID monitoring not supported:', e);
+                // FID monitoring not supported
             }
 
             // Cumulative Layout Shift (CLS)
@@ -83,7 +84,7 @@ class PerformanceMonitor {
                 clsObserver.observe({ entryTypes: ['layout-shift'] });
                 this.observers.cls = clsObserver;
             } catch (e) {
-                console.warn('CLS monitoring not supported:', e);
+                // CLS monitoring not supported
             }
         }
     }
@@ -127,8 +128,8 @@ class PerformanceMonitor {
                     averageLoadTime: resources.reduce((sum, r) => sum + r.duration, 0) / resources.length,
                     timestamp: Date.now()
                 };
-                
-                if (slowResources.length > 0) {
+
+                if (this.isDevelopment && slowResources.length > 0) {
                     console.warn(`Found ${slowResources.length} slow loading resources:`, slowResources);
                 }
             }, 1000);
@@ -284,7 +285,7 @@ class PerformanceMonitor {
     }
 
     /**
-     * Generate performance report
+     * Generate performance report (only logs in development)
      */
     generateReport() {
         const report = {
@@ -307,27 +308,30 @@ class PerformanceMonitor {
                 }
             }
         };
-        
-        console.group('📊 Performance Report');
-        console.table(report.summary.coreWebVitals);
-        if (report.summary.loading.navigation) {
-            console.table(report.summary.loading.navigation);
+
+        if (this.isDevelopment) {
+            console.group('📊 Performance Report');
+            console.table(report.summary.coreWebVitals);
+            if (report.summary.loading.navigation) {
+                console.table(report.summary.loading.navigation);
+            }
+            if (report.summary.runtime.animation) {
+                console.table(report.summary.runtime.animation);
+            }
+            if (report.summary.runtime.memory) {
+                console.table(report.summary.runtime.memory);
+            }
+            console.groupEnd();
         }
-        if (report.summary.runtime.animation) {
-            console.table(report.summary.runtime.animation);
-        }
-        if (report.summary.runtime.memory) {
-            console.table(report.summary.runtime.memory);
-        }
-        console.groupEnd();
-        
+
         return report;
     }
 
     /**
-     * Log performance metrics
+     * Log performance metrics (only in development)
      */
     logMetric(name, value) {
+        if (!this.isDevelopment) return;
         const color = this.getMetricColor(name, value);
         console.log(`%c🔥 ${name}: ${value}`, `color: ${color}; font-weight: bold;`);
     }
@@ -350,7 +354,9 @@ class PerformanceMonitor {
      */
     start() {
         this.startAnimationMonitoring();
-        console.log('🚀 Performance monitoring started');
+        if (this.isDevelopment) {
+            console.log('🚀 Performance monitoring started');
+        }
     }
 
     stop() {
@@ -360,7 +366,9 @@ class PerformanceMonitor {
                 observer.disconnect();
             }
         });
-        console.log('⏹️ Performance monitoring stopped');
+        if (this.isDevelopment) {
+            console.log('⏹️ Performance monitoring stopped');
+        }
     }
 
     getMetrics() {

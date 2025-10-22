@@ -99,7 +99,6 @@
 <script nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
     // Inject disabled shortcuts directly into window for immediate access
     window.__disabledShortcuts = @json(\App\Models\UserKeyboardShortcut::findOrCreateForUser(auth()->id())->disabled_shortcuts ?? []);
-    console.log('[Disabled Shortcuts] Injected from server:', window.__disabledShortcuts);
 </script>
 @endauth
 

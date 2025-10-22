@@ -53,15 +53,8 @@ final class ShareMonitoringService
      */
     private function logAccess(Share $share, array $accessData): void
     {
-        Log::info('Share access recorded', [
-            'share_uuid' => $share->uuid,
-            'share_type' => $share->share_type,
-            'user_id' => $share->user_id,
-            'ip_address' => $accessData['ip_address'] ?? null,
-            'user_agent' => $accessData['user_agent'] ?? null,
-            'referrer' => $accessData['referrer'] ?? null,
-            'timestamp' => now()->toISOString(),
-        ]);
+        // Access logging removed for quieter console output
+        // Data is still recorded in share_accesses table
     }
 
     /**

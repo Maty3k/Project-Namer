@@ -18,32 +18,25 @@ import rippleEffect from './components/rippleEffect.js';
 
 // Function to register Alpine components
 function registerAlpineComponents() {
-    console.log('[Alpine] Attempting to register components...');
-    console.log('[Alpine] window.Alpine exists:', !!window.Alpine);
-
     if (window.Alpine) {
         window.Alpine.data('lazyLoadObserver', lazyLoadObserver);
         window.Alpine.data('keyboardShortcuts', keyboardShortcuts);
         window.Alpine.data('optimisticUI', optimisticUI);
         window.Alpine.data('rippleEffect', rippleEffect);
-        console.log('[Alpine] ✓ All components registered successfully');
         return true;
     } else {
-        console.warn('[Alpine] window.Alpine not available yet, will retry...');
         return false;
     }
 }
 
 // Try to register on alpine:init event
 document.addEventListener('alpine:init', () => {
-    console.log('[Alpine] alpine:init event fired');
     registerAlpineComponents();
 });
 
 // Fallback: Try to register when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('[Alpine] DOMContentLoaded - checking if components need registration');
         // Wait a bit for Alpine to load via @fluxScripts
         setTimeout(() => {
             registerAlpineComponents();
@@ -51,7 +44,6 @@ if (document.readyState === 'loading') {
     });
 } else {
     // DOM is already loaded, try immediately and retry if needed
-    console.log('[Alpine] DOM already loaded, attempting registration');
     if (!registerAlpineComponents()) {
         // Retry after a short delay
         setTimeout(registerAlpineComponents, 100);

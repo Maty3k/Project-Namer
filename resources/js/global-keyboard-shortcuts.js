@@ -25,10 +25,8 @@ let disabledShortcuts = [];
 function updateDisabledShortcuts() {
     if (window.__disabledShortcuts) {
         disabledShortcuts = window.__disabledShortcuts;
-        console.log('[Global Keyboard Shortcuts] Using injected disabled shortcuts:', disabledShortcuts);
     } else {
         disabledShortcuts = [];
-        console.log('[Global Keyboard Shortcuts] No disabled shortcuts found');
     }
 }
 
@@ -36,8 +34,6 @@ function updateDisabledShortcuts() {
  * Initialize global keyboard shortcuts
  */
 function initGlobalKeyboardShortcuts() {
-    console.log('[Global Keyboard Shortcuts] Initializing global keyboard handler');
-
     // Register global keydown listener
     window.addEventListener('keydown', handleGlobalKeydown);
 
@@ -47,11 +43,7 @@ function initGlobalKeyboardShortcuts() {
     // Setup Livewire event listener
     const setupLivewireListener = () => {
         if (typeof Livewire !== 'undefined') {
-            console.log('[Global Keyboard Shortcuts] Livewire available, setting up event listener');
-
             Livewire.on('shortcuts-updated', async (data) => {
-                console.log('[Global Keyboard Shortcuts] Shortcuts updated event received, fetching latest state');
-
                 // Fetch fresh data from API to get updated disabled shortcuts
                 try {
                     const response = await fetch('/api/keyboard-shortcuts', {
@@ -67,14 +59,11 @@ function initGlobalKeyboardShortcuts() {
                         const apiData = await response.json();
                         disabledShortcuts = apiData.disabled_shortcuts || [];
                         window.__disabledShortcuts = disabledShortcuts; // Update window variable
-                        console.log('[Global Keyboard Shortcuts] Updated disabled shortcuts from API:', disabledShortcuts);
                     }
                 } catch (error) {
-                    console.error('[Global Keyboard Shortcuts] Failed to fetch disabled shortcuts:', error);
+                    // Silently fail - keyboard shortcuts will still work with cached data
                 }
             });
-        } else {
-            console.log('[Global Keyboard Shortcuts] Livewire not ready yet, will retry');
         }
     };
 
@@ -83,11 +72,8 @@ function initGlobalKeyboardShortcuts() {
 
     // Also listen for livewire:init event as fallback
     document.addEventListener('livewire:init', () => {
-        console.log('[Global Keyboard Shortcuts] Livewire initialized event fired');
         setupLivewireListener();
     });
-
-    console.log('[Global Keyboard Shortcuts] Global keyboard handler registered');
 }
 
 /**
@@ -126,14 +112,11 @@ function handleGlobalKeydown(event) {
         if (needsCtrl === hasCtrl && needsAlt === hasAlt && needsShift === hasShift) {
             // NOW check if shortcut is disabled (after confirming key+modifiers match)
             if (disabledShortcuts.includes(shortcut.action)) {
-                console.log(`[Global Keyboard Shortcuts] Shortcut "${shortcut.action}" is disabled - ignoring`);
                 event.preventDefault(); // Still prevent default browser behavior
                 return;
             }
 
             event.preventDefault();
-
-            console.log(`[Global Keyboard Shortcuts] Shortcut triggered: ${shortcut.action}`);
 
             // Handle route navigation
             if (shortcut.route) {

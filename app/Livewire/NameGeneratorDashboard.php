@@ -882,11 +882,6 @@ class NameGeneratorDashboard extends Component
                     ]
                 );
 
-                Log::info('Updated domain status from DNS job', [
-                    'domain' => $domain,
-                    'available' => $data['available'] ?? null,
-                ]);
-
                 break;
             }
         }

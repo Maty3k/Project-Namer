@@ -11,8 +11,6 @@ export default () => ({
     shortcuts: [],
 
     init() {
-        console.log('[Keyboard Shortcuts Component] Initializing UI component');
-
         // Get shortcuts from global handler
         if (window.globalKeyboardShortcuts) {
             this.shortcuts = window.globalKeyboardShortcuts.getShortcuts();
@@ -20,12 +18,10 @@ export default () => ({
 
         // Listen for global events from the keyboard handler
         window.addEventListener('toggle-help-overlay', () => {
-            console.log('[Keyboard Shortcuts Component] Toggle help overlay event received');
             this.toggleHelpOverlay();
         });
 
         window.addEventListener('close-modals', () => {
-            console.log('[Keyboard Shortcuts Component] Close modals event received');
             this.closeModals();
         });
     },

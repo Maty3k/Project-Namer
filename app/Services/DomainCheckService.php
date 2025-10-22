@@ -61,8 +61,6 @@ final readonly class DomainCheckService
 
         // If DNS records found, domain is definitely taken
         if ($hasDNS === true) {
-            Log::info('Domain has DNS records - marking as taken', ['domain' => $domain]);
-
             $dnsRecords = $this->dnsLookup->getDNSRecords($domain);
 
             // Cache the DNS result
@@ -81,8 +79,6 @@ final readonly class DomainCheckService
         // If no DNS records found, domain is likely available
         // (We skip slow API calls for performance)
         if ($hasDNS === false) {
-            Log::info('No DNS records found - marking as likely available', ['domain' => $domain]);
-
             // Cache the DNS result
             $this->cacheResult($domain, true, 'dns', false);
 
