@@ -21,10 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Register OpenAI Logo Service with API key from config
-        $this->app->singleton(fn ($app): \App\Services\OpenAILogoService => new OpenAILogoService(
-            apiKey: config('services.openai.api_key')
-        ));
+        // Register OpenAI Logo Service - Prism handles authentication
+        $this->app->singleton(OpenAILogoService::class);
     }
 
     /**

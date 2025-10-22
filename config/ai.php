@@ -133,32 +133,9 @@ return [
     ],
 
     /*
-    |--------------------------------------------------------------------------
-    | Provider Configurations
-    |--------------------------------------------------------------------------
-    |
-    | Provider-specific settings and API configurations
-    |
+    | Note: Provider configurations (API keys, base URLs, etc.) are now managed
+    | by Prism. See config/prism.php for provider settings.
     */
-
-    'providers' => [
-        'openai' => [
-            'base_url' => env('OPENAI_BASE_URL', 'https://api.openai.com/v1'),
-            'organization' => env('OPENAI_ORGANIZATION'),
-            'default_headers' => [
-                'User-Agent' => 'Project-Namer/1.0',
-            ],
-        ],
-
-        'anthropic' => [
-            'base_url' => env('ANTHROPIC_BASE_URL', 'https://api.anthropic.com/v1'),
-            'version' => env('ANTHROPIC_API_VERSION', '2023-06-01'),
-        ],
-
-        'google' => [
-            'base_url' => env('GOOGLE_AI_BASE_URL', 'https://generativelanguage.googleapis.com/v1'),
-        ],
-    ],
 
     /*
     |--------------------------------------------------------------------------

@@ -7,14 +7,16 @@ namespace App\Services;
 use App\Models\ProjectImage;
 use Exception;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Prism\Prism\Enums\Provider;
+use Prism\Prism\Prism;
+use Prism\Prism\ValueObjects\Media\Image;
 
 class VisionAnalysisService
 {
     /**
-     * Analyze image using OpenAI Vision API.
+     * Analyze image using OpenAI Vision API via Prism.
      *
      * @return array<string, mixed>
      */
@@ -34,44 +36,22 @@ class VisionAnalysisService
         }
 
         $imagePath = Storage::disk('public')->path($image->file_path);
-        $imageData = base64_encode(file_get_contents($imagePath));
-        $mimeType = $image->mime_type ?? 'image/jpeg';
-
         $prompt = $this->buildAnalysisPrompt();
 
         try {
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer '.config('ai.openai_api_key'),
-                'Content-Type' => 'application/json',
-            ])->post('https://api.openai.com/v1/chat/completions', [
-                'model' => 'gpt-4o',
-                'messages' => [
-                    [
-                        'role' => 'user',
-                        'content' => [
-                            [
-                                'type' => 'text',
-                                'text' => $prompt,
-                            ],
-                            [
-                                'type' => 'image_url',
-                                'image_url' => [
-                                    'url' => "data:{$mimeType};base64,{$imageData}",
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                'max_tokens' => 500,
-                'temperature' => 0.3,
-            ]);
+            $response = Prism::text()
+                ->using(Provider::OpenAI, 'gpt-4o')
+                ->withPrompt(
+                    $prompt,
+                    [Image::fromLocalPath($imagePath)]
+                )
+                ->withClientOptions([
+                    'max_tokens' => 500,
+                    'temperature' => 0.3,
+                ])
+                ->asText();
 
-            if (! $response->successful()) {
-                throw new Exception('Vision API request failed');
-            }
-
-            $data = $response->json();
-            $content = $data['choices'][0]['message']['content'] ?? '';
+            $content = $response->text;
 
             $analysis = json_decode($content, true);
             if (! $analysis) {

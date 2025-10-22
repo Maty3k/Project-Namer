@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Prism\Prism\Enums\Provider;
+use Prism\Prism\Prism;
 
 class OpenAILogoService
 {
@@ -25,11 +27,6 @@ class OpenAILogoService
     ];
 
     /**
-     * DALL-E 2 API endpoint.
-     */
-    protected const DALLE_API_URL = 'https://api.openai.com/v1/images/generations';
-
-    /**
      * Image size for DALL-E 2 (256x256).
      */
     protected const IMAGE_SIZE = '256x256';
@@ -38,10 +35,6 @@ class OpenAILogoService
      * Number of logos to generate.
      */
     protected const LOGOS_COUNT = 4;
-
-    public function __construct(
-        protected string $apiKey
-    ) {}
 
     /**
      * Generate all 4 logos for a logo generation request.
@@ -94,7 +87,7 @@ class OpenAILogoService
         $generatedLogo->update(['prompt' => $prompt]);
 
         try {
-            // Call DALL-E 2 API
+            // Call DALL-E 2 API via Prism
             $imageUrl = $this->callDalleApi($prompt);
 
             // Download and save the image
@@ -142,34 +135,33 @@ class OpenAILogoService
     }
 
     /**
-     * Call the DALL-E 2 API to generate an image.
+     * Call the DALL-E 2 API via Prism to generate an image.
      */
     protected function callDalleApi(string $prompt): string
     {
-        $response = Http::withHeaders([
-            'Authorization' => "Bearer {$this->apiKey}",
-            'Content-Type' => 'application/json',
-        ])->timeout(60)->post(self::DALLE_API_URL, [
-            'model' => 'dall-e-2', // Explicitly using DALL-E 2
-            'prompt' => $prompt,
-            'n' => 1, // Generate 1 image per request
-            'size' => self::IMAGE_SIZE, // 256x256
-            'response_format' => 'url',
-        ]);
+        try {
+            $response = Prism::image()
+                ->using(Provider::OpenAI, 'dall-e-2')
+                ->withPrompt($prompt)
+                ->withClientOptions([
+                    'n' => 1,
+                    'size' => self::IMAGE_SIZE,
+                    'response_format' => 'url',
+                ])
+                ->generate();
 
-        if (! $response->successful()) {
+            $image = $response->firstImage();
+
+            if (! $image || ! $image->url) {
+                throw new LogoGenerationException('Invalid response from DALL-E API');
+            }
+
+            return $image->url;
+        } catch (\Exception $e) {
             throw new LogoGenerationException(
-                'DALL-E API request failed: '.$response->body()
+                'DALL-E API request failed: '.$e->getMessage()
             );
         }
-
-        $data = $response->json();
-
-        if (! isset($data['data'][0]['url'])) {
-            throw new LogoGenerationException('Invalid response from DALL-E API');
-        }
-
-        return $data['data'][0]['url'];
     }
 
     /**

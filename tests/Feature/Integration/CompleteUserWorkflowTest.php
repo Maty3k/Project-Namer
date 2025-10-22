@@ -9,12 +9,10 @@ use App\Livewire\ProjectPage;
 use App\Livewire\ThemeQuickToggle;
 use App\Models\LogoGeneration;
 use App\Models\Project;
-use App\Models\UploadedLogo;
 use App\Models\User;
 use App\Services\DNSLookupService;
 use App\Services\OpenAINameService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
@@ -393,7 +391,7 @@ class CompleteUserWorkflowTest extends TestCase
 
         $logoComponent->assertHasNoErrors();
 
-        $this->logWorkflowStep("✅ Logo gallery display tested");
+        $this->logWorkflowStep('✅ Logo gallery display tested');
 
         // Test smooth theme transitions
         $themeComponent = Livewire::actingAs($this->user)->test(ThemeQuickToggle::class);
