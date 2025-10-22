@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Exceptions\LogoGenerationException;
 use App\Models\GeneratedLogo;
 use App\Models\LogoGeneration;
+use App\Models\NameSuggestion;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -105,6 +106,9 @@ class OpenAILogoService
             // Check if all logos are complete
             if ($logoGeneration->logos_completed >= $logoGeneration->total_logos_requested) {
                 $logoGeneration->markAsCompleted();
+
+                // Update NameSuggestion with completed logos
+                $this->updateNameSuggestionWithLogos($logoGeneration);
             }
         } catch (\Exception $e) {
             $generatedLogo->markAsFailed($e->getMessage());
@@ -183,6 +187,46 @@ class OpenAILogoService
         Storage::disk('public')->put($filePath, $imageContent);
 
         return $filePath;
+    }
+
+    /**
+     * Update NameSuggestion with completed logos.
+     */
+    protected function updateNameSuggestionWithLogos(LogoGeneration $logoGeneration): void
+    {
+        // Find NameSuggestion by matching the business name
+        $nameSuggestion = NameSuggestion::where('name', $logoGeneration->business_name)->first();
+
+        if (! $nameSuggestion) {
+            Log::warning('No NameSuggestion found for business name', [
+                'business_name' => $logoGeneration->business_name,
+                'logo_generation_id' => $logoGeneration->id,
+            ]);
+
+            return;
+        }
+
+        // Get all completed logos for this generation
+        $completedLogos = $logoGeneration->generatedLogos()
+            ->where('status', 'completed')
+            ->get();
+
+        // Build logos array for NameSuggestion
+        $logosData = $completedLogos->map(function (GeneratedLogo $logo) {
+            return [
+                'style' => $logo->style,
+                'url' => $logo->url,
+            ];
+        })->toArray();
+
+        // Update NameSuggestion with logos data
+        $nameSuggestion->update(['logos' => $logosData]);
+
+        Log::info('Updated NameSuggestion with logos', [
+            'name_suggestion_id' => $nameSuggestion->id,
+            'business_name' => $logoGeneration->business_name,
+            'logos_count' => count($logosData),
+        ]);
     }
 
     /**
