@@ -171,6 +171,35 @@ it('deletes logo and updates count', function (): void {
     expect($logoGeneration->fresh()->logos_completed)->toBe(3);
 });
 
+it('deletes logo with null file path without errors', function (): void {
+    $logoGeneration = LogoGeneration::factory()
+        ->for($this->user)
+        ->create([
+            'logos_completed' => 1,
+        ]);
+
+    // Create a logo in processing state (no file_path)
+    $logo = GeneratedLogo::factory()
+        ->for($logoGeneration, 'logoGeneration')
+        ->create([
+            'status' => 'processing',
+            'file_path' => null,
+        ]);
+
+    Livewire::test(LogoGallery::class, ['logoGeneration' => $logoGeneration])
+        ->call('confirmDelete', $logo->id)
+        ->call('deleteLogo')
+        ->assertSet('showDeleteModal', false)
+        ->assertSet('logoToDelete', null)
+        ->assertDispatched('show-toast');
+
+    // Verify logo was deleted
+    expect(GeneratedLogo::find($logo->id))->toBeNull();
+
+    // Verify count was decremented
+    expect($logoGeneration->fresh()->logos_completed)->toBe(0);
+});
+
 it('displays empty state when no logos exist', function (): void {
     $logoGeneration = LogoGeneration::factory()
         ->for($this->user)

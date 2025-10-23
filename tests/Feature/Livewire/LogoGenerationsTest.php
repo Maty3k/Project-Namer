@@ -130,3 +130,32 @@ it('displays bookmark icon for saved generations', function (): void {
     expect($html)->toContain('Saved Business');
     expect($html)->toContain('Unsaved Business');
 });
+
+it('can delete logo generation with logos that have null file paths', function (): void {
+    $generation = LogoGeneration::factory()
+        ->for($this->user)
+        ->create([
+            'business_name' => 'Test Business',
+            'status' => 'processing',
+        ]);
+
+    // Create logos with null file_path (processing state)
+    \App\Models\GeneratedLogo::factory()
+        ->for($generation, 'logoGeneration')
+        ->count(3)
+        ->create([
+            'status' => 'processing',
+            'file_path' => null,
+        ]);
+
+    Livewire::test(LogoGenerations::class)
+        ->call('confirmDelete', $generation->id)
+        ->call('deleteAllLogos')
+        ->assertSet('showDeleteModal', false)
+        ->assertSet('generationToDelete', null)
+        ->assertDispatched('show-toast');
+
+    // Verify generation and all logos were deleted
+    expect(LogoGeneration::find($generation->id))->toBeNull();
+    expect(\App\Models\GeneratedLogo::where('logo_generation_id', $generation->id)->count())->toBe(0);
+});

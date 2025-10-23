@@ -125,7 +125,7 @@ class GeneratedLogo extends Model
      */
     public function deleteFile(): void
     {
-        if (Storage::disk('public')->exists($this->file_path)) {
+        if ($this->file_path && Storage::disk('public')->exists($this->file_path)) {
             Storage::disk('public')->delete($this->file_path);
         }
     }
