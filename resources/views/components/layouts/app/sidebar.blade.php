@@ -77,11 +77,13 @@
         <x-app-logo />
     </a>
 
+    <x-desktop-user-menu class="mt-4" />
+
+    <flux:separator class="my-4" />
+
     <x-sidebar-top-menu/>
 
     <flux:spacer />
-
-    <x-desktop-user-menu/>
 </flux:sidebar>
 
 <x-mobile-user-menu/>
