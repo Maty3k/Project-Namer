@@ -24,8 +24,6 @@ class LogoGallery extends Component
 
     public ?GeneratedLogo $logoToDelete = null;
 
-    public bool $showDeleteAllModal = false;
-
     public bool $showPreviewModal = false;
 
     public ?GeneratedLogo $logoToPreview = null;
@@ -229,61 +227,6 @@ class LogoGallery extends Component
 
         // Component will automatically re-render after method completes
         return null;
-    }
-
-    /**
-     * Open delete all confirmation modal.
-     */
-    public function confirmDeleteAll(): void
-    {
-        $this->showDeleteAllModal = true;
-    }
-
-    /**
-     * Cancel delete all operation.
-     */
-    public function cancelDeleteAll(): void
-    {
-        $this->showDeleteAllModal = false;
-    }
-
-    /**
-     * Delete all logos for this generation.
-     */
-    public function deleteAll(): mixed
-    {
-        $logos = $this->logos;
-
-        if ($logos->isEmpty()) {
-            $this->dispatch('show-toast', [
-                'message' => 'No logos to delete',
-                'type' => 'error',
-            ]);
-
-            return null;
-        }
-
-        $count = $logos->count();
-        $businessName = $this->logoGeneration->business_name;
-
-        // Delete all logo files and records
-        foreach ($logos as $logo) {
-            $logo->deleteFile();
-            $logo->delete();
-        }
-
-        // Delete the parent logo generation record
-        $this->logoGeneration->delete();
-
-        $this->dispatch('show-toast', [
-            'message' => "Successfully deleted {$count} logo".(($count !== 1) ? 's' : '')." for \"{$businessName}\"",
-            'type' => 'success',
-        ]);
-
-        $this->showDeleteAllModal = false;
-
-        // Redirect back to logo generations list
-        return $this->redirect(route('logos.index'), navigate: true);
     }
 
     /**
