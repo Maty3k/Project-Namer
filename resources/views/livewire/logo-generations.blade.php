@@ -42,7 +42,7 @@
                         <option value="favorited">Favorited</option>
                     </select>
 
-                    @if($logoGenerations->isNotEmpty())
+                    @if($logoGenerations->count() >= 2)
                         <button
                             wire:click="confirmDeleteAllGenerations"
                             class="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white font-medium rounded-lg transition-colors shadow-sm hover:shadow-md whitespace-nowrap"
