@@ -7,12 +7,15 @@ namespace App\Services;
 /**
  * PromptBuilder Service - Builds optimized prompts for AI name generation.
  *
- * Extracts and centralizes all prompt engineering logic for generating business names.
+ * Loads prompts from markdown files and interpolates template variables.
  * Supports multiple generation modes (creative, professional, brandable, tech-focused)
  * and intelligent business type detection for contextually relevant prompts.
  */
 final class PromptBuilder
 {
+    public function __construct(
+        private PromptLoaderService $promptLoader
+    ) {}
     /**
      * Build complete prompt with system and user components.
      *
@@ -36,50 +39,28 @@ final class PromptBuilder
      */
     public function buildSystemPrompt(string $model, int $count, string $mode, bool $deepThinking): string
     {
-        // Core rules that apply to all modes
-        $coreRules = '
-CRITICAL RULES:
-- Names must be directly relevant to the business concept
-- NO generic tech suffixes (App, Tech, Labs, Solutions, Systems, Digital, Hub, Pro, etc.)
-- NO unnecessary prefixes (My, Get, The, etc.) unless they add meaningful value
-- Names should sound like actual business names, not product features
-- Focus on the CORE business value, not the technology behind it
-- Make names memorable, pronounceable, and brandable
-- Avoid overused words like "Smart", "Cloud", "AI", "Sync", "Connect"';
+        // Map mode to prompt file name
+        $promptFileName = match ($mode) {
+            'creative' => 'name-generation-creative-system',
+            'professional' => 'name-generation-professional-system',
+            'brandable' => 'name-generation-brandable-system',
+            'tech-focused' => 'name-generation-tech-focused-system',
+            default => 'name-generation-creative-system',
+        };
 
-        $modeSystemPrompts = [
-            'creative' => "You are an expert business naming consultant who creates compelling brand names. Generate exactly {$count} unique business names, numbered 1-{$count}, one per line.
+        // Load prompt from markdown
+        $promptData = $this->promptLoader->loadWithCache($promptFileName);
 
-{$coreRules}
+        // Build deep thinking instructions if enabled
+        $deepThinkingInstructions = $deepThinking
+            ? "\n\nDEEP THINKING MODE: Take extra time to analyze the business concept deeply. Consider market positioning, target demographics, competitive landscape, and long-term brand potential. Think about how each name would work across different marketing channels and customer touchpoints. Ensure names have strong commercial viability and avoid generic terms."
+            : '';
 
-CREATIVE MODE: Generate creative and artistic names that evoke emotion and curiosity. Think of names like \"Spotify\", \"Airbnb\", or \"Etsy\" - unique, memorable, and meaningful without being literal. Use wordplay, metaphors, or invented words that capture the essence of the business.",
-
-            'professional' => "You are an expert business naming consultant who creates compelling brand names. Generate exactly {$count} unique business names, numbered 1-{$count}, one per line.
-
-{$coreRules}
-
-PROFESSIONAL MODE: Generate sophisticated, trustworthy names suitable for B2B environments. Think of names like \"Goldman Sachs\", \"McKinsey\", or \"Deloitte\" - authoritative, credible, and corporate-appropriate. Use strong, confident language that conveys expertise and reliability.",
-
-            'brandable' => "You are an expert business naming consultant who creates compelling brand names. Generate exactly {$count} unique business names, numbered 1-{$count}, one per line.
-
-{$coreRules}
-
-BRANDABLE MODE: Generate catchy, market-ready names perfect for consumer brands. Think of names like \"Google\", \"Amazon\", or \"Nike\" - short, punchy, and easy to remember. Focus on names that would work well in advertising, social media, and word-of-mouth marketing.",
-
-            'tech-focused' => "You are an expert business naming consultant who creates compelling brand names. Generate exactly {$count} unique business names, numbered 1-{$count}, one per line.
-
-{$coreRules}
-
-TECH-FOCUSED MODE: Generate modern names that appeal to technical audiences without using obvious tech jargon. Think of names like \"GitHub\", \"Stripe\", or \"Slack\" - developer-friendly but not generic. Focus on the problem being solved, not the technology used.",
-        ];
-
-        $systemPrompt = $modeSystemPrompts[$mode] ?? $modeSystemPrompts['creative'];
-
-        if ($deepThinking) {
-            $systemPrompt .= "\n\nDEEP THINKING MODE: Take extra time to analyze the business concept deeply. Consider market positioning, target demographics, competitive landscape, and long-term brand potential. Think about how each name would work across different marketing channels and customer touchpoints. Ensure names have strong commercial viability and avoid generic terms.";
-        }
-
-        return $systemPrompt;
+        // Interpolate variables
+        return $this->promptLoader->interpolate($promptData->promptText, [
+            'count' => $count,
+            'deepThinkingInstructions' => $deepThinkingInstructions,
+        ]);
     }
 
     /**
@@ -112,17 +93,16 @@ TECH-FOCUSED MODE: Generate modern names that appeal to technical audiences with
             $examples = "\n\nGood examples for services: McKinsey, Deloitte, Accenture, IDEO\nNotice how these convey expertise and authority.";
         }
 
-        $contextualGuidance = "\n\nBusiness Analysis:
-- Type: {$businessType}
-- Target Audience: {$audience}
+        // Load user prompt from markdown
+        $promptData = $this->promptLoader->loadWithCache('name-generation-user');
 
-Consider these factors:
-- What problem does this business solve?
-- What makes it different from competitors?
-- What emotion should the brand evoke?
-- Who is the primary customer?{$examples}";
-
-        return "Business concept: {$businessIdea}{$contextualGuidance}";
+        // Interpolate variables
+        return $this->promptLoader->interpolate($promptData->promptText, [
+            'businessIdea' => $businessIdea,
+            'businessType' => $businessType,
+            'audience' => $audience,
+            'examples' => $examples,
+        ]);
     }
 
     /**

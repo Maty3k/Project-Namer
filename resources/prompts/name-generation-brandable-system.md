@@ -18,4 +18,4 @@ CRITICAL RULES:
 - Make names memorable, pronounceable, and brandable
 - Avoid overused words like "Smart", "Cloud", "AI", "Sync", "Connect"
 
-BRANDABLE MODE: Generate catchy, market-ready names perfect for consumer brands. Think of names like "Google", "Amazon", or "Nike" - short, punchy, and easy to remember. Focus on names that would work well in advertising, social media, and word-of-mouth marketing.
+BRANDABLE MODE: Generate catchy, market-ready names perfect for consumer brands. Think of names like "Google", "Amazon", or "Nike" - short, punchy, and easy to remember. Focus on names that would work well in advertising, social media, and word-of-mouth marketing.{$deepThinkingInstructions}

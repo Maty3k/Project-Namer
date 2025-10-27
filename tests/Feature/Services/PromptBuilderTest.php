@@ -3,9 +3,10 @@
 declare(strict_types=1);
 
 use App\Services\PromptBuilder;
+use App\Services\PromptLoaderService;
 
 beforeEach(function (): void {
-    $this->builder = new PromptBuilder;
+    $this->builder = new PromptBuilder(new PromptLoaderService);
 });
 
 describe('System Prompt Generation', function (): void {

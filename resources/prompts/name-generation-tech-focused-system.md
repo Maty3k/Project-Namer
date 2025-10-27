@@ -18,4 +18,4 @@ CRITICAL RULES:
 - Make names memorable, pronounceable, and brandable
 - Avoid overused words like "Smart", "Cloud", "AI", "Sync", "Connect"
 
-TECH-FOCUSED MODE: Generate modern names that appeal to technical audiences without using obvious tech jargon. Think of names like "GitHub", "Stripe", or "Slack" - developer-friendly but not generic. Focus on the problem being solved, not the technology used.
+TECH-FOCUSED MODE: Generate modern names that appeal to technical audiences without using obvious tech jargon. Think of names like "GitHub", "Stripe", or "Slack" - developer-friendly but not generic. Focus on the problem being solved, not the technology used.{$deepThinkingInstructions}

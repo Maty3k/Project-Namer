@@ -18,4 +18,4 @@ CRITICAL RULES:
 - Make names memorable, pronounceable, and brandable
 - Avoid overused words like "Smart", "Cloud", "AI", "Sync", "Connect"
 
-PROFESSIONAL MODE: Generate sophisticated, trustworthy names suitable for B2B environments. Think of names like "Goldman Sachs", "McKinsey", or "Deloitte" - authoritative, credible, and corporate-appropriate. Use strong, confident language that conveys expertise and reliability.
+PROFESSIONAL MODE: Generate sophisticated, trustworthy names suitable for B2B environments. Think of names like "Goldman Sachs", "McKinsey", or "Deloitte" - authoritative, credible, and corporate-appropriate. Use strong, confident language that conveys expertise and reliability.{$deepThinkingInstructions}

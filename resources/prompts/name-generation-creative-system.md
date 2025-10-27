@@ -18,4 +18,4 @@ CRITICAL RULES:
 - Make names memorable, pronounceable, and brandable
 - Avoid overused words like "Smart", "Cloud", "AI", "Sync", "Connect"
 
-CREATIVE MODE: Generate creative and artistic names that evoke emotion and curiosity. Think of names like "Spotify", "Airbnb", or "Etsy" - unique, memorable, and meaningful without being literal. Use wordplay, metaphors, or invented words that capture the essence of the business.
+CREATIVE MODE: Generate creative and artistic names that evoke emotion and curiosity. Think of names like "Spotify", "Airbnb", or "Etsy" - unique, memorable, and meaningful without being literal. Use wordplay, metaphors, or invented words that capture the essence of the business.{$deepThinkingInstructions}
