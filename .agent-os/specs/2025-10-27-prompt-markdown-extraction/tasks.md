@@ -66,12 +66,12 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 6.6 Update analyzeImage() to use loaded markdown prompt and config
   - [x] 6.7 Verify all VisionAnalysisService tests pass
 
-- [ ] 7. Update GenerateNamesWithModelJob
-  - [ ] 7.1 Write integration tests for job with markdown-based configs
-  - [ ] 7.2 Remove MODEL_CONFIGS constant from job
-  - [ ] 7.3 Update handle() method to use PromptBuilder's markdown configs
-  - [ ] 7.4 Maintain all queue, retry, and error handling logic
-  - [ ] 7.5 Verify all job tests pass
+- [x] 7. Update GenerateNamesWithModelJob
+  - [x] 7.1 Write integration tests for job with markdown-based configs
+  - [x] 7.2 Remove MODEL_CONFIGS constant from job
+  - [x] 7.3 Update handle() method to use PromptBuilder's markdown configs
+  - [x] 7.4 Maintain all queue, retry, and error handling logic
+  - [x] 7.5 Verify all job tests pass
 
 - [ ] 8. Create Comprehensive Documentation
   - [ ] 8.1 Create `resources/prompts/README.md` with complete documentation

@@ -29,25 +29,6 @@ class GenerateNamesWithModelJob implements ShouldQueue
 
     public int $timeout = 120; // 2 minutes timeout
 
-    private const MODEL_CONFIGS = [
-        'gpt-4' => [
-            'provider' => Provider::OpenAI,
-            'model' => 'gpt-4o',
-        ],
-        'claude-3.5-sonnet' => [
-            'provider' => Provider::Anthropic,
-            'model' => 'claude-3-5-sonnet-20241022',
-        ],
-        'gemini-1.5-pro' => [
-            'provider' => Provider::Gemini,
-            'model' => 'gemini-1.5-pro',
-        ],
-        'grok-beta' => [
-            'provider' => Provider::XAI,
-            'model' => 'grok-beta',
-        ],
-    ];
-
     /**
      * Create a new job instance.
      *
@@ -91,27 +72,30 @@ class GenerateNamesWithModelJob implements ShouldQueue
             // Update model status to running
             $this->updateModelStatus('running');
 
-            // Check if model configuration exists
-            if (! isset(self::MODEL_CONFIGS[$this->modelId])) {
-                throw new Exception("AI model {$this->modelId} is not configured");
-            }
-
-            $config = self::MODEL_CONFIGS[$this->modelId];
             $mode = $this->parameters['mode'] ?? 'creative';
             $deepThinking = $this->parameters['deep_thinking'] ?? false;
             $count = $this->parameters['count'] ?? 10;
 
-            // Build prompts
-            $prompts = $promptBuilder->build($this->prompt, $this->modelId, $count, $mode, $deepThinking);
+            // Build prompts and load configuration from markdown
+            $result = $promptBuilder->buildWithConfig($this->prompt, $this->modelId, $count, $mode, $deepThinking);
+            $config = $result['config'];
+
+            // Get temperature from markdown config
+            $temperature = $deepThinking && $config->deepThinkingTemperature !== null
+                ? $config->deepThinkingTemperature
+                : ($config->temperature ?? 0.7);
+
+            // Get max tokens from markdown config
+            $maxTokens = $config->maxTokens ?? 200;
 
             // Generate names using Prism directly
             $response = Prism::text()
-                ->using($config['provider'], $config['model'])
-                ->withSystemPrompt($prompts['system'])
-                ->withPrompt($prompts['user'])
+                ->using($config->provider, $config->model)
+                ->withSystemPrompt($result['system'])
+                ->withPrompt($result['user'])
                 ->withClientOptions([
-                    'max_tokens' => 200,
-                    'temperature' => $deepThinking ? 0.3 : 0.7,
+                    'max_tokens' => $maxTokens,
+                    'temperature' => $temperature,
                 ])
                 ->asText();
 
