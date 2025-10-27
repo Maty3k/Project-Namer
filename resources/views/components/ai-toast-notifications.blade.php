@@ -98,17 +98,7 @@
                 duration: 5000
             });
         });
-        
-        Livewire.on('ai-deep-thinking-activated', (data) => {
-            addNotification({
-                type: 'info',
-                title: 'Deep Thinking Mode',
-                message: 'Enhanced processing activated for higher quality results',
-                icon: 'sparkles',
-                duration: 4000
-            });
-        });
-        
+
         Livewire.on('ai-preferences-saved', (data) => {
             addNotification({
                 type: 'success',

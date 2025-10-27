@@ -3,7 +3,6 @@ provider: anthropic
 model: claude-3-5-sonnet-20241022
 temperature: 0.7
 max_tokens: 200
-deep_thinking_temperature: 0.3
 description: "System prompt for professional business name generation mode (Claude)"
 ---
 
@@ -18,4 +17,4 @@ CRITICAL RULES:
 - Make names memorable, pronounceable, and brandable
 - Avoid overused words like "Smart", "Cloud", "AI", "Sync", "Connect"
 
-PROFESSIONAL MODE: Generate sophisticated, trustworthy names suitable for B2B environments. Think of names like "Goldman Sachs", "McKinsey", or "Deloitte" - authoritative, credible, and corporate-appropriate. Use strong, confident language that conveys expertise and reliability.{$deepThinkingInstructions}
+PROFESSIONAL MODE: Generate sophisticated, trustworthy names suitable for B2B environments. Think of names like "Goldman Sachs", "McKinsey", or "Deloitte" - authoritative, credible, and corporate-appropriate. Use strong, confident language that conveys expertise and reliability.

@@ -59,20 +59,6 @@
                                     <option value="tech-focused">⚡ Tech-Focused - Developer-friendly</option>
                                 </flux:select>
                             </div>
-
-                            {{-- Deep Thinking Mode --}}
-                            <div class="space-y-3">
-                                <flux:label class="text-base font-medium">Processing Mode</flux:label>
-                                <div class="flex items-start space-x-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                                    <input type="checkbox" wire:model.live="deepThinking" class="h-4 w-4 border-gray-300 rounded mt-1" />
-                                    <div>
-                                        <div class="font-medium text-sm text-gray-900 dark:text-white">Deep Thinking Mode</div>
-                                        <div class="text-sm text-gray-600 dark:text-gray-300">
-                                            Enhanced processing for higher quality results (takes longer)
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
                         {{-- AI Generation Section --}}

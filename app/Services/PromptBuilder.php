@@ -35,12 +35,11 @@ final class PromptBuilder
         string $businessIdea,
         string $model,
         int $count,
-        string $mode,
-        bool $deepThinking
+        string $mode
     ): array {
         return [
-            'system' => $this->buildSystemPrompt($model, $count, $mode, $deepThinking),
-            'user' => $this->buildUserPrompt($businessIdea, $model, $mode, $deepThinking),
+            'system' => $this->buildSystemPrompt($model, $count, $mode),
+            'user' => $this->buildUserPrompt($businessIdea, $model, $mode),
         ];
     }
 
@@ -53,8 +52,7 @@ final class PromptBuilder
         string $businessIdea,
         string $model,
         int $count,
-        string $mode,
-        bool $deepThinking
+        string $mode
     ): array {
         // Get model suffix and mode slug
         $modelSuffix = self::MODEL_SUFFIX_MAP[$model] ?? 'gpt4';
@@ -71,8 +69,8 @@ final class PromptBuilder
         $promptData = $this->promptLoader->loadWithCache($promptFileName);
 
         return [
-            'system' => $this->buildSystemPrompt($model, $count, $mode, $deepThinking),
-            'user' => $this->buildUserPrompt($businessIdea, $model, $mode, $deepThinking),
+            'system' => $this->buildSystemPrompt($model, $count, $mode),
+            'user' => $this->buildUserPrompt($businessIdea, $model, $mode),
             'config' => $promptData,
         ];
     }
@@ -80,7 +78,7 @@ final class PromptBuilder
     /**
      * Build system prompt optimized for the generation mode and model.
      */
-    public function buildSystemPrompt(string $model, int $count, string $mode, bool $deepThinking): string
+    public function buildSystemPrompt(string $model, int $count, string $mode): string
     {
         // Get model suffix for filename (e.g., 'gpt-4' -> 'gpt4')
         $modelSuffix = self::MODEL_SUFFIX_MAP[$model] ?? 'gpt4';
@@ -99,22 +97,16 @@ final class PromptBuilder
         // Load prompt from markdown
         $promptData = $this->promptLoader->loadWithCache($promptFileName);
 
-        // Build deep thinking instructions if enabled
-        $deepThinkingInstructions = $deepThinking
-            ? "\n\nDEEP THINKING MODE: Take extra time to analyze the business concept deeply. Consider market positioning, target demographics, competitive landscape, and long-term brand potential. Think about how each name would work across different marketing channels and customer touchpoints. Ensure names have strong commercial viability and avoid generic terms."
-            : '';
-
         // Interpolate variables
         return $this->promptLoader->interpolate($promptData->promptText, [
             'count' => $count,
-            'deepThinkingInstructions' => $deepThinkingInstructions,
         ]);
     }
 
     /**
      * Build user prompt with the business concept and contextual guidance.
      */
-    public function buildUserPrompt(string $businessIdea, string $model, string $mode, bool $deepThinking): string
+    public function buildUserPrompt(string $businessIdea, string $model, string $mode): string
     {
         // Analyze business type for better context
         $businessType = 'General Business';
@@ -157,14 +149,13 @@ final class PromptBuilder
      * Legacy compatibility method - combines system and user prompts into single string.
      * Used by existing code that expects a single combined prompt.
      */
-    public function optimizePrompt(string $modelId, string $basePrompt, string $mode, bool $deepThinking): string
+    public function optimizePrompt(string $modelId, string $basePrompt, string $mode): string
     {
         $prompts = $this->build(
             businessIdea: $basePrompt,
             model: $modelId,
             count: 10,
-            mode: $mode,
-            deepThinking: $deepThinking
+            mode: $mode
         );
 
         return $prompts['system']."\n\n".$prompts['user'];

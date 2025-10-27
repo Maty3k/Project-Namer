@@ -304,18 +304,6 @@
                                 <flux:error name="generationMode" />
                             </flux:field>
 
-                            <!-- Deep Thinking Mode -->
-                            <flux:field>
-                                <div class="flex items-center gap-3">
-                                    <flux:checkbox
-                                        wire:model.live="deepThinking"
-                                        id="deepThinking"
-                                    />
-                                    <flux:label for="deepThinking">Deep Thinking Mode</flux:label>
-                                    <span class="text-sm text-gray-500">(Higher quality, slower results)</span>
-                                </div>
-                            </flux:field>
-
                         </div>
 
                         <!-- Generation Actions -->

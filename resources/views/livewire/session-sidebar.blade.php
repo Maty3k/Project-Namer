@@ -268,9 +268,6 @@
                             <div class="flex items-center justify-between text-xs text-gray-400 dark:text-gray-500">
                                 <span>{{ $session->created_at->diffForHumans() }}</span>
                                 <div class="flex items-center gap-1">
-                                    @if($session->deep_thinking)
-                                        <x-app-icon name="light-bulb" size="xs" title="Deep thinking mode" />
-                                    @endif
                                     <span class="capitalize">{{ $session->generation_mode }}</span>
                                 </div>
                             </div>

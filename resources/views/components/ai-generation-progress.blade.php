@@ -44,21 +44,6 @@
                 </div>
             </div>
 
-            {{-- Deep Thinking Mode Indicator --}}
-            @if($deepThinking)
-                <div class="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4 mb-4">
-                    <div class="flex items-center gap-2">
-                        <flux:icon.sparkles class="size-5 text-purple-500 animate-pulse" />
-                        <span class="text-sm font-medium text-purple-700 dark:text-purple-300">
-                            Deep Thinking Mode Active
-                        </span>
-                    </div>
-                    <p class="text-xs text-purple-600 dark:text-purple-400 mt-1">
-                        Enhanced processing for higher quality results
-                    </p>
-                </div>
-            @endif
-
             {{-- Model Progress --}}
             @if(count($selectedModels) > 1 && !empty($modelProgress))
                 <div class="space-y-3">
@@ -164,14 +149,10 @@
         {{-- Performance Metrics --}}
         @if($this->showPerformanceMetrics ?? false)
             <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 text-sm">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                     <div class="text-center">
                         <p class="font-medium text-gray-900 dark:text-white">{{ count($selectedModels) }}</p>
                         <p class="text-gray-500 dark:text-gray-400">Models</p>
-                    </div>
-                    <div class="text-center">
-                        <p class="font-medium text-gray-900 dark:text-white">{{ $deepThinking ? 'Enhanced' : 'Standard' }}</p>
-                        <p class="text-gray-500 dark:text-gray-400">Mode</p>
                     </div>
                     <div class="text-center">
                         <p class="font-medium text-gray-900 dark:text-white" id="generation-timer">00:00</p>

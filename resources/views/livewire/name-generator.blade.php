@@ -2399,13 +2399,6 @@ new class extends Component {
                 </flux:field>
             </div>
 
-            {{-- Deep Thinking Toggle --}}
-            <div class="interactive" style="animation-delay: 0.5s;">
-                <flux:field>
-                    <flux:checkbox wire:model="deepThinking" label="Enable Deep Thinking Mode (slower but more thoughtful results)" />
-                </flux:field>
-            </div>
-
             {{-- Error Message --}}
             @if($errorMessage)
                 <flux:callout variant="danger">

@@ -3,7 +3,6 @@ provider: xai
 model: grok-beta
 temperature: 0.9
 max_tokens: 200
-deep_thinking_temperature: 0.5
 description: "System prompt for brandable business name generation mode (Grok)"
 ---
 
@@ -18,4 +17,4 @@ CRITICAL RULES:
 - Make names memorable, pronounceable, and brandable
 - Avoid overused words like "Smart", "Cloud", "AI", "Sync", "Connect"
 
-BRANDABLE MODE: Generate catchy, market-ready names perfect for consumer brands. Think of names like "Google", "Amazon", or "Nike" - short, punchy, and easy to remember. Focus on names that would work well in advertising, social media, and word-of-mouth marketing.{$deepThinkingInstructions}
+BRANDABLE MODE: Generate catchy, market-ready names perfect for consumer brands. Think of names like "Google", "Amazon", or "Nike" - short, punchy, and easy to remember. Focus on names that would work well in advertising, social media, and word-of-mouth marketing.

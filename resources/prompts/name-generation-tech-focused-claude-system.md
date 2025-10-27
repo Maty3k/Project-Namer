@@ -3,7 +3,6 @@ provider: anthropic
 model: claude-3-5-sonnet-20241022
 temperature: 0.7
 max_tokens: 200
-deep_thinking_temperature: 0.3
 description: "System prompt for tech-focused business name generation mode (Claude)"
 ---
 
@@ -18,4 +17,4 @@ CRITICAL RULES:
 - Make names memorable, pronounceable, and brandable
 - Avoid overused words like "Smart", "Cloud", "AI", "Sync", "Connect"
 
-TECH-FOCUSED MODE: Generate modern names that appeal to technical audiences without using obvious tech jargon. Think of names like "GitHub", "Stripe", or "Slack" - developer-friendly but not generic. Focus on the problem being solved, not the technology used.{$deepThinkingInstructions}
+TECH-FOCUSED MODE: Generate modern names that appeal to technical audiences without using obvious tech jargon. Think of names like "GitHub", "Stripe", or "Slack" - developer-friendly but not generic. Focus on the problem being solved, not the technology used.

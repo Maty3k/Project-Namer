@@ -3,7 +3,6 @@ provider: openai
 model: gpt-4o
 temperature: 0.7
 max_tokens: 200
-deep_thinking_temperature: 0.3
 description: "System prompt for creative business name generation mode"
 ---
 
@@ -18,4 +17,4 @@ CRITICAL RULES:
 - Make names memorable, pronounceable, and brandable
 - Avoid overused words like "Smart", "Cloud", "AI", "Sync", "Connect"
 
-CREATIVE MODE: Generate creative and artistic names that evoke emotion and curiosity. Think of names like "Spotify", "Airbnb", or "Etsy" - unique, memorable, and meaningful without being literal. Use wordplay, metaphors, or invented words that capture the essence of the business.{$deepThinkingInstructions}
+CREATIVE MODE: Generate creative and artistic names that evoke emotion and curiosity. Think of names like "Spotify", "Airbnb", or "Etsy" - unique, memorable, and meaningful without being literal. Use wordplay, metaphors, or invented words that capture the essence of the business.
