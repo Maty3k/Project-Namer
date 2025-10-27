@@ -216,7 +216,7 @@ class LogoGallery extends Component
             $this->logoToDelete = null;
 
             // Redirect back to logo generations list
-            return $this->redirect(route('logo.generations'), navigate: true);
+            return $this->redirect(route('logos.index'), navigate: true);
         }
 
         $this->dispatch('show-toast', [
