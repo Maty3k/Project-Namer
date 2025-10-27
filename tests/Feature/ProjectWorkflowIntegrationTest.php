@@ -82,27 +82,7 @@ describe('Project Workflow Integration Tests', function (): void {
         expect($project->fresh()->selected_name_id)->toBe($suggestion1->id);
 
         // Step 3: Hide a suggestion
-        Livewire::test(NameResultCard::class, ['suggestion' => $suggestion2])
-            ->call('hideSuggestion')
-            ->assertDispatched('suggestion-hidden', $suggestion2->id);
-
-        // Verify suggestion was hidden
-
-        // Step 4: Change filter to see hidden suggestions
-        $projectComponent = Livewire::test(ProjectPage::class, ['uuid' => $project->uuid])
-            ->call('setResultsFilter', 'hidden')
-
-        // Verify filtered suggestions show only hidden ones
-        $hiddenSuggestions = $projectComponent->get('filteredSuggestions');
-        expect($hiddenSuggestions)->toHaveCount(1);
-        expect($hiddenSuggestions->first()->name)->toBe('GreenBuy');
-
-        // Step 5: Show all suggestions
-        $projectComponent->call('setResultsFilter', 'all')
-
-        $allSuggestions = $projectComponent->get('filteredSuggestions');
-        expect($allSuggestions)->toHaveCount(2);
-        expect($allSuggestions->pluck('name')->toArray())->toContain('EcoMart', 'GreenBuy');
+        // Hide/show functionality has been removed
     });
 
     test('sidebar integration with project workflow', function (): void {

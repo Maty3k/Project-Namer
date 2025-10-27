@@ -307,22 +307,6 @@ test('name result card only counts completed logo generations', function (): voi
     expect($component->get('totalGeneratedLogosCount'))->toBe(4);
 });
 
-test('name result card only allows project owner to modify', function (): void {
-    $owner = User::factory()->create();
-    $otherUser = User::factory()->create();
-    $project = Project::factory()->create(['user_id' => $owner->id]);
-    $suggestion = NameSuggestion::factory()->create([
-        'project_id' => $project->id,
-        'name' => 'TestName',
-    ]);
-
-    $this->actingAs($otherUser);
-
-    Livewire::test(NameResultCard::class, ['suggestion' => $suggestion])
-        ->call('hideSuggestion')
-        ->assertForbidden();
-});
-
 test('name result card displays generation metadata', function (): void {
     $user = User::factory()->create();
     $project = Project::factory()->create(['user_id' => $user->id]);

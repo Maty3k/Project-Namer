@@ -46,24 +46,6 @@ test('name suggestion casts attributes correctly', function (): void {
     expect($casts['generation_metadata'])->toBe('array');
 });
 
-test('visible scope filters hidden suggestions', function (): void {
-    $project = Project::factory()->create();
-
-
-    $visible = NameSuggestion::visible()->where('project_id', $project->id)->get();
-
-    expect($visible)->toHaveCount(2);
-});
-
-test('hidden scope filters visible suggestions', function (): void {
-    $project = Project::factory()->create();
-
-
-    $hidden = NameSuggestion::hidden()->where('project_id', $project->id)->get();
-
-    expect($hidden)->toHaveCount(3);
-});
-
 test('domains are cast to array from json', function (): void {
     $domains = [
         ['extension' => '.com', 'available' => true],

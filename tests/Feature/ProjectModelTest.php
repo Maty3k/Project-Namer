@@ -34,14 +34,6 @@ test('a project can have a selected name', function (): void {
     expect($project->selectedName->id)->toBe($suggestion->id);
 });
 
-test('a project has visible name suggestions scope', function (): void {
-    $project = Project::factory()->create();
-
-
-    expect($project->visibleNameSuggestions)->toHaveCount(2);
-    expect($project->nameSuggestions)->toHaveCount(3);
-});
-
 test('uuid is automatically generated on creation', function (): void {
     $project = Project::factory()->create(['uuid' => null]);
 

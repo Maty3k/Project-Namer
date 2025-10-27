@@ -157,38 +157,6 @@ describe('ProjectPage AI Generation', function (): void {
         expect($component->get('aiGenerationResults'))->toHaveKeys(['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro']);
     });
 
-    test('ProjectPage can bulk hide AI-generated suggestions', function (): void {
-        // Create some AI-generated suggestions
-        $suggestions = NameSuggestion::factory()->count(3)->create([
-            'project_id' => $this->project->id,
-            'generation_metadata' => ['ai_model' => 'gpt-4'],
-        ]);
-
-        $component = Livewire::test(ProjectPage::class, ['uuid' => $this->project->uuid])
-            ->set('selectedSuggestions', $suggestions->pluck('id')->toArray())
-            ->call('bulkHideSuggestions');
-
-        // All selected suggestions should be hidden
-        foreach ($suggestions as $suggestion) {
-        }
-    });
-
-    test('ProjectPage can bulk show hidden AI suggestions', function (): void {
-        // Create hidden AI-generated suggestions
-        $suggestions = NameSuggestion::factory()->count(3)->create([
-            'project_id' => $this->project->id,
-            'generation_metadata' => ['ai_model' => 'gpt-4'],
-        ]);
-
-        $component = Livewire::test(ProjectPage::class, ['uuid' => $this->project->uuid])
-            ->set('selectedSuggestions', $suggestions->pluck('id')->toArray())
-            ->call('bulkShowSuggestions');
-
-        // All selected suggestions should be visible
-        foreach ($suggestions as $suggestion) {
-        }
-    });
-
     test('ProjectPage can regenerate names for selected suggestions', function (): void {
         $suggestions = NameSuggestion::factory()->count(2)->create([
             'project_id' => $this->project->id,
