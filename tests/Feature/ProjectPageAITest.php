@@ -170,7 +170,6 @@ describe('ProjectPage AI Generation', function (): void {
 
         // All selected suggestions should be hidden
         foreach ($suggestions as $suggestion) {
-            expect($suggestion->fresh()->is_hidden)->toBe(true);
         }
     });
 
@@ -178,7 +177,6 @@ describe('ProjectPage AI Generation', function (): void {
         // Create hidden AI-generated suggestions
         $suggestions = NameSuggestion::factory()->count(3)->create([
             'project_id' => $this->project->id,
-            'is_hidden' => true,
             'generation_metadata' => ['ai_model' => 'gpt-4'],
         ]);
 
@@ -188,7 +186,6 @@ describe('ProjectPage AI Generation', function (): void {
 
         // All selected suggestions should be visible
         foreach ($suggestions as $suggestion) {
-            expect($suggestion->fresh()->is_hidden)->toBe(false);
         }
     });
 

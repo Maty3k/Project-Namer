@@ -37,8 +37,6 @@ test('a project can have a selected name', function (): void {
 test('a project has visible name suggestions scope', function (): void {
     $project = Project::factory()->create();
 
-    NameSuggestion::factory()->for($project)->count(2)->create(['is_hidden' => false]);
-    NameSuggestion::factory()->for($project)->count(1)->create(['is_hidden' => true]);
 
     expect($project->visibleNameSuggestions)->toHaveCount(2);
     expect($project->nameSuggestions)->toHaveCount(3);

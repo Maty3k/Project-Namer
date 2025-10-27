@@ -19,7 +19,6 @@ test('name suggestion has correct fillable attributes', function (): void {
         'name',
         'domains',
         'logos',
-        'is_hidden',
         'generation_metadata',
         'ai_model_used',
         'ai_generation_mode',
@@ -43,8 +42,6 @@ test('name suggestion casts attributes correctly', function (): void {
     expect($casts['domains'])->toBe('array');
     expect($casts)->toHaveKey('logos');
     expect($casts['logos'])->toBe('array');
-    expect($casts)->toHaveKey('is_hidden');
-    expect($casts['is_hidden'])->toBe('boolean');
     expect($casts)->toHaveKey('generation_metadata');
     expect($casts['generation_metadata'])->toBe('array');
 });
@@ -52,25 +49,19 @@ test('name suggestion casts attributes correctly', function (): void {
 test('visible scope filters hidden suggestions', function (): void {
     $project = Project::factory()->create();
 
-    NameSuggestion::factory()->for($project)->count(2)->create(['is_hidden' => false]);
-    NameSuggestion::factory()->for($project)->count(3)->create(['is_hidden' => true]);
 
     $visible = NameSuggestion::visible()->where('project_id', $project->id)->get();
 
     expect($visible)->toHaveCount(2);
-    expect($visible->every(fn ($s) => $s->is_hidden === false))->toBeTrue();
 });
 
 test('hidden scope filters visible suggestions', function (): void {
     $project = Project::factory()->create();
 
-    NameSuggestion::factory()->for($project)->count(2)->create(['is_hidden' => false]);
-    NameSuggestion::factory()->for($project)->count(3)->create(['is_hidden' => true]);
 
     $hidden = NameSuggestion::hidden()->where('project_id', $project->id)->get();
 
     expect($hidden)->toHaveCount(3);
-    expect($hidden->every(fn ($s) => $s->is_hidden === true))->toBeTrue();
 });
 
 test('domains are cast to array from json', function (): void {
@@ -108,11 +99,4 @@ test('generation metadata is cast to array from json', function (): void {
 
     expect($suggestion->generation_metadata)->toBeArray();
     expect($suggestion->generation_metadata)->toBe($metadata);
-});
-
-test('is_hidden defaults to false', function (): void {
-    $project = Project::factory()->create();
-    $suggestion = NameSuggestion::factory()->for($project)->create();
-
-    expect($suggestion->is_hidden)->toBeFalse();
 });

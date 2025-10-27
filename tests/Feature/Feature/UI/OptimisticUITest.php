@@ -13,40 +13,7 @@ beforeEach(function (): void {
     $this->actingAs($this->user);
 });
 
-describe('Optimistic Hide/Show for Name Suggestions', function (): void {
-    test('hide suggestion updates UI immediately', function (): void {
-        $suggestion = NameSuggestion::factory()->create([
-            'project_id' => $this->project->id,
-            'is_hidden' => false,
-        ]);
-
-        $response = $this->get(route('project.show', $this->project->uuid));
-        $response->assertStatus(200);
-
-        // Component should exist and handle optimistic updates
-        $componentPath = resource_path('js/components/optimisticUI.js');
-        expect(file_exists($componentPath))->toBeTrue();
-    });
-
-    test('show suggestion updates UI immediately', function (): void {
-        $suggestion = NameSuggestion::factory()->create([
-            'project_id' => $this->project->id,
-            'is_hidden' => true,
-        ]);
-
-        // Verify optimistic update component exists
-        $componentPath = resource_path('js/components/optimisticUI.js');
-        expect(file_exists($componentPath))->toBeTrue();
-    });
-
-    test('rollback occurs on server error', function (): void {
-        // Component should handle rollback logic
-        $componentPath = resource_path('js/components/optimisticUI.js');
-        $content = file_get_contents($componentPath);
-
-        expect($content)->toContain('rollback');
-    });
-});
+// Hide/show functionality removed - tests deleted
 
 describe('Optimistic Star/Favorite Functionality', function (): void {
     test('star session updates UI immediately', function (): void {
@@ -101,15 +68,7 @@ describe('Rollback Mechanism', function (): void {
         expect($content)->toMatch('/(catch|error|fail)/i');
     });
 
-    test('rollback restores original state', function (): void {
-        $suggestion = NameSuggestion::factory()->create([
-            'project_id' => $this->project->id,
-            'is_hidden' => false,
-        ]);
-
-        // Original state should be preserved for rollback
-        expect($suggestion->is_hidden)->toBeFalse();
-    });
+    // Test removed - is_hidden field no longer exists
 });
 
 describe('Error Toast Notifications', function (): void {
@@ -149,20 +108,7 @@ describe('Rapid Consecutive Operations', function (): void {
         expect($content)->toContain('function');
     });
 
-    test('rollback only affects failed operations', function (): void {
-        $suggestion1 = NameSuggestion::factory()->create([
-            'project_id' => $this->project->id,
-            'is_hidden' => false,
-        ]);
-
-        $suggestion2 = NameSuggestion::factory()->create([
-            'project_id' => $this->project->id,
-            'is_hidden' => false,
-        ]);
-
-        // Each suggestion maintains independent state
-        expect($suggestion1->id)->not->toBe($suggestion2->id);
-    });
+    // Test removed - is_hidden field no longer exists
 });
 
 describe('Integration with Livewire', function (): void {
