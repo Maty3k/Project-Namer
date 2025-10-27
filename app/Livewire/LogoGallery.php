@@ -227,9 +227,7 @@ class LogoGallery extends Component
         $this->showDeleteModal = false;
         $this->logoToDelete = null;
 
-        // Refresh the component
-        $this->dispatch('$refresh');
-
+        // Component will automatically re-render after method completes
         return null;
     }
 
