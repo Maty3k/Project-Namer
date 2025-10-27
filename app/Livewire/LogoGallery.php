@@ -184,10 +184,10 @@ class LogoGallery extends Component
     /**
      * Delete a specific logo.
      */
-    public function deleteLogo(): void
+    public function deleteLogo(): mixed
     {
         if (! $this->logoToDelete) {
-            return;
+            return null;
         }
 
         // Delete the file from storage
@@ -229,6 +229,8 @@ class LogoGallery extends Component
 
         // Refresh the component
         $this->dispatch('$refresh');
+
+        return null;
     }
 
     /**
@@ -250,7 +252,7 @@ class LogoGallery extends Component
     /**
      * Delete all logos for this generation.
      */
-    public function deleteAll(): void
+    public function deleteAll(): mixed
     {
         $logos = $this->logos;
 
@@ -260,7 +262,7 @@ class LogoGallery extends Component
                 'type' => 'error',
             ]);
 
-            return;
+            return null;
         }
 
         $count = $logos->count();
