@@ -45,6 +45,39 @@ final class PromptBuilder
     }
 
     /**
+     * Build complete prompt with system and user components, plus configuration from markdown.
+     *
+     * @return array{system: string, user: string, config: PromptData}
+     */
+    public function buildWithConfig(
+        string $businessIdea,
+        string $model,
+        int $count,
+        string $mode,
+        bool $deepThinking
+    ): array {
+        // Get model suffix and mode slug
+        $modelSuffix = self::MODEL_SUFFIX_MAP[$model] ?? 'gpt4';
+        $modeSlug = match ($mode) {
+            'creative' => 'creative',
+            'professional' => 'professional',
+            'brandable' => 'brandable',
+            'tech-focused' => 'tech-focused',
+            default => 'creative',
+        };
+
+        // Load configuration from markdown
+        $promptFileName = "name-generation-{$modeSlug}-{$modelSuffix}-system";
+        $promptData = $this->promptLoader->loadWithCache($promptFileName);
+
+        return [
+            'system' => $this->buildSystemPrompt($model, $count, $mode, $deepThinking),
+            'user' => $this->buildUserPrompt($businessIdea, $model, $mode, $deepThinking),
+            'config' => $promptData,
+        ];
+    }
+
+    /**
      * Build system prompt optimized for the generation mode and model.
      */
     public function buildSystemPrompt(string $model, int $count, string $mode, bool $deepThinking): string

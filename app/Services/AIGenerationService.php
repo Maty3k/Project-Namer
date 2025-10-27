@@ -361,8 +361,8 @@ final readonly class AIGenerationService
                 'model' => $primaryModel,
                 'generation_mode' => $mode,
                 'deep_thinking' => $deepThinking,
-                'temperature' => $this->getTemperature($primaryModel, $deepThinking, $customParams),
-                'max_tokens' => $this->getMaxTokens($primaryModel, $customParams),
+                'temperature' => $this->getTemperature($primaryModel, $deepThinking, $customParams, $mode),
+                'max_tokens' => $this->getMaxTokens($primaryModel, $customParams, $mode),
                 'response_time_ms' => 0, // Cached response
                 'status' => 'completed',
                 'cached' => true,
@@ -384,8 +384,8 @@ final readonly class AIGenerationService
                     'model' => $primaryModel,
                     'generation_mode' => $mode,
                     'deep_thinking' => $deepThinking,
-                    'temperature' => $this->getTemperature($primaryModel, $deepThinking, $customParams),
-                    'max_tokens' => $this->getMaxTokens($primaryModel, $customParams),
+                    'temperature' => $this->getTemperature($primaryModel, $deepThinking, $customParams, $mode),
+                    'max_tokens' => $this->getMaxTokens($primaryModel, $customParams, $mode),
                     'response_time_ms' => (int) round($responseTime),
                     'status' => 'completed',
                     'cached' => false,
@@ -428,8 +428,8 @@ final readonly class AIGenerationService
                         'model' => $fallbackModel,
                         'generation_mode' => $mode,
                         'deep_thinking' => $deepThinking,
-                        'temperature' => $this->getTemperature($fallbackModel, $deepThinking, $customParams),
-                        'max_tokens' => $this->getMaxTokens($fallbackModel, $customParams),
+                        'temperature' => $this->getTemperature($fallbackModel, $deepThinking, $customParams, $mode),
+                        'max_tokens' => $this->getMaxTokens($fallbackModel, $customParams, $mode),
                         'response_time_ms' => (int) round((microtime(true) - $startTime) * 1000),
                         'status' => 'completed',
                         'cached' => true,
@@ -448,8 +448,8 @@ final readonly class AIGenerationService
                     'model' => $fallbackModel,
                     'generation_mode' => $mode,
                     'deep_thinking' => $deepThinking,
-                    'temperature' => $this->getTemperature($fallbackModel, $deepThinking, $customParams),
-                    'max_tokens' => $this->getMaxTokens($fallbackModel, $customParams),
+                    'temperature' => $this->getTemperature($fallbackModel, $deepThinking, $customParams, $mode),
+                    'max_tokens' => $this->getMaxTokens($fallbackModel, $customParams, $mode),
                     'response_time_ms' => (int) round($responseTime),
                     'status' => 'completed',
                     'cached' => false,
@@ -478,8 +478,8 @@ final readonly class AIGenerationService
             'model' => $primaryModel,
             'generation_mode' => $mode,
             'deep_thinking' => $deepThinking,
-            'temperature' => $this->getTemperature($primaryModel, $deepThinking, $customParams),
-            'max_tokens' => $this->getMaxTokens($primaryModel, $customParams),
+            'temperature' => $this->getTemperature($primaryModel, $deepThinking, $customParams, $mode),
+            'max_tokens' => $this->getMaxTokens($primaryModel, $customParams, $mode),
             'response_time_ms' => (int) round($responseTime),
             'status' => 'failed',
             'error' => $this->normalizeError($lastException->getMessage()),
@@ -505,16 +505,26 @@ final readonly class AIGenerationService
         int $count,
         array $customParams
     ): array {
-        $config = self::MODEL_CONFIGS[$model];
-        $prompts = $this->promptBuilder->build($businessIdea, $model, $count, $mode, $deepThinking);
+        // Load prompts and configuration from markdown
+        $result = $this->promptBuilder->buildWithConfig($businessIdea, $model, $count, $mode, $deepThinking);
+        $config = $result['config'];
 
-        $temperature = $this->getTemperature($model, $deepThinking, $customParams);
-        $maxTokens = $this->getMaxTokens($model, $customParams);
+        // Get temperature from markdown config or custom params
+        $temperature = isset($customParams['temperature'])
+            ? (float) $customParams['temperature']
+            : ($deepThinking && $config->deepThinkingTemperature !== null
+                ? $config->deepThinkingTemperature
+                : ($config->temperature ?? 0.7));
+
+        // Get max tokens from markdown config or custom params
+        $maxTokens = isset($customParams['max_tokens'])
+            ? (int) $customParams['max_tokens']
+            : ($config->maxTokens ?? 200);
 
         $response = Prism::text()
-            ->using($config['provider'], $config['model'])
-            ->withSystemPrompt($prompts['system'])
-            ->withPrompt($prompts['user'])
+            ->using($config->provider, $config->model)
+            ->withSystemPrompt($result['system'])
+            ->withPrompt($result['user'])
             ->withClientOptions([
                 'max_tokens' => $maxTokens,
                 'temperature' => $temperature,
@@ -554,33 +564,41 @@ final readonly class AIGenerationService
     }
 
     /**
-     * Get temperature for a model with custom overrides.
+     * Get temperature for a model with custom overrides (loads from markdown config).
      *
      * @param  array<string, mixed>  $customParams
      */
-    private function getTemperature(string $model, bool $deepThinking, array $customParams): float
+    private function getTemperature(string $model, bool $deepThinking, array $customParams, string $mode = 'creative'): float
     {
         if (isset($customParams['temperature'])) {
             return (float) $customParams['temperature'];
         }
 
-        $config = self::MODEL_CONFIGS[$model];
+        // Load config from markdown to get temperature
+        $result = $this->promptBuilder->buildWithConfig('', $model, 10, $mode, $deepThinking);
+        $config = $result['config'];
 
-        return $deepThinking ? $config['deep_thinking_temperature'] : $config['temperature'];
+        return $deepThinking && $config->deepThinkingTemperature !== null
+            ? $config->deepThinkingTemperature
+            : ($config->temperature ?? 0.7);
     }
 
     /**
-     * Get max tokens for a model with custom overrides.
+     * Get max tokens for a model with custom overrides (loads from markdown config).
      *
      * @param  array<string, mixed>  $customParams
      */
-    private function getMaxTokens(string $model, array $customParams): int
+    private function getMaxTokens(string $model, array $customParams, string $mode = 'creative'): int
     {
         if (isset($customParams['max_tokens'])) {
             return (int) $customParams['max_tokens'];
         }
 
-        return self::MODEL_CONFIGS[$model]['max_tokens'];
+        // Load config from markdown to get max_tokens
+        $result = $this->promptBuilder->buildWithConfig('', $model, 10, $mode, false);
+        $config = $result['config'];
+
+        return $config->maxTokens ?? 200;
     }
 
     /**
