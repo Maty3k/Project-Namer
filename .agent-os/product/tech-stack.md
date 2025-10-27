@@ -65,7 +65,7 @@
 
 ## Repository
 
-- **Code Repository:** https://github.com/user/project-namer
+- **Code Repository:** https://github.com/user/brandify
 - **Version Control:** Git
 - **CI/CD:** GitHub Actions
 

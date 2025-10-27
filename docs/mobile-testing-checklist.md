@@ -2,7 +2,7 @@
 
 > Task 5.2: Test application functionality on real mobile devices and browsers
 > 
-> This document provides a comprehensive checklist for testing the Project Namer application on real mobile devices and browsers.
+> This document provides a comprehensive checklist for testing the Brandify application on real mobile devices and browsers.
 
 ## Required Test Devices
 

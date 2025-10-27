@@ -63,7 +63,7 @@ console.error = function(...args) {
 
 // Sidebar state management with localStorage
 document.addEventListener('livewire:init', function () {
-    const SIDEBAR_STATE_KEY = 'project-namer-sidebar-collapsed';
+    const SIDEBAR_STATE_KEY = 'brandify-sidebar-collapsed';
 
     // Listen for loadSidebarState event from Livewire
     Livewire.on('loadSidebarState', () => {

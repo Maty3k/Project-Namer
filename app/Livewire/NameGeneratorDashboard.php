@@ -29,7 +29,7 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 
 /**
- * Name generator dashboard component for the Project Namer application.
+ * Name generator dashboard component for the Brandify application.
  *
  * Handles the complete workflow from business idea input to name generation,
  * domain checking, logo creation, and result sharing.

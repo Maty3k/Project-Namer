@@ -2,7 +2,7 @@
 
 > Last Updated: 2025-10-22
 >
-> This document tracks all LLM (Large Language Model) API interactions in the Project Namer application and verifies whether they use Prism for API calls.
+> This document tracks all LLM (Large Language Model) API interactions in the Brandify application and verifies whether they use Prism for API calls.
 
 ## Overview
 

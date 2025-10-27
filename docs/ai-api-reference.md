@@ -5,7 +5,7 @@
 
 ## Overview
 
-This document provides detailed API reference for the Project Namer AI integration system, including REST endpoints, WebSocket events, and service method signatures.
+This document provides detailed API reference for the Brandify AI integration system, including REST endpoints, WebSocket events, and service method signatures.
 
 ## Table of Contents
 
@@ -751,7 +751,7 @@ $estimate = $client->estimateCost([
 ### JavaScript SDK
 
 ```javascript
-import { AIClient } from '@project-namer/ai-client';
+import { AIClient } from '@brandify/ai-client';
 
 const client = new AIClient('your_api_token');
 

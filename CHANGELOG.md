@@ -102,6 +102,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Laravel Pint for code formatting
 - Comprehensive test suite with 2300+ tests
 
-[Unreleased]: https://github.com/user/project-namer/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/user/project-namer/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/user/project-namer/releases/tag/v0.1.0
+[Unreleased]: https://github.com/user/brandify/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/user/brandify/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/user/brandify/releases/tag/v0.1.0

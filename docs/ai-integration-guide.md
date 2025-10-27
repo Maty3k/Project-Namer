@@ -5,7 +5,7 @@
 
 ## Overview
 
-The Project Namer application includes a comprehensive AI integration system that enables intelligent business name generation using multiple AI providers. This guide covers architecture, usage patterns, configuration, and best practices for working with the AI system.
+The Brandify application includes a comprehensive AI integration system that enables intelligent business name generation using multiple AI providers. This guide covers architecture, usage patterns, configuration, and best practices for working with the AI system.
 
 ## Table of Contents
 
@@ -814,4 +814,4 @@ For questions or issues with the AI integration system:
 
 ---
 
-*This documentation is maintained by the Project Namer development team. Last updated: September 2, 2025*
+*This documentation is maintained by the Brandify development team. Last updated: September 2, 2025*
