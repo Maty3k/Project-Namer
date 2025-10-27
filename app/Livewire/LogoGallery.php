@@ -199,6 +199,26 @@ class LogoGallery extends Component
         // Decrement the completed logos count
         $this->logoGeneration->decrement('logos_completed');
 
+        // Check if this was the last logo - if so, delete the parent generation
+        $this->logoGeneration->refresh();
+        $remainingLogos = $this->logoGeneration->generatedLogos()->count();
+
+        if ($remainingLogos === 0) {
+            $businessName = $this->logoGeneration->business_name;
+            $this->logoGeneration->delete();
+
+            $this->dispatch('show-toast', [
+                'message' => "Last logo deleted. Generation \"{$businessName}\" has been removed.",
+                'type' => 'success',
+            ]);
+
+            $this->showDeleteModal = false;
+            $this->logoToDelete = null;
+
+            // Redirect back to logo generations list
+            return $this->redirect(route('logo.generations'), navigate: true);
+        }
+
         $this->dispatch('show-toast', [
             'message' => 'Logo deleted successfully',
             'type' => 'success',
@@ -244,6 +264,7 @@ class LogoGallery extends Component
         }
 
         $count = $logos->count();
+        $businessName = $this->logoGeneration->business_name;
 
         // Delete all logo files and records
         foreach ($logos as $logo) {
@@ -251,18 +272,18 @@ class LogoGallery extends Component
             $logo->delete();
         }
 
-        // Reset the completed logos count to 0
-        $this->logoGeneration->update(['logos_completed' => 0]);
+        // Delete the parent logo generation record
+        $this->logoGeneration->delete();
 
         $this->dispatch('show-toast', [
-            'message' => "Successfully deleted {$count} logo".(($count !== 1) ? 's' : ''),
+            'message' => "Successfully deleted {$count} logo".(($count !== 1) ? 's' : '')." for \"{$businessName}\"",
             'type' => 'success',
         ]);
 
         $this->showDeleteAllModal = false;
 
-        // Refresh the component
-        $this->dispatch('$refresh');
+        // Redirect back to logo generations list
+        return $this->redirect(route('logo.generations'), navigate: true);
     }
 
     /**
