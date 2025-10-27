@@ -7,36 +7,36 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
 
 ## Tasks
 
-- [ ] 1. Create PromptLoaderService and PromptData DTO
-  - [ ] 1.1 Write tests for PromptData DTO (creation, validation, readonly properties)
-  - [ ] 1.2 Create PromptData DTO class with all required and optional fields
-  - [ ] 1.3 Write tests for PromptLoaderService (load, parse, validate, cache, errors)
-  - [ ] 1.4 Create PromptLoaderService with YAML parsing and caching
-  - [ ] 1.5 Implement provider enum validation
-  - [ ] 1.6 Implement template variable interpolation
-  - [ ] 1.7 Create custom exceptions (PromptNotFoundException, InvalidPromptException)
-  - [ ] 1.8 Verify all PromptLoaderService tests pass
+- [x] 1. Create PromptLoaderService and PromptData DTO
+  - [x] 1.1 Write tests for PromptData DTO (creation, validation, readonly properties)
+  - [x] 1.2 Create PromptData DTO class with all required and optional fields
+  - [x] 1.3 Write tests for PromptLoaderService (load, parse, validate, cache, errors)
+  - [x] 1.4 Create PromptLoaderService with YAML parsing and caching
+  - [x] 1.5 Implement provider enum validation
+  - [x] 1.6 Implement template variable interpolation
+  - [x] 1.7 Create custom exceptions (PromptNotFoundException, InvalidPromptException)
+  - [x] 1.8 Verify all PromptLoaderService tests pass
 
-- [ ] 2. Extract Name Generation Prompts to Markdown
-  - [ ] 2.1 Create `resources/prompts/` directory structure
-  - [ ] 2.2 Extract core rules to `name-generation-core-rules.md`
-  - [ ] 2.3 Extract creative mode prompts to markdown files (system + user)
-  - [ ] 2.4 Extract professional mode prompts to markdown files (system + user)
-  - [ ] 2.5 Extract brandable mode prompts to markdown files (system + user)
-  - [ ] 2.6 Extract tech-focused mode prompts to markdown files (system + user)
-  - [ ] 2.7 Add appropriate frontmatter (provider, model, temperature, etc.) to each file
-  - [ ] 2.8 Verify markdown files are valid and loadable
+- [x] 2. Extract Name Generation Prompts to Markdown
+  - [x] 2.1 Create `resources/prompts/` directory structure
+  - [x] 2.2 Extract core rules to `name-generation-core-rules.md`
+  - [x] 2.3 Extract creative mode prompts to markdown files (system + user)
+  - [x] 2.4 Extract professional mode prompts to markdown files (system + user)
+  - [x] 2.5 Extract brandable mode prompts to markdown files (system + user)
+  - [x] 2.6 Extract tech-focused mode prompts to markdown files (system + user)
+  - [x] 2.7 Add appropriate frontmatter (provider, model, temperature, etc.) to each file
+  - [x] 2.8 Verify markdown files are valid and loadable
 
-- [ ] 3. Update PromptBuilder to Use Markdown Prompts
-  - [ ] 3.1 Write integration tests for PromptBuilder with PromptLoaderService
-  - [ ] 3.2 Inject PromptLoaderService into PromptBuilder
-  - [ ] 3.3 Update buildSystemPrompt() to load from markdown files
-  - [ ] 3.4 Update buildUserPrompt() to load from markdown files
-  - [ ] 3.5 Implement variable interpolation for user prompts
-  - [ ] 3.6 Add buildWithConfig() method returning prompt + configuration
-  - [ ] 3.7 Maintain backward compatibility with existing build() method
-  - [ ] 3.8 Remove hardcoded prompt strings
-  - [ ] 3.9 Verify all PromptBuilder tests pass
+- [x] 3. Update PromptBuilder to Use Markdown Prompts
+  - [x] 3.1 Write integration tests for PromptBuilder with PromptLoaderService
+  - [x] 3.2 Inject PromptLoaderService into PromptBuilder
+  - [x] 3.3 Update buildSystemPrompt() to load from markdown files
+  - [x] 3.4 Update buildUserPrompt() to load from markdown files
+  - [x] 3.5 Implement variable interpolation for user prompts
+  - [x] 3.6 Add buildWithConfig() method returning prompt + configuration
+  - [x] 3.7 Maintain backward compatibility with existing build() method
+  - [x] 3.8 Remove hardcoded prompt strings
+  - [x] 3.9 Verify all PromptBuilder tests pass
 
 - [ ] 4. Update AIGenerationService to Use Markdown Configuration
   - [ ] 4.1 Write integration tests for AIGenerationService with markdown configs
