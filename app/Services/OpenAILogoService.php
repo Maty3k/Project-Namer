@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Livewire\Livewire;
 use Prism\Prism\Enums\Provider;
 use Prism\Prism\Prism;
 
@@ -228,19 +227,8 @@ class OpenAILogoService
             'logos_count' => count($logosData),
         ]);
 
-        // Dispatch Livewire event to update the UI in real-time
-        // We dispatch to all Livewire components via the event bus
-        try {
-            // Use Livewire's event system to notify components
-            $eventName = 'logos-generated-'.$nameSuggestion->id;
-            app('livewire')->trigger($eventName, []);
-        } catch (\Throwable $e) {
-            // Silently fail if Livewire context is not available (e.g., in tests)
-            Log::debug('Could not dispatch Livewire event', [
-                'event' => 'logos-generated-'.$nameSuggestion->id,
-                'error' => $e->getMessage(),
-            ]);
-        }
+        // Note: UI updates are handled via Livewire polling (wire:poll)
+        // in the NameResultCard component, not via events
     }
 
     /**

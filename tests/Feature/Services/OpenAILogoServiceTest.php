@@ -202,9 +202,6 @@ describe('Logo Persistence to NameSuggestion', function (): void {
                     && $context['logos_count'] === 1;
             }));
 
-        Log::shouldReceive('debug')
-            ->zeroOrMoreTimes();
-
         $service = app(OpenAILogoService::class);
         $reflection = new ReflectionClass($service);
         $method = $reflection->getMethod('updateNameSuggestionWithLogos');
