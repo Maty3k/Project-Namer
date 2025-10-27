@@ -13,6 +13,8 @@ class LogoGenerations extends Component
 
     public ?LogoGeneration $generationToDelete = null;
 
+    public bool $showDeleteAllModal = false;
+
     public string $search = '';
 
     public string $filterBy = 'newest';
@@ -97,6 +99,67 @@ class LogoGenerations extends Component
 
         $this->showDeleteModal = false;
         $this->generationToDelete = null;
+
+        // Refresh the component
+        $this->dispatch('$refresh');
+    }
+
+    /**
+     * Open delete all generations confirmation modal.
+     */
+    public function confirmDeleteAllGenerations(): void
+    {
+        $this->showDeleteAllModal = true;
+    }
+
+    /**
+     * Cancel delete all generations operation.
+     */
+    public function cancelDeleteAllGenerations(): void
+    {
+        $this->showDeleteAllModal = false;
+    }
+
+    /**
+     * Delete all logo generations for the authenticated user.
+     */
+    public function deleteAllGenerations(): void
+    {
+        $generations = $this->logoGenerations;
+
+        if ($generations->isEmpty()) {
+            $this->dispatch('show-toast', [
+                'message' => 'No logo generations to delete',
+                'type' => 'error',
+            ]);
+
+            return;
+        }
+
+        $totalCount = 0;
+        $generationCount = $generations->count();
+
+        // Delete all logos and generation records
+        foreach ($generations as $generation) {
+            $logoCount = $generation->generatedLogos->count();
+            $totalCount += $logoCount;
+
+            // Delete all logo files for this generation
+            foreach ($generation->generatedLogos as $logo) {
+                $logo->deleteFile();
+                $logo->delete();
+            }
+
+            // Delete the generation record
+            $generation->delete();
+        }
+
+        $this->dispatch('show-toast', [
+            'message' => "Successfully deleted {$generationCount} generation".($generationCount !== 1 ? 's' : '')." ({$totalCount} logo".($totalCount !== 1 ? 's' : '').")",
+            'type' => 'success',
+        ]);
+
+        $this->showDeleteAllModal = false;
 
         // Refresh the component
         $this->dispatch('$refresh');
