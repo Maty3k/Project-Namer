@@ -113,3 +113,51 @@ test('user without saved preferences starts with empty selections', function () 
     expect($component->generationMode)->toBe('');
     expect($component->deepThinking)->toBeFalse();
 });
+
+test('user can clear saved AI preferences', function () {
+    $user = User::factory()->create();
+    $project = Project::factory()->create(['user_id' => $user->id]);
+
+    // Save preferences first
+    UserAIPreferences::create([
+        'user_id' => $user->id,
+        'preferred_models' => ['gpt-4', 'claude-3.5-sonnet'],
+        'default_generation_mode' => 'creative',
+        'default_deep_thinking' => true,
+        'enable_model_comparison' => true,
+    ]);
+
+    // Clear preferences
+    Livewire::actingAs($user)
+        ->test(ProjectPage::class, ['uuid' => $project->uuid])
+        ->call('clearAIPreferences')
+        ->assertDispatched('show-toast');
+
+    // Verify preferences were deleted from database
+    $preferences = UserAIPreferences::where('user_id', $user->id)->first();
+    expect($preferences)->toBeNull();
+});
+
+test('clearing preferences resets current selections', function () {
+    $user = User::factory()->create();
+    $project = Project::factory()->create(['user_id' => $user->id]);
+
+    // Save preferences
+    UserAIPreferences::create([
+        'user_id' => $user->id,
+        'preferred_models' => ['gpt-4'],
+        'default_generation_mode' => 'professional',
+        'default_deep_thinking' => false,
+        'enable_model_comparison' => false,
+    ]);
+
+    $component = Livewire::actingAs($user)
+        ->test(ProjectPage::class, ['uuid' => $project->uuid])
+        ->call('clearAIPreferences');
+
+    // Verify component state is reset
+    expect($component->selectedAIModels)->toBe([]);
+    expect($component->generationMode)->toBe('');
+    expect($component->deepThinking)->toBeFalse();
+    expect($component->enableModelComparison)->toBeFalse();
+});

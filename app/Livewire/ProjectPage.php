@@ -963,6 +963,31 @@ class ProjectPage extends Component
     }
 
     /**
+     * Clear user AI preferences.
+     */
+    public function clearAIPreferences(): void
+    {
+        UserAIPreferences::where('user_id', auth()->id())->delete();
+
+        // Reset current selections to empty
+        $this->selectedAIModels = [];
+        $this->generationMode = '';
+        $this->deepThinking = false;
+        $this->enableModelComparison = false;
+
+        // Dispatch preferences cleared event
+        $this->dispatch('ai-preferences-cleared', [
+            'user_id' => auth()->id(),
+            'project_uuid' => $this->project->uuid,
+        ]);
+
+        $this->dispatch('show-toast', [
+            'message' => 'AI preferences cleared',
+            'type' => 'success',
+        ]);
+    }
+
+    /**
      * Delete a single AI generation with confirmation.
      */
     public function deleteAIGeneration(int $generationId): void
