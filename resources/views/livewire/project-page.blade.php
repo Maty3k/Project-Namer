@@ -267,13 +267,6 @@
                                     Cancel Generation
                                 </flux:button>
                             @endif
-
-                            <flux:button
-                                wire:click="saveAIPreferences"
-                                variant="ghost"
-                            >
-                                Save Preferences
-                            </flux:button>
                         </div>
 
                         <!-- Error Message -->

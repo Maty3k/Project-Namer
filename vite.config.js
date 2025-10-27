@@ -14,9 +14,6 @@ export default defineConfig({
     ],
     server: {
         cors: true,
-        hmr: {
-            host: 'localhost',
-        },
     },
     publicDir: false, // Laravel handles public directory
 });
