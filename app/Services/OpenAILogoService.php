@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\DataTransferObjects\PromptData;
 use App\Exceptions\LogoGenerationException;
 use App\Models\GeneratedLogo;
 use App\Models\LogoGeneration;
@@ -18,33 +19,27 @@ use Prism\Prism\Prism;
 class OpenAILogoService
 {
     /**
-     * Logo styles with their descriptions for DALL-E prompts.
+     * Available logo styles.
      */
-    protected const LOGO_STYLES = [
-        'minimalist' => 'minimalist, clean, simple geometric shapes',
-        'modern' => 'modern, sleek, contemporary design',
-        'playful' => 'playful, fun, vibrant and colorful',
-        'corporate' => 'professional, corporate, business-focused',
-    ];
-
-    /**
-     * Image size for DALL-E 2 (256x256).
-     */
-    protected const IMAGE_SIZE = '256x256';
+    protected const LOGO_STYLES = ['minimalist', 'modern', 'playful', 'corporate'];
 
     /**
      * Number of logos to generate.
      */
     protected const LOGOS_COUNT = 4;
 
+    public function __construct(
+        protected PromptLoaderService $promptLoader
+    ) {}
+
     /**
      * Generate all 4 logos for a logo generation request.
      */
     public function generateLogos(LogoGeneration $logoGeneration): void
     {
-        foreach (self::LOGO_STYLES as $style => $styleDescription) {
+        foreach (self::LOGO_STYLES as $style) {
             try {
-                $this->generateSingleLogo($logoGeneration, $style, $styleDescription);
+                $this->generateSingleLogo($logoGeneration, $style);
             } catch (LogoGenerationException $e) {
                 Log::error("Failed to generate {$style} logo", [
                     'logo_generation_id' => $logoGeneration->id,
@@ -67,9 +62,11 @@ class OpenAILogoService
      */
     protected function generateSingleLogo(
         LogoGeneration $logoGeneration,
-        string $style,
-        string $styleDescription
+        string $style
     ): void {
+        // Load prompt config from markdown
+        $promptData = $this->promptLoader->loadWithCache("logo-generation-{$style}");
+
         // Create the logo record
         $generatedLogo = GeneratedLogo::create([
             'logo_generation_id' => $logoGeneration->id,
@@ -81,7 +78,7 @@ class OpenAILogoService
         $prompt = $this->buildPrompt(
             $logoGeneration->business_name,
             $logoGeneration->business_description ?? '',
-            $styleDescription
+            $promptData
         );
 
         // Save the prompt
@@ -89,7 +86,7 @@ class OpenAILogoService
 
         try {
             // Call DALL-E 2 API via Prism
-            $imageUrl = $this->callDalleApi($prompt);
+            $imageUrl = $this->callDalleApi($prompt, $promptData);
 
             // Download and save the image
             $filePath = $this->downloadAndSaveImage($imageUrl, $logoGeneration->id, $style);
@@ -120,37 +117,39 @@ class OpenAILogoService
     }
 
     /**
-     * Build the DALL-E prompt for logo generation.
+     * Build the DALL-E prompt for logo generation using markdown template.
      */
     protected function buildPrompt(
         string $businessName,
         string $businessDescription,
-        string $styleDescription
+        PromptData $promptData
     ): string {
-        $prompt = "Create a {$styleDescription} logo for a business called '{$businessName}'";
+        // Build business description clause
+        $businessDescriptionClause = ! empty($businessDescription)
+            ? " that {$businessDescription}"
+            : '';
 
-        if (! empty($businessDescription)) {
-            $prompt .= " that {$businessDescription}";
-        }
-
-        $prompt .= '. The logo should be simple, memorable, and work well at small sizes. No text in the logo.';
-
-        return $prompt;
+        // Interpolate variables in the prompt template
+        return $this->promptLoader->interpolate($promptData->promptText, [
+            'businessName' => $businessName,
+            'styleDescription' => $promptData->metadata['style_description'] ?? '',
+            'businessDescriptionClause' => $businessDescriptionClause,
+        ]);
     }
 
     /**
-     * Call the DALL-E 2 API via Prism to generate an image.
+     * Call the DALL-E 2 API via Prism to generate an image using markdown config.
      */
-    protected function callDalleApi(string $prompt): string
+    protected function callDalleApi(string $prompt, PromptData $promptData): string
     {
         try {
             $response = Prism::image()
-                ->using(Provider::OpenAI, 'dall-e-2')
+                ->using($promptData->provider, $promptData->model)
                 ->withPrompt($prompt)
                 ->withClientOptions([
-                    'n' => 1,
-                    'size' => self::IMAGE_SIZE,
-                    'response_format' => 'url',
+                    'n' => $promptData->metadata['n'] ?? 1,
+                    'size' => $promptData->metadata['size'] ?? '256x256',
+                    'response_format' => $promptData->metadata['response_format'] ?? 'url',
                 ])
                 ->generate();
 
@@ -236,6 +235,6 @@ class OpenAILogoService
      */
     public static function getAvailableStyles(): array
     {
-        return array_keys(self::LOGO_STYLES);
+        return self::LOGO_STYLES;
     }
 }

@@ -46,16 +46,16 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 4.5 Maintain caching, fallback, and retry logic
   - [x] 4.6 Verify all AIGenerationService tests pass
 
-- [ ] 5. Extract Logo Generation Prompts and Update Service
-  - [ ] 5.1 Create logo generation markdown files for each style
-  - [ ] 5.2 Add appropriate frontmatter (provider: openai, model: dall-e-2, etc.)
-  - [ ] 5.3 Write integration tests for OpenAILogoService with markdown prompts
-  - [ ] 5.4 Update OpenAILogoService to use PromptLoaderService
-  - [ ] 5.5 Remove LOGO_STYLES constant
-  - [ ] 5.6 Update buildPrompt() to use loaded markdown template
-  - [ ] 5.7 Update callDalleApi() to use provider/model from markdown
-  - [ ] 5.8 Implement template variable interpolation for logo prompts
-  - [ ] 5.9 Verify all OpenAILogoService tests pass
+- [x] 5. Extract Logo Generation Prompts and Update Service
+  - [x] 5.1 Create logo generation markdown files for each style
+  - [x] 5.2 Add appropriate frontmatter (provider: openai, model: dall-e-2, etc.)
+  - [x] 5.3 Write integration tests for OpenAILogoService with markdown prompts
+  - [x] 5.4 Update OpenAILogoService to use PromptLoaderService
+  - [x] 5.5 Remove LOGO_STYLES constant
+  - [x] 5.6 Update buildPrompt() to use loaded markdown template
+  - [x] 5.7 Update callDalleApi() to use provider/model from markdown
+  - [x] 5.8 Implement template variable interpolation for logo prompts
+  - [x] 5.9 Verify all OpenAILogoService tests pass
 
 - [ ] 6. Extract Vision Analysis Prompt and Update Service
   - [ ] 6.1 Create vision analysis markdown file with JSON schema prompt
