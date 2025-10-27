@@ -56,11 +56,6 @@ return new class extends Migration
 
         // Add indexes to name_suggestions table
         Schema::table('name_suggestions', function (Blueprint $table) {
-            // Index for project queries with visibility
-            if (! Schema::hasIndex('name_suggestions', 'name_suggestions_project_id_is_hidden_index')) {
-                $table->index(['project_id', 'is_hidden'], 'name_suggestions_project_id_is_hidden_index');
-            }
-
             // Index for AI generation relationship
             if (! Schema::hasIndex('name_suggestions', 'name_suggestions_ai_generation_id_index')) {
                 $table->index('ai_generation_id', 'name_suggestions_ai_generation_id_index');
@@ -121,7 +116,6 @@ return new class extends Migration
 
         // Remove indexes from name_suggestions table
         Schema::table('name_suggestions', function (Blueprint $table) {
-            $table->dropIndex('name_suggestions_project_id_is_hidden_index');
             $table->dropIndex('name_suggestions_ai_generation_id_index');
             $table->dropIndex('name_suggestions_generation_session_id_index');
             $table->dropIndex('name_suggestions_name_index');

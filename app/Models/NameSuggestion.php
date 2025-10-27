@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $name
  * @property array<array-key, mixed>|null $domains
  * @property array<array-key, mixed>|null $logos
- * @property bool $is_hidden
  * @property array<array-key, mixed>|null $generation_metadata
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -32,11 +31,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|NameSuggestion aiGenerated()
  * @method static Builder<static>|NameSuggestion byAiModel(string $modelName)
  * @method static \Database\Factories\NameSuggestionFactory factory($count = null, $state = [])
- * @method static Builder<static>|NameSuggestion hidden()
  * @method static Builder<static>|NameSuggestion newModelQuery()
  * @method static Builder<static>|NameSuggestion newQuery()
  * @method static Builder<static>|NameSuggestion query()
- * @method static Builder<static>|NameSuggestion visible()
  * @method static Builder<static>|NameSuggestion whereAiCostCents($value)
  * @method static Builder<static>|NameSuggestion whereAiDeepThinking($value)
  * @method static Builder<static>|NameSuggestion whereAiGenerationMode($value)
@@ -49,7 +46,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|NameSuggestion whereDomains($value)
  * @method static Builder<static>|NameSuggestion whereGenerationMetadata($value)
  * @method static Builder<static>|NameSuggestion whereId($value)
- * @method static Builder<static>|NameSuggestion whereIsHidden($value)
  * @method static Builder<static>|NameSuggestion whereLogos($value)
  * @method static Builder<static>|NameSuggestion whereName($value)
  * @method static Builder<static>|NameSuggestion whereProjectId($value)
@@ -72,7 +68,6 @@ final class NameSuggestion extends Model
         'name',
         'domains',
         'logos',
-        'is_hidden',
         'generation_metadata',
         'ai_model_used',
         'ai_generation_mode',
@@ -94,27 +89,6 @@ final class NameSuggestion extends Model
         return $this->belongsTo(Project::class);
     }
 
-    /**
-     * Scope a query to only include visible suggestions.
-     *
-     * @param  Builder<$this>  $query
-     * @return Builder<$this>
-     */
-    protected function scopeVisible(Builder $query): Builder
-    {
-        return $query->where('is_hidden', false);
-    }
-
-    /**
-     * Scope a query to only include hidden suggestions.
-     *
-     * @param  Builder<$this>  $query
-     * @return Builder<$this>
-     */
-    protected function scopeHidden(Builder $query): Builder
-    {
-        return $query->where('is_hidden', true);
-    }
 
     /**
      * Scope a query to only include AI-generated suggestions.
@@ -178,7 +152,6 @@ final class NameSuggestion extends Model
         return [
             'domains' => 'array',
             'logos' => 'array',
-            'is_hidden' => 'boolean',
             'generation_metadata' => 'array',
             'ai_deep_thinking' => 'boolean',
             'ai_response_time_ms' => 'integer',

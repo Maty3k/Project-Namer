@@ -19,12 +19,10 @@ return new class extends Migration
             $table->string('name');
             $table->json('domains')->nullable();
             $table->json('logos')->nullable();
-            $table->boolean('is_hidden')->default(false);
             $table->json('generation_metadata')->nullable();
             $table->timestamps();
 
             $table->index('project_id');
-            $table->index('is_hidden');
         });
     }
 

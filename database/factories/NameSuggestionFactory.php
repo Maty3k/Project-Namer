@@ -27,24 +27,11 @@ final class NameSuggestionFactory extends Factory
                 ['extension' => '.io', 'available' => $this->faker->boolean()],
             ],
             'logos' => null,
-            'is_hidden' => false,
             'generation_metadata' => [
                 'ai_model' => 'gpt-4',
                 'temperature' => 0.7,
             ],
         ];
-    }
-
-    /**
-     * Indicate that the name suggestion is hidden.
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\NameSuggestion>
-     */
-    public function hidden(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'is_hidden' => true,
-        ]);
     }
 
     /**

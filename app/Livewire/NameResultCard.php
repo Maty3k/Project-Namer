@@ -13,7 +13,7 @@ use Livewire\Component;
 /**
  * NameResultCard component for displaying individual name suggestions.
  *
- * Handles name suggestion display, expansion, hiding/showing, and selection functionality
+ * Handles name suggestion display, expansion, and selection functionality
  * with real-time updates and visual feedback.
  *
  * @property-read array<string, mixed>|null $freshDomains
@@ -58,37 +58,6 @@ class NameResultCard extends Component
         $this->expanded = ! $this->expanded;
     }
 
-    /**
-     * Hide this suggestion from the results.
-     */
-    public function hideSuggestion(): void
-    {
-        $this->authorize('update', $this->suggestion->project);
-
-        $this->suggestion->update(['is_hidden' => true]);
-
-        $this->dispatch('suggestion-hidden', $this->suggestion->id);
-        $this->dispatch('show-toast', [
-            'message' => "Hidden '{$this->suggestion->name}' from results.",
-            'type' => 'info',
-        ]);
-    }
-
-    /**
-     * Show this suggestion in the results.
-     */
-    public function showSuggestion(): void
-    {
-        $this->authorize('update', $this->suggestion->project);
-
-        $this->suggestion->update(['is_hidden' => false]);
-
-        $this->dispatch('suggestion-shown', $this->suggestion->id);
-        $this->dispatch('show-toast', [
-            'message' => "Restored '{$this->suggestion->name}' to visible results.",
-            'type' => 'success',
-        ]);
-    }
 
     /**
      * Select this name suggestion for the project.

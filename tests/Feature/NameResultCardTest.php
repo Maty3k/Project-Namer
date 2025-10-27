@@ -67,44 +67,6 @@ test('name result card can be expanded and collapsed', function (): void {
         ->assertSet('expanded', false);
 });
 
-test('name result card can be hidden', function (): void {
-    $user = User::factory()->create();
-    $project = Project::factory()->create(['user_id' => $user->id]);
-    $suggestion = NameSuggestion::factory()->create([
-        'project_id' => $project->id,
-        'name' => 'TestName',
-        'is_hidden' => false,
-    ]);
-
-    $this->actingAs($user);
-
-    Livewire::test(NameResultCard::class, ['suggestion' => $suggestion])
-        ->call('hideSuggestion')
-        ->assertDispatched('suggestion-hidden', $suggestion->id);
-
-    // Verify the suggestion was marked as hidden in the database
-    expect($suggestion->fresh()->is_hidden)->toBeTrue();
-});
-
-test('name result card can be unhidden', function (): void {
-    $user = User::factory()->create();
-    $project = Project::factory()->create(['user_id' => $user->id]);
-    $suggestion = NameSuggestion::factory()->create([
-        'project_id' => $project->id,
-        'name' => 'TestName',
-        'is_hidden' => true,
-    ]);
-
-    $this->actingAs($user);
-
-    Livewire::test(NameResultCard::class, ['suggestion' => $suggestion])
-        ->call('showSuggestion')
-        ->assertDispatched('suggestion-shown', $suggestion->id);
-
-    // Verify the suggestion was marked as visible in the database
-    expect($suggestion->fresh()->is_hidden)->toBeFalse();
-});
-
 test('name result card can be selected', function (): void {
     $user = User::factory()->create();
     $project = Project::factory()->create(['user_id' => $user->id]);

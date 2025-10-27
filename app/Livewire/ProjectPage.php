@@ -48,8 +48,6 @@ class ProjectPage extends Component
 
     public bool $editingName = false;
 
-    public string $resultsFilter = 'visible'; // 'visible', 'hidden', 'all'
-
     // AI Generation Properties
     public bool $showAIControls = false;
 
@@ -91,8 +89,6 @@ class ProjectPage extends Component
     protected $listeners = [
         'name-selected' => 'handleNameSelected',
         'name-deselected' => 'handleNameDeselected',
-        'suggestion-hidden' => 'handleSuggestionVisibilityChanged',
-        'suggestion-shown' => 'handleSuggestionVisibilityChanged',
         'trigger-auto-generation' => 'handleAutoGeneration',
     ];
 
@@ -291,51 +287,14 @@ class ProjectPage extends Component
     }
 
     /**
-     * Get filtered name suggestions based on current filter.
+     * Get filtered name suggestions.
      *
      * @return Collection<int, \App\Models\NameSuggestion>
      */
     public function getFilteredSuggestionsProperty(): Collection
     {
         // Always get fresh query to avoid caching issues
-        $query = $this->project->nameSuggestions()->latest();
-
-        return match ($this->resultsFilter) {
-            'visible' => $query->where('is_hidden', false)->get(),
-            'hidden' => $query->where('is_hidden', true)->get(),
-            'all' => $query->get(),
-            default => $query->where('is_hidden', false)->get(),
-        };
-    }
-
-    /**
-     * Get the count of suggestions by type.
-     *
-     * @return array<string, int>
-     */
-    public function getSuggestionCountsProperty(): array
-    {
-        $suggestions = $this->project->nameSuggestions;
-
-        return [
-            'visible' => $suggestions->where('is_hidden', false)->count(),
-            'hidden' => $suggestions->where('is_hidden', true)->count(),
-            'total' => $suggestions->count(),
-        ];
-    }
-
-    /**
-     * Set the results filter.
-     */
-    public function setResultsFilter(string $filter): void
-    {
-        if (! in_array($filter, ['visible', 'hidden', 'all'])) {
-            $this->addError('resultsFilter', 'Invalid filter value. Must be one of: visible, hidden, all');
-
-            return;
-        }
-
-        $this->resultsFilter = $filter;
+        return $this->project->nameSuggestions()->latest()->get();
     }
 
     /**
@@ -402,15 +361,6 @@ class ProjectPage extends Component
             'generation_id' => $this->currentAIGenerationId,
             'available_models' => array_keys($this->aiGenerationResults),
         ]);
-    }
-
-    /**
-     * Handle when suggestion visibility changes.
-     */
-    public function handleSuggestionVisibilityChanged(int $suggestionId): void
-    {
-        // Force refresh of computed properties by re-rendering
-        $this->render();
     }
 
     // AI Generation Methods
@@ -757,7 +707,6 @@ class ProjectPage extends Component
 
         // Add context from existing suggestions
         $existingNames = $this->project->nameSuggestions()
-            ->where('is_hidden', false)
             ->limit(5)
             ->pluck('name')
             ->toArray();
@@ -946,45 +895,6 @@ class ProjectPage extends Component
         $aiGeneration->update(['execution_metadata' => $metadata]);
     }
 
-    /**
-     * Bulk hide selected suggestions.
-     */
-    public function bulkHideSuggestions(): void
-    {
-        $this->authorize('update', $this->project);
-
-        NameSuggestion::whereIn('id', $this->selectedSuggestions)
-            ->where('project_id', $this->project->id)
-            ->update(['is_hidden' => true]);
-
-        $count = count($this->selectedSuggestions);
-        $this->selectedSuggestions = [];
-
-        $this->dispatch('show-toast', [
-            'message' => "Hidden {$count} suggestions",
-            'type' => 'info',
-        ]);
-    }
-
-    /**
-     * Bulk show selected suggestions.
-     */
-    public function bulkShowSuggestions(): void
-    {
-        $this->authorize('update', $this->project);
-
-        NameSuggestion::whereIn('id', $this->selectedSuggestions)
-            ->where('project_id', $this->project->id)
-            ->update(['is_hidden' => false]);
-
-        $count = count($this->selectedSuggestions);
-        $this->selectedSuggestions = [];
-
-        $this->dispatch('show-toast', [
-            'message' => "Restored {$count} suggestions",
-            'type' => 'success',
-        ]);
-    }
 
     /**
      * Regenerate names for selected suggestions.
