@@ -147,21 +147,11 @@
     @if($showPreviewModal && $logoToPreview)
         <flux:modal wire:model="showPreviewModal" class="max-w-4xl">
             <div class="space-y-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <flux:heading size="lg" class="capitalize">{{ $logoToPreview->style }} Style</flux:heading>
-                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                            {{ $logoGeneration->business_name }}
-                        </p>
-                    </div>
-                    <button
-                        wire:click="closePreview"
-                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                    >
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
+                <div>
+                    <flux:heading size="lg" class="capitalize">{{ $logoToPreview->style }} Style</flux:heading>
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                        {{ $logoGeneration->business_name }}
+                    </p>
                 </div>
 
                 {{-- Large Logo Preview --}}
