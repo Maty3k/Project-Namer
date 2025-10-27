@@ -38,13 +38,13 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 3.8 Remove hardcoded prompt strings
   - [x] 3.9 Verify all PromptBuilder tests pass
 
-- [ ] 4. Update AIGenerationService to Use Markdown Configuration
-  - [ ] 4.1 Write integration tests for AIGenerationService with markdown configs
-  - [ ] 4.2 Remove MODEL_CONFIGS constant
-  - [ ] 4.3 Update generateNamesForModel() to load config from markdown
-  - [ ] 4.4 Update temperature and max_tokens logic to use markdown values
-  - [ ] 4.5 Maintain caching, fallback, and retry logic
-  - [ ] 4.6 Verify all AIGenerationService tests pass
+- [x] 4. Update AIGenerationService to Use Markdown Configuration
+  - [x] 4.1 Write integration tests for AIGenerationService with markdown configs
+  - [x] 4.2 Remove MODEL_CONFIGS constant
+  - [x] 4.3 Update generateNamesForModel() to load config from markdown
+  - [x] 4.4 Update temperature and max_tokens logic to use markdown values
+  - [x] 4.5 Maintain caching, fallback, and retry logic
+  - [x] 4.6 Verify all AIGenerationService tests pass
 
 - [ ] 5. Extract Logo Generation Prompts and Update Service
   - [ ] 5.1 Create logo generation markdown files for each style

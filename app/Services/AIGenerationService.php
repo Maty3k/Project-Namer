@@ -44,37 +44,6 @@ final readonly class AIGenerationService
         'grok-beta' => ['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro'],
     ];
 
-    private const MODEL_CONFIGS = [
-        'gpt-4' => [
-            'provider' => Provider::OpenAI,
-            'model' => 'gpt-4o',
-            'max_tokens' => 200,
-            'temperature' => 0.7,
-            'deep_thinking_temperature' => 0.3,
-        ],
-        'claude-3.5-sonnet' => [
-            'provider' => Provider::Anthropic,
-            'model' => 'claude-3-5-sonnet-20241022',
-            'max_tokens' => 200,
-            'temperature' => 0.7,
-            'deep_thinking_temperature' => 0.3,
-        ],
-        'gemini-1.5-pro' => [
-            'provider' => Provider::Gemini,
-            'model' => 'gemini-1.5-pro',
-            'max_tokens' => 200,
-            'temperature' => 0.8,
-            'deep_thinking_temperature' => 0.4,
-        ],
-        'grok-beta' => [
-            'provider' => Provider::XAI,
-            'model' => 'grok-beta',
-            'max_tokens' => 200,
-            'temperature' => 0.9,
-            'deep_thinking_temperature' => 0.5,
-        ],
-    ];
-
     public function __construct(
         private PromptBuilder $promptBuilder,
         private VisionAnalysisService $visionService
