@@ -13,6 +13,16 @@ namespace App\Services;
  */
 final class PromptBuilder
 {
+    /**
+     * Map model IDs to prompt file suffixes.
+     */
+    private const MODEL_SUFFIX_MAP = [
+        'gpt-4' => 'gpt4',
+        'claude-3.5-sonnet' => 'claude',
+        'gemini-1.5-pro' => 'gemini',
+        'grok-beta' => 'grok',
+    ];
+
     public function __construct(
         private PromptLoaderService $promptLoader
     ) {}
@@ -35,18 +45,23 @@ final class PromptBuilder
     }
 
     /**
-     * Build system prompt optimized for the generation mode.
+     * Build system prompt optimized for the generation mode and model.
      */
     public function buildSystemPrompt(string $model, int $count, string $mode, bool $deepThinking): string
     {
-        // Map mode to prompt file name
-        $promptFileName = match ($mode) {
-            'creative' => 'name-generation-creative-system',
-            'professional' => 'name-generation-professional-system',
-            'brandable' => 'name-generation-brandable-system',
-            'tech-focused' => 'name-generation-tech-focused-system',
-            default => 'name-generation-creative-system',
+        // Get model suffix for filename (e.g., 'gpt-4' -> 'gpt4')
+        $modelSuffix = self::MODEL_SUFFIX_MAP[$model] ?? 'gpt4';
+
+        // Build prompt filename: name-generation-{mode}-{model}-system
+        $modeSlug = match ($mode) {
+            'creative' => 'creative',
+            'professional' => 'professional',
+            'brandable' => 'brandable',
+            'tech-focused' => 'tech-focused',
+            default => 'creative',
         };
+
+        $promptFileName = "name-generation-{$modeSlug}-{$modelSuffix}-system";
 
         // Load prompt from markdown
         $promptData = $this->promptLoader->loadWithCache($promptFileName);
