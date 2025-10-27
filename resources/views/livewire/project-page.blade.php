@@ -113,7 +113,7 @@
             <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
                 <div class="bg-primary-50 dark:bg-gray-800 rounded-lg p-6">
                     <div class="mb-6">
-                        <h3 class="text-lg font-semibold {{ $userTheme ? '' : 'text-gray-900 dark:text-white' }}">AI Name Generation</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">AI Name Generation</h3>
                     </div>
 
                     <!-- AI Controls -->
