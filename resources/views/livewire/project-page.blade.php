@@ -68,8 +68,8 @@
                 <div class="flex-1">
                     <h3 class="text-lg font-medium {{ $userTheme ? '' : 'text-gray-900 dark:text-white' }}">Name Suggestions</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        @if($this->suggestionCounts['total'] > 0)
-                            {{ $this->suggestionCounts['visible'] }} visible, {{ $this->suggestionCounts['hidden'] }} hidden
+                        @if($this->filteredSuggestions->isNotEmpty())
+                            {{ $this->filteredSuggestions->count() }} suggestion{{ $this->filteredSuggestions->count() !== 1 ? 's' : '' }}
                         @else
                             No suggestions generated yet
                         @endif
@@ -77,90 +77,11 @@
                 </div>
 
                 <!-- Generate More Names Button - Removed: Users can only generate once per project -->
-
-                <!-- Filter Controls -->
-                @if($this->suggestionCounts['total'] > 0)
-                    <div class="flex items-center space-x-2 sm:flex-shrink-0">
-                        <flux:button
-                            wire:click="setResultsFilter('visible')"
-                            variant="{{ $resultsFilter === 'visible' ? 'primary' : 'ghost' }}"
-                            size="sm"
-                            wire:loading.attr="disabled"
-                            wire:target="setResultsFilter"
-                        >
-                            <span wire:loading.remove wire:target="setResultsFilter">Visible ({{ $this->suggestionCounts['visible'] }})</span>
-                            <span wire:loading wire:target="setResultsFilter">Loading...</span>
-                        </flux:button>
-                        
-                        @if($this->suggestionCounts['hidden'] > 0)
-                            <flux:button
-                                wire:click="setResultsFilter('hidden')"
-                                variant="{{ $resultsFilter === 'hidden' ? 'primary' : 'ghost' }}"
-                                size="sm"
-                                wire:loading.attr="disabled"
-                                wire:target="setResultsFilter"
-                            >
-                                <span wire:loading.remove wire:target="setResultsFilter">Hidden ({{ $this->suggestionCounts['hidden'] }})</span>
-                                <span wire:loading wire:target="setResultsFilter">Loading...</span>
-                            </flux:button>
-                        @endif
-                        
-                        <flux:button
-                            wire:click="setResultsFilter('all')"
-                            variant="{{ $resultsFilter === 'all' ? 'primary' : 'ghost' }}"
-                            size="sm"
-                            wire:loading.attr="disabled"
-                            wire:target="setResultsFilter"
-                        >
-                            <span wire:loading.remove wire:target="setResultsFilter">All ({{ $this->suggestionCounts['total'] }})</span>
-                            <span wire:loading wire:target="setResultsFilter">Loading...</span>
-                        </flux:button>
-                    </div>
-                @endif
             </div>
 
             <!-- Name Suggestions List -->
             <div class="relative">
-                <!-- Enhanced Loading Overlay with Smooth Animations -->
-                <div 
-                    wire:loading 
-                    wire:target="setResultsFilter" 
-                    class="absolute inset-0 bg-white/80 dark:bg-gray-900/80 flex items-center justify-center z-10 rounded-lg backdrop-blur-sm transition-all duration-300 ease-out"
-                    x-data="{ show: false }"
-                    x-init="$nextTick(() => show = true)"
-                    x-show="show"
-                    x-transition:enter="transition ease-out duration-300"
-                    x-transition:enter-start="opacity-0 scale-95"
-                    x-transition:enter-end="opacity-100 scale-100"
-                    x-transition:leave="transition ease-in duration-200"
-                    x-transition:leave-start="opacity-100 scale-100"
-                    x-transition:leave-end="opacity-0 scale-95"
-                >
-                    <div class="flex flex-col items-center space-y-3 text-gray-600 dark:text-gray-400">
-                        <!-- Enhanced Loading Spinner -->
-                        <div class="relative">
-                            <svg class="animate-spin w-8 h-8 text-primary-500" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            <div class="absolute inset-0 animate-ping">
-                                <div class="w-8 h-8 border-2 border-primary-500/30 rounded-full"></div>
-                            </div>
-                        </div>
-                        
-                        <!-- Animated Text -->
-                        <span class="text-sm font-medium animate-pulse">Filtering suggestions...</span>
-                        
-                        <!-- Animated Dots -->
-                        <div class="flex space-x-1">
-                            <div class="w-2 h-2 bg-primary-500 rounded-full animate-bounce" style="animation-delay: 0s"></div>
-                            <div class="w-2 h-2 bg-primary-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-                            <div class="w-2 h-2 bg-primary-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                        </div>
-                    </div>
-                </div>
-
-            @if($this->suggestionCounts['total'] === 0)
+            @if($this->filteredSuggestions->isEmpty())
                 <!-- Ready to generate names -->
                 <div class="text-center py-12">
                     <div class="text-gray-500 dark:text-gray-400">
@@ -171,35 +92,15 @@
                         <p>Start by describing your project above, and select the style below to start generating AI-powered name suggestions.</p>
                     </div>
                 </div>
-            @elseif($this->filteredSuggestions->isEmpty() && $this->suggestionCounts['total'] > 0)
-                <!-- No suggestions for current filter -->
-                <div class="text-center py-12">
-                    <div class="text-gray-500 dark:text-gray-400">
-                        <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                        <p>No {{ $resultsFilter }} suggestions found</p>
-                    </div>
-                </div>
             @else
                 <!-- Suggestions Table -->
                 <div class="space-y-6">
-                    <!-- Skeleton Loading State -->
-                    <div wire:loading wire:target="setResultsFilter" class="space-y-6">
-                        @for($i = 0; $i < 3; $i++)
-                            <x-skeleton-name-card />
-                        @endfor
-                    </div>
-
-                    <!-- Actual Suggestions -->
-                    <div wire:loading.remove wire:target="setResultsFilter" class="space-y-6">
-                        @foreach($this->filteredSuggestions as $suggestion)
-                            <livewire:name-result-card
-                                :suggestion="$suggestion"
-                                :key="'name-result-v2-' . $suggestion->id"
-                            />
-                        @endforeach
-                    </div>
+                    @foreach($this->filteredSuggestions as $suggestion)
+                        <livewire:name-result-card
+                            :suggestion="$suggestion"
+                            :key="'name-result-v2-' . $suggestion->id"
+                        />
+                    @endforeach
                 </div>
             @endif
             </div>
@@ -208,7 +109,7 @@
         </div>
 
         <!-- AI Generation Controls Modal/Section -->
-        @if($showAIControls && $this->suggestionCounts['total'] === 0)
+        @if($showAIControls && $this->filteredSuggestions->isEmpty())
             <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
                 <div class="bg-primary-50 dark:bg-gray-800 rounded-lg p-6">
                     <div class="mb-6">
