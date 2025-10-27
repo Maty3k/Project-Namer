@@ -361,28 +361,28 @@
                                 @if($generation->generation_mode)
                                     <div>
                                         <span class="text-gray-500 dark:text-gray-400">Mode:</span>
-                                        <span class="ml-1 font-medium">{{ ucfirst($generation->generation_mode) }}</span>
+                                        <span class="ml-1 font-medium text-gray-900 dark:text-white">{{ ucfirst($generation->generation_mode) }}</span>
                                     </div>
                                 @endif
-                                
+
                                 @if($generation->models_requested)
                                     <div>
                                         <span class="text-gray-500 dark:text-gray-400">Models:</span>
-                                        <span class="ml-1 font-medium">{{ count($generation->models_requested) }} model(s)</span>
+                                        <span class="ml-1 font-medium text-gray-900 dark:text-white">{{ count($generation->models_requested) }} model(s)</span>
                                     </div>
                                 @endif
                                 
                                 @if($generation->total_names_generated)
                                     <div>
                                         <span class="text-gray-500 dark:text-gray-400">Names:</span>
-                                        <span class="ml-1 font-medium">{{ $generation->total_names_generated }}</span>
+                                        <span class="ml-1 font-medium text-gray-900 dark:text-white">{{ $generation->total_names_generated }}</span>
                                     </div>
                                 @endif
-                                
+
                                 @if($generation->getDurationInSeconds())
                                     <div>
                                         <span class="text-gray-500 dark:text-gray-400">Duration:</span>
-                                        <span class="ml-1 font-medium">{{ $generation->getDurationInSeconds() }}s</span>
+                                        <span class="ml-1 font-medium text-gray-900 dark:text-white">{{ $generation->getDurationInSeconds() }}s</span>
                                     </div>
                                 @endif
                             </div>
