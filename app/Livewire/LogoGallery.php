@@ -24,6 +24,8 @@ class LogoGallery extends Component
 
     public ?GeneratedLogo $logoToDelete = null;
 
+    public bool $showDeleteAllModal = false;
+
     public bool $showPreviewModal = false;
 
     public ?GeneratedLogo $logoToPreview = null;
@@ -204,6 +206,60 @@ class LogoGallery extends Component
 
         $this->showDeleteModal = false;
         $this->logoToDelete = null;
+
+        // Refresh the component
+        $this->dispatch('$refresh');
+    }
+
+    /**
+     * Open delete all confirmation modal.
+     */
+    public function confirmDeleteAll(): void
+    {
+        $this->showDeleteAllModal = true;
+    }
+
+    /**
+     * Cancel delete all operation.
+     */
+    public function cancelDeleteAll(): void
+    {
+        $this->showDeleteAllModal = false;
+    }
+
+    /**
+     * Delete all logos for this generation.
+     */
+    public function deleteAll(): void
+    {
+        $logos = $this->logos;
+
+        if ($logos->isEmpty()) {
+            $this->dispatch('show-toast', [
+                'message' => 'No logos to delete',
+                'type' => 'error',
+            ]);
+
+            return;
+        }
+
+        $count = $logos->count();
+
+        // Delete all logo files and records
+        foreach ($logos as $logo) {
+            $logo->deleteFile();
+            $logo->delete();
+        }
+
+        // Reset the completed logos count to 0
+        $this->logoGeneration->update(['logos_completed' => 0]);
+
+        $this->dispatch('show-toast', [
+            'message' => "Successfully deleted {$count} logo".(($count !== 1) ? 's' : ''),
+            'type' => 'success',
+        ]);
+
+        $this->showDeleteAllModal = false;
 
         // Refresh the component
         $this->dispatch('$refresh');
