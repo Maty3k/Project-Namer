@@ -14,8 +14,7 @@ describe('System Prompt Generation', function (): void {
         $prompt = $this->builder->buildSystemPrompt(
             model: 'gpt-4o',
             count: 10,
-            mode: 'creative',
-            deepThinking: false
+            mode: 'creative'
         );
 
         expect($prompt)
@@ -32,7 +31,6 @@ describe('System Prompt Generation', function (): void {
             model: 'gpt-4o',
             count: 10,
             mode: 'professional',
-            deepThinking: false
         );
 
         expect($prompt)
@@ -47,7 +45,6 @@ describe('System Prompt Generation', function (): void {
             model: 'gpt-4o',
             count: 10,
             mode: 'brandable',
-            deepThinking: false
         );
 
         expect($prompt)
@@ -62,7 +59,6 @@ describe('System Prompt Generation', function (): void {
             model: 'gpt-4o',
             count: 10,
             mode: 'tech-focused',
-            deepThinking: false
         );
 
         expect($prompt)
@@ -72,27 +68,11 @@ describe('System Prompt Generation', function (): void {
             ->toContain('Slack');
     });
 
-    test('includes deep thinking instructions when enabled', function (): void {
+    test('does not include deep thinking instructions', function (): void {
         $prompt = $this->builder->buildSystemPrompt(
             model: 'gpt-4o',
             count: 10,
             mode: 'creative',
-            deepThinking: true
-        );
-
-        expect($prompt)
-            ->toContain('DEEP THINKING MODE')
-            ->toContain('Take extra time')
-            ->toContain('market positioning')
-            ->toContain('competitive landscape');
-    });
-
-    test('does not include deep thinking when disabled', function (): void {
-        $prompt = $this->builder->buildSystemPrompt(
-            model: 'gpt-4o',
-            count: 10,
-            mode: 'creative',
-            deepThinking: false
         );
 
         expect($prompt)->not->toContain('DEEP THINKING MODE');
@@ -103,7 +83,6 @@ describe('System Prompt Generation', function (): void {
             model: 'gpt-4o',
             count: 10,
             mode: 'creative',
-            deepThinking: false
         );
 
         expect($prompt)
@@ -118,7 +97,6 @@ describe('System Prompt Generation', function (): void {
             model: 'gpt-4o',
             count: 20,
             mode: 'creative',
-            deepThinking: false
         );
 
         expect($prompt)
@@ -131,7 +109,6 @@ describe('System Prompt Generation', function (): void {
             model: 'gpt-4o',
             count: 10,
             mode: 'unknown-mode',
-            deepThinking: false
         );
 
         expect($prompt)->toContain('CREATIVE MODE');
@@ -144,7 +121,6 @@ describe('User Prompt Generation', function (): void {
             businessIdea: 'A meal planning app',
             model: 'gpt-4o',
             mode: 'creative',
-            deepThinking: false
         );
 
         expect($prompt)
@@ -159,7 +135,6 @@ describe('User Prompt Generation', function (): void {
             businessIdea: 'A software platform for developers',
             model: 'gpt-4o',
             mode: 'creative',
-            deepThinking: false
         );
 
         expect($prompt)
@@ -173,7 +148,6 @@ describe('User Prompt Generation', function (): void {
             businessIdea: 'A bakery specializing in sourdough bread',
             model: 'gpt-4o',
             mode: 'creative',
-            deepThinking: false
         );
 
         expect($prompt)
@@ -187,7 +161,6 @@ describe('User Prompt Generation', function (): void {
             businessIdea: 'An online store for handmade crafts',
             model: 'gpt-4o',
             mode: 'creative',
-            deepThinking: false
         );
 
         expect($prompt)
@@ -201,7 +174,6 @@ describe('User Prompt Generation', function (): void {
             businessIdea: 'A consulting agency for small businesses',
             model: 'gpt-4o',
             mode: 'creative',
-            deepThinking: false
         );
 
         expect($prompt)
@@ -215,7 +187,6 @@ describe('User Prompt Generation', function (): void {
             businessIdea: 'Something completely unique',
             model: 'gpt-4o',
             mode: 'creative',
-            deepThinking: false
         );
 
         expect($prompt)
@@ -228,7 +199,6 @@ describe('User Prompt Generation', function (): void {
             businessIdea: 'A meal planning app',
             model: 'gpt-4o',
             mode: 'creative',
-            deepThinking: false
         );
 
         expect($prompt)
@@ -246,7 +216,6 @@ describe('Complete Prompt Building', function (): void {
             model: 'gpt-4o',
             count: 10,
             mode: 'tech-focused',
-            deepThinking: false
         );
 
         expect($result)->toHaveKeys(['system', 'user']);
@@ -258,26 +227,12 @@ describe('Complete Prompt Building', function (): void {
             ->toContain('Technology/Software');
     });
 
-    test('builds complete prompt with deep thinking enabled', function (): void {
-        $result = $this->builder->build(
-            businessIdea: 'A restaurant reservation system',
-            model: 'claude-3-5-sonnet-20241022',
-            count: 15,
-            mode: 'professional',
-            deepThinking: true
-        );
-
-        expect($result['system'])->toContain('DEEP THINKING MODE');
-        expect($result['user'])->toContain('restaurant');
-    });
-
     test('handles different name counts', function (): void {
         $result = $this->builder->build(
             businessIdea: 'A photography portfolio site',
             model: 'gpt-4o',
             count: 25,
             mode: 'creative',
-            deepThinking: false
         );
 
         expect($result['system'])->toContain('exactly 25 unique business names');
@@ -289,8 +244,7 @@ describe('Legacy Compatibility', function (): void {
         $prompt = $this->builder->optimizePrompt(
             modelId: 'gpt-4',
             basePrompt: 'A project management software platform',
-            mode: 'brandable',
-            deepThinking: false
+            mode: 'brandable'
         );
 
         expect($prompt)
@@ -298,16 +252,5 @@ describe('Legacy Compatibility', function (): void {
             ->toContain('BRANDABLE MODE')
             ->toContain('Business concept: A project management software platform')
             ->toContain('Technology/Software');
-    });
-
-    test('optimizePrompt with deep thinking', function (): void {
-        $prompt = $this->builder->optimizePrompt(
-            modelId: 'claude-3.5-sonnet',
-            basePrompt: 'A SaaS platform',
-            mode: 'professional',
-            deepThinking: true
-        );
-
-        expect($prompt)->toContain('Take extra time');
     });
 });
