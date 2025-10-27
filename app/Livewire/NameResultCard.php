@@ -193,6 +193,19 @@ class NameResultCard extends Component
     }
 
     /**
+     * Refresh logo count when logos are generated.
+     *
+     * This listener is triggered when logo generation completes for this suggestion.
+     * It refreshes the model to pick up the new logo data without requiring a page refresh.
+     */
+    #[On('logos-generated-{suggestion.id}')]
+    public function refreshLogoCount(): void
+    {
+        // Refresh the suggestion model to get the updated logos data
+        $this->suggestion->refresh();
+    }
+
+    /**
      * Refresh domain data when polling.
      * This method is called periodically while isCheckingDomains is true.
      * Checks DomainCache for updated results and syncs them to the suggestion.
