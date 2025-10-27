@@ -24,6 +24,10 @@ class LogoGallery extends Component
 
     public ?GeneratedLogo $logoToDelete = null;
 
+    public bool $showPreviewModal = false;
+
+    public ?GeneratedLogo $logoToPreview = null;
+
     /**
      * Mount the component with a logo generation.
      */
@@ -134,6 +138,30 @@ class LogoGallery extends Component
     {
         $this->showDeleteModal = false;
         $this->logoToDelete = null;
+    }
+
+    /**
+     * Open preview modal for a specific logo.
+     */
+    public function previewLogo(int $logoId): void
+    {
+        $this->logoToPreview = GeneratedLogo::findOrFail($logoId);
+
+        // Verify this logo belongs to the current generation
+        if ($this->logoToPreview->logo_generation_id !== $this->logoGeneration->id) {
+            throw new HttpException(403, 'Forbidden');
+        }
+
+        $this->showPreviewModal = true;
+    }
+
+    /**
+     * Close preview modal.
+     */
+    public function closePreview(): void
+    {
+        $this->showPreviewModal = false;
+        $this->logoToPreview = null;
     }
 
     /**

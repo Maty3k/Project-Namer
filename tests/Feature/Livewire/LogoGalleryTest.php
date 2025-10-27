@@ -271,3 +271,52 @@ it('can unsave a saved logo generation', function (): void {
 
     expect($logoGeneration->fresh()->is_saved)->toBeFalse();
 });
+
+it('opens preview modal when clicking on a logo', function (): void {
+    $logoGeneration = LogoGeneration::factory()
+        ->for($this->user)
+        ->completed()
+        ->create();
+
+    $logo = GeneratedLogo::factory()
+        ->for($logoGeneration, 'logoGeneration')
+        ->completed()
+        ->style('minimalist')
+        ->create();
+
+    Livewire::test(LogoGallery::class, ['logoGeneration' => $logoGeneration])
+        ->assertSet('showPreviewModal', false)
+        ->assertSet('logoToPreview', null)
+        ->call('previewLogo', $logo->id)
+        ->assertSet('showPreviewModal', true)
+        ->assertSet('logoToPreview.id', $logo->id);
+});
+
+it('closes preview modal', function (): void {
+    $logoGeneration = LogoGeneration::factory()
+        ->for($this->user)
+        ->completed()
+        ->create();
+
+    $logo = GeneratedLogo::factory()
+        ->for($logoGeneration, 'logoGeneration')
+        ->completed()
+        ->create();
+
+    Livewire::test(LogoGallery::class, ['logoGeneration' => $logoGeneration])
+        ->call('previewLogo', $logo->id)
+        ->assertSet('showPreviewModal', true)
+        ->call('closePreview')
+        ->assertSet('showPreviewModal', false)
+        ->assertSet('logoToPreview', null);
+});
+
+it('prevents unauthorized users from previewing logos', function (): void {
+    $otherUser = User::factory()->create();
+    $logoGeneration = LogoGeneration::factory()
+        ->for($otherUser)
+        ->create();
+
+    Livewire::test(LogoGallery::class, ['logoGeneration' => $logoGeneration])
+        ->assertStatus(403);
+});
