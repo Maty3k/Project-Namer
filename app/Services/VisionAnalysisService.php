@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\DataTransferObjects\PromptData;
 use App\Models\ProjectImage;
 use Exception;
 use Illuminate\Support\Facades\Cache;
@@ -15,8 +16,11 @@ use Prism\Prism\ValueObjects\Media\Image;
 
 class VisionAnalysisService
 {
+    public function __construct(
+        protected PromptLoaderService $promptLoader
+    ) {}
     /**
-     * Analyze image using OpenAI Vision API via Prism.
+     * Analyze image using OpenAI Vision API via Prism with markdown config.
      *
      * @return array<string, mixed>
      */
@@ -35,19 +39,21 @@ class VisionAnalysisService
             throw new Exception('Image file not found');
         }
 
+        // Load prompt configuration from markdown
+        $promptData = $this->promptLoader->loadWithCache('vision-analysis');
+
         $imagePath = Storage::disk('public')->path($image->file_path);
-        $prompt = $this->buildAnalysisPrompt();
 
         try {
             $response = Prism::text()
-                ->using(Provider::OpenAI, 'gpt-4o')
+                ->using($promptData->provider, $promptData->model)
                 ->withPrompt(
-                    $prompt,
+                    $promptData->promptText,
                     [Image::fromLocalPath($imagePath)]
                 )
                 ->withClientOptions([
-                    'max_tokens' => 500,
-                    'temperature' => 0.3,
+                    'max_tokens' => $promptData->maxTokens ?? 500,
+                    'temperature' => $promptData->temperature ?? 0.3,
                 ])
                 ->asText();
 
@@ -85,24 +91,6 @@ class VisionAnalysisService
         $image->update(['ai_analysis' => $analysis]);
 
         return $analysis;
-    }
-
-    /**
-     * Build the vision analysis prompt for consistent results.
-     */
-    protected function buildAnalysisPrompt(): string
-    {
-        return 'Analyze this image and provide a JSON response with the following structure:
-{
-  "description": "A clear, detailed description of what you see in the image",
-  "mood": "The emotional tone and atmosphere (e.g., professional, playful, elegant, rustic)",
-  "colors": ["Array of dominant colors in the image"],
-  "objects": ["Key objects, elements, or subjects visible"],
-  "style": "The visual style or aesthetic (e.g., modern, vintage, minimalist, artistic)",
-  "business_relevance": "What types of businesses or industries this image might represent or appeal to"
-}
-
-Focus on elements that would be relevant for business naming and branding. Be specific and descriptive but concise.';
     }
 
     /**

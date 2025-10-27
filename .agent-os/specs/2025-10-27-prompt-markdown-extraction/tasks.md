@@ -57,14 +57,14 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 5.8 Implement template variable interpolation for logo prompts
   - [x] 5.9 Verify all OpenAILogoService tests pass
 
-- [ ] 6. Extract Vision Analysis Prompt and Update Service
-  - [ ] 6.1 Create vision analysis markdown file with JSON schema prompt
-  - [ ] 6.2 Add appropriate frontmatter (provider: openai, model: gpt-4o, temperature: 0.3, max_tokens: 500)
-  - [ ] 6.3 Write integration tests for VisionAnalysisService with markdown prompt
-  - [ ] 6.4 Update VisionAnalysisService to use PromptLoaderService
-  - [ ] 6.5 Remove buildAnalysisPrompt() method
-  - [ ] 6.6 Update analyzeImage() to use loaded markdown prompt and config
-  - [ ] 6.7 Verify all VisionAnalysisService tests pass
+- [x] 6. Extract Vision Analysis Prompt and Update Service
+  - [x] 6.1 Create vision analysis markdown file with JSON schema prompt
+  - [x] 6.2 Add appropriate frontmatter (provider: openai, model: gpt-4o, temperature: 0.3, max_tokens: 500)
+  - [x] 6.3 Write integration tests for VisionAnalysisService with markdown prompt
+  - [x] 6.4 Update VisionAnalysisService to use PromptLoaderService
+  - [x] 6.5 Remove buildAnalysisPrompt() method
+  - [x] 6.6 Update analyzeImage() to use loaded markdown prompt and config
+  - [x] 6.7 Verify all VisionAnalysisService tests pass
 
 - [ ] 7. Update GenerateNamesWithModelJob
   - [ ] 7.1 Write integration tests for job with markdown-based configs
