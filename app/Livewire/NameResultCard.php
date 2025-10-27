@@ -39,6 +39,8 @@ class NameResultCard extends Component
 
     public bool $isCheckingDomains = false;
 
+    public bool $isGeneratingLogos = false;
+
     /**
      * Mount the component with a name suggestion.
      */
@@ -98,7 +100,24 @@ class NameResultCard extends Component
     {
         $this->authorize('update', $this->suggestion->project);
 
+        // Start polling for logo updates
+        $this->isGeneratingLogos = true;
+
         $this->dispatch('logos-requested', $this->suggestion->id);
+    }
+
+    /**
+     * Listen for logo generation start event from dashboard.
+     */
+    #[On('logo-generation-started')]
+    public function onLogoGenerationStarted(int $logoGenerationId): void
+    {
+        // Check if this logo generation is for our suggestion
+        $logoGeneration = \App\Models\LogoGeneration::find($logoGenerationId);
+
+        if ($logoGeneration && $logoGeneration->business_name === $this->suggestion->name) {
+            $this->isGeneratingLogos = true;
+        }
     }
 
     /**
@@ -195,14 +214,27 @@ class NameResultCard extends Component
     /**
      * Refresh logo count when logos are generated.
      *
-     * This listener is triggered when logo generation completes for this suggestion.
-     * It refreshes the model to pick up the new logo data without requiring a page refresh.
+     * This method is polled while isGeneratingLogos is true.
+     * It checks for logo updates and stops polling when generation is complete.
      */
-    #[On('logos-generated-{suggestion.id}')]
     public function refreshLogoCount(): void
     {
+        if (! $this->isGeneratingLogos) {
+            return;
+        }
+
         // Refresh the suggestion model to get the updated logos data
         $this->suggestion->refresh();
+
+        // Check if logo generation is complete by looking at LogoGeneration records
+        $logoGeneration = \App\Models\LogoGeneration::where('business_name', $this->suggestion->name)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($logoGeneration && $logoGeneration->status === 'completed') {
+            // Stop polling once generation is complete
+            $this->isGeneratingLogos = false;
+        }
     }
 
     /**
