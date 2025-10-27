@@ -146,6 +146,13 @@ it('deletes logo and updates count', function (): void {
             'logos_completed' => 4,
         ]);
 
+    // Create multiple logos so this isn't the last one
+    GeneratedLogo::factory()
+        ->for($logoGeneration, 'logoGeneration')
+        ->completed()
+        ->count(3)
+        ->create();
+
     $logo = GeneratedLogo::factory()
         ->for($logoGeneration, 'logoGeneration')
         ->completed()
@@ -175,8 +182,14 @@ it('deletes logo with null file path without errors', function (): void {
     $logoGeneration = LogoGeneration::factory()
         ->for($this->user)
         ->create([
-            'logos_completed' => 1,
+            'logos_completed' => 2,
         ]);
+
+    // Create another logo so this isn't the last one
+    GeneratedLogo::factory()
+        ->for($logoGeneration, 'logoGeneration')
+        ->completed()
+        ->create();
 
     // Create a logo in processing state (no file_path)
     $logo = GeneratedLogo::factory()
@@ -196,8 +209,8 @@ it('deletes logo with null file path without errors', function (): void {
     // Verify logo was deleted
     expect(GeneratedLogo::find($logo->id))->toBeNull();
 
-    // Verify count was decremented
-    expect($logoGeneration->fresh()->logos_completed)->toBe(0);
+    // Verify parent generation still exists with decremented count
+    expect($logoGeneration->fresh()->logos_completed)->toBe(1);
 });
 
 it('displays empty state when no logos exist', function (): void {

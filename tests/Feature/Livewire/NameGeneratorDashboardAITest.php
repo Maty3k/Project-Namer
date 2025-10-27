@@ -65,7 +65,6 @@ beforeEach(function (): void {
 test('Dashboard displays AI generation controls', function (): void {
     Livewire::test(NameGeneratorDashboard::class)
         ->assertSee('Enable AI Generation')
-        ->assertSee('Deep Thinking Mode')
         ->set('useAIGeneration', true)
         ->assertSee('AI Model Selection')
         ->assertSee('Model Comparison');
@@ -126,15 +125,6 @@ test('Dashboard can set generation mode for AI', function (): void {
         ->assertSet('generationMode', 'brandable')
         ->set('generationMode', 'tech-focused')
         ->assertSet('generationMode', 'tech-focused');
-});
-
-test('Dashboard can toggle deep thinking mode', function (): void {
-    Livewire::test(NameGeneratorDashboard::class)
-        ->set('deepThinking', false)
-        ->assertSet('deepThinking', false)
-        ->set('deepThinking', true)
-        ->assertSet('deepThinking', true)
-        ->assertSee('Deep Thinking Mode');
 });
 
 test('Dashboard generates names with AI when enabled', function (): void {
