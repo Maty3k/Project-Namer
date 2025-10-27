@@ -370,11 +370,20 @@ class ProjectPage extends Component
      */
     protected function loadUserAIPreferences(): void
     {
-        // Don't pre-select anything - let user choose each time
-        $this->selectedAIModels = [];
-        $this->generationMode = '';
-        $this->deepThinking = false;
-        $this->enableModelComparison = false;
+        $preferences = UserAIPreferences::where('user_id', auth()->id())->first();
+
+        if ($preferences) {
+            $this->selectedAIModels = $preferences->preferred_models ?? [];
+            $this->generationMode = $preferences->default_generation_mode ?? '';
+            $this->deepThinking = $preferences->default_deep_thinking ?? false;
+            $this->enableModelComparison = $preferences->enable_model_comparison ?? false;
+        } else {
+            // No saved preferences - start with empty selections
+            $this->selectedAIModels = [];
+            $this->generationMode = '';
+            $this->deepThinking = false;
+            $this->enableModelComparison = false;
+        }
     }
 
     /**
