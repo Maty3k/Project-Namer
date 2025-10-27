@@ -274,14 +274,6 @@
                             >
                                 Save Preferences
                             </flux:button>
-
-                            <flux:button
-                                wire:click="clearAIPreferences"
-                                variant="ghost"
-                                wire:confirm="Are you sure you want to clear your saved AI preferences? This will reset your default model and generation mode selections."
-                            >
-                                Clear Preferences
-                            </flux:button>
                         </div>
 
                         <!-- Error Message -->
