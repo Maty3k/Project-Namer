@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
+use App\Exceptions\DeprecatedFileException;
 use App\Helpers\ThemeHelper;
 use App\Models\AIGeneration;
 use App\Models\AIModelPerformance;
@@ -147,6 +148,11 @@ class NameGeneratorDashboard extends Component
 
     public function mount(): void
     {
+        throw new DeprecatedFileException(
+            __FILE__,
+            'NameGeneratorDashboard component replaced by Dashboard + ProjectPage workflow. Not used in any routes.'
+        );
+
         $this->loadSearchHistory();
         $this->checkForActiveLogoGeneration();
         $this->loadUserAIPreferences();

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
+use App\Exceptions\DeprecatedFileException;
 use App\Helpers\ThemeHelper;
 use App\Models\NamingSession;
 use App\Services\SessionService;
@@ -45,6 +46,11 @@ class SessionSidebar extends Component
 
     public function mount(): void
     {
+        throw new DeprecatedFileException(
+            __FILE__,
+            'SessionSidebar component replaced by Sidebar component. Not used in any routes or blade views outside of tests.'
+        );
+
         $this->loadInitialState();
     }
 
