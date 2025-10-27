@@ -66,7 +66,7 @@
             <!-- Section Header -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <div class="flex-1">
-                    <h3 class="text-lg font-medium {{ $userTheme ? '' : 'text-gray-900 dark:text-white' }}">Name Suggestions</h3>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Name Suggestions</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                         @if($this->filteredSuggestions->isNotEmpty())
                             {{ $this->filteredSuggestions->count() }} suggestion{{ $this->filteredSuggestions->count() !== 1 ? 's' : '' }}
