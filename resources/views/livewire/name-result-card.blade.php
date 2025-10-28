@@ -324,30 +324,6 @@
 
                 <!-- Action Buttons -->
                 <div class="flex items-center space-x-1 sm:space-x-2">
-                    <!-- Selection Toggle -->
-                    @if($this->isSelected)
-                        <flux:button
-                            wire:click="deselectName"
-                            variant="ghost"
-                            size="sm"
-                            class="text-primary-600 hover:text-primary-700"
-                            wire:loading.attr="disabled"
-                        >
-                            <span wire:loading.remove wire:target="deselectName">Deselect</span>
-                            <span wire:loading wire:target="deselectName">Deselecting...</span>
-                        </flux:button>
-                    @else
-                        <flux:button
-                            wire:click="selectName"
-                            variant="primary"
-                            size="sm"
-                            wire:loading.attr="disabled"
-                        >
-                            <span wire:loading.remove wire:target="selectName">Select</span>
-                            <span wire:loading wire:target="selectName">Selecting...</span>
-                        </flux:button>
-                    @endif
-
                     <!-- Expand Toggle -->
                     <div wire:ignore>
                         <flux:button
