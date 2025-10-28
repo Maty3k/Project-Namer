@@ -127,8 +127,9 @@ describe('Disabled Keyboard Shortcuts', function (): void {
         $globalPath = resource_path('js/global-keyboard-shortcuts.js');
         $content = file_get_contents($globalPath);
 
-        // Verify that it listens for Livewire shortcuts-updated event and fetches from API
+        // Verify that it listens for Livewire shortcuts-updated event and updates from event data
         expect($content)->toContain('Livewire.on(\'shortcuts-updated\'');
-        expect($content)->toContain('fetch(\'/api/keyboard-shortcuts\'');
+        expect($content)->toContain('event.disabledShortcuts');
+        expect($content)->toContain('disabledShortcuts = event.disabledShortcuts');
     });
 });

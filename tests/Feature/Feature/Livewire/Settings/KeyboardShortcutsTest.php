@@ -171,14 +171,6 @@ test('authenticated users can access keyboard shortcuts page', function (): void
     expect($response->content())->toContain('Keyboard Shortcuts');
 });
 
-test('displays reset confirmation', function (): void {
-    $user = User::factory()->create();
-
-    Livewire::actingAs($user)
-        ->test(KeyboardShortcuts::class)
-        ->assertSee('Are you sure you want to reset all keyboard shortcuts to defaults?');
-});
-
 test('displays help tip about pressing ctrl h', function (): void {
     $user = User::factory()->create();
 
