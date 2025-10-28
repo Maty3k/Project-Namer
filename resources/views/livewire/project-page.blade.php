@@ -227,17 +227,34 @@
 
         <!-- Optional Tools Section Header -->
         @if($this->filteredSuggestions->isEmpty())
-            <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <div class="mb-6">
-                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                        <svg class="w-5 h-5 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
-                        </svg>
-                        Optional Tools
-                    </h2>
-                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                        Enhance your results with these optional features — everything works great without them
-                    </p>
+            <div class="mt-8 pt-8 border-t-2 border-dashed border-gray-300 dark:border-gray-600">
+                <div class="bg-gradient-to-r from-primary-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20
+                            rounded-lg border-2 border-primary-200 dark:border-primary-700 p-6 mb-6">
+                    <div class="flex items-start gap-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-primary-100 dark:bg-primary-800 rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                                Optional Tools
+                                <span class="ml-2 text-sm font-normal bg-primary-600 text-white px-2 py-1 rounded-full">
+                                    Not Required
+                                </span>
+                            </h2>
+                            <p class="text-base text-gray-700 dark:text-gray-300">
+                                Enhance your results with these optional features below. Everything works great without them!
+                            </p>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <svg class="w-6 h-6 text-primary-400 dark:text-primary-500 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
             </div>
         @endif
