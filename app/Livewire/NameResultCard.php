@@ -7,6 +7,7 @@ namespace App\Livewire;
 use App\Models\NameSuggestion;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\View\View;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -33,6 +34,7 @@ class NameResultCard extends Component
 {
     use AuthorizesRequests;
 
+    #[Locked]
     public NameSuggestion $suggestion;
 
     public bool $expanded = false;
@@ -100,6 +102,12 @@ class NameResultCard extends Component
         $this->authorize('update', $this->suggestion->project);
 
         $this->suggestion->update(['is_favorited' => ! $this->suggestion->is_favorited]);
+
+        // Refresh the suggestion to get the updated state
+        $this->suggestion->refresh();
+
+        // Dispatch event to refresh the sidebar
+        $this->dispatch('project-updated');
 
         $this->dispatch('show-toast', [
             'message' => $this->suggestion->is_favorited
