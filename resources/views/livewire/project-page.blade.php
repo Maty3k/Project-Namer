@@ -232,7 +232,8 @@
             </div>
         @endif
 
-        <!-- Name Suggestions Section -->
+        <!-- Name Suggestions Section - Only shown when suggestions exist or generation is in progress -->
+        @if($this->filteredSuggestions->isNotEmpty() || $isGeneratingNames)
         <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
             <!-- Section Header -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -242,7 +243,7 @@
                         @if($this->filteredSuggestions->isNotEmpty())
                             {{ $this->filteredSuggestions->count() }} suggestion{{ $this->filteredSuggestions->count() !== 1 ? 's' : '' }}
                         @else
-                            No suggestions generated yet
+                            Generating suggestions...
                         @endif
                     </p>
                 </div>
@@ -253,14 +254,14 @@
             <!-- Name Suggestions List -->
             <div class="relative">
             @if($this->filteredSuggestions->isEmpty())
-                <!-- Ready to generate names -->
+                <!-- Generating placeholder -->
                 <div class="text-center py-12">
                     <div class="text-gray-500 dark:text-gray-400">
-                        <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-12 h-12 mx-auto mb-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
-                        <h3 class="text-lg font-medium mb-2">Ready to generate names</h3>
-                        <p>Start by describing your project above, and select the style below to start generating AI-powered name suggestions.</p>
+                        <h3 class="text-lg font-medium mb-2">Generating names...</h3>
+                        <p>Please wait while we generate AI-powered name suggestions for your project.</p>
                     </div>
                 </div>
             @else
@@ -278,6 +279,7 @@
 
             <!-- Generate More Names Floating Button - Removed: Users can only generate once per project -->
         </div>
+        @endif
 
         <!-- AI Generation Controls Modal/Section -->
 
