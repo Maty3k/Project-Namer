@@ -32,7 +32,7 @@ describe('Updated ThemeService', function (): void {
 
         $expectedThemes = [
             'default', 'dark', 'ocean', 'sunset', 'forest',
-            'cosmic-violet', 'coral-reef', 'midnight-teal',
+            'cosmic-violet', 'coral-reef', 'cyberpunk',
             'summer', 'winter', 'halloween', 'spring', 'autumn',
             'neon-cyber', 'electric-blue', 'hot-pink', 'lava-red',
             'lime-punch', 'gold-rush', 'matrix-green',

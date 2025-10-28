@@ -131,11 +131,11 @@ final class ThemeService
                 'category' => 'standard',
             ],
             [
-                'name' => 'midnight-teal',
-                'display_name' => 'Midnight Teal',
-                'theme_name' => 'midnight-teal',
+                'name' => 'cyberpunk',
+                'display_name' => 'Cyberpunk 2077',
+                'theme_name' => 'cyberpunk',
                 'is_dark_mode' => true,
-                'preview_url' => '/images/theme-previews/midnight-teal.png',
+                'preview_url' => '/images/theme-previews/cyberpunk.png',
                 'category' => 'standard',
             ],
             // Seasonal Themes
