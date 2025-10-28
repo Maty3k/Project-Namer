@@ -158,46 +158,10 @@
 
                 <flux:field>
                     <flux:label>Description (Optional)</flux:label>
-                    <flux:textarea wire:model.live="description" 
+                    <flux:textarea wire:model.live="description"
                                   rows="3"
                                   placeholder="Describe what these images represent for your project" />
                     <flux:error name="description" />
-                </flux:field>
-
-                <!-- Tags -->
-                <flux:field>
-                    <flux:label>Tags (Optional)</flux:label>
-                    <div class="space-y-2">
-                        @foreach($tags as $index => $tag)
-                            <div class="flex gap-2">
-                                <flux:input wire:model.live="tags.{{ $index }}"
-                                           placeholder="Enter tag" 
-                                           class="flex-1" />
-                                <flux:button variant="danger"
-                                            size="sm"
-                                            wire:click="removeTag({{ $index }})"
-                                            type="button">
-                                    Remove
-                                </flux:button>
-                            </div>
-                        @endforeach
-                        
-                        @if(count($tags) < 10)
-                            <flux:button variant="ghost"
-                                        size="sm"
-                                        wire:click="addTag"
-                                        type="button">
-                                + Add Tag
-                            </flux:button>
-                        @endif
-                    </div>
-                </flux:field>
-
-                <!-- Privacy Setting -->
-                <flux:field>
-                    <flux:checkbox wire:model.live="isPublic">
-                        Make images publicly viewable
-                    </flux:checkbox>
                 </flux:field>
             </div>
         @endif
