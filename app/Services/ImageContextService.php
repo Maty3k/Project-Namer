@@ -48,22 +48,42 @@ final class ImageContextService
         $imageCount = $images->count();
         $plural = $imageCount === 1 ? 'image' : 'images';
 
-        $context = "\n\n=== IMPORTANT VISUAL INSPIRATION ===\n";
-        $context .= "The user has carefully selected {$imageCount} inspiration {$plural} that should STRONGLY influence the name generation:\n\n";
+        $context = "\n\n╔═══════════════════════════════════════════════════════════╗\n";
+        $context .= "║   🎨 CRITICAL: VISUAL INSPIRATION PROVIDED                ║\n";
+        $context .= "╚═══════════════════════════════════════════════════════════╝\n\n";
+
+        $context .= "⚠️  MANDATORY REQUIREMENT: The user has uploaded {$imageCount} inspiration {$plural}.\n";
+        $context .= "These images are THE PRIMARY CREATIVE DIRECTION for naming.\n";
+        $context .= "ALL generated names MUST be DIRECTLY inspired by these images.\n\n";
+
+        $context .= "📸 VISUAL INSPIRATION SOURCES:\n\n";
 
         foreach ($images as $image) {
-            $context .= "• {$image->title}";
+            $context .= "🔹 **{$image->title}**";
 
             if ($image->description) {
-                $context .= ": {$image->description}";
+                $context .= "\n   Context: {$image->description}";
             }
 
-            $context .= "\n";
+            $context .= "\n\n";
         }
 
-        $context .= "\nYou MUST incorporate themes, imagery, and concepts from these inspirations into the generated names. ";
-        $context .= "The names should evoke the visual and thematic elements described above. ";
-        $context .= "Make the connection between the inspiration and the names clear and meaningful.";
+        $context .= "═══════════════════════════════════════════════════════════\n\n";
+        $context .= "🎯 YOUR NAMING INSTRUCTIONS:\n\n";
+        $context .= "1. Read each inspiration image title and description carefully\n";
+        $context .= "2. Extract the key themes, emotions, and visual concepts\n";
+        $context .= "3. Generate names that DIRECTLY reference or evoke these inspirations\n";
+        $context .= "4. Make the connection between the image and name OBVIOUS\n";
+        $context .= "5. Prioritize image inspiration OVER the business description\n\n";
+
+        $context .= "✅ GOOD NAME EXAMPLES (if inspiration was 'River inspiration'):\n";
+        $context .= "   - RiverFlow, Rapids, StreamLine, Current, Tributary\n\n";
+
+        $context .= "❌ BAD NAME EXAMPLES (ignoring the river inspiration):\n";
+        $context .= "   - TechHub, CloudSync, DataPro (generic, no connection to river)\n\n";
+
+        $context .= "⚡ Remember: The visual inspirations are NOT optional suggestions.\n";
+        $context .= "They are MANDATORY creative constraints that every name must reflect.\n";
 
         return $context;
     }

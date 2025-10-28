@@ -61,10 +61,11 @@ describe('ImageContextService', function (): void {
         $context = $this->service->getContextForProject($this->project->id);
 
         expect($context)
-            ->toContain('IMPORTANT VISUAL INSPIRATION')
-            ->toContain('The user has carefully selected 1 inspiration image that should STRONGLY influence')
-            ->toContain('• River inspiration')
-            ->toContain('You MUST incorporate themes, imagery, and concepts from these inspirations');
+            ->toContain('CRITICAL: VISUAL INSPIRATION PROVIDED')
+            ->toContain('MANDATORY REQUIREMENT: The user has uploaded 1 inspiration image')
+            ->toContain('🔹 **River inspiration**')
+            ->toContain('ALL generated names MUST be DIRECTLY inspired by these images')
+            ->toContain('YOUR NAMING INSTRUCTIONS');
     });
 
     test('formats single image with title and description', function (): void {
@@ -79,9 +80,10 @@ describe('ImageContextService', function (): void {
         $context = $this->service->getContextForProject($this->project->id);
 
         expect($context)
-            ->toContain('IMPORTANT VISUAL INSPIRATION')
-            ->toContain('• River inspiration: A flowing river through mountains')
-            ->toContain('You MUST incorporate themes, imagery, and concepts');
+            ->toContain('CRITICAL: VISUAL INSPIRATION PROVIDED')
+            ->toContain('🔹 **River inspiration**')
+            ->toContain('Context: A flowing river through mountains')
+            ->toContain('MANDATORY creative constraints');
     });
 
     test('formats multiple images with titles and descriptions', function (): void {
@@ -112,12 +114,13 @@ describe('ImageContextService', function (): void {
         $context = $this->service->getContextForProject($this->project->id);
 
         expect($context)
-            ->toContain('3 inspiration images that should STRONGLY influence')
-            ->toContain('• River inspiration: A flowing river with smooth stones')
-            ->toContain('• Mountain theme: Rocky peaks with snow')
-            ->toContain('• Forest vibes')
-            ->not->toContain('Forest vibes:') // No colon when no description
-            ->toContain('You MUST incorporate themes, imagery, and concepts');
+            ->toContain('uploaded 3 inspiration images')
+            ->toContain('🔹 **River inspiration**')
+            ->toContain('Context: A flowing river with smooth stones')
+            ->toContain('🔹 **Mountain theme**')
+            ->toContain('Context: Rocky peaks with snow')
+            ->toContain('🔹 **Forest vibes**')
+            ->toContain('MANDATORY creative constraints');
     });
 
     test('orders images by most recent first', function (): void {
@@ -140,8 +143,8 @@ describe('ImageContextService', function (): void {
         $context = $this->service->getContextForProject($this->project->id);
 
         // New image should appear before old image in the formatted string
-        $newPosition = strpos($context, 'New inspiration');
-        $oldPosition = strpos($context, 'Old inspiration');
+        $newPosition = strpos($context, '**New inspiration**');
+        $oldPosition = strpos($context, '**Old inspiration**');
 
         expect($newPosition)->toBeLessThan($oldPosition);
     });
@@ -166,8 +169,8 @@ describe('ImageContextService', function (): void {
         $context = $this->service->getContextForProject($this->project->id);
 
         expect($context)
-            ->toContain('My project image')
-            ->not->toContain('Other project image');
+            ->toContain('**My project image**')
+            ->not->toContain('**Other project image**');
     });
 
     test('getContextForProjectModel works with Project instance', function (): void {
@@ -181,8 +184,8 @@ describe('ImageContextService', function (): void {
         $context = $this->service->getContextForProjectModel($this->project);
 
         expect($context)
-            ->toContain('Test image')
-            ->toContain('IMPORTANT VISUAL INSPIRATION');
+            ->toContain('**Test image**')
+            ->toContain('CRITICAL: VISUAL INSPIRATION PROVIDED');
     });
 
     test('uses correct plural for multiple images', function (): void {
@@ -195,7 +198,7 @@ describe('ImageContextService', function (): void {
 
         $context = $this->service->getContextForProject($this->project->id);
 
-        expect($context)->toContain('2 inspiration images that should STRONGLY influence');
+        expect($context)->toContain('uploaded 2 inspiration images');
     });
 
     test('handles long descriptions gracefully', function (): void {
@@ -212,7 +215,7 @@ describe('ImageContextService', function (): void {
         $context = $this->service->getContextForProject($this->project->id);
 
         expect($context)
-            ->toContain('Complex image')
+            ->toContain('**Complex image**')
             ->toContain($longDescription);
     });
 });
