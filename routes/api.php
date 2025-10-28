@@ -124,8 +124,8 @@ Route::middleware('api')->group(function (): void {
         });
     });
 
-    // Image Upload API Routes - uses web middleware for session auth from Livewire
-    Route::prefix('projects')->middleware(['web', 'auth'])->group(function (): void {
+    // Image Upload API Routes - uses auth middleware for API authentication
+    Route::prefix('projects')->middleware(['auth'])->group(function (): void {
         // Upload images to project
         Route::post('{project}/images', [ImageUploadController::class, 'store'])
             ->middleware('throttle:30,1') // 30 uploads per minute
@@ -243,18 +243,18 @@ Route::middleware('api')->group(function (): void {
         ->middleware(['auth'])
         ->name('api.keyboard-shortcuts');
 
-    // Suggestion domains API endpoint - uses web middleware for session auth
+    // Suggestion domains API endpoint - uses auth middleware for API authentication
     Route::get('suggestions/{suggestion}/domains', [SuggestionDomainsController::class, 'show'])
-        ->middleware(['web', 'auth'])
+        ->middleware(['auth'])
         ->name('api.suggestions.domains');
 
-    // Domain checking API endpoint - uses web middleware for session auth
+    // Domain checking API endpoint - uses auth middleware for API authentication
     Route::post('suggestions/{suggestion}/check-domains', [DomainCheckController::class, 'check'])
-        ->middleware(['web', 'auth'])
+        ->middleware(['auth'])
         ->name('api.suggestions.check-domains');
 
-    // Logo Generation API Routes - uses web middleware for session auth
-    Route::prefix('logos')->middleware(['web', 'auth'])->group(function (): void {
+    // Logo Generation API Routes - uses auth middleware for API authentication
+    Route::prefix('logos')->middleware(['auth'])->group(function (): void {
         // Generate logos for a business idea
         Route::post('generate', [LogoGenerationController::class, 'generate'])
             ->middleware('throttle:10,1') // 10 requests per minute

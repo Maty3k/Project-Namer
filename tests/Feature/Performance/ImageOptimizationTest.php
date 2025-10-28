@@ -16,6 +16,7 @@ beforeEach(function (): void {
     $this->user = User::factory()->create();
     $this->project = Project::factory()->create(['user_id' => $this->user->id]);
     $this->withoutVite();
+    $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
 });
 
 describe('Image Processing Performance', function (): void {
@@ -30,6 +31,7 @@ describe('Image Processing Performance', function (): void {
         $response = $this->actingAs($this->user)
             ->postJson("/api/projects/{$this->project->id}/images", [
                 'images' => $files,
+                'title' => 'Performance test images',
             ]);
 
         $processingTime = microtime(true) - $startTime;
@@ -45,6 +47,7 @@ describe('Image Processing Performance', function (): void {
         $response = $this->actingAs($this->user)
             ->postJson("/api/projects/{$this->project->id}/images", [
                 'images' => [$file],
+                'title' => 'Thumbnail test',
             ]);
 
         $response->assertSuccessful();
@@ -64,6 +67,7 @@ describe('Image Processing Performance', function (): void {
         $response = $this->actingAs($this->user)
             ->postJson("/api/projects/{$this->project->id}/images", [
                 'images' => [$largeFile],
+                'title' => 'Large image test',
             ]);
 
         $response->assertSuccessful();

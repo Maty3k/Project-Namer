@@ -6,13 +6,16 @@ use App\Models\Project;
 use App\Models\ProjectImage;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 
 beforeEach(function (): void {
     Storage::fake('public');
+    Queue::fake(); // Prevent jobs from running synchronously
     $this->user = User::factory()->create();
     $this->project = Project::factory()->create(['user_id' => $this->user->id]);
     $this->withoutVite();
+    $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
 });
 
 describe('File Storage Configuration', function (): void {
@@ -22,6 +25,7 @@ describe('File Storage Configuration', function (): void {
         $response = $this->actingAs($this->user)
             ->postJson("/api/projects/{$this->project->id}/images", [
                 'images' => [$file],
+                'title' => 'Storage test image',
             ]);
 
         $response->assertSuccessful();
@@ -38,11 +42,13 @@ describe('File Storage Configuration', function (): void {
         $this->actingAs($this->user)
             ->postJson("/api/projects/{$this->project->id}/images", [
                 'images' => [$file1],
+                'title' => 'First upload',
             ]);
 
         $this->actingAs($this->user)
             ->postJson("/api/projects/{$this->project->id}/images", [
                 'images' => [$file2],
+                'title' => 'Second upload',
             ]);
 
         $images = ProjectImage::all();
@@ -81,6 +87,7 @@ describe('Storage Usage Tracking', function (): void {
         $this->actingAs($this->user)
             ->postJson("/api/projects/{$this->project->id}/images", [
                 'images' => [$file1, $file2],
+                'title' => 'Storage tracking test',
             ]);
 
         $totalSize = ProjectImage::where('user_id', $this->user->id)->sum('file_size');

@@ -24,6 +24,7 @@ test('can upload single image to project', function (): void {
     $response = $this->actingAs($this->user)
         ->post("/api/projects/{$this->project->id}/images", [
             'images' => [$file],
+            'title' => 'Test inspiration image',
         ]);
 
     $response->assertSuccessful();
@@ -48,6 +49,7 @@ test('can upload multiple images to project', function (): void {
     $response = $this->actingAs($this->user)
         ->post("/api/projects/{$this->project->id}/images", [
             'images' => $files,
+            'title' => 'Multiple test images',
         ]);
 
     $response->assertSuccessful();
@@ -102,6 +104,7 @@ test('validates user can only upload to their own projects', function (): void {
     $response = $this->actingAs($this->user)
         ->postJson("/api/projects/{$otherProject->id}/images", [
             'images' => [$file],
+            'title' => 'Test image',
         ]);
 
     $response->assertForbidden();
@@ -139,6 +142,7 @@ test('generates unique uuid for each image', function (): void {
     $this->actingAs($this->user)
         ->postJson("/api/projects/{$this->project->id}/images", [
             'images' => $files,
+            'title' => 'UUID test images',
         ]);
 
     $images = ProjectImage::all();
@@ -164,6 +168,7 @@ test('processes image upload with background job', function (): void {
     $this->actingAs($this->user)
         ->postJson("/api/projects/{$this->project->id}/images", [
             'images' => [$file],
+            'title' => 'Background job test',
         ]);
 
     Queue::assertPushed(\App\Jobs\ProcessUploadedImageJob::class);

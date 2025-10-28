@@ -17,6 +17,7 @@ test('name suggestion has correct fillable attributes', function (): void {
     $fillable = [
         'project_id',
         'name',
+        'is_favorited',
         'domains',
         'logos',
         'generation_metadata',
