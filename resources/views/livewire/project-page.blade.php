@@ -475,8 +475,8 @@
         @endif
 
 
-        <!-- AI Generation History Section - Only shown when names have been generated -->
-        @if(!empty($aiGenerationHistory) && $this->filteredSuggestions->isNotEmpty())
+        <!-- AI Generation History Section - Only shown when AI generations exist -->
+        @if(!empty($aiGenerationHistory) && $aiGenerationHistory->isNotEmpty())
             <div class="mt-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
