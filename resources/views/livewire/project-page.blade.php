@@ -294,7 +294,7 @@
                             <flux:field>
                                 <flux:label>Enter Your Name Idea</flux:label>
                                 <flux:input
-                                    wire:model.defer="manualNameInput"
+                                    wire:model.live="manualNameInput"
                                     placeholder="e.g., MyAwesomeBrand or myawesomebrand.com"
                                     class="w-full"
                                 />
