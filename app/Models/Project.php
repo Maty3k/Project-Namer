@@ -174,6 +174,14 @@ final class Project extends Model
     }
 
     /**
+     * Get the count of favorited name suggestions for this project.
+     */
+    public function getFavoritedNamesCount(): int
+    {
+        return $this->nameSuggestions()->where('is_favorited', true)->count();
+    }
+
+    /**
      * The attributes that should be cast.
      *
      * @return array<string, string>
