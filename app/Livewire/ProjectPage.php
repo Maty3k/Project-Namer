@@ -9,6 +9,7 @@ use App\Models\NameSuggestion;
 use App\Models\Project;
 use App\Models\UserAIPreferences;
 use App\Services\AI\AIGenerationService;
+use App\Services\DomainCheckService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Cache;
