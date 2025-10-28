@@ -387,14 +387,6 @@
                                 @endif
                             </div>
 
-                            @if($generation->deep_thinking)
-                                <div class="mt-2">
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300">
-                                        🧠 Deep Thinking Mode
-                                    </span>
-                                </div>
-                            @endif
-
                             @if($generation->error_message)
                                 <div class="mt-3 p-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded text-sm">
                                     <span class="text-red-700 dark:text-red-400">Error:</span>
