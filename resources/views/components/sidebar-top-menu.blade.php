@@ -26,6 +26,14 @@
             {{ __('Name Generator') }}
         </flux:navlist.item>
 
+        <flux:navlist.item icon="globe-alt"
+                           :href="route('domain-checker')"
+                           :current="request()->routeIs('domain-checker')"
+                           wire:navigate
+                           class="touch-target interactive focus-modern">
+            {{ __('Domain Checker') }}
+        </flux:navlist.item>
+
         <flux:navlist.item icon="photo"
                            :href="route('logos.index')"
                            :current="request()->routeIs('logos.*')"

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\ExportController;
 use App\Http\Controllers\PublicShareController;
 use App\Livewire\Appearance;
+use App\Livewire\DomainChecker;
 use App\Livewire\KeyboardShortcuts;
 use App\Livewire\ProjectPage;
 use App\Livewire\Settings\Password;
@@ -76,6 +77,7 @@ Route::middleware(['auth'])->group(function (): void {
     // Standalone features (not part of settings)
     Route::get('appearance', Appearance::class)->name('appearance');
     Route::get('keyboard-shortcuts', KeyboardShortcuts::class)->name('keyboard-shortcuts');
+    Route::get('domain-checker', DomainChecker::class)->name('domain-checker');
 
     // Share management
     Route::get('shares', fn () => view('shares.index'))->name('shares.index');
