@@ -1,6 +1,6 @@
 <div>
     <flux:header class="mb-8">
-        <flux:heading size="xl" class="mb-3">Domain Checker</flux:heading>
+        <flux:heading size="xl" class="mb-6">Domain Checker</flux:heading>
         <flux:subheading>Quickly check domain availability for your business name ideas</flux:subheading>
     </flux:header>
 
