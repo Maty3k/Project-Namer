@@ -85,6 +85,18 @@ class ProjectPage extends Component
     /** @var array<string, string> */
     public array $modelStatuses = [];
 
+    // Manual Name Entry Properties
+    public string $manualNameInput = '';
+
+    public bool $manualNameChecked = false;
+
+    public bool $manualNameSaved = false;
+
+    public string $cleanManualName = '';
+
+    /** @var array<string, array<string, mixed>> */
+    public array $manualNameDomains = [];
+
     /** @var array<string, string> */
     protected $listeners = [
         'name-selected' => 'handleNameSelected',
@@ -100,6 +112,7 @@ class ProjectPage extends Component
         'selectedAIModels.*' => 'string|in:gpt-4,claude-3.5-sonnet,gemini-1.5-pro,grok-beta',
         'generationMode' => 'nullable|string|in:creative,professional,brandable,tech-focused',
         'deepThinking' => 'boolean',
+        'manualNameInput' => 'required|string|min:2|max:100',
     ];
 
     /** @var array<string, string> */
@@ -1305,6 +1318,7 @@ class ProjectPage extends Component
         $this->realTimeProgress ??= [];
         $this->modelStatuses ??= [];
         $this->aiGenerationResults ??= [];
+        $this->manualNameDomains ??= [];
 
         // Reload AI generation history if not present
         if ($this->aiGenerationHistory === null) {
@@ -1317,6 +1331,154 @@ class ProjectPage extends Component
         }
         if (! isset($this->editableDescription)) {
             $this->editableDescription = $this->project->description ?? '';
+        }
+    }
+
+    // Manual Name Entry Methods
+
+    /**
+     * Check manual name and domain availability.
+     */
+    public function checkManualName(): void
+    {
+        $this->authorize('update', $this->project);
+
+        // Validate input
+        $this->validate(['manualNameInput' => $this->rules['manualNameInput']]);
+
+        // Clean the input - remove .com, .io, etc. if user included them
+        $this->cleanManualName = trim($this->manualNameInput);
+        $this->cleanManualName = (string) preg_replace('/\.(com|net|org|io|co|app|dev|ai|tech|studio)$/i', '', $this->cleanManualName);
+        $this->cleanManualName = strtolower((string) preg_replace('/[^a-zA-Z0-9]/', '', $this->cleanManualName));
+
+        if (empty($this->cleanManualName)) {
+            $this->dispatch('show-toast', [
+                'message' => 'Please enter a valid name.',
+                'type' => 'error',
+            ]);
+
+            return;
+        }
+
+        // Reset states
+        $this->manualNameDomains = [];
+        $this->manualNameChecked = false;
+        $this->manualNameSaved = false;
+
+        try {
+            $domainCheckService = app(DomainCheckService::class);
+
+            // Check the 4 main TLDs: .com, .io, .co, .net
+            $tldsToCheck = ['com', 'io', 'co', 'net'];
+
+            foreach ($tldsToCheck as $tld) {
+                $domain = "{$this->cleanManualName}.{$tld}";
+                $result = $domainCheckService->checkDomain($domain);
+
+                $this->manualNameDomains[$domain] = [
+                    'extension' => ".{$tld}",
+                    'available' => $result['available'],
+                    'status' => $result['status'] ?? 'unknown',
+                ];
+            }
+
+            $this->manualNameChecked = true;
+
+            // Create a NameSuggestion record for this manually entered name
+            $existingSuggestion = NameSuggestion::where('project_id', $this->project->id)
+                ->where('name', $this->cleanManualName)
+                ->first();
+
+            if (! $existingSuggestion) {
+                NameSuggestion::create([
+                    'project_id' => $this->project->id,
+                    'name' => $this->cleanManualName,
+                    'domains' => $this->manualNameDomains,
+                    'generation_metadata' => [
+                        'source' => 'manual',
+                        'original_input' => $this->manualNameInput,
+                        'entered_at' => now()->toISOString(),
+                    ],
+                ]);
+
+                $this->manualNameSaved = true;
+
+                // Refresh the project to show updated suggestions
+                $this->project->unsetRelation('nameSuggestions');
+                $this->project = $this->project->fresh(['nameSuggestions']);
+            }
+
+            $this->dispatch('show-toast', [
+                'message' => 'Domain availability checked successfully!',
+                'type' => 'success',
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Manual name check failed', [
+                'project_id' => $this->project->id,
+                'name' => $this->cleanManualName,
+                'error' => $e->getMessage(),
+            ]);
+
+            $this->dispatch('show-toast', [
+                'message' => 'Failed to check domain availability. Please try again.',
+                'type' => 'error',
+            ]);
+        }
+    }
+
+    /**
+     * Generate logo for the manually entered name.
+     */
+    public function generateManualNameLogo(): void
+    {
+        $this->authorize('update', $this->project);
+
+        if (! $this->manualNameChecked || empty($this->cleanManualName)) {
+            $this->dispatch('show-toast', [
+                'message' => 'Please check the name first before generating a logo.',
+                'type' => 'warning',
+            ]);
+
+            return;
+        }
+
+        try {
+            // Create a LogoGeneration record
+            $logoGeneration = \App\Models\LogoGeneration::create([
+                'user_id' => auth()->id(),
+                'business_name' => $this->cleanManualName,
+                'business_description' => $this->project->description,
+                'color_palette' => null,
+                'status' => 'pending',
+            ]);
+
+            // Dispatch job to generate logos
+            \App\Jobs\GenerateLogosJob::dispatch($logoGeneration);
+
+            $this->dispatch('show-toast', [
+                'message' => 'Logo generation started! This may take a moment.',
+                'type' => 'success',
+            ]);
+
+            // Dispatch event for logo generation started
+            $this->dispatch('logo-generation-started', [
+                'logo_generation_id' => $logoGeneration->id,
+                'business_name' => $this->cleanManualName,
+                'project_uuid' => $this->project->uuid,
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Logo generation failed for manual name', [
+                'project_id' => $this->project->id,
+                'name' => $this->cleanManualName,
+                'error' => $e->getMessage(),
+            ]);
+
+            $this->dispatch('show-toast', [
+                'message' => 'Failed to start logo generation. Please try again.',
+                'type' => 'error',
+            ]);
         }
     }
 

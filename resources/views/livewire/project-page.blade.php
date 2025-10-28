@@ -271,6 +271,140 @@
                 <!-- Embedded Photo Gallery -->
                 @livewire(\App\Livewire\PhotoGallery::class, ['project' => $project], 'gallery-'.$project->id)
             </div>
+
+            <!-- Try Your Own Name Section -->
+            <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+                    <!-- Section Header -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                            <svg class="w-5 h-5 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                            </svg>
+                            Try Your Own Name
+                        </h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                            Have a name or domain in mind? Check its availability and generate a logo.
+                        </p>
+                    </div>
+
+                    <!-- Manual Name Input -->
+                    <div class="space-y-4">
+                        <div>
+                            <flux:field>
+                                <flux:label>Enter Your Name Idea</flux:label>
+                                <flux:input
+                                    wire:model.defer="manualNameInput"
+                                    placeholder="e.g., MyAwesomeBrand or myawesomebrand.com"
+                                    class="w-full"
+                                />
+                                @error('manualNameInput')
+                                    <flux:error>{{ $message }}</flux:error>
+                                @enderror
+                            </flux:field>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-wrap gap-3">
+                            <flux:button
+                                wire:click="checkManualName"
+                                wire:loading.attr="disabled"
+                                wire:target="checkManualName"
+                                variant="primary"
+                                :disabled="!$manualNameInput"
+                            >
+                                <span wire:loading.remove wire:target="checkManualName">
+                                    <svg class="w-4 h-4 mr-2 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                    Check Domain Availability
+                                </span>
+                                <span wire:loading wire:target="checkManualName">
+                                    <svg class="w-4 h-4 mr-2 inline-block animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                    </svg>
+                                    Checking...
+                                </span>
+                            </flux:button>
+
+                            @if($manualNameChecked)
+                                <flux:button
+                                    wire:click="generateManualNameLogo"
+                                    wire:loading.attr="disabled"
+                                    wire:target="generateManualNameLogo"
+                                    variant="ghost"
+                                >
+                                    <span wire:loading.remove wire:target="generateManualNameLogo">
+                                        <svg class="w-4 h-4 mr-2 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        Generate Logo
+                                    </span>
+                                    <span wire:loading wire:target="generateManualNameLogo">
+                                        <svg class="w-4 h-4 mr-2 inline-block animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                        </svg>
+                                        Generating...
+                                    </span>
+                                </flux:button>
+                            @endif
+                        </div>
+
+                        <!-- Domain Availability Results -->
+                        @if($manualNameChecked && !empty($manualNameDomains))
+                            <div class="mt-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+                                <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-3">
+                                    Domain Availability for "{{ $cleanManualName }}"
+                                </h4>
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                    @foreach($manualNameDomains as $domain => $info)
+                                        <div class="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded border
+                                                    @if($info['available'] === true) border-green-200 dark:border-green-800
+                                                    @elseif($info['available'] === false) border-red-200 dark:border-red-800
+                                                    @else border-gray-200 dark:border-gray-700 @endif">
+                                            @if($info['available'] === true)
+                                                <svg class="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                </svg>
+                                                <span class="text-sm text-green-700 dark:text-green-300 font-medium">{{ $info['extension'] }}</span>
+                                            @elseif($info['available'] === false)
+                                                <svg class="w-4 h-4 text-red-600 dark:text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                </svg>
+                                                <span class="text-sm text-red-700 dark:text-red-300">{{ $info['extension'] }}</span>
+                                            @else
+                                                <svg class="w-4 h-4 text-gray-400 flex-shrink-0 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                                </svg>
+                                                <span class="text-sm text-gray-500 dark:text-gray-400">{{ $info['extension'] }}</span>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                <!-- Success Message if name was saved -->
+                                @if($manualNameSaved)
+                                    <div class="mt-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                                        <div class="flex items-start gap-2">
+                                            <svg class="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            <div class="flex-1">
+                                                <p class="text-sm font-medium text-green-900 dark:text-green-100">
+                                                    Name saved successfully!
+                                                </p>
+                                                <p class="text-sm text-green-700 dark:text-green-300 mt-1">
+                                                    Your name "{{ $cleanManualName }}" has been added to your suggestions. You can view it in the Name Suggestions section after generating names.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
         @endif
 
         <!-- Name Suggestions Section - Only shown when suggestions exist or generation is in progress -->
