@@ -13,12 +13,17 @@
         <div class="flex flex-col space-y-3
                     sm:flex-row sm:space-y-0 sm:items-center sm:justify-between">
             
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
-                Photo Gallery
-                <span class="text-sm font-normal text-gray-500 dark:text-gray-400 ml-2">
-                    ({{ $images->total() }} {{ Str::plural('photo', $images->total()) }})
-                </span>
-            </h2>
+            <div>
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    Photo Gallery
+                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400 ml-2">
+                        ({{ $images->total() }} {{ Str::plural('photo', $images->total()) }})
+                    </span>
+                </h2>
+                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                    Upload inspiration images to influence logo generation with their color palettes
+                </p>
+            </div>
 
         </div>
     </div>
