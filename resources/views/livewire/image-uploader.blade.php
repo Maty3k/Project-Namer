@@ -172,9 +172,9 @@
             <div class="flex justify-end">
                 <flux:button type="submit"
                             variant="primary"
-                            disabled="{{ $isUploading || empty($title) }}">
+                            :disabled="$isUploading || !trim($title)">
                     <span wire:loading.remove wire:target="uploadImages">
-                        @if(empty($title))
+                        @if(empty(trim($title)))
                             Enter a title to upload
                         @else
                             Upload {{ count($images) }} {{ Str::plural('Image', count($images)) }}
