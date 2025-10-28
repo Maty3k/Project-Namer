@@ -124,8 +124,8 @@ Route::middleware('api')->group(function (): void {
         });
     });
 
-    // Image Upload API Routes
-    Route::prefix('projects')->middleware(['auth'])->group(function (): void {
+    // Image Upload API Routes - uses web middleware for session auth from Livewire
+    Route::prefix('projects')->middleware(['web', 'auth'])->group(function (): void {
         // Upload images to project
         Route::post('{project}/images', [ImageUploadController::class, 'store'])
             ->middleware('throttle:30,1') // 30 uploads per minute

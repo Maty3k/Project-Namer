@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Enums\ColorScheme;
+use App\Models\ProjectImage;
 use InvalidArgumentException;
 
 /**
@@ -203,5 +204,167 @@ final class ColorPaletteService
     public function colorSchemeExists(string $colorScheme): bool
     {
         return ColorScheme::exists($colorScheme);
+    }
+
+    /**
+     * Get color palette description from project images for logo generation.
+     *
+     * Returns a string describing the dominant colors found in the project's images.
+     */
+    public function getColorPaletteFromImages(int $projectId): ?string
+    {
+        // Get all completed images with dominant colors
+        $images = ProjectImage::query()
+            ->where('project_id', $projectId)
+            ->where('processing_status', 'completed')
+            ->whereNotNull('dominant_colors')
+            ->get();
+
+        if ($images->isEmpty()) {
+            return null;
+        }
+
+        // Collect all colors from all images
+        $allColors = [];
+        foreach ($images as $image) {
+            if (is_array($image->dominant_colors)) {
+                $allColors = array_merge($allColors, $image->dominant_colors);
+            }
+        }
+
+        if (empty($allColors)) {
+            return null;
+        }
+
+        // Get unique colors (remove duplicates or very similar colors)
+        $uniqueColors = $this->deduplicateColors($allColors);
+
+        // Limit to top 3-5 most prominent colors
+        $topColors = array_slice($uniqueColors, 0, min(5, count($uniqueColors)));
+
+        // Convert hex colors to descriptive color names
+        $colorDescriptions = [];
+        foreach ($topColors as $hex) {
+            $colorName = $this->getColorName($hex);
+            $colorDescriptions[] = "{$colorName} ({$hex})";
+        }
+
+        // Format as a descriptive string for DALL-E
+        $colorList = implode(', ', $colorDescriptions);
+
+        return "IMPORTANT: Use this color palette inspired by the user's uploaded inspiration images: {$colorList}. The logo MUST incorporate or complement these specific colors to match the visual inspiration provided.";
+    }
+
+    /**
+     * Remove duplicate or very similar colors.
+     *
+     * @param array<string> $colors
+     * @return array<string>
+     */
+    protected function deduplicateColors(array $colors): array
+    {
+        $unique = [];
+
+        foreach ($colors as $color) {
+            $isDuplicate = false;
+
+            foreach ($unique as $existingColor) {
+                if ($this->colorsAreSimilar($color, $existingColor)) {
+                    $isDuplicate = true;
+                    break;
+                }
+            }
+
+            if (! $isDuplicate) {
+                $unique[] = $color;
+            }
+        }
+
+        return $unique;
+    }
+
+    /**
+     * Check if two colors are similar (within threshold).
+     */
+    protected function colorsAreSimilar(string $color1, string $color2, int $threshold = 30): bool
+    {
+        $rgb1 = $this->hexToRgb($color1);
+        $rgb2 = $this->hexToRgb($color2);
+
+        $distance = sqrt(
+            pow($rgb1['r'] - $rgb2['r'], 2) +
+            pow($rgb1['g'] - $rgb2['g'], 2) +
+            pow($rgb1['b'] - $rgb2['b'], 2)
+        );
+
+        return $distance < $threshold;
+    }
+
+    /**
+     * Convert hex color to RGB array.
+     *
+     * @return array{r: int, g: int, b: int}
+     */
+    protected function hexToRgb(string $hex): array
+    {
+        $hex = ltrim($hex, '#');
+
+        return [
+            'r' => hexdec(substr($hex, 0, 2)),
+            'g' => hexdec(substr($hex, 2, 2)),
+            'b' => hexdec(substr($hex, 4, 2)),
+        ];
+    }
+
+    /**
+     * Get descriptive color name from hex value.
+     */
+    protected function getColorName(string $hex): string
+    {
+        $rgb = $this->hexToRgb($hex);
+
+        $r = $rgb['r'];
+        $g = $rgb['g'];
+        $b = $rgb['b'];
+
+        // Check for grayscale first
+        if (abs($r - $g) < 15 && abs($g - $b) < 15) {
+            if ($r < 50) {
+                return 'black';
+            } elseif ($r < 100) {
+                return 'dark gray';
+            } elseif ($r < 180) {
+                return 'gray';
+            } elseif ($r < 230) {
+                return 'light gray';
+            } else {
+                return 'white';
+            }
+        }
+
+        // Determine dominant hue
+        $max = max($r, $g, $b);
+        $min = min($r, $g, $b);
+
+        // Check for specific color regions
+        if ($r > $g && $r > $b) {
+            if ($g > $b) {
+                return $r > 200 && $g < 100 ? 'red' : 'orange';
+            } else {
+                return $b > 100 ? 'purple' : 'red';
+            }
+        } elseif ($g > $r && $g > $b) {
+            if ($r > $b) {
+                return $r > 150 ? 'yellow' : 'green';
+            } else {
+                return $b > 100 ? 'teal' : 'green';
+            }
+        } else { // Blue dominant
+            if ($r > $g) {
+                return 'purple';
+            } else {
+                return $g > 100 ? 'cyan' : 'blue';
+            }
+        }
     }
 }
