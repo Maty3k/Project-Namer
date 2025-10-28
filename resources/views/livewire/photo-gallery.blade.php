@@ -28,10 +28,12 @@
         </div>
     </div>
 
-    <!-- Upload Section (always visible) -->
-    <div class="mb-4">
-        @livewire('image-uploader', ['project' => $project], key('uploader-'.$project->id))
-    </div>
+    <!-- Upload Section (only visible when no images exist) -->
+    @if($images->total() === 0)
+        <div class="mb-4">
+            @livewire('image-uploader', ['project' => $project], key('uploader-'.$project->id))
+        </div>
+    @endif
 
     <!-- Photo Display (Single Large Image) -->
     <div class="bg-white dark:bg-gray-900 rounded-lg overflow-hidden">
@@ -61,16 +63,6 @@
                                  alt="{{ $image->title ?? $image->original_filename }}"
                                  class="w-full h-auto object-contain transition-transform duration-200 group-hover:scale-105"
                                  loading="eager">
-                        @endif
-
-                        <!-- Processing Status Badge -->
-                        @if($image->processing_status !== 'completed')
-                            <div class="absolute top-4 right-4">
-                                <span class="px-3 py-2 text-sm font-medium rounded-full
-                                           {{ $image->processing_status === 'processing' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800' }}">
-                                    {{ ucfirst($image->processing_status) }}
-                                </span>
-                            </div>
                         @endif
 
                         <!-- Video/GIF Indicator -->
