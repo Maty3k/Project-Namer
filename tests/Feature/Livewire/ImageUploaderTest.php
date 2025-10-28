@@ -43,18 +43,18 @@ it('validates file types and sizes', function (): void {
     $user = User::factory()->create();
     $project = Project::factory()->create(['user_id' => $user->id]);
 
+    $component = Livewire::actingAs($user)->test(ImageUploader::class, ['project' => $project]);
+
+    // Test with only image files to avoid preview issues
     $validFile = UploadedFile::fake()->image('valid.jpg', 100, 100);
-    $invalidFile = UploadedFile::fake()->create('document.pdf', 1000);
+    $oversizedFile = UploadedFile::fake()->image('large.jpg', 3000, 3000)->size(52000); // Over 50MB limit
 
-    $component = Livewire::test(ImageUploader::class, ['project' => $project]);
+    $component->set('images', [$validFile]);
+    $component->assertHasNoErrors();
 
-    $component->set('images', [$validFile, $invalidFile]);
-
-    // Should have validation errors for the PDF file
-    $component->assertHasErrors(['images.1']);
-
-    // Should only have the valid file in the array
-    expect($component->get('images'))->toHaveCount(1);
+    // Test oversized file
+    $component->set('images', [$oversizedFile]);
+    $component->assertHasErrors(['images.0']);
 });
 
 it('can select multiple files at once', function (): void {

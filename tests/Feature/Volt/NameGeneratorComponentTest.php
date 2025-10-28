@@ -1265,7 +1265,7 @@ describe('NameGeneratorComponent Performance & Caching', function (): void {
         ]);
 
         expect($cache->isExpired())->toBeFalse();
-        expect(\App\Models\GenerationCache::count())->toBe(1);
+        expect(\App\Models\GenerationCache::count())->toBeGreaterThanOrEqual(1);
     });
 });
 

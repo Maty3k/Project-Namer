@@ -628,14 +628,26 @@ new class extends Component {
             'businessDescription.min' => 'Please provide a more detailed business description (at least 10 characters).',
         ]);
 
-        // Validate that the selected name is in the generated names
-        if (!in_array($selectedName, $this->generatedNames)) {
+        // Validate that the selected name exists in either generatedNames or domainResults
+        $allNames = array_merge(
+            $this->generatedNames,
+            array_column($this->domainResults, 'name')
+        );
+
+        if (!in_array($selectedName, $allNames)) {
             $this->errorMessage = 'Invalid business name selected.';
             return;
         }
 
         $this->isGeneratingLogos = true;
         $this->errorMessage = '';
+
+        // Log for debugging
+        \Log::info('Generate logos called', [
+            'selectedName' => $selectedName,
+            'businessDescription' => $this->businessDescription,
+            'sessionId' => $this->sessionId,
+        ]);
 
         try {
             // Create logo generation request

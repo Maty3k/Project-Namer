@@ -243,18 +243,18 @@ Route::middleware('api')->group(function (): void {
         ->middleware(['auth'])
         ->name('api.keyboard-shortcuts');
 
-    // Suggestion domains API endpoint - uses auth middleware for API authentication
+    // Suggestion domains API endpoint - uses web + auth middleware for session-based authentication
     Route::get('suggestions/{suggestion}/domains', [SuggestionDomainsController::class, 'show'])
-        ->middleware(['auth'])
+        ->middleware(['web', 'auth'])
         ->name('api.suggestions.domains');
 
-    // Domain checking API endpoint - uses auth middleware for API authentication
+    // Domain checking API endpoint - uses web + auth middleware for session-based authentication
     Route::post('suggestions/{suggestion}/check-domains', [DomainCheckController::class, 'check'])
-        ->middleware(['auth'])
+        ->middleware(['web', 'auth'])
         ->name('api.suggestions.check-domains');
 
-    // Logo Generation API Routes - uses auth middleware for API authentication
-    Route::prefix('logos')->middleware(['auth'])->group(function (): void {
+    // Logo Generation API Routes - uses web + auth middleware for session-based authentication
+    Route::prefix('logos')->middleware(['web', 'auth'])->group(function (): void {
         // Generate logos for a business idea
         Route::post('generate', [LogoGenerationController::class, 'generate'])
             ->middleware('throttle:10,1') // 10 requests per minute

@@ -21,7 +21,7 @@
                     </span>
                 </h2>
                 <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                    Upload inspiration images to influence logo generation with their color palettes
+                    <span class="font-medium">Optional:</span> Upload an inspiration image to influence logo generation with its color palette. Everything works without it, but adding one provides more detailed, personalized results.
                 </p>
             </div>
 
@@ -33,17 +33,13 @@
         @livewire('image-uploader', ['project' => $project], key('uploader-'.$project->id))
     </div>
 
-    <!-- Photo Grid (Phone Gallery Style) -->
+    <!-- Photo Display (Single Large Image) -->
     <div class="bg-white dark:bg-gray-900 rounded-lg overflow-hidden">
         @if($images->count() > 0)
-            <!-- Grid View -->
-            <div class="grid grid-cols-3 gap-0.5
-                        sm:grid-cols-4 sm:gap-1
-                        md:grid-cols-5
-                        lg:grid-cols-6
-                        xl:grid-cols-8">
+            <!-- Large Single Image View -->
+            <div class="p-4">
                 @foreach($images as $index => $image)
-                    <div class="relative aspect-square overflow-hidden cursor-pointer group"
+                    <div class="relative max-w-3xl mx-auto overflow-hidden rounded-lg cursor-pointer group"
                          @click="openViewer({{ $index }})"
                          wire:key="image-{{ $image->uuid }}"
                          data-image-index="{{ $index }}"
@@ -53,33 +49,33 @@
                          data-description="{{ $image->description ?? '' }}"
                          data-size="{{ number_format($image->file_size / 1024, 0) }} KB"
                          data-date="{{ $image->created_at->format('M j, Y') }}">
-                        
-                        <!-- Thumbnail -->
+
+                        <!-- Image -->
                         @if($image->thumbnail_path)
-                            <img src="{{ Storage::url($image->thumbnail_path) }}" 
+                            <img src="{{ Storage::url($image->file_path) }}"
                                  alt="{{ $image->title ?? $image->original_filename }}"
-                                 class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-110"
-                                 loading="lazy">
+                                 class="w-full h-auto object-contain transition-transform duration-200 group-hover:scale-105"
+                                 loading="eager">
                         @else
-                            <img src="{{ Storage::url($image->file_path) }}" 
+                            <img src="{{ Storage::url($image->file_path) }}"
                                  alt="{{ $image->title ?? $image->original_filename }}"
-                                 class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-110"
-                                 loading="lazy">
+                                 class="w-full h-auto object-contain transition-transform duration-200 group-hover:scale-105"
+                                 loading="eager">
                         @endif
 
                         <!-- Selection Checkbox (appears on hover) -->
-                        <div class="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <input type="checkbox" 
+                        <div class="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <input type="checkbox"
                                    wire:model="selectedImages"
                                    value="{{ $image->uuid }}"
                                    @click.stop
-                                   class="w-5 h-5 rounded border-2 border-white shadow-sm">
+                                   class="w-6 h-6 rounded border-2 border-white shadow-sm">
                         </div>
 
                         <!-- Processing Status Badge -->
                         @if($image->processing_status !== 'completed')
-                            <div class="absolute bottom-2 right-2">
-                                <span class="px-2 py-1 text-xs font-medium rounded-full 
+                            <div class="absolute top-4 right-4">
+                                <span class="px-3 py-2 text-sm font-medium rounded-full
                                            {{ $image->processing_status === 'processing' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800' }}">
                                     {{ ucfirst($image->processing_status) }}
                                 </span>
@@ -88,12 +84,15 @@
 
                         <!-- Video/GIF Indicator -->
                         @if(Str::contains($image->mime_type, 'video') || $image->mime_type === 'image/gif')
-                            <div class="absolute bottom-2 left-2">
-                                <svg class="w-6 h-6 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
+                            <div class="absolute bottom-4 left-4">
+                                <svg class="w-8 h-8 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path>
                                 </svg>
                             </div>
                         @endif
+
+                        <!-- Hover Overlay with Info -->
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 pointer-events-none"></div>
                     </div>
                 @endforeach
             </div>

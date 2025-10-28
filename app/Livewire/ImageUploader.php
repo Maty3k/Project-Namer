@@ -39,14 +39,14 @@ class ImageUploader extends Component
     protected function rules(): array
     {
         return [
-            'images' => ['required', 'array', 'min:1', 'max:20'],
+            'images' => ['required', 'array', 'min:1', 'max:1'],
             'images.*' => [
                 'file',
                 'image',
                 'mimes:jpeg,jpg,png,webp,gif',
                 'max:51200', // 50MB
             ],
-            'newFiles' => ['nullable', 'array', 'max:20'],
+            'newFiles' => ['nullable', 'array', 'max:1'],
             'newFiles.*' => [
                 'file',
                 'image',
@@ -111,6 +111,14 @@ class ImageUploader extends Component
 
     public function uploadImages(): void
     {
+        // Check if project already has an image
+        $existingImageCount = \App\Models\ProjectImage::where('project_id', $this->project->id)->count();
+        if ($existingImageCount >= 1) {
+            $this->addError('images', 'This project already has an inspiration image. Please delete the existing one before uploading a new one.');
+
+            return;
+        }
+
         $this->validate();
 
         if (empty($this->images)) {

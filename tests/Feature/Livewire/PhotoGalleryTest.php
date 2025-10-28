@@ -67,8 +67,8 @@ test('renders in grid view mode only', function (): void {
     // Component should render successfully without viewMode property
     $component->assertStatus(200);
 
-    // Should see grid layout (aspect-square class indicates grid view)
-    $component->assertSee('aspect-square', false);
+    // Should see large single image view (max-w-3xl class indicates centered large display)
+    $component->assertSee('max-w-3xl', false);
 });
 
 test('can select and deselect images', function (): void {
