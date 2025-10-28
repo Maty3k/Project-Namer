@@ -63,15 +63,6 @@
                                  loading="eager">
                         @endif
 
-                        <!-- Selection Checkbox (appears on hover) -->
-                        <div class="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <input type="checkbox"
-                                   wire:model="selectedImages"
-                                   value="{{ $image->uuid }}"
-                                   @click.stop
-                                   class="w-6 h-6 rounded border-2 border-white shadow-sm">
-                        </div>
-
                         <!-- Processing Status Badge -->
                         @if($image->processing_status !== 'completed')
                             <div class="absolute top-4 right-4">
@@ -190,29 +181,6 @@
             </template>
         </div>
     </div>
-
-    <!-- Bulk Actions Bar -->
-    @if($showBulkActions)
-        <div class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 p-4 z-40">
-            <div class="max-w-7xl mx-auto flex items-center justify-between">
-                <span class="text-sm text-gray-600 dark:text-gray-400">
-                    {{ count($selectedImages) }} {{ Str::plural('photo', count($selectedImages)) }} selected
-                </span>
-                <div class="flex items-center space-x-2">
-                    <button wire:click="clearSelection()" 
-                            class="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
-                        Cancel
-                    </button>
-                    <button wire:click="$set('bulkAction', 'delete')" 
-                            wire:confirm="Are you sure you want to delete {{ count($selectedImages) }} images?"
-                            wire:click="performBulkAction"
-                            class="px-3 py-1.5 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700">
-                        Delete
-                    </button>
-                </div>
-            </div>
-        </div>
-    @endif
 </div>
 
 @push('scripts')
