@@ -54,25 +54,6 @@
                 @endforeach
             </div>
 
-            {{-- Reset Button --}}
-            <div class="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-gray-700">
-                <div>
-                    <h4 class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                        Reset to Defaults
-                    </h4>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        Reset all shortcuts to their default configuration
-                    </p>
-                </div>
-                <flux:button
-                    variant="danger"
-                    wire:click="resetAllShortcuts"
-                    wire:confirm="Are you sure you want to reset all keyboard shortcuts to defaults?"
-                >
-                    Reset All
-                </flux:button>
-            </div>
-
             {{-- Help Text --}}
             <div class="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
                 <p class="text-sm text-blue-900 dark:text-blue-100">
