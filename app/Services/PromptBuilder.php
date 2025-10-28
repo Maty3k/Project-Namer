@@ -35,11 +35,12 @@ final class PromptBuilder
         string $businessIdea,
         string $model,
         int $count,
-        string $mode
+        string $mode,
+        ?string $imageContext = null
     ): array {
         return [
             'system' => $this->buildSystemPrompt($model, $count, $mode),
-            'user' => $this->buildUserPrompt($businessIdea, $model, $mode),
+            'user' => $this->buildUserPrompt($businessIdea, $model, $mode, $imageContext),
         ];
     }
 
@@ -52,7 +53,8 @@ final class PromptBuilder
         string $businessIdea,
         string $model,
         int $count,
-        string $mode
+        string $mode,
+        ?string $imageContext = null
     ): array {
         // Get model suffix and mode slug
         $modelSuffix = self::MODEL_SUFFIX_MAP[$model] ?? 'gpt4';
@@ -70,7 +72,7 @@ final class PromptBuilder
 
         return [
             'system' => $this->buildSystemPrompt($model, $count, $mode),
-            'user' => $this->buildUserPrompt($businessIdea, $model, $mode),
+            'user' => $this->buildUserPrompt($businessIdea, $model, $mode, $imageContext),
             'config' => $promptData,
         ];
     }
@@ -106,7 +108,7 @@ final class PromptBuilder
     /**
      * Build user prompt with the business concept and contextual guidance.
      */
-    public function buildUserPrompt(string $businessIdea, string $model, string $mode): string
+    public function buildUserPrompt(string $businessIdea, string $model, string $mode, ?string $imageContext = null): string
     {
         // Analyze business type for better context
         $businessType = 'General Business';
@@ -137,12 +139,19 @@ final class PromptBuilder
         $promptData = $this->promptLoader->loadWithCache('name-generation-user');
 
         // Interpolate variables
-        return $this->promptLoader->interpolate($promptData->promptText, [
+        $userPrompt = $this->promptLoader->interpolate($promptData->promptText, [
             'businessIdea' => $businessIdea,
             'businessType' => $businessType,
             'audience' => $audience,
             'examples' => $examples,
         ]);
+
+        // Inject image context if available
+        if ($imageContext) {
+            $userPrompt .= "\n\n".$imageContext;
+        }
+
+        return $userPrompt;
     }
 
     /**

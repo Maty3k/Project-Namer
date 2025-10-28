@@ -474,8 +474,11 @@ final readonly class AIGenerationService
         int $count,
         array $customParams
     ): array {
+        // Extract image context from custom params if available
+        $imageContext = $customParams['image_context'] ?? null;
+
         // Load prompts and configuration from markdown
-        $result = $this->promptBuilder->buildWithConfig($businessIdea, $model, $count, $mode, $deepThinking);
+        $result = $this->promptBuilder->buildWithConfig($businessIdea, $model, $count, $mode, $imageContext);
         $config = $result['config'];
 
         // Get temperature from markdown config or custom params
@@ -544,7 +547,7 @@ final readonly class AIGenerationService
         }
 
         // Load config from markdown to get temperature
-        $result = $this->promptBuilder->buildWithConfig('', $model, 10, $mode, $deepThinking);
+        $result = $this->promptBuilder->buildWithConfig('', $model, 10, $mode, null);
         $config = $result['config'];
 
         return $deepThinking && $config->deepThinkingTemperature !== null
@@ -564,7 +567,7 @@ final readonly class AIGenerationService
         }
 
         // Load config from markdown to get max_tokens
-        $result = $this->promptBuilder->buildWithConfig('', $model, 10, $mode, false);
+        $result = $this->promptBuilder->buildWithConfig('', $model, 10, $mode, null);
         $config = $result['config'];
 
         return $config->maxTokens ?? 200;
