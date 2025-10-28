@@ -410,6 +410,28 @@ class PhotoGallery extends Component
     public function refreshGallery(): void
     {
         $this->resetPage();
+
+        // Poll for completed images every 2 seconds for up to 30 seconds
+        $this->dispatch('poll-for-completed-images');
+    }
+
+    /**
+     * Check if there are any pending images and refresh if completed.
+     * Returns true if there are still pending images (continue polling).
+     * Returns false if all images are completed (stop polling).
+     */
+    public function checkPendingImages(): bool
+    {
+        $hasPending = ProjectImage::where('project_id', $this->project->id)
+            ->whereIn('processing_status', ['pending', 'processing'])
+            ->exists();
+
+        // If no pending images, stop polling by dispatching event
+        if (! $hasPending) {
+            $this->dispatch('all-images-processed');
+        }
+
+        return $hasPending;
     }
 
     /**
