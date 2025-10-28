@@ -55,7 +55,7 @@ class ImageUploader extends Component
                 'mimes:jpeg,jpg,png,webp,gif',
                 'max:51200', // 50MB
             ],
-            'title' => ['nullable', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
             'tags' => ['nullable', 'array', 'max:10'],
             'tags.*' => ['string', 'max:50'],

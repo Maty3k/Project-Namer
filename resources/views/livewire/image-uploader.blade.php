@@ -150,9 +150,10 @@
         @if(count($images) > 0)
             <div class="space-y-4">
                 <flux:field>
-                    <flux:label>Title (Optional)</flux:label>
-                    <flux:input wire:model.live="title" 
-                               placeholder="Enter a title for these images" />
+                    <flux:label>Title <span class="text-red-500">*</span></flux:label>
+                    <flux:input wire:model.live="title"
+                               placeholder="Enter a title that describes your inspiration (e.g., 'River inspiration', 'Mountain theme')"
+                               required />
                     <flux:error name="title" />
                 </flux:field>
 
