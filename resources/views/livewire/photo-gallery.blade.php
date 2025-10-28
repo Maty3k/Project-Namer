@@ -65,6 +65,33 @@
                                  loading="eager">
                         @endif
 
+                        <!-- Processing Status Overlay -->
+                        @if($image->processing_status === 'pending' || $image->processing_status === 'processing')
+                            <div class="absolute inset-0 bg-black/50 flex items-center justify-center">
+                                <div class="text-center">
+                                    <div class="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent mx-auto mb-3"></div>
+                                    <p class="text-white font-medium">Processing image for inspiration...</p>
+                                    <p class="text-white/80 text-sm mt-1">This may take a few moments</p>
+                                </div>
+                            </div>
+                        @elseif($image->processing_status === 'completed')
+                            <!-- Success indicator that fades out -->
+                            <div class="absolute top-4 right-4" x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" x-transition>
+                                <div class="bg-green-500 text-white px-3 py-2 rounded-full shadow-lg flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <span class="text-sm font-medium">Ready!</span>
+                                </div>
+                            </div>
+                        @elseif($image->processing_status === 'failed')
+                            <div class="absolute top-4 right-4">
+                                <div class="bg-red-500 text-white px-3 py-2 rounded-full shadow-lg">
+                                    <span class="text-sm font-medium">Processing Failed</span>
+                                </div>
+                            </div>
+                        @endif
+
                         <!-- Video/GIF Indicator -->
                         @if(Str::contains($image->mime_type, 'video') || $image->mime_type === 'image/gif')
                             <div class="absolute bottom-4 left-4">
