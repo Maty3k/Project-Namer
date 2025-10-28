@@ -22,9 +22,7 @@ class ImageUploader extends Component
     /** @var array<TemporaryUploadedFile> */
     public array $newFiles = [];
 
-    public string $title = '';
-
-    public string $description = '';
+    public string $inspiration = '';
 
     /** @var array<string> */
     public array $tags = [];
@@ -55,8 +53,7 @@ class ImageUploader extends Component
                 'mimes:jpeg,jpg,png,webp,gif',
                 'max:51200', // 50MB
             ],
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:1000'],
+            'inspiration' => ['nullable', 'string', 'max:1000'],
             'tags' => ['nullable', 'array', 'max:10'],
             'tags.*' => ['string', 'max:50'],
             'isPublic' => ['boolean'],
@@ -126,41 +123,71 @@ class ImageUploader extends Component
         $this->uploadProgress = 'Preparing upload...';
 
         try {
-            // Upload images via API
-            $http = \Illuminate\Support\Facades\Http::asForm();
+            // Process images directly without HTTP API call
+            $uploadedImages = [];
 
-            foreach ($this->images as $index => $file) {
-                $http->attach("images[{$index}]", $file->getRealPath(), $file->getClientOriginalName());
-            }
-
-            $response = $http->post(route('api.projects.images.store', $this->project), [
-                'title' => $this->title,
-                'description' => $this->description,
-                'tags' => array_filter($this->tags),
-                'is_public' => $this->isPublic,
-            ]);
-
-            if ($response->successful()) {
-                $this->uploadProgress = 'Upload completed successfully!';
-                $this->reset(['images', 'title', 'description', 'tags', 'isPublic']);
-
-                // Emit event to refresh gallery
-                $this->dispatch('images-uploaded');
-
-                // Show success notification
-                $this->dispatch('notify',
-                    message: 'Images uploaded successfully! Processing in background.',
-                    type: 'success'
+            foreach ($this->images as $file) {
+                // Store the original file
+                $uuid = \Illuminate\Support\Str::uuid()->toString();
+                $extension = $file->getClientOriginalExtension();
+                $storedFilename = "{$uuid}.{$extension}";
+                $filePath = $file->storeAs(
+                    "projects/{$this->project->id}/images/originals",
+                    $storedFilename,
+                    'public'
                 );
 
-            } else {
-                $this->uploadProgress = 'Upload failed. Please try again.';
-                $this->addError('upload', 'Failed to upload images. Please check file sizes and formats.');
+                // Create the database record
+                $image = \App\Models\ProjectImage::create([
+                    'uuid' => $uuid,
+                    'project_id' => $this->project->id,
+                    'user_id' => auth()->id(),
+                    'original_filename' => $file->getClientOriginalName(),
+                    'stored_filename' => $storedFilename,
+                    'file_path' => $filePath,
+                    'file_size' => $file->getSize(),
+                    'mime_type' => $file->getMimeType(),
+                    'width' => null,
+                    'height' => null,
+                    'title' => $this->inspiration ?: null,
+                    'description' => $this->inspiration ?: null,
+                    'tags' => array_filter($this->tags) ?: null,
+                    'processing_status' => 'pending',
+                    'is_public' => $this->isPublic,
+                ]);
+
+                // Dispatch job for background processing
+                dispatch(new \App\Jobs\ProcessUploadedImageJob($image));
+
+                $uploadedImages[] = $image;
             }
 
-        } catch (\Exception) {
+            // Update project counters
+            $this->project->increment('total_images', count($uploadedImages));
+            $totalSize = collect($this->images)->sum(fn ($file) => $file->getSize());
+            $this->project->increment('storage_used_bytes', $totalSize);
+
+            $this->uploadProgress = 'Upload completed successfully!';
+            $this->reset(['images', 'inspiration', 'tags', 'isPublic']);
+
+            // Emit event to refresh gallery
+            $this->dispatch('images-uploaded');
+
+            // Show success notification
+            $this->dispatch('notify',
+                message: 'Images uploaded successfully! Processing in background.',
+                type: 'success'
+            );
+
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Image upload exception', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'project_id' => $this->project->id,
+            ]);
+
             $this->uploadProgress = 'Upload failed. Please try again.';
-            $this->addError('upload', 'An error occurred during upload. Please try again.');
+            $this->addError('upload', 'An error occurred during upload: ' . $e->getMessage());
         }
 
         $this->isUploading = false;

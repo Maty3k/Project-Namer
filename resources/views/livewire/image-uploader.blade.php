@@ -146,25 +146,18 @@
             </div>
         @endif
 
-        <!-- Metadata Fields -->
+        <!-- Inspiration Field -->
         @if(count($images) > 0)
-            <div class="space-y-4">
-                <flux:field>
-                    <flux:label>Title <span class="text-red-500">*</span></flux:label>
-                    <flux:input wire:model.live="title"
-                               placeholder="Enter a title that describes your inspiration (e.g., 'River inspiration', 'Mountain theme')"
-                               required />
-                    <flux:error name="title" />
-                </flux:field>
-
-                <flux:field>
-                    <flux:label>Description (Optional)</flux:label>
-                    <flux:textarea wire:model.live="description"
-                                  rows="3"
-                                  placeholder="Describe what these images represent for your project" />
-                    <flux:error name="description" />
-                </flux:field>
-            </div>
+            <flux:field>
+                <flux:label>Inspiration (Optional)</flux:label>
+                <flux:textarea wire:model.live="inspiration"
+                              rows="3"
+                              placeholder="Describe the inspiration for these images (e.g., 'River theme', 'Mountain landscape', 'Modern minimalist')" />
+                <flux:description>
+                    This will help guide the AI in generating names that match your visual inspiration.
+                </flux:description>
+                <flux:error name="inspiration" />
+            </flux:field>
         @endif
 
         <!-- Upload Button -->
@@ -172,13 +165,9 @@
             <div class="flex justify-end">
                 <flux:button type="submit"
                             variant="primary"
-                            :disabled="$isUploading || !trim($title)">
+                            :disabled="$isUploading">
                     <span wire:loading.remove wire:target="uploadImages">
-                        @if(empty(trim($title)))
-                            Enter a title to upload
-                        @else
-                            Upload {{ count($images) }} {{ Str::plural('Image', count($images)) }}
-                        @endif
+                        Upload {{ count($images) }} {{ Str::plural('Image', count($images)) }}
                     </span>
                     <span wire:loading wire:target="uploadImages">
                         {{ $uploadProgress ?: 'Uploading...' }}
