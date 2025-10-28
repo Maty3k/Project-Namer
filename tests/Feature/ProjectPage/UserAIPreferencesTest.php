@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Models\UserAIPreferences;
 use Livewire\Livewire;
 
-test('user can save AI preferences', function () {
+test('user can save AI preferences', function (): void {
     $user = User::factory()->create();
     $project = Project::factory()->create(['user_id' => $user->id]);
 
@@ -28,7 +28,7 @@ test('user can save AI preferences', function () {
     expect($preferences->default_deep_thinking)->toBeTrue();
 });
 
-test('saved preferences are loaded when user visits new project', function () {
+test('saved preferences are loaded when user visits new project', function (): void {
     $user = User::factory()->create();
 
     // Save preferences first
@@ -53,7 +53,7 @@ test('saved preferences are loaded when user visits new project', function () {
     expect($component->enableModelComparison)->toBeTrue();
 });
 
-test('preferences persist across multiple projects', function () {
+test('preferences persist across multiple projects', function (): void {
     $user = User::factory()->create();
 
     // Save preferences on first project
@@ -75,7 +75,7 @@ test('preferences persist across multiple projects', function () {
     expect($component->generationMode)->toBe('brandable');
 });
 
-test('updating preferences overwrites previous preferences', function () {
+test('updating preferences overwrites previous preferences', function (): void {
     $user = User::factory()->create();
     $project = Project::factory()->create(['user_id' => $user->id]);
 
@@ -101,7 +101,7 @@ test('updating preferences overwrites previous preferences', function () {
     expect($preferences->default_deep_thinking)->toBeTrue();
 });
 
-test('user without saved preferences starts with empty selections', function () {
+test('user without saved preferences starts with empty selections', function (): void {
     $user = User::factory()->create();
     $project = Project::factory()->create(['user_id' => $user->id]);
 

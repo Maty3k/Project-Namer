@@ -904,7 +904,6 @@ class ProjectPage extends Component
         $aiGeneration->update(['execution_metadata' => $metadata]);
     }
 
-
     /**
      * Regenerate names for selected suggestions.
      */

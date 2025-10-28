@@ -261,7 +261,7 @@ final class ColorPaletteService
     /**
      * Remove duplicate or very similar colors.
      *
-     * @param array<string> $colors
+     * @param  array<string>  $colors
      * @return array<string>
      */
     protected function deduplicateColors(array $colors): array
@@ -295,9 +295,9 @@ final class ColorPaletteService
         $rgb2 = $this->hexToRgb($color2);
 
         $distance = sqrt(
-            pow($rgb1['r'] - $rgb2['r'], 2) +
-            pow($rgb1['g'] - $rgb2['g'], 2) +
-            pow($rgb1['b'] - $rgb2['b'], 2)
+            ($rgb1['r'] - $rgb2['r']) ** 2 +
+            ($rgb1['g'] - $rgb2['g']) ** 2 +
+            ($rgb1['b'] - $rgb2['b']) ** 2
         );
 
         return $distance < $threshold;

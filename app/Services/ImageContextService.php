@@ -27,8 +27,7 @@ final class ImageContextService
         $images = ProjectImage::query()
             ->where('project_id', $projectId)
             ->where('processing_status', 'completed')
-            ->whereNotNull('title')
-            ->orderBy('created_at', 'desc')
+            ->whereNotNull('title')->latest()
             ->get(['title', 'description']);
 
         if ($images->isEmpty()) {

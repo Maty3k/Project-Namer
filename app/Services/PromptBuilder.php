@@ -11,7 +11,7 @@ namespace App\Services;
  * Supports multiple generation modes (creative, professional, brandable, tech-focused)
  * and intelligent business type detection for contextually relevant prompts.
  */
-final class PromptBuilder
+final readonly class PromptBuilder
 {
     /**
      * Map model IDs to prompt file suffixes.
@@ -26,6 +26,7 @@ final class PromptBuilder
     public function __construct(
         private PromptLoaderService $promptLoader
     ) {}
+
     /**
      * Build complete prompt with system and user components.
      *

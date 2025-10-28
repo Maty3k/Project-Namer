@@ -155,7 +155,7 @@ class LogoGenerations extends Component
         }
 
         $this->dispatch('show-toast', [
-            'message' => "Successfully deleted {$generationCount} generation".($generationCount !== 1 ? 's' : '')." ({$totalCount} logo".($totalCount !== 1 ? 's' : '').")",
+            'message' => "Successfully deleted {$generationCount} generation".($generationCount !== 1 ? 's' : '')." ({$totalCount} logo".($totalCount !== 1 ? 's' : '').')',
             'type' => 'success',
         ]);
 

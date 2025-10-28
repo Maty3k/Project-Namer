@@ -5,8 +5,8 @@ declare(strict_types=1);
 use App\Services\PromptData;
 use Prism\Prism\Enums\Provider;
 
-describe('PromptData DTO', function () {
-    test('it creates PromptData with required fields only', function () {
+describe('PromptData DTO', function (): void {
+    test('it creates PromptData with required fields only', function (): void {
         $promptData = new PromptData(
             provider: Provider::OpenAI,
             model: 'gpt-4o',
@@ -23,7 +23,7 @@ describe('PromptData DTO', function () {
             ->and($promptData->clientOptions)->toBe([]);
     });
 
-    test('it creates PromptData with all optional fields', function () {
+    test('it creates PromptData with all optional fields', function (): void {
         $promptData = new PromptData(
             provider: Provider::Anthropic,
             model: 'claude-3-5-sonnet-20241022',
@@ -45,7 +45,7 @@ describe('PromptData DTO', function () {
             ->and($promptData->clientOptions)->toBe(['extra' => 'option']);
     });
 
-    test('it provides readonly properties', function () {
+    test('it provides readonly properties', function (): void {
         $promptData = new PromptData(
             provider: Provider::Gemini,
             model: 'gemini-1.5-pro',
@@ -56,7 +56,7 @@ describe('PromptData DTO', function () {
         expect($reflection->isReadOnly())->toBeTrue();
     });
 
-    test('it exports to array for serialization', function () {
+    test('it exports to array for serialization', function (): void {
         $promptData = new PromptData(
             provider: Provider::XAI,
             model: 'grok-beta',
@@ -75,7 +75,7 @@ describe('PromptData DTO', function () {
             ->and($array['maxTokens'])->toBe(150);
     });
 
-    test('it creates from array (named constructor)', function () {
+    test('it creates from array (named constructor)', function (): void {
         $data = [
             'provider' => 'openai',
             'model' => 'gpt-4o',

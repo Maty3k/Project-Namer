@@ -56,9 +56,7 @@ describe('Logo Generations Search', function (): void {
 
         Livewire::test(LogoGenerations::class)
             ->set('search', '')
-            ->assertViewHas('logoGenerations', function ($logoGenerations): bool {
-                return $logoGenerations->count() === 3;
-            });
+            ->assertViewHas('logoGenerations', fn ($logoGenerations): bool => $logoGenerations->count() === 3);
     });
 
     test('it shows no results when search matches nothing', function (): void {
@@ -94,10 +92,8 @@ describe('Logo Generations Filters', function (): void {
         ]);
 
         Livewire::test(LogoGenerations::class)
-            ->assertViewHas('logoGenerations', function ($logoGenerations) use ($newest, $middle, $oldest): bool {
-                return $logoGenerations->first()->id === $newest->id
-                    && $logoGenerations->last()->id === $oldest->id;
-            });
+            ->assertViewHas('logoGenerations', fn ($logoGenerations): bool => $logoGenerations->first()->id === $newest->id
+                && $logoGenerations->last()->id === $oldest->id);
     });
 
     test('it filters by newest when filter is set to newest', function (): void {
@@ -115,10 +111,8 @@ describe('Logo Generations Filters', function (): void {
 
         Livewire::test(LogoGenerations::class)
             ->set('filterBy', 'newest')
-            ->assertViewHas('logoGenerations', function ($logoGenerations) use ($newest, $oldest): bool {
-                return $logoGenerations->first()->id === $newest->id
-                    && $logoGenerations->last()->id === $oldest->id;
-            });
+            ->assertViewHas('logoGenerations', fn ($logoGenerations): bool => $logoGenerations->first()->id === $newest->id
+                && $logoGenerations->last()->id === $oldest->id);
     });
 
     test('it filters by oldest when filter is set to oldest', function (): void {
@@ -136,10 +130,8 @@ describe('Logo Generations Filters', function (): void {
 
         Livewire::test(LogoGenerations::class)
             ->set('filterBy', 'oldest')
-            ->assertViewHas('logoGenerations', function ($logoGenerations) use ($newest, $oldest): bool {
-                return $logoGenerations->first()->id === $oldest->id
-                    && $logoGenerations->last()->id === $newest->id;
-            });
+            ->assertViewHas('logoGenerations', fn ($logoGenerations): bool => $logoGenerations->first()->id === $oldest->id
+                && $logoGenerations->last()->id === $newest->id);
     });
 
     test('it filters alphabetically when filter is set to alphabetical', function (): void {
@@ -180,11 +172,10 @@ describe('Logo Generations Filters', function (): void {
 
         Livewire::test(LogoGenerations::class)
             ->set('filterBy', 'favorited')
-            ->assertViewHas('logoGenerations', function ($logoGenerations) use ($saved, $notSaved): bool {
+            ->assertViewHas('logoGenerations', fn ($logoGenerations): bool =>
                 // Favorited should come first
-                return $logoGenerations->first()->id === $saved->id
-                    && $logoGenerations->last()->id === $notSaved->id;
-            });
+                $logoGenerations->first()->id === $saved->id
+                && $logoGenerations->last()->id === $notSaved->id);
     });
 });
 
@@ -240,10 +231,9 @@ describe('Combined Search and Filters', function (): void {
             ->assertSee('Tech Solutions')
             ->assertSee('Tech Corp')
             ->assertDontSee('Design Studio')
-            ->assertViewHas('logoGenerations', function ($logoGenerations): bool {
+            ->assertViewHas('logoGenerations', fn ($logoGenerations): bool =>
                 // Favorited "Tech Solutions" should be first
-                return $logoGenerations->first()->business_name === 'Tech Solutions';
-            });
+                $logoGenerations->first()->business_name === 'Tech Solutions');
     });
 });
 

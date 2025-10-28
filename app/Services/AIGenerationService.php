@@ -9,7 +9,6 @@ use App\Models\GenerationSession;
 use Exception;
 use Illuminate\Support\Sleep;
 use InvalidArgumentException;
-use Prism\Prism\Enums\Provider;
 use Prism\Prism\Prism;
 
 /**

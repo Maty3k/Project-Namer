@@ -40,7 +40,6 @@ final class PromptLoaderService
      * Load a prompt file and parse its contents.
      *
      * @param  string  $promptName  Prompt filename without .md extension
-     * @return PromptData
      *
      * @throws PromptNotFoundException
      * @throws InvalidPromptException
@@ -62,15 +61,12 @@ final class PromptLoaderService
      * Load a prompt file with caching.
      *
      * @param  string  $promptName  Prompt filename without .md extension
-     * @return PromptData
      */
     public function loadWithCache(string $promptName): PromptData
     {
         $cacheKey = $this->getCacheKey($promptName);
 
-        return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($promptName) {
-            return $this->load($promptName);
-        });
+        return Cache::remember($cacheKey, self::CACHE_TTL, fn () => $this->load($promptName));
     }
 
     /**
@@ -97,7 +93,7 @@ final class PromptLoaderService
             ->filter(fn ($file) => $file->getExtension() === 'md')
             ->map(fn ($file) => $file->getFilenameWithoutExtension())
             ->values()
-            ->toArray();
+            ->all();
     }
 
     /**
@@ -159,7 +155,7 @@ final class PromptLoaderService
 
         try {
             $frontmatter = Yaml::parse($yamlContent);
-        } catch (ParseException $e) {
+        } catch (ParseException) {
             throw new InvalidPromptException("Invalid YAML frontmatter in: {$promptName}");
         }
 
@@ -193,7 +189,7 @@ final class PromptLoaderService
         // Load the config source file
         try {
             $configData = $this->loadWithCache($configSourceName);
-        } catch (PromptNotFoundException $e) {
+        } catch (PromptNotFoundException) {
             throw new PromptNotFoundException("Config source file not found: {$configSource} referenced in {$promptName}");
         }
 
@@ -240,7 +236,7 @@ final class PromptLoaderService
         // Parse provider enum
         try {
             $provider = Provider::from($frontmatter['provider']);
-        } catch (\ValueError $e) {
+        } catch (\ValueError) {
             $validProviders = implode(', ', array_map(fn ($p) => $p->value, Provider::cases()));
             throw new InvalidPromptException(
                 "Invalid provider '{$frontmatter['provider']}'. Must be one of: {$validProviders}"

@@ -60,7 +60,6 @@ class NameResultCard extends Component
         $this->expanded = ! $this->expanded;
     }
 
-
     /**
      * Select this name suggestion for the project.
      */
@@ -210,7 +209,6 @@ class NameResultCard extends Component
         // Dispatch completion event for tests and other listeners
         $this->dispatch('domain-check-complete', id: $this->suggestion->id);
     }
-
 
     /**
      * Refresh domain data when polling.

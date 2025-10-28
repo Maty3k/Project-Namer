@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Prism\Prism\Enums\Provider;
 use Prism\Prism\Prism;
 
 class OpenAILogoService
@@ -229,12 +228,10 @@ class OpenAILogoService
             ->get();
 
         // Build logos array for NameSuggestion
-        $logosData = $completedLogos->map(function (GeneratedLogo $logo) {
-            return [
-                'style' => $logo->style,
-                'url' => $logo->url,
-            ];
-        })->toArray();
+        $logosData = $completedLogos->map(fn (GeneratedLogo $logo) => [
+            'style' => $logo->style,
+            'url' => $logo->url,
+        ])->all();
 
         // Update NameSuggestion with logos data
         $nameSuggestion->update(['logos' => $logosData]);

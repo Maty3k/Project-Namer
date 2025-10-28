@@ -89,7 +89,6 @@ final class NameSuggestion extends Model
         return $this->belongsTo(Project::class);
     }
 
-
     /**
      * Scope a query to only include AI-generated suggestions.
      *

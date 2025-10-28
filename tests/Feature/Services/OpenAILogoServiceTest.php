@@ -80,7 +80,6 @@ describe('Logo Persistence to NameSuggestion', function (): void {
         $service = app(OpenAILogoService::class);
         $reflection = new ReflectionClass($service);
         $method = $reflection->getMethod('updateNameSuggestionWithLogos');
-        $method->setAccessible(true);
         $method->invoke($service, $logoGeneration);
 
         // Verify NameSuggestion was updated
@@ -140,7 +139,6 @@ describe('Logo Persistence to NameSuggestion', function (): void {
         $service = app(OpenAILogoService::class);
         $reflection = new ReflectionClass($service);
         $method = $reflection->getMethod('updateNameSuggestionWithLogos');
-        $method->setAccessible(true);
         $method->invoke($service, $logoGeneration);
 
         // Verify only completed logos are included
@@ -169,7 +167,6 @@ describe('Logo Persistence to NameSuggestion', function (): void {
         $service = app(OpenAILogoService::class);
         $reflection = new ReflectionClass($service);
         $method = $reflection->getMethod('updateNameSuggestionWithLogos');
-        $method->setAccessible(true);
         $method->invoke($service, $logoGeneration);
     });
 
@@ -196,16 +193,13 @@ describe('Logo Persistence to NameSuggestion', function (): void {
 
         Log::shouldReceive('info')
             ->once()
-            ->with('Updated NameSuggestion with logos', \Mockery::on(function ($context) use ($nameSuggestion) {
-                return $context['name_suggestion_id'] === $nameSuggestion->id
-                    && $context['business_name'] === 'LogTest'
-                    && $context['logos_count'] === 1;
-            }));
+            ->with('Updated NameSuggestion with logos', \Mockery::on(fn ($context) => $context['name_suggestion_id'] === $nameSuggestion->id
+                && $context['business_name'] === 'LogTest'
+                && $context['logos_count'] === 1));
 
         $service = app(OpenAILogoService::class);
         $reflection = new ReflectionClass($service);
         $method = $reflection->getMethod('updateNameSuggestionWithLogos');
-        $method->setAccessible(true);
         $method->invoke($service, $logoGeneration);
     });
 
@@ -242,7 +236,6 @@ describe('Logo Persistence to NameSuggestion', function (): void {
         $service = app(OpenAILogoService::class);
         $reflection = new ReflectionClass($service);
         $method = $reflection->getMethod('updateNameSuggestionWithLogos');
-        $method->setAccessible(true);
         $method->invoke($service, $logoGeneration);
 
         // Only the first suggestion should be updated (first() query)
@@ -282,7 +275,6 @@ describe('Logo URL Generation', function (): void {
         $service = app(OpenAILogoService::class);
         $reflection = new ReflectionClass($service);
         $method = $reflection->getMethod('updateNameSuggestionWithLogos');
-        $method->setAccessible(true);
         $method->invoke($service, $logoGeneration);
 
         $nameSuggestion->refresh();

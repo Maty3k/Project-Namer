@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\DataTransferObjects\PromptData;
 use App\Models\ProjectImage;
 use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Prism\Prism\Enums\Provider;
 use Prism\Prism\Prism;
 use Prism\Prism\ValueObjects\Media\Image;
 
@@ -19,6 +17,7 @@ class VisionAnalysisService
     public function __construct(
         protected PromptLoaderService $promptLoader
     ) {}
+
     /**
      * Analyze image using OpenAI Vision API via Prism with markdown config.
      *

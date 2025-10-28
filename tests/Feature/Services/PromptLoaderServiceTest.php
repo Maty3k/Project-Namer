@@ -10,7 +10,7 @@ use Prism\Prism\Enums\Provider;
 
 uses()->group('unit');
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Clear cache before each test
     Cache::flush();
 
@@ -18,8 +18,8 @@ beforeEach(function () {
     $this->promptLoader = new PromptLoaderService(base_path('tests/fixtures/prompts'));
 });
 
-describe('PromptLoaderService Basic Loading', function () {
-    test('it loads valid prompt markdown file with complete frontmatter', function () {
+describe('PromptLoaderService Basic Loading', function (): void {
+    test('it loads valid prompt markdown file with complete frontmatter', function (): void {
         $promptData = $this->promptLoader->load('test-valid-prompt');
 
         expect($promptData->provider)->toBe(Provider::OpenAI)
@@ -31,7 +31,7 @@ describe('PromptLoaderService Basic Loading', function () {
             ->and($promptData->promptText)->toContain('This is a test prompt');
     });
 
-    test('it loads minimal prompt with only required fields', function () {
+    test('it loads minimal prompt with only required fields', function (): void {
         $promptData = $this->promptLoader->load('test-minimal-prompt');
 
         expect($promptData->provider)->toBe(Provider::Anthropic)
@@ -41,7 +41,7 @@ describe('PromptLoaderService Basic Loading', function () {
             ->and($promptData->promptText)->toContain('Minimal prompt');
     });
 
-    test('it extracts prompt text without frontmatter delimiters', function () {
+    test('it extracts prompt text without frontmatter delimiters', function (): void {
         $promptData = $this->promptLoader->load('test-valid-prompt');
 
         expect($promptData->promptText)->not->toContain('---')
@@ -49,7 +49,7 @@ describe('PromptLoaderService Basic Loading', function () {
             ->and($promptData->promptText)->not->toContain('model:');
     });
 
-    test('it maps provider string to Provider enum', function () {
+    test('it maps provider string to Provider enum', function (): void {
         $promptData = $this->promptLoader->load('test-valid-prompt');
 
         expect($promptData->provider)->toBeInstanceOf(Provider::class)
@@ -57,19 +57,17 @@ describe('PromptLoaderService Basic Loading', function () {
     });
 });
 
-describe('PromptLoaderService Caching', function () {
-    test('it caches loaded prompts for 1 hour', function () {
+describe('PromptLoaderService Caching', function (): void {
+    test('it caches loaded prompts for 1 hour', function (): void {
         Cache::shouldReceive('remember')
             ->once()
-            ->withArgs(function ($key, $ttl, $callback) {
-                return str_contains($key, 'test-valid-prompt') && $ttl === 3600;
-            })
+            ->withArgs(fn ($key, $ttl, $callback) => str_contains($key, 'test-valid-prompt') && $ttl === 3600)
             ->andReturn($this->promptLoader->load('test-valid-prompt'));
 
         $this->promptLoader->loadWithCache('test-valid-prompt');
     });
 
-    test('it returns cached prompt on subsequent loads', function () {
+    test('it returns cached prompt on subsequent loads', function (): void {
         // First load - should hit file system
         $first = $this->promptLoader->loadWithCache('test-valid-prompt');
 
@@ -79,7 +77,7 @@ describe('PromptLoaderService Caching', function () {
         expect($first->promptText)->toBe($second->promptText);
     });
 
-    test('it clears cache for specific prompt', function () {
+    test('it clears cache for specific prompt', function (): void {
         // Load and cache
         $this->promptLoader->loadWithCache('test-valid-prompt');
 
@@ -92,30 +90,30 @@ describe('PromptLoaderService Caching', function () {
     });
 });
 
-describe('PromptLoaderService Error Handling', function () {
-    test('it throws PromptNotFoundException when file does not exist', function () {
+describe('PromptLoaderService Error Handling', function (): void {
+    test('it throws PromptNotFoundException when file does not exist', function (): void {
         $this->promptLoader->load('non-existent-file');
     })->throws(PromptNotFoundException::class, 'Prompt file not found');
 
-    test('it throws InvalidPromptException when YAML is malformed', function () {
+    test('it throws InvalidPromptException when YAML is malformed', function (): void {
         $this->promptLoader->load('test-invalid-yaml');
     })->throws(InvalidPromptException::class, 'Invalid YAML frontmatter');
 
-    test('it throws InvalidPromptException when provider field is missing', function () {
+    test('it throws InvalidPromptException when provider field is missing', function (): void {
         $this->promptLoader->load('test-missing-provider');
     })->throws(InvalidPromptException::class, 'Missing required field \'provider\'');
 
-    test('it throws InvalidPromptException when model field is missing', function () {
+    test('it throws InvalidPromptException when model field is missing', function (): void {
         $this->promptLoader->load('test-missing-model');
     })->throws(InvalidPromptException::class, 'Missing required field \'model\'');
 
-    test('it throws InvalidPromptException when provider value is invalid', function () {
+    test('it throws InvalidPromptException when provider value is invalid', function (): void {
         $this->promptLoader->load('test-invalid-provider');
     })->throws(InvalidPromptException::class);
 });
 
-describe('PromptLoaderService Config Source Resolution', function () {
-    test('it loads user prompt with config_source and resolves config from system prompt', function () {
+describe('PromptLoaderService Config Source Resolution', function (): void {
+    test('it loads user prompt with config_source and resolves config from system prompt', function (): void {
         $promptData = $this->promptLoader->load('test-user-prompt-with-config-source');
 
         // Should use config from test-system-prompt.md
@@ -127,15 +125,15 @@ describe('PromptLoaderService Config Source Resolution', function () {
             ->and($promptData->promptText)->toContain('Business concept: {$businessIdea}');
     });
 
-    test('it throws PromptNotFoundException when config_source file does not exist', function () {
+    test('it throws PromptNotFoundException when config_source file does not exist', function (): void {
         $this->promptLoader->load('test-config-source-not-found');
     })->throws(PromptNotFoundException::class, 'Config source file not found');
 
-    test('it throws InvalidPromptException when config_source references itself', function () {
+    test('it throws InvalidPromptException when config_source references itself', function (): void {
         $this->promptLoader->load('test-config-source-self-reference');
     })->throws(InvalidPromptException::class, 'Config source cannot reference itself');
 
-    test('it caches both user and system prompts separately', function () {
+    test('it caches both user and system prompts separately', function (): void {
         // Load user prompt (which references system prompt)
         $this->promptLoader->loadWithCache('test-user-prompt-with-config-source');
 
@@ -148,8 +146,8 @@ describe('PromptLoaderService Config Source Resolution', function () {
     });
 });
 
-describe('PromptLoaderService Interpolation', function () {
-    test('it interpolates single variable in prompt text', function () {
+describe('PromptLoaderService Interpolation', function (): void {
+    test('it interpolates single variable in prompt text', function (): void {
         $promptData = $this->promptLoader->load('test-interpolation');
 
         $interpolated = $this->promptLoader->interpolate($promptData->promptText, [
@@ -160,7 +158,7 @@ describe('PromptLoaderService Interpolation', function () {
             ->and($interpolated)->not->toContain('{$businessName}');
     });
 
-    test('it interpolates multiple variables in prompt text', function () {
+    test('it interpolates multiple variables in prompt text', function (): void {
         $promptData = $this->promptLoader->load('test-interpolation');
 
         $interpolated = $this->promptLoader->interpolate($promptData->promptText, [
@@ -175,7 +173,7 @@ describe('PromptLoaderService Interpolation', function () {
             ->and($interpolated)->not->toContain('{$');
     });
 
-    test('it handles missing variables gracefully (leaves placeholder)', function () {
+    test('it handles missing variables gracefully (leaves placeholder)', function (): void {
         $promptData = $this->promptLoader->load('test-interpolation');
 
         $interpolated = $this->promptLoader->interpolate($promptData->promptText, [
@@ -187,7 +185,7 @@ describe('PromptLoaderService Interpolation', function () {
             ->and($interpolated)->toContain('{$businessDescription}'); // Still present
     });
 
-    test('it handles empty variable values', function () {
+    test('it handles empty variable values', function (): void {
         $promptData = $this->promptLoader->load('test-interpolation');
 
         $interpolated = $this->promptLoader->interpolate($promptData->promptText, [
@@ -201,7 +199,7 @@ describe('PromptLoaderService Interpolation', function () {
             ->and($interpolated)->toContain('that .'); // Empty description
     });
 
-    test('it handles numeric variable values', function () {
+    test('it handles numeric variable values', function (): void {
         $template = 'Generate {$count} names for {$businessName}';
 
         $interpolated = $this->promptLoader->interpolate($template, [
@@ -213,36 +211,36 @@ describe('PromptLoaderService Interpolation', function () {
     });
 });
 
-describe('PromptLoaderService Validation', function () {
-    test('it validates temperature is float', function () {
+describe('PromptLoaderService Validation', function (): void {
+    test('it validates temperature is float', function (): void {
         // This is implicitly tested by successful loading of test-valid-prompt
         $promptData = $this->promptLoader->load('test-valid-prompt');
 
         expect($promptData->temperature)->toBeFloat();
     });
 
-    test('it validates max_tokens is integer', function () {
+    test('it validates max_tokens is integer', function (): void {
         $promptData = $this->promptLoader->load('test-valid-prompt');
 
         expect($promptData->maxTokens)->toBeInt();
     });
 
-    test('it handles optional deep_thinking_temperature field', function () {
+    test('it handles optional deep_thinking_temperature field', function (): void {
         $promptData = $this->promptLoader->load('test-valid-prompt');
 
         expect($promptData->deepThinkingTemperature)->toBe(0.3)
             ->and($promptData->deepThinkingTemperature)->toBeFloat();
     });
 
-    test('it handles optional description field', function () {
+    test('it handles optional description field', function (): void {
         $promptData = $this->promptLoader->load('test-valid-prompt');
 
         expect($promptData->description)->toBe('Test prompt with all fields');
     });
 });
 
-describe('PromptLoaderService Directory Operations', function () {
-    test('it returns all available prompts in directory', function () {
+describe('PromptLoaderService Directory Operations', function (): void {
+    test('it returns all available prompts in directory', function (): void {
         $prompts = $this->promptLoader->getAllPrompts();
 
         expect($prompts)->toBeArray()

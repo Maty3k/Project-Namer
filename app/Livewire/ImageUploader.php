@@ -187,7 +187,7 @@ class ImageUploader extends Component
             ]);
 
             $this->uploadProgress = 'Upload failed. Please try again.';
-            $this->addError('upload', 'An error occurred during upload: ' . $e->getMessage());
+            $this->addError('upload', 'An error occurred during upload: '.$e->getMessage());
         }
 
         $this->isUploading = false;
