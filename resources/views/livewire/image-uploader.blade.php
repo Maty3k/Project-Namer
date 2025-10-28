@@ -170,11 +170,15 @@
         <!-- Upload Button -->
         @if(count($images) > 0)
             <div class="flex justify-end">
-                <flux:button type="submit" 
+                <flux:button type="submit"
                             variant="primary"
-                            :disabled="$isUploading">
+                            disabled="{{ $isUploading || empty($title) }}">
                     <span wire:loading.remove wire:target="uploadImages">
-                        Upload {{ count($images) }} {{ Str::plural('Image', count($images)) }}
+                        @if(empty($title))
+                            Enter a title to upload
+                        @else
+                            Upload {{ count($images) }} {{ Str::plural('Image', count($images)) }}
+                        @endif
                     </span>
                     <span wire:loading wire:target="uploadImages">
                         {{ $uploadProgress ?: 'Uploading...' }}
