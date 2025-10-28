@@ -224,9 +224,27 @@
                 </div>
             </div>
         @endif
-        <!-- Photo Gallery Section - Only shown before name generation -->
+
+        <!-- Optional Tools Section Header -->
         @if($this->filteredSuggestions->isEmpty())
             <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <div class="mb-6">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                        <svg class="w-5 h-5 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                        </svg>
+                        Optional Tools
+                    </h2>
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                        Enhance your results with these optional features — everything works great without them
+                    </p>
+                </div>
+            </div>
+        @endif
+
+        <!-- Photo Gallery Section - Only shown before name generation -->
+        @if($this->filteredSuggestions->isEmpty())
+            <div class="mt-6">
                 <!-- Embedded Photo Gallery -->
                 @livewire(\App\Livewire\PhotoGallery::class, ['project' => $project], 'gallery-'.$project->id)
             </div>
