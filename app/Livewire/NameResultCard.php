@@ -101,20 +101,24 @@ class NameResultCard extends Component
     {
         $this->authorize('update', $this->suggestion->project);
 
-        $this->suggestion->update(['is_favorited' => ! $this->suggestion->is_favorited]);
+        $wasFavorited = $this->suggestion->is_favorited;
+        $this->suggestion->update(['is_favorited' => ! $wasFavorited]);
 
-        // Refresh the suggestion to get the updated state
-        $this->suggestion->refresh();
+        // Don't refresh the model to avoid Livewire re-rendering the component
+        // The UI will be updated via Alpine.js
 
         // Dispatch event to refresh the sidebar
         $this->dispatch('project-updated');
 
         $this->dispatch('show-toast', [
-            'message' => $this->suggestion->is_favorited
+            'message' => ! $wasFavorited
                 ? "Added '{$this->suggestion->name}' to favorites!"
                 : "Removed '{$this->suggestion->name}' from favorites.",
             'type' => 'success',
         ]);
+
+        // Skip the component render to avoid breaking Alpine.js state
+        $this->skipRender();
     }
 
     /**

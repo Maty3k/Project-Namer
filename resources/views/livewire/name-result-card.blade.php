@@ -16,6 +16,8 @@
        logos: {{ Js::from($suggestion->logos ?? []) }},
        logoGenerationId: null,
        pollInterval: null,
+       // Favorite state
+       isFavorited: {{ $suggestion->is_favorited ? 'true' : 'false' }},
        get availableCount() {
            return Object.values(this.domains || {}).filter(d => d?.available === true).length;
        },
@@ -326,23 +328,21 @@
                 <div class="flex items-center space-x-1 sm:space-x-2">
                     <!-- Favorite Toggle -->
                     <flux:button
-                        wire:click="toggleFavorite"
+                        @click="isFavorited = !isFavorited; $wire.toggleFavorite()"
                         variant="ghost"
                         size="sm"
                         class="group"
-                        wire:loading.attr="disabled"
                     >
-                        @if($suggestion->is_favorited)
-                            <svg class="w-4 h-4 text-yellow-500 dark:text-yellow-400 fill-current group-hover:scale-110 transition-transform duration-200"
-                                 viewBox="0 0 24 24">
-                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                            </svg>
-                        @else
-                            <svg class="w-4 h-4 text-gray-400 dark:text-gray-500 group-hover:text-yellow-500 dark:group-hover:text-yellow-400 group-hover:scale-110 transition-all duration-200"
-                                 fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                            </svg>
-                        @endif
+                        <svg x-show="isFavorited"
+                             class="w-4 h-4 text-yellow-500 dark:text-yellow-400 fill-current group-hover:scale-110 transition-transform duration-200"
+                             viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                        <svg x-show="!isFavorited"
+                             class="w-4 h-4 text-gray-400 dark:text-gray-500 group-hover:text-yellow-500 dark:group-hover:text-yellow-400 group-hover:scale-110 transition-all duration-200"
+                             fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
                     </flux:button>
 
                     <!-- Expand Toggle -->
