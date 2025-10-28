@@ -249,10 +249,13 @@ final class ColorPaletteService
             $colorDescriptions[] = "{$colorName} ({$hex})";
         }
 
-        // Format as a descriptive string for DALL-E
+        // Format as a descriptive string for DALL-E with emphasis on color codes
         $colorList = implode(', ', $colorDescriptions);
 
-        return "IMPORTANT: Use this color palette inspired by the user's uploaded inspiration images: {$colorList}. The logo MUST incorporate or complement these specific colors to match the visual inspiration provided.";
+        // Also create list of just hex codes for precision
+        $hexList = implode(', ', $topColors);
+
+        return "\n\nCRITICAL COLOR REQUIREMENT: Use ONLY these exact colors: {$hexList}. These colors come from the user's uploaded inspiration images: {$colorList}. The logo MUST use these specific hex color values. Do not use any other colors.";
     }
 
     /**

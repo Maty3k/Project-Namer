@@ -156,7 +156,7 @@ describe('Color Palette Service', function (): void {
         $result = $this->service->getColorPaletteFromImages($project->id);
 
         expect($result)->toBeString()
-            ->and($result)->toContain('IMPORTANT: Use this color palette')
+            ->and($result)->toContain('CRITICAL COLOR REQUIREMENT')
             ->and($result)->toContain('green')
             ->and($result)->toContain('blue')
             ->and($result)->toContain('red')
@@ -215,10 +215,11 @@ describe('Color Palette Service', function (): void {
         $result = $this->service->getColorPaletteFromImages($project->id);
 
         // Count occurrences of hex colors in the result
+        // Note: Hex codes appear twice - once in hex list, once in color descriptions
         $hexMatches = [];
         preg_match_all('/#[0-9A-Fa-f]{6}/', $result, $hexMatches);
 
-        expect($hexMatches[0])->toHaveCount(5);
+        expect($hexMatches[0])->toHaveCount(10); // 5 colors x 2 occurrences each
     });
 
     it('ignores pending and failed images', function (): void {
