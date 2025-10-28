@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $project_id
  * @property string $name
+ * @property bool $is_favorited
  * @property array<array-key, mixed>|null $domains
  * @property array<array-key, mixed>|null $logos
  * @property array<array-key, mixed>|null $generation_metadata
@@ -66,6 +67,7 @@ final class NameSuggestion extends Model
     protected $fillable = [
         'project_id',
         'name',
+        'is_favorited',
         'domains',
         'logos',
         'generation_metadata',
@@ -149,6 +151,7 @@ final class NameSuggestion extends Model
     protected function casts(): array
     {
         return [
+            'is_favorited' => 'boolean',
             'domains' => 'array',
             'logos' => 'array',
             'generation_metadata' => 'array',

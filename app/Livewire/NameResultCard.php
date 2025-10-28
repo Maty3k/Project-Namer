@@ -93,6 +93,23 @@ class NameResultCard extends Component
     }
 
     /**
+     * Toggle the favorite status of this name suggestion.
+     */
+    public function toggleFavorite(): void
+    {
+        $this->authorize('update', $this->suggestion->project);
+
+        $this->suggestion->update(['is_favorited' => ! $this->suggestion->is_favorited]);
+
+        $this->dispatch('show-toast', [
+            'message' => $this->suggestion->is_favorited
+                ? "Added '{$this->suggestion->name}' to favorites!"
+                : "Removed '{$this->suggestion->name}' from favorites.",
+            'type' => 'success',
+        ]);
+    }
+
+    /**
      * Request logo generation for this name suggestion.
      */
     public function generateLogos(): void
