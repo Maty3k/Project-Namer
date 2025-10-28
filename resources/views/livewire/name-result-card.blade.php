@@ -681,10 +681,12 @@
                         </summary>
                         <div class="mt-2 pl-5 text-xs text-gray-500 dark:text-gray-400">
                             @foreach($suggestion->generation_metadata as $key => $value)
-                                <div class="flex justify-between">
-                                    <span class="capitalize">{{ str_replace('_', ' ', $key) }}:</span>
-                                    <span>{{ is_array($value) ? json_encode($value) : $value }}</span>
-                                </div>
+                                @if($key !== 'deep_thinking')
+                                    <div class="flex justify-between">
+                                        <span class="capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                        <span>{{ is_array($value) ? json_encode($value) : $value }}</span>
+                                    </div>
+                                @endif
                             @endforeach
                         </div>
                     </details>
