@@ -48,10 +48,11 @@ final class ImageContextService
         $imageCount = $images->count();
         $plural = $imageCount === 1 ? 'image' : 'images';
 
-        $context = "The user has uploaded {$imageCount} inspiration {$plural} for this project:\n";
+        $context = "\n\n=== IMPORTANT VISUAL INSPIRATION ===\n";
+        $context .= "The user has carefully selected {$imageCount} inspiration {$plural} that should STRONGLY influence the name generation:\n\n";
 
         foreach ($images as $image) {
-            $context .= "- {$image->title}";
+            $context .= "• {$image->title}";
 
             if ($image->description) {
                 $context .= ": {$image->description}";
@@ -60,7 +61,9 @@ final class ImageContextService
             $context .= "\n";
         }
 
-        $context .= "\nConsider these visual themes and inspirations when generating names.";
+        $context .= "\nYou MUST incorporate themes, imagery, and concepts from these inspirations into the generated names. ";
+        $context .= "The names should evoke the visual and thematic elements described above. ";
+        $context .= "Make the connection between the inspiration and the names clear and meaningful.";
 
         return $context;
     }
