@@ -191,9 +191,17 @@
                                                 </p>
                                             @endif
 
-                                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-1 transition-opacity duration-300 ease-out delay-300">
-                                                {{ $project->updated_at->format('M j') }}
-                                            </p>
+                                            <div class="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500 mt-1 transition-opacity duration-300 ease-out delay-300">
+                                                <span>{{ $project->updated_at->format('M j') }}</span>
+                                                @if(isset($project->favorited_names_count) && $project->favorited_names_count > 0)
+                                                    <div class="flex items-center gap-1 text-yellow-500 dark:text-yellow-400" title="{{ $project->favorited_names_count }} favorited {{ Str::plural('name', $project->favorited_names_count) }}">
+                                                        <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24">
+                                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                                        </svg>
+                                                        <span>{{ $project->favorited_names_count }}</span>
+                                                    </div>
+                                                @endif
+                                            </div>
                                         </div>
 
                                         @if(!$bulkDeleteMode)
