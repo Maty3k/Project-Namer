@@ -12,8 +12,5 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
-    server: {
-        cors: true,
-    },
     publicDir: false, // Laravel handles public directory
 });

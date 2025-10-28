@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\DataTransferObjects\PromptData;
 use App\Exceptions\LogoGenerationException;
 use App\Models\GeneratedLogo;
 use App\Models\LogoGeneration;

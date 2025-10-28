@@ -1,6 +1,5 @@
 @if($suggestion)
 <div wire:key="name-card-{{ $suggestion->id }}"
-     wire:poll.2s="refreshLogoCount"
      class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-300 ease-out hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-800/50 transform hover:-translate-y-1
             {{ $this->isSelected ? 'ring-2 ring-blue-500 bg-primary-50 dark:bg-primary-900/10 shadow-lg shadow-blue-200/30 dark:shadow-blue-800/30' : 'hover:border-gray-300 dark:hover:border-gray-600' }}
             scale-100 hover:scale-[1.02]
@@ -225,7 +224,7 @@
            }
        },
        init() {
-           // Load existing domains on mount without triggering Livewire
+           // Load existing domains and logos on mount
            (async () => {
                try {
                    const response = await fetch(`/api/suggestions/${this.suggestionId}/domains`, {
@@ -310,14 +309,17 @@
                         </template>
                     </div>
 
-                    @if($this->hasGeneratedLogos)
-                        <span class="flex items-center">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                            {{ $this->totalGeneratedLogosCount }} {{ $this->totalGeneratedLogosCount === 1 ? 'logo' : 'logos' }}
-                        </span>
-                    @endif
+                    <!-- Logo Count - Polling via Alpine.js -->
+                    <div wire:ignore>
+                        <template x-if="hasLogos">
+                            <span class="flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span x-text="(logos?.length || 0) + ' ' + ((logos?.length === 1) ? 'logo' : 'logos')"></span>
+                            </span>
+                        </template>
+                    </div>
                 </div>
 
                 <!-- Action Buttons -->

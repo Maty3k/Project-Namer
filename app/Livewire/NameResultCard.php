@@ -211,42 +211,6 @@ class NameResultCard extends Component
         $this->dispatch('domain-check-complete', id: $this->suggestion->id);
     }
 
-    /**
-     * Refresh logo count when logos are generated.
-     *
-     * This method is polled every 2 seconds to check for logo updates.
-     * It only does work if there's an active logo generation happening.
-     */
-    public function refreshLogoCount(): void
-    {
-        // Check if there's an active logo generation for this name
-        $activeGeneration = \App\Models\LogoGeneration::where('business_name', $this->suggestion->name)
-            ->whereIn('status', ['pending', 'processing'])
-            ->orderBy('created_at', 'desc')
-            ->first();
-
-        if ($activeGeneration) {
-            // There's an active generation, set the flag and refresh the model
-            $this->isGeneratingLogos = true;
-            $this->suggestion->refresh();
-        } else {
-            // Check if there was a recently completed generation
-            $recentGeneration = \App\Models\LogoGeneration::where('business_name', $this->suggestion->name)
-                ->where('status', 'completed')
-                ->where('created_at', '>=', now()->subMinutes(2))
-                ->orderBy('created_at', 'desc')
-                ->first();
-
-            if ($recentGeneration) {
-                // Recently completed, do one final refresh and stop
-                $this->suggestion->refresh();
-                $this->isGeneratingLogos = false;
-            } else {
-                // No active or recent generation
-                $this->isGeneratingLogos = false;
-            }
-        }
-    }
 
     /**
      * Refresh domain data when polling.
