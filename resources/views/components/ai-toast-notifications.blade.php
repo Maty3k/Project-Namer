@@ -154,57 +154,7 @@
                 x-transition:leave-end="opacity-0"
                 class="pointer-events-auto"
             >
-                <!-- Success Toast -->
-                <div x-show="notification.type === 'success'" 
-                     class="bg-white dark:bg-gray-800 border-l-4 border-green-400 rounded-lg shadow-lg p-4">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0">
-                            <template x-if="notification.icon === 'check-circle'">
-                                <flux:icon.check-circle class="size-6 text-green-400" />
-                            </template>
-                            <template x-if="notification.icon === 'check'">
-                                <flux:icon.check class="size-6 text-green-400" />
-                            </template>
-                            <template x-if="!notification.icon || (notification.icon !== 'check-circle' && notification.icon !== 'check')">
-                                <flux:icon.check-circle class="size-6 text-green-400" />
-                            </template>
-                        </div>
-                        <div class="ml-3 flex-1">
-                            <p class="text-sm font-medium text-gray-900 dark:text-white" x-text="notification.title"></p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1" x-text="notification.message"></p>
-                            
-                            <!-- Actions -->
-                            <template x-if="notification.actions && notification.actions.length > 0">
-                                <div class="flex space-x-2 mt-3">
-                                    <template x-for="action in notification.actions" :key="action.label">
-                                        <flux:button 
-                                            size="xs" 
-                                            variant="filled"
-                                            class="bg-green-600 hover:bg-green-700 text-white"
-                                            x-text="action.label"
-                                            @click="
-                                                if (action.action === 'scrollToResults') {
-                                                    document.querySelector('[wire\\\\:key*=suggestion]')?.scrollIntoView({ behavior: 'smooth' });
-                                                }
-                                                removeNotification(notification.id);
-                                            "
-                                        ></flux:button>
-                                    </template>
-                                </div>
-                            </template>
-                        </div>
-                        <div class="ml-4 flex-shrink-0">
-                            <flux:button 
-                                variant="ghost" 
-                                size="xs"
-                                @click="removeNotification(notification.id)"
-                                class="text-gray-400 hover:text-gray-500"
-                            >
-                                <flux:icon.x-mark class="size-4" />
-                            </flux:button>
-                        </div>
-                    </div>
-                </div>
+                <!-- Success Toast - Removed per user request -->
 
                 <!-- Error Toast -->
                 <div x-show="notification.type === 'error'" 
