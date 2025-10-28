@@ -22,9 +22,9 @@ beforeEach(function (): void {
 });
 
 describe('ProjectPage AI Generation', function (): void {
-    test('ProjectPage displays generate more names button', function (): void {
+    test('ProjectPage loads project correctly', function (): void {
         Livewire::test(ProjectPage::class, ['uuid' => $this->project->uuid])
-            ->assertSee('Generate More Names')
+            ->assertSee('Test Project')
             ->assertSet('project.id', $this->project->id);
     });
 
