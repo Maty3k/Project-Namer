@@ -39,7 +39,7 @@ final class PromptBuilder
         ?string $imageContext = null
     ): array {
         return [
-            'system' => $this->buildSystemPrompt($model, $count, $mode),
+            'system' => $this->buildSystemPrompt($model, $count, $mode, $imageContext),
             'user' => $this->buildUserPrompt($businessIdea, $model, $mode, $imageContext),
         ];
     }
@@ -71,7 +71,7 @@ final class PromptBuilder
         $promptData = $this->promptLoader->loadWithCache($promptFileName);
 
         return [
-            'system' => $this->buildSystemPrompt($model, $count, $mode),
+            'system' => $this->buildSystemPrompt($model, $count, $mode, $imageContext),
             'user' => $this->buildUserPrompt($businessIdea, $model, $mode, $imageContext),
             'config' => $promptData,
         ];
@@ -80,7 +80,7 @@ final class PromptBuilder
     /**
      * Build system prompt optimized for the generation mode and model.
      */
-    public function buildSystemPrompt(string $model, int $count, string $mode): string
+    public function buildSystemPrompt(string $model, int $count, string $mode, ?string $imageContext = null): string
     {
         // Get model suffix for filename (e.g., 'gpt-4' -> 'gpt4')
         $modelSuffix = self::MODEL_SUFFIX_MAP[$model] ?? 'gpt4';
@@ -100,9 +100,16 @@ final class PromptBuilder
         $promptData = $this->promptLoader->loadWithCache($promptFileName);
 
         // Interpolate variables
-        return $this->promptLoader->interpolate($promptData->promptText, [
+        $systemPrompt = $this->promptLoader->interpolate($promptData->promptText, [
             'count' => $count,
         ]);
+
+        // Inject image context at the END of system prompt if available (reinforcement)
+        if ($imageContext) {
+            $systemPrompt .= "\n\n".$imageContext;
+        }
+
+        return $systemPrompt;
     }
 
     /**
@@ -146,9 +153,9 @@ final class PromptBuilder
             'examples' => $examples,
         ]);
 
-        // Inject image context if available
+        // Inject image context AT THE BEGINNING if available (highest priority)
         if ($imageContext) {
-            $userPrompt .= "\n\n".$imageContext;
+            $userPrompt = $imageContext."\n\n".$userPrompt;
         }
 
         return $userPrompt;
