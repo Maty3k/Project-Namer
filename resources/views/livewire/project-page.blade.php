@@ -55,11 +55,13 @@
             </div>
         </div>
         
-        <!-- Photo Gallery Section -->
-        <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <!-- Embedded Photo Gallery -->
-            @livewire(\App\Livewire\PhotoGallery::class, ['project' => $project], 'gallery-'.$project->id)
-        </div>
+        <!-- Photo Gallery Section - Only shown before name generation -->
+        @if($this->filteredSuggestions->isEmpty())
+            <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <!-- Embedded Photo Gallery -->
+                @livewire(\App\Livewire\PhotoGallery::class, ['project' => $project], 'gallery-'.$project->id)
+            </div>
+        @endif
 
         <!-- Name Suggestions Section -->
         <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
