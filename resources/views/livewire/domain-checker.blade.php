@@ -1,7 +1,7 @@
 <div>
-    <flux:header class="mb-8">
-        <flux:heading size="xl" class="!mb-8">Domain Checker</flux:heading>
-        <flux:subheading>Quickly check domain availability for your business name ideas</flux:subheading>
+    <flux:header class="mb-8 flex items-center gap-8">
+        <flux:heading size="xl" class="!mb-0">Domain Checker</flux:heading>
+        <flux:subheading class="!mb-0">Quickly check domain availability for your business name ideas</flux:subheading>
     </flux:header>
 
     <div class="max-w-3xl mx-auto">
