@@ -39,7 +39,7 @@ class KeyboardShortcuts extends Component
         $this->shortcuts = $userShortcuts->getMergedShortcuts();
         $this->disabledShortcuts = $userShortcuts->disabled_shortcuts ?? [];
 
-        $this->dispatch('shortcuts-updated');
+        $this->dispatch('shortcuts-updated', disabledShortcuts: $this->disabledShortcuts);
         $this->dispatch('toast', message: 'Shortcut updated');
     }
 
@@ -55,7 +55,7 @@ class KeyboardShortcuts extends Component
         $this->shortcuts = $userShortcuts->getMergedShortcuts();
         $this->disabledShortcuts = [];
 
-        $this->dispatch('shortcuts-updated');
+        $this->dispatch('shortcuts-updated', disabledShortcuts: $this->disabledShortcuts);
         $this->dispatch('toast', message: 'All shortcuts reset to defaults');
     }
 

@@ -43,25 +43,11 @@ function initGlobalKeyboardShortcuts() {
     // Setup Livewire event listener
     const setupLivewireListener = () => {
         if (typeof Livewire !== 'undefined') {
-            Livewire.on('shortcuts-updated', async (data) => {
-                // Fetch fresh data from API to get updated disabled shortcuts
-                try {
-                    const response = await fetch('/api/keyboard-shortcuts', {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest',
-                        },
-                        credentials: 'same-origin',
-                    });
-
-                    if (response.ok) {
-                        const apiData = await response.json();
-                        disabledShortcuts = apiData.disabled_shortcuts || [];
-                        window.__disabledShortcuts = disabledShortcuts; // Update window variable
-                    }
-                } catch (error) {
-                    // Silently fail - keyboard shortcuts will still work with cached data
+            Livewire.on('shortcuts-updated', (event) => {
+                // Update disabled shortcuts immediately from event data
+                if (event && event.disabledShortcuts !== undefined) {
+                    disabledShortcuts = event.disabledShortcuts || [];
+                    window.__disabledShortcuts = disabledShortcuts; // Update window variable
                 }
             });
         }
