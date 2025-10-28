@@ -55,62 +55,6 @@
             </div>
         </div>
         
-        <!-- Photo Gallery Section - Only shown before name generation -->
-        @if($this->filteredSuggestions->isEmpty())
-            <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <!-- Embedded Photo Gallery -->
-                @livewire(\App\Livewire\PhotoGallery::class, ['project' => $project], 'gallery-'.$project->id)
-            </div>
-        @endif
-
-        <!-- Name Suggestions Section -->
-        <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <!-- Section Header -->
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-                <div class="flex-1">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Name Suggestions</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        @if($this->filteredSuggestions->isNotEmpty())
-                            {{ $this->filteredSuggestions->count() }} suggestion{{ $this->filteredSuggestions->count() !== 1 ? 's' : '' }}
-                        @else
-                            No suggestions generated yet
-                        @endif
-                    </p>
-                </div>
-
-                <!-- Generate More Names Button - Removed: Users can only generate once per project -->
-            </div>
-
-            <!-- Name Suggestions List -->
-            <div class="relative">
-            @if($this->filteredSuggestions->isEmpty())
-                <!-- Ready to generate names -->
-                <div class="text-center py-12">
-                    <div class="text-gray-500 dark:text-gray-400">
-                        <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        <h3 class="text-lg font-medium mb-2">Ready to generate names</h3>
-                        <p>Start by describing your project above, and select the style below to start generating AI-powered name suggestions.</p>
-                    </div>
-                </div>
-            @else
-                <!-- Suggestions Table -->
-                <div class="space-y-6">
-                    @foreach($this->filteredSuggestions as $suggestion)
-                        <livewire:name-result-card
-                            :suggestion="$suggestion"
-                            :key="'name-result-v2-' . $suggestion->id"
-                        />
-                    @endforeach
-                </div>
-            @endif
-            </div>
-
-            <!-- Generate More Names Floating Button - Removed: Users can only generate once per project -->
-        </div>
-
-        <!-- AI Generation Controls Modal/Section -->
         @if($showAIControls && $this->filteredSuggestions->isEmpty())
             <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
                 <div class="bg-primary-50 dark:bg-gray-800 rounded-lg p-6">
@@ -280,6 +224,62 @@
                 </div>
             </div>
         @endif
+        <!-- Photo Gallery Section - Only shown before name generation -->
+        @if($this->filteredSuggestions->isEmpty())
+            <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <!-- Embedded Photo Gallery -->
+                @livewire(\App\Livewire\PhotoGallery::class, ['project' => $project], 'gallery-'.$project->id)
+            </div>
+        @endif
+
+        <!-- Name Suggestions Section -->
+        <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <!-- Section Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <div class="flex-1">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Name Suggestions</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        @if($this->filteredSuggestions->isNotEmpty())
+                            {{ $this->filteredSuggestions->count() }} suggestion{{ $this->filteredSuggestions->count() !== 1 ? 's' : '' }}
+                        @else
+                            No suggestions generated yet
+                        @endif
+                    </p>
+                </div>
+
+                <!-- Generate More Names Button - Removed: Users can only generate once per project -->
+            </div>
+
+            <!-- Name Suggestions List -->
+            <div class="relative">
+            @if($this->filteredSuggestions->isEmpty())
+                <!-- Ready to generate names -->
+                <div class="text-center py-12">
+                    <div class="text-gray-500 dark:text-gray-400">
+                        <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <h3 class="text-lg font-medium mb-2">Ready to generate names</h3>
+                        <p>Start by describing your project above, and select the style below to start generating AI-powered name suggestions.</p>
+                    </div>
+                </div>
+            @else
+                <!-- Suggestions Table -->
+                <div class="space-y-6">
+                    @foreach($this->filteredSuggestions as $suggestion)
+                        <livewire:name-result-card
+                            :suggestion="$suggestion"
+                            :key="'name-result-v2-' . $suggestion->id"
+                        />
+                    @endforeach
+                </div>
+            @endif
+            </div>
+
+            <!-- Generate More Names Floating Button - Removed: Users can only generate once per project -->
+        </div>
+
+        <!-- AI Generation Controls Modal/Section -->
 
         <!-- AI Generation Progress -->
         @if($isGeneratingNames)
