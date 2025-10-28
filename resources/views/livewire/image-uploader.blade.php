@@ -149,10 +149,11 @@
         <!-- Inspiration Field -->
         @if(count($images) > 0)
             <flux:field>
-                <flux:label>Inspiration (Optional)</flux:label>
+                <flux:label>Inspiration <span class="text-red-500">*</span></flux:label>
                 <flux:textarea wire:model.live="inspiration"
                               rows="3"
-                              placeholder="Describe the inspiration for these images (e.g., 'River theme', 'Mountain landscape', 'Modern minimalist')" />
+                              placeholder="Describe the inspiration for these images (e.g., 'River theme', 'Mountain landscape', 'Modern minimalist')"
+                              required />
                 <flux:description>
                     This will help guide the AI in generating names that match your visual inspiration.
                 </flux:description>
@@ -165,9 +166,13 @@
             <div class="flex justify-end">
                 <flux:button type="submit"
                             variant="primary"
-                            :disabled="$isUploading">
+                            :disabled="$isUploading || !trim($inspiration)">
                     <span wire:loading.remove wire:target="uploadImages">
-                        Upload {{ count($images) }} {{ Str::plural('Image', count($images)) }}
+                        @if(empty(trim($inspiration)))
+                            Enter inspiration to upload
+                        @else
+                            Upload {{ count($images) }} {{ Str::plural('Image', count($images)) }}
+                        @endif
                     </span>
                     <span wire:loading wire:target="uploadImages">
                         {{ $uploadProgress ?: 'Uploading...' }}
