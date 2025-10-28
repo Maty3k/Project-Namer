@@ -250,9 +250,15 @@
                             </p>
                         </div>
                         <div class="flex-shrink-0">
-                            <svg class="w-6 h-6 text-primary-400 dark:text-primary-500 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                            </svg>
+                            <div class="relative">
+                                <div class="absolute inset-0 bg-primary-400 dark:bg-primary-600 rounded-full blur-md opacity-50 animate-pulse"></div>
+                                <div class="relative w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700
+                                            rounded-full flex items-center justify-center shadow-lg animate-bounce">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
