@@ -55,62 +55,6 @@
             </div>
         </div>
         
-        <!-- Photo Gallery Section - Only shown before name generation -->
-        @if($this->filteredSuggestions->isEmpty())
-            <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <!-- Embedded Photo Gallery -->
-                @livewire(\App\Livewire\PhotoGallery::class, ['project' => $project], 'gallery-'.$project->id)
-            </div>
-        @endif
-
-        <!-- Name Suggestions Section -->
-        <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <!-- Section Header -->
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-                <div class="flex-1">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Name Suggestions</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        @if($this->filteredSuggestions->isNotEmpty())
-                            {{ $this->filteredSuggestions->count() }} suggestion{{ $this->filteredSuggestions->count() !== 1 ? 's' : '' }}
-                        @else
-                            No suggestions generated yet
-                        @endif
-                    </p>
-                </div>
-
-                <!-- Generate More Names Button - Removed: Users can only generate once per project -->
-            </div>
-
-            <!-- Name Suggestions List -->
-            <div class="relative">
-            @if($this->filteredSuggestions->isEmpty())
-                <!-- Ready to generate names -->
-                <div class="text-center py-12">
-                    <div class="text-gray-500 dark:text-gray-400">
-                        <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        <h3 class="text-lg font-medium mb-2">Ready to generate names</h3>
-                        <p>Start by describing your project above, and select the style below to start generating AI-powered name suggestions.</p>
-                    </div>
-                </div>
-            @else
-                <!-- Suggestions Table -->
-                <div class="space-y-6">
-                    @foreach($this->filteredSuggestions as $suggestion)
-                        <livewire:name-result-card
-                            :suggestion="$suggestion"
-                            :key="'name-result-v2-' . $suggestion->id"
-                        />
-                    @endforeach
-                </div>
-            @endif
-            </div>
-
-            <!-- Generate More Names Floating Button - Removed: Users can only generate once per project -->
-        </div>
-
-        <!-- AI Generation Controls Modal/Section -->
         @if($showAIControls && $this->filteredSuggestions->isEmpty())
             <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
                 <div class="bg-primary-50 dark:bg-gray-800 rounded-lg p-6">
@@ -281,6 +225,105 @@
             </div>
         @endif
 
+        <!-- Optional Tools Section Header -->
+        @if($this->filteredSuggestions->isEmpty())
+            <div class="mt-8 pt-8 border-t-2 border-dashed border-gray-300 dark:border-gray-600">
+                <div class="bg-gradient-to-r from-primary-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20
+                            rounded-lg border-2 border-primary-200 dark:border-primary-700 p-6 mb-6">
+                    <div class="flex items-start gap-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-primary-100 dark:bg-primary-800 rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                                Optional Tools
+                                <span class="ml-2 text-sm font-normal bg-primary-600 text-white px-2 py-1 rounded-full">
+                                    Not Required
+                                </span>
+                            </h2>
+                            <p class="text-base text-gray-700 dark:text-gray-300">
+                                Enhance your results with these optional features below. Everything works great without them!
+                            </p>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <div class="relative">
+                                <div class="absolute inset-0 bg-primary-400 dark:bg-primary-600 rounded-full blur-md opacity-50 animate-pulse"></div>
+                                <div class="relative w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700
+                                            rounded-full flex items-center justify-center shadow-lg animate-bounce">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        <!-- Photo Gallery Section - Only shown before name generation -->
+        @if($this->filteredSuggestions->isEmpty())
+            <div class="mt-6">
+                <!-- Embedded Photo Gallery -->
+                @livewire(\App\Livewire\PhotoGallery::class, ['project' => $project], 'gallery-'.$project->id)
+            </div>
+        @endif
+
+        <!-- Name Suggestions Section - Only shown when suggestions exist or generation is in progress -->
+        @if($this->filteredSuggestions->isNotEmpty() || $isGeneratingNames)
+        <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <!-- Section Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <div class="flex-1">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Name Suggestions</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        @if($this->filteredSuggestions->isNotEmpty())
+                            {{ $this->filteredSuggestions->count() }} suggestion{{ $this->filteredSuggestions->count() !== 1 ? 's' : '' }}
+                        @else
+                            Generating suggestions...
+                        @endif
+                    </p>
+                </div>
+
+                <!-- Generate More Names Button - Removed: Users can only generate once per project -->
+            </div>
+
+            <!-- Name Suggestions List -->
+            <div class="relative">
+            @if($this->filteredSuggestions->isEmpty())
+                <!-- Generating placeholder -->
+                <div class="text-center py-12">
+                    <div class="text-gray-500 dark:text-gray-400">
+                        <svg class="w-12 h-12 mx-auto mb-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <h3 class="text-lg font-medium mb-2">Generating names...</h3>
+                        <p>Please wait while we generate AI-powered name suggestions for your project.</p>
+                    </div>
+                </div>
+            @else
+                <!-- Suggestions Table -->
+                <div class="space-y-6">
+                    @foreach($this->filteredSuggestions as $suggestion)
+                        <livewire:name-result-card
+                            :suggestion="$suggestion"
+                            :key="'name-result-v2-' . $suggestion->id"
+                        />
+                    @endforeach
+                </div>
+            @endif
+            </div>
+
+            <!-- Generate More Names Floating Button - Removed: Users can only generate once per project -->
+        </div>
+        @endif
+
+        <!-- AI Generation Controls Modal/Section -->
+
         <!-- AI Generation Progress -->
         @if($isGeneratingNames)
             <div class="mt-6">
@@ -298,8 +341,8 @@
         @endif
 
 
-        <!-- AI Generation History Section -->
-        @if(!empty($aiGenerationHistory))
+        <!-- AI Generation History Section - Only shown when names have been generated -->
+        @if(!empty($aiGenerationHistory) && $this->filteredSuggestions->isNotEmpty())
             <div class="mt-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
