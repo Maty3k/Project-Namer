@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 use App\Enums\ColorScheme;
+use App\Models\Project;
+use App\Models\ProjectImage;
+use App\Models\User;
 use App\Services\ColorPaletteService;
 
 beforeEach(function (): void {
@@ -112,5 +115,146 @@ describe('Color Palette Service', function (): void {
     it('can check if color scheme exists', function (): void {
         expect($this->service->colorSchemeExists('ocean_blue'))->toBeTrue()
             ->and($this->service->colorSchemeExists('invalid_scheme'))->toBeFalse();
+    });
+
+    it('returns null when project has no completed images', function (): void {
+        $user = User::factory()->create();
+        $project = Project::factory()->create(['user_id' => $user->id]);
+
+        $result = $this->service->getColorPaletteFromImages($project->id);
+
+        expect($result)->toBeNull();
+    });
+
+    it('returns null when project images have no dominant colors', function (): void {
+        $user = User::factory()->create();
+        $project = Project::factory()->create(['user_id' => $user->id]);
+
+        ProjectImage::factory()->create([
+            'project_id' => $project->id,
+            'user_id' => $user->id,
+            'processing_status' => 'completed',
+            'dominant_colors' => null,
+        ]);
+
+        $result = $this->service->getColorPaletteFromImages($project->id);
+
+        expect($result)->toBeNull();
+    });
+
+    it('returns color palette description from project images', function (): void {
+        $user = User::factory()->create();
+        $project = Project::factory()->create(['user_id' => $user->id]);
+
+        ProjectImage::factory()->create([
+            'project_id' => $project->id,
+            'user_id' => $user->id,
+            'processing_status' => 'completed',
+            'dominant_colors' => ['#00FF00', '#0000FF', '#FF0000'],
+        ]);
+
+        $result = $this->service->getColorPaletteFromImages($project->id);
+
+        expect($result)->toBeString()
+            ->and($result)->toContain('CRITICAL COLOR REQUIREMENT')
+            ->and($result)->toContain('green')
+            ->and($result)->toContain('blue')
+            ->and($result)->toContain('red')
+            ->and($result)->toContain('#00FF00')
+            ->and($result)->toContain('#0000FF')
+            ->and($result)->toContain('#FF0000');
+    });
+
+    it('deduplicates similar colors from multiple images', function (): void {
+        $user = User::factory()->create();
+        $project = Project::factory()->create(['user_id' => $user->id]);
+
+        // Create two images with similar green colors
+        ProjectImage::factory()->create([
+            'project_id' => $project->id,
+            'user_id' => $user->id,
+            'processing_status' => 'completed',
+            'dominant_colors' => ['#00FF00', '#FF0000'],
+        ]);
+
+        ProjectImage::factory()->create([
+            'project_id' => $project->id,
+            'user_id' => $user->id,
+            'processing_status' => 'completed',
+            'dominant_colors' => ['#00FF10', '#0000FF'],
+        ]);
+
+        $result = $this->service->getColorPaletteFromImages($project->id);
+
+        expect($result)->toBeString()
+            ->and($result)->toContain('green')
+            ->and($result)->toContain('red')
+            ->and($result)->toContain('blue');
+    });
+
+    it('limits color palette to top 5 colors', function (): void {
+        $user = User::factory()->create();
+        $project = Project::factory()->create(['user_id' => $user->id]);
+
+        ProjectImage::factory()->create([
+            'project_id' => $project->id,
+            'user_id' => $user->id,
+            'processing_status' => 'completed',
+            'dominant_colors' => [
+                '#FF0000', // red
+                '#00FF00', // green
+                '#0000FF', // blue
+                '#FFFF00', // yellow
+                '#FF00FF', // purple
+                '#00FFFF', // cyan
+                '#FFA500', // orange
+                '#800080', // purple
+            ],
+        ]);
+
+        $result = $this->service->getColorPaletteFromImages($project->id);
+
+        // Count occurrences of hex colors in the result
+        // Note: Hex codes appear twice - once in hex list, once in color descriptions
+        $hexMatches = [];
+        preg_match_all('/#[0-9A-Fa-f]{6}/', $result, $hexMatches);
+
+        expect($hexMatches[0])->toHaveCount(10); // 5 colors x 2 occurrences each
+    });
+
+    it('ignores pending and failed images', function (): void {
+        $user = User::factory()->create();
+        $project = Project::factory()->create(['user_id' => $user->id]);
+
+        // Pending image
+        ProjectImage::factory()->create([
+            'project_id' => $project->id,
+            'user_id' => $user->id,
+            'processing_status' => 'pending',
+            'dominant_colors' => ['#FF0000'],
+        ]);
+
+        // Failed image
+        ProjectImage::factory()->create([
+            'project_id' => $project->id,
+            'user_id' => $user->id,
+            'processing_status' => 'failed',
+            'dominant_colors' => ['#00FF00'],
+        ]);
+
+        // Completed image
+        ProjectImage::factory()->create([
+            'project_id' => $project->id,
+            'user_id' => $user->id,
+            'processing_status' => 'completed',
+            'dominant_colors' => ['#0000FF'],
+        ]);
+
+        $result = $this->service->getColorPaletteFromImages($project->id);
+
+        expect($result)->toContain('blue')
+            ->and($result)->toContain('#0000FF')
+            ->and($result)->not->toContain('#FF0000')
+            ->and($result)->not->toContain('#00FF00');
     });
 });

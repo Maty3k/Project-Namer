@@ -28,7 +28,8 @@ class OpenAILogoService
     protected const LOGOS_COUNT = 4;
 
     public function __construct(
-        protected PromptLoaderService $promptLoader
+        protected PromptLoaderService $promptLoader,
+        protected ColorPaletteService $colorPaletteService
     ) {}
 
     /**
@@ -73,11 +74,16 @@ class OpenAILogoService
             'status' => 'processing',
         ]);
 
-        // Build the prompt
+        // Get project ID from NameSuggestion
+        $nameSuggestion = NameSuggestion::where('name', $logoGeneration->business_name)->first();
+        $projectId = $nameSuggestion?->project_id;
+
+        // Build the prompt with color palette if available
         $prompt = $this->buildPrompt(
             $logoGeneration->business_name,
             $logoGeneration->business_description ?? '',
-            $promptData
+            $promptData,
+            $projectId
         );
 
         // Save the prompt
@@ -121,19 +127,32 @@ class OpenAILogoService
     protected function buildPrompt(
         string $businessName,
         string $businessDescription,
-        PromptData $promptData
+        PromptData $promptData,
+        ?int $projectId = null
     ): string {
         // Build business description clause
         $businessDescriptionClause = ! empty($businessDescription)
             ? " that {$businessDescription}"
             : '';
 
+        // Get color palette from project images if available
+        $colorPalette = '';
+        if ($projectId) {
+            $colors = $this->colorPaletteService->getColorPaletteFromImages($projectId);
+            if ($colors) {
+                $colorPalette = "\n\n{$colors}";
+            }
+        }
+
         // Interpolate variables in the prompt template
-        return $this->promptLoader->interpolate($promptData->promptText, [
+        $basePrompt = $this->promptLoader->interpolate($promptData->promptText, [
             'businessName' => $businessName,
             'styleDescription' => $promptData->metadata['style_description'] ?? '',
             'businessDescriptionClause' => $businessDescriptionClause,
         ]);
+
+        // Append color palette instruction at the end for emphasis
+        return $basePrompt.$colorPalette;
     }
 
     /**

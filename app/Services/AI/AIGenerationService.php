@@ -32,7 +32,8 @@ class AIGenerationService
 
     public function __construct(
         protected CoreAIGenerationService $coreAIService,
-        protected PromptBuilder $promptBuilder
+        protected PromptBuilder $promptBuilder,
+        protected \App\Services\ImageContextService $imageContextService
     ) {}
 
     /**
@@ -256,6 +257,14 @@ class AIGenerationService
         try {
             $mode = $parameters['mode'] ?? 'creative';
             $deepThinking = $parameters['deep_thinking'] ?? false;
+
+            // Fetch image context for this project
+            $imageContext = $this->imageContextService->getContextForProject($aiGeneration->project_id);
+
+            // Add image context to parameters if it exists
+            if ($imageContext) {
+                $parameters['image_context'] = $imageContext;
+            }
 
             // Use core AIGenerationService to generate names for all models
             $generationResult = $this->coreAIService->generateNamesParallel(

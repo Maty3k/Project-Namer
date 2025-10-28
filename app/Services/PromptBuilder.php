@@ -35,11 +35,12 @@ final class PromptBuilder
         string $businessIdea,
         string $model,
         int $count,
-        string $mode
+        string $mode,
+        ?string $imageContext = null
     ): array {
         return [
-            'system' => $this->buildSystemPrompt($model, $count, $mode),
-            'user' => $this->buildUserPrompt($businessIdea, $model, $mode),
+            'system' => $this->buildSystemPrompt($model, $count, $mode, $imageContext),
+            'user' => $this->buildUserPrompt($businessIdea, $model, $mode, $imageContext),
         ];
     }
 
@@ -52,7 +53,8 @@ final class PromptBuilder
         string $businessIdea,
         string $model,
         int $count,
-        string $mode
+        string $mode,
+        ?string $imageContext = null
     ): array {
         // Get model suffix and mode slug
         $modelSuffix = self::MODEL_SUFFIX_MAP[$model] ?? 'gpt4';
@@ -69,8 +71,8 @@ final class PromptBuilder
         $promptData = $this->promptLoader->loadWithCache($promptFileName);
 
         return [
-            'system' => $this->buildSystemPrompt($model, $count, $mode),
-            'user' => $this->buildUserPrompt($businessIdea, $model, $mode),
+            'system' => $this->buildSystemPrompt($model, $count, $mode, $imageContext),
+            'user' => $this->buildUserPrompt($businessIdea, $model, $mode, $imageContext),
             'config' => $promptData,
         ];
     }
@@ -78,7 +80,7 @@ final class PromptBuilder
     /**
      * Build system prompt optimized for the generation mode and model.
      */
-    public function buildSystemPrompt(string $model, int $count, string $mode): string
+    public function buildSystemPrompt(string $model, int $count, string $mode, ?string $imageContext = null): string
     {
         // Get model suffix for filename (e.g., 'gpt-4' -> 'gpt4')
         $modelSuffix = self::MODEL_SUFFIX_MAP[$model] ?? 'gpt4';
@@ -98,15 +100,22 @@ final class PromptBuilder
         $promptData = $this->promptLoader->loadWithCache($promptFileName);
 
         // Interpolate variables
-        return $this->promptLoader->interpolate($promptData->promptText, [
+        $systemPrompt = $this->promptLoader->interpolate($promptData->promptText, [
             'count' => $count,
         ]);
+
+        // Inject image context at the END of system prompt if available (reinforcement)
+        if ($imageContext) {
+            $systemPrompt .= "\n\n".$imageContext;
+        }
+
+        return $systemPrompt;
     }
 
     /**
      * Build user prompt with the business concept and contextual guidance.
      */
-    public function buildUserPrompt(string $businessIdea, string $model, string $mode): string
+    public function buildUserPrompt(string $businessIdea, string $model, string $mode, ?string $imageContext = null): string
     {
         // Analyze business type for better context
         $businessType = 'General Business';
@@ -137,12 +146,19 @@ final class PromptBuilder
         $promptData = $this->promptLoader->loadWithCache('name-generation-user');
 
         // Interpolate variables
-        return $this->promptLoader->interpolate($promptData->promptText, [
+        $userPrompt = $this->promptLoader->interpolate($promptData->promptText, [
             'businessIdea' => $businessIdea,
             'businessType' => $businessType,
             'audience' => $audience,
             'examples' => $examples,
         ]);
+
+        // Inject image context AT THE BEGINNING if available (highest priority)
+        if ($imageContext) {
+            $userPrompt = $imageContext."\n\n".$userPrompt;
+        }
+
+        return $userPrompt;
     }
 
     /**

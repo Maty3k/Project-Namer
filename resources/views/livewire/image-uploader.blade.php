@@ -146,70 +146,33 @@
             </div>
         @endif
 
-        <!-- Metadata Fields -->
+        <!-- Inspiration Field -->
         @if(count($images) > 0)
-            <div class="space-y-4">
-                <flux:field>
-                    <flux:label>Title (Optional)</flux:label>
-                    <flux:input wire:model.live="title" 
-                               placeholder="Enter a title for these images" />
-                    <flux:error name="title" />
-                </flux:field>
-
-                <flux:field>
-                    <flux:label>Description (Optional)</flux:label>
-                    <flux:textarea wire:model.live="description" 
-                                  rows="3"
-                                  placeholder="Describe what these images represent for your project" />
-                    <flux:error name="description" />
-                </flux:field>
-
-                <!-- Tags -->
-                <flux:field>
-                    <flux:label>Tags (Optional)</flux:label>
-                    <div class="space-y-2">
-                        @foreach($tags as $index => $tag)
-                            <div class="flex gap-2">
-                                <flux:input wire:model.live="tags.{{ $index }}"
-                                           placeholder="Enter tag" 
-                                           class="flex-1" />
-                                <flux:button variant="danger"
-                                            size="sm"
-                                            wire:click="removeTag({{ $index }})"
-                                            type="button">
-                                    Remove
-                                </flux:button>
-                            </div>
-                        @endforeach
-                        
-                        @if(count($tags) < 10)
-                            <flux:button variant="ghost"
-                                        size="sm"
-                                        wire:click="addTag"
-                                        type="button">
-                                + Add Tag
-                            </flux:button>
-                        @endif
-                    </div>
-                </flux:field>
-
-                <!-- Privacy Setting -->
-                <flux:field>
-                    <flux:checkbox wire:model.live="isPublic">
-                        Make images publicly viewable
-                    </flux:checkbox>
-                </flux:field>
-            </div>
+            <flux:field>
+                <flux:label>Inspiration <span class="text-red-500">*</span></flux:label>
+                <flux:textarea wire:model.live="inspiration"
+                              rows="3"
+                              placeholder="Describe the inspiration for these images (e.g., 'River theme', 'Mountain landscape', 'Modern minimalist')"
+                              required />
+                <flux:description>
+                    This will help guide the AI in generating names that match your visual inspiration.
+                </flux:description>
+                <flux:error name="inspiration" />
+            </flux:field>
         @endif
 
         <!-- Upload Button -->
         @if(count($images) > 0)
             <div class="flex justify-end">
-                <flux:button type="submit" 
+                <flux:button type="submit"
                             variant="primary"
-                            :disabled="$isUploading">
+                            :disabled="$isUploading || !trim($inspiration)">
                     <span wire:loading.remove wire:target="uploadImages">
-                        Upload {{ count($images) }} {{ Str::plural('Image', count($images)) }}
+                        @if(empty(trim($inspiration)))
+                            Enter inspiration to upload
+                        @else
+                            Upload {{ count($images) }} {{ Str::plural('Image', count($images)) }}
+                        @endif
                     </span>
                     <span wire:loading wire:target="uploadImages">
                         {{ $uploadProgress ?: 'Uploading...' }}

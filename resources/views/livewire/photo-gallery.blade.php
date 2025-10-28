@@ -1,9 +1,12 @@
-<div class="photo-gallery relative" 
+<div class="photo-gallery relative"
      x-data="photoGalleryComponent()"
      x-init="init()"
      @keydown.escape.window="closeViewer()"
      @keydown.arrow-left.window="previousImage()"
-     @keydown.arrow-right.window="nextImage()">
+     @keydown.arrow-right.window="nextImage()"
+     @if($this->checkPendingImages())
+     wire:poll.2s="checkPendingImages"
+     @endif>
 
     <!-- Gallery Header -->
     <div class="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-4">

@@ -75,9 +75,10 @@ class GenerateNamesWithModelJob implements ShouldQueue
             $mode = $this->parameters['mode'] ?? 'creative';
             $deepThinking = $this->parameters['deep_thinking'] ?? false;
             $count = $this->parameters['count'] ?? 10;
+            $imageContext = $this->parameters['image_context'] ?? null;
 
             // Build prompts and load configuration from markdown
-            $result = $promptBuilder->buildWithConfig($this->prompt, $this->modelId, $count, $mode, $deepThinking);
+            $result = $promptBuilder->buildWithConfig($this->prompt, $this->modelId, $count, $mode, $imageContext);
             $config = $result['config'];
 
             // Get temperature from markdown config

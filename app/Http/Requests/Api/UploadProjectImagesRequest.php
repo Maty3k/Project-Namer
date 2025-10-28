@@ -32,7 +32,7 @@ class UploadProjectImagesRequest extends FormRequest
                 'mimes:jpeg,jpg,png,webp,gif',
                 'max:51200', // 50MB in kilobytes
             ],
-            'title' => ['nullable', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
             'tags' => ['nullable', 'array', 'max:10'],
             'tags.*' => ['string', 'max:50'],
@@ -56,6 +56,7 @@ class UploadProjectImagesRequest extends FormRequest
             'images.*.image' => 'Each file must be a valid image.',
             'images.*.mimes' => 'Images must be in JPEG, PNG, WebP, or GIF format.',
             'images.*.max' => 'Each image must be smaller than 50MB.',
+            'title.required' => 'A title is required for your inspiration image.',
             'tags.max' => 'You can add a maximum of 10 tags.',
             'tags.*.max' => 'Each tag must be 50 characters or less.',
         ];
