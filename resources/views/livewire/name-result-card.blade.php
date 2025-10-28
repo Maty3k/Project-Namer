@@ -643,7 +643,7 @@
                 <template x-if="hasLogos">
                     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                         <template x-for="(logo, logoIndex) in logos" :key="`logo-{{ $suggestion->id }}-${logoIndex}`">
-                            <div class="relative aspect-square rounded-lg border-2 border-gray-900 dark:border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+                            <div class="relative aspect-square rounded-lg border-2 border-gray-900 dark:border-gray-100 bg-white overflow-hidden hover:shadow-md transition-shadow">
                                 <template x-if="logo.url">
                                     <img
                                         :src="logo.url"
