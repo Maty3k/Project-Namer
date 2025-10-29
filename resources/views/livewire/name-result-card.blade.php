@@ -1,6 +1,6 @@
 @if($suggestion)
 <div wire:key="name-card-{{ $suggestion->id }}"
-     wire:poll.3s="$refresh"
+     @if($this->isGeneratingLogos) wire:poll.3s @endif
      class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-300 ease-out hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-800/50 transform hover:-translate-y-1
             {{ $this->isSelected ? 'ring-2 ring-blue-500 bg-primary-50 dark:bg-primary-900/10 shadow-lg shadow-blue-200/30 dark:shadow-blue-800/30' : 'hover:border-gray-300 dark:hover:border-gray-600' }}
             scale-100 hover:scale-[1.02]
