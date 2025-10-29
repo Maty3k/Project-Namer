@@ -425,6 +425,9 @@ class PhotoGallery extends Component
         // Refresh the project relationship to get latest image data
         $this->project->refresh();
 
+        // Clear Livewire's computed property cache to force fresh query
+        unset($this->images);
+
         // Check if there are any pending/processing images
         $hasPending = ProjectImage::where('project_id', $this->project->id)
             ->whereIn('processing_status', ['pending', 'processing'])
