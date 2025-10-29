@@ -55,7 +55,7 @@ class OpenAILogoService
             // Add delay between API calls to prevent SSL connection issues
             // Skip delay for first logo
             if ($styleIndex > 0) {
-                sleep(2); // 2 second delay between logos
+                sleep(5); // 5 second delay between logos to prevent SSL issues
             }
 
             try {
@@ -219,8 +219,8 @@ class OpenAILogoService
                     'error' => $e->getMessage(),
                 ]);
 
-                // Exponential backoff: 1s, 2s, 4s
-                $sleepTime = pow(2, $attempt - 1);
+                // Exponential backoff: 2s, 4s, 8s (longer delays for SSL issues)
+                $sleepTime = pow(2, $attempt);
                 sleep($sleepTime);
             }
         }
