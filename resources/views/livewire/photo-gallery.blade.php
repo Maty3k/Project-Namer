@@ -53,7 +53,7 @@
             </div>
         </div>
     @elseif($hasCompletedImage)
-        <!-- Success message when image is completed -->
+        <!-- Success message when image is completed + Max limit notice -->
         <div class="mb-4 p-6 bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-800 rounded-lg">
             <div class="flex items-center gap-3">
                 <div class="flex-shrink-0">
@@ -67,6 +67,12 @@
                     <h3 class="text-lg font-semibold text-green-900 dark:text-green-100">Image Ready!</h3>
                     <p class="text-sm text-green-700 dark:text-green-300 mt-1">
                         Your inspiration photo has been processed successfully. You can now generate names with AI-powered color palette suggestions.
+                    </p>
+                    <p class="text-xs text-green-600 dark:text-green-400 mt-2 flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Maximum 1 image per project. Delete the existing image to upload a new one.</span>
                     </p>
                 </div>
             </div>
@@ -121,6 +127,18 @@
                                     </svg>
                                     <span class="text-sm font-medium">Ready!</span>
                                 </div>
+                            </div>
+
+                            <!-- Delete Button - Always visible on completed images -->
+                            <div class="absolute top-4 left-4">
+                                <button
+                                    wire:click.stop="openImageModal('{{ $image->uuid }}')"
+                                    class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full shadow-lg transition-colors duration-200 flex items-center gap-2"
+                                    title="Delete image">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
                             </div>
                         @elseif($image->processing_status === 'failed')
                             <div class="absolute top-4 right-4">
