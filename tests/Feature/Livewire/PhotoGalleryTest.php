@@ -195,3 +195,54 @@ test('filters work correctly', function (): void {
         ->set('search', 'test')
         ->assertSet('search', 'test');
 });
+
+test('checkPendingImages refreshes component and dispatches event when all complete', function (): void {
+    // Create project with a completed image
+    $project = Project::factory()->create(['user_id' => $this->user->id]);
+    ProjectImage::factory()->create([
+        'project_id' => $project->id,
+        'user_id' => $this->user->id,
+        'processing_status' => 'completed',
+    ]);
+
+    Livewire::test(PhotoGallery::class, ['project' => $project])
+        ->call('checkPendingImages')
+        ->assertDispatched('all-images-processed');
+});
+
+test('checkPendingImages does not dispatch event when images are pending', function (): void {
+    // Create project with a pending image
+    $project = Project::factory()->create(['user_id' => $this->user->id]);
+    ProjectImage::factory()->create([
+        'project_id' => $project->id,
+        'user_id' => $this->user->id,
+        'processing_status' => 'pending',
+    ]);
+
+    Livewire::test(PhotoGallery::class, ['project' => $project])
+        ->call('checkPendingImages')
+        ->assertNotDispatched('all-images-processed');
+});
+
+test('checkPendingImages updates component when status changes', function (): void {
+    // Create project with a pending image
+    $project = Project::factory()->create(['user_id' => $this->user->id]);
+    $image = ProjectImage::factory()->create([
+        'project_id' => $project->id,
+        'user_id' => $this->user->id,
+        'processing_status' => 'pending',
+    ]);
+
+    $component = Livewire::test(PhotoGallery::class, ['project' => $project]);
+
+    // Verify pending image exists
+    $component->call('checkPendingImages')
+        ->assertNotDispatched('all-images-processed');
+
+    // Update image to completed
+    $image->update(['processing_status' => 'completed']);
+
+    // Call checkPendingImages again - should now dispatch event
+    $component->call('checkPendingImages')
+        ->assertDispatched('all-images-processed');
+});

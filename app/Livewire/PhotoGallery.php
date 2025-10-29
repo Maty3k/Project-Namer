@@ -416,22 +416,27 @@ class PhotoGallery extends Component
     }
 
     /**
-     * Check if there are any pending images and refresh if completed.
-     * Returns true if there are still pending images (continue polling).
-     * Returns false if all images are completed (stop polling).
+     * Check if there are any pending images and refresh the component.
+     * This method is called every 2 seconds via wire:poll to update the UI
+     * with the latest processing status of images.
      */
-    public function checkPendingImages(): bool
+    public function checkPendingImages(): void
     {
+        // Refresh the project relationship to get latest image data
+        $this->project->refresh();
+
+        // Check if there are any pending/processing images
         $hasPending = ProjectImage::where('project_id', $this->project->id)
             ->whereIn('processing_status', ['pending', 'processing'])
             ->exists();
 
-        // If no pending images, stop polling by dispatching event
+        // Dispatch event when all images are processed
         if (! $hasPending) {
             $this->dispatch('all-images-processed');
         }
 
-        return $hasPending;
+        // Force Livewire to re-render the component with fresh data
+        // This ensures the UI updates immediately when status changes
     }
 
     /**
