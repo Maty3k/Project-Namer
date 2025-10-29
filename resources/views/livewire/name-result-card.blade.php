@@ -1,5 +1,6 @@
 @if($suggestion)
 <div wire:key="name-card-{{ $suggestion->id }}"
+     wire:poll.3s="$refresh"
      class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-300 ease-out hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-800/50 transform hover:-translate-y-1
             {{ $this->isSelected ? 'ring-2 ring-blue-500 bg-primary-50 dark:bg-primary-900/10 shadow-lg shadow-blue-200/30 dark:shadow-blue-800/30' : 'hover:border-gray-300 dark:hover:border-gray-600' }}
             scale-100 hover:scale-[1.02]
@@ -311,16 +312,25 @@
                         </template>
                     </div>
 
-                    <!-- Logo Count - Polling via Alpine.js -->
-                    <div wire:ignore>
-                        <template x-if="hasLogos">
+                    <!-- Logo Count/Status - Shows both generation progress and completed logos -->
+                    <div>
+                        @if($this->logoGenerationStatus)
+                            <!-- Generating logos - show progress -->
+                            <span class="flex items-center text-blue-600 dark:text-blue-400 animate-pulse">
+                                <svg class="w-4 h-4 mr-1 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span>{{ $this->logoGenerationStatus['progress'] }}/{{ $this->logoGenerationStatus['total'] }} logos</span>
+                            </span>
+                        @elseif($this->hasLogos)
+                            <!-- Has completed logos -->
                             <span class="flex items-center">
                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                 </svg>
-                                <span x-text="(logos?.length || 0) + ' ' + ((logos?.length === 1) ? 'logo' : 'logos')"></span>
+                                <span>{{ $this->logoCount }} {{ Str::plural('logo', $this->logoCount) }}</span>
                             </span>
-                        </template>
+                        @endif
                     </div>
                 </div>
 
@@ -600,16 +610,32 @@
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2">
                         <h4 class="font-medium text-gray-900 dark:text-white">Logos</h4>
-                        @if($this->hasGeneratedLogos)
+                        @if($this->logoGenerationStatus)
+                            <!-- Generating - show progress badge -->
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 animate-pulse">
+                                {{ $this->logoGenerationStatus['progress'] }}/{{ $this->logoGenerationStatus['total'] }} generating
+                            </span>
+                        @elseif($this->hasGeneratedLogos)
+                            <!-- Completed - show total count -->
                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300">
                                 {{ $this->totalGeneratedLogosCount }} generated
                             </span>
                         @endif
                     </div>
-                    <div class="flex items-center gap-2" wire:ignore>
-                        <template x-if="hasLogos && logoGenerationId">
+                    <div class="flex items-center gap-2">
+                        @if($this->logoGenerationStatus)
+                            <!-- Generating - show disabled button -->
+                            <button
+                                type="button"
+                                disabled
+                                class="text-sm font-medium text-gray-400 dark:text-gray-600 cursor-not-allowed opacity-50"
+                            >
+                                Generating...
+                            </button>
+                        @elseif($this->hasGeneratedLogos && $this->logoGenerationId)
+                            <!-- Completed - show View in Gallery link -->
                             <a
-                                :href="`/logo-gallery/${logoGenerationId}`"
+                                href="/logo-gallery/{{ $this->logoGenerationId }}"
                                 class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 rounded-lg transition-colors shadow-sm hover:shadow-md"
                             >
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -617,22 +643,45 @@
                                 </svg>
                                 View in Gallery
                             </a>
-                        </template>
-                        <template x-if="!hasLogos">
+                        @else
+                            <!-- No logos - show Generate button -->
                             <button
-                                @click.prevent.stop="startLogoGeneration()"
+                                wire:click="generateLogos"
                                 type="button"
-                                class="text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                :disabled="generatingLogos"
-                                x-text="generatingLogos ? 'Generating...' : 'Generate Logos'"
+                                class="text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors"
                             >
+                                Generate Logos
                             </button>
-                        </template>
+                        @endif
                     </div>
                 </div>
 
-                <template x-if="hasLogos">
-                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                @if($this->logoGenerationStatus)
+                    <!-- Logo generation progress indicator -->
+                    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 animate-spin mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
+                                    Generating logos: {{ $this->logoGenerationStatus['progress'] }} of {{ $this->logoGenerationStatus['total'] }} complete
+                                </p>
+                                <div class="w-full bg-blue-200 dark:bg-blue-800 rounded-full h-2 overflow-hidden">
+                                    <div
+                                        class="bg-blue-600 dark:bg-blue-500 h-full transition-all duration-500 ease-out"
+                                        style="width: {{ ($this->logoGenerationStatus['progress'] / $this->logoGenerationStatus['total']) * 100 }}%"
+                                    ></div>
+                                </div>
+                                <p class="text-xs text-blue-700 dark:text-blue-300 mt-2">
+                                    This may take a few moments. The page will refresh automatically.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @elseif($this->hasLogos)
+                    <!-- Show generated logos grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3" wire:ignore>
                         <template x-for="(logo, logoIndex) in logos" :key="`logo-{{ $suggestion->id }}-${logoIndex}`">
                             <div class="relative aspect-square rounded-lg border-2 border-gray-900 dark:border-gray-100 bg-white overflow-hidden hover:shadow-md transition-shadow">
                                 <template x-if="logo.url">
@@ -649,15 +698,15 @@
                             </div>
                         </template>
                     </div>
-                </template>
-                <template x-if="!hasLogos">
+                @else
+                    <!-- No logos yet -->
                     <div class="text-center py-4 text-gray-500 dark:text-gray-400">
                         <svg class="w-8 h-8 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
                         <p class="text-sm">No logos generated yet</p>
                     </div>
-                </template>
+                @endif
             </div>
 
             <!-- Generation Metadata (if available) -->

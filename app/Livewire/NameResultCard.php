@@ -504,6 +504,39 @@ class NameResultCard extends Component
         return $this->totalGeneratedLogosCount > 0;
     }
 
+    /**
+     * Get the current logo generation status for this business name.
+     *
+     * @return array{status: string, progress: int, total: int, logo_generation_id: int|null}|null
+     */
+    public function getLogoGenerationStatusProperty(): ?array
+    {
+        $logoGeneration = \App\Models\LogoGeneration::where('business_name', $this->suggestion->name)
+            ->where('user_id', auth()->id())
+            ->whereIn('status', ['pending', 'processing'])
+            ->latest()
+            ->first();
+
+        if (! $logoGeneration) {
+            return null;
+        }
+
+        return [
+            'status' => $logoGeneration->status,
+            'progress' => $logoGeneration->logos_completed,
+            'total' => $logoGeneration->total_logos_requested,
+            'logo_generation_id' => $logoGeneration->id,
+        ];
+    }
+
+    /**
+     * Check if logos are currently being generated for this business name.
+     */
+    public function getIsGeneratingLogosProperty(): bool
+    {
+        return $this->logoGenerationStatus !== null;
+    }
+
     public function render(): View
     {
         return view('livewire.name-result-card');
