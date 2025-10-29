@@ -1,26 +1,36 @@
-# Logo Generation Queue Worker Fix
+# Queue Worker Fix for Logo Generation & Image Processing
 
 ## Problem
-Logo generation appears stuck at "generating..." for 5+ minutes and never completes.
+Logo generation or image processing appears stuck at "processing..." for an extended period and never completes.
 
 ## Root Cause
-The Laravel queue worker is not running. Logo generation jobs are being dispatched to the database queue but nothing is processing them.
+The Laravel queue worker is not running, or it's not processing the correct queues. This application uses multiple queues:
+
+- **`default` queue**: Logo generation jobs (`GenerateLogosJob`)
+- **`image-processing` queue**: Image upload processing jobs (`ProcessUploadedImageJob`)
 
 **Evidence:**
-- 4 pending jobs in the `jobs` table (attempts = 0, reserved_at = null)
-- 4 pending logo_generations with status = "pending"
+- Pending jobs in the `jobs` table (attempts = 0, reserved_at = null)
+- Pending images/logos with status = "pending" or "processing"
 - No queue:work process running (checked with `ps aux | grep queue:work`)
+- OR queue worker running but not processing the correct queues
 
 ## Solution
 
-### Option 1: Start Queue Worker (Recommended for Development)
+### Option 1: Start Queue Worker for All Queues (Recommended)
+
+**IMPORTANT:** This application uses multiple queues. You must specify both queues when starting the worker.
 
 Open a new terminal window and run:
 
 ```bash
 cd /Users/anamariaradulescu/Herd/Project-Namer
-php artisan queue:work --tries=3
+php artisan queue:work --queue=image-processing,default --tries=3
 ```
+
+**Why both queues?**
+- `image-processing`: Processes uploaded inspiration images (fast, ~300ms)
+- `default`: Generates logos with AI (slower, ~50-60 seconds per job)
 
 Keep this terminal window open while working on the application. The queue worker will process all pending jobs immediately.
 
@@ -42,21 +52,30 @@ QUEUE_CONNECTION=sync
 If you just want to process the current stuck jobs without keeping a worker running:
 
 ```bash
-php artisan queue:work --stop-when-empty
+php artisan queue:work --queue=image-processing,default --stop-when-empty
 ```
 
-This will process all pending jobs and then stop automatically.
+This will process all pending jobs from both queues and then stop automatically.
+
+**Note:** Remember to include both queues, otherwise some jobs won't be processed!
 
 ## Verification
 
 After starting the queue worker, you should see output like:
 
+**For Logo Generation:**
 ```
 [2025-10-29 08:53:32][c378493a-1dac-46cc-939c-2f835238557d] Processing: App\Jobs\GenerateLogosJob
-[2025-10-29 08:53:45][c378493a-1dac-46cc-939c-2f835238557d] Processed:  App\Jobs\GenerateLogosJob
+[2025-10-29 08:53:45][c378493a-1dac-46cc-939c-2f835238557d] Processed:  App\Jobs\GenerateLogosJob (50-60s)
 ```
+The logos should appear in your application within 50-60 seconds (depending on OpenAI API response time).
 
-The logos should appear in your application within 30-60 seconds (depending on OpenAI API response time).
+**For Image Processing:**
+```
+[2025-10-29 09:28:34] Processing: App\Jobs\ProcessUploadedImageJob
+[2025-10-29 09:28:35] Processed:  App\Jobs\ProcessUploadedImageJob (276ms)
+```
+The image should be marked as "completed" within 1-2 seconds, and you'll see a green "Image Ready!" banner.
 
 ## Long-Term Solution (Production)
 
@@ -73,7 +92,7 @@ sudo apt-get install supervisor  # Ubuntu/Debian
 ```ini
 [program:laravel-worker]
 process_name=%(program_name)s_%(process_num)02d
-command=php /path/to/your/artisan queue:work --sleep=3 --tries=3 --max-time=3600
+command=php /path/to/your/artisan queue:work --queue=image-processing,default --sleep=3 --tries=3 --max-time=3600
 autostart=true
 autorestart=true
 stopasgroup=true
@@ -84,6 +103,8 @@ redirect_stderr=true
 stdout_logfile=/path/to/your/storage/logs/worker.log
 stopwaitsecs=3600
 ```
+
+**Important:** Notice the `--queue=image-processing,default` parameter is included!
 
 3. Start supervisor:
 ```bash
