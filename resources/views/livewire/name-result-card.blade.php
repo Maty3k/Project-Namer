@@ -646,11 +646,12 @@
                         @else
                             <!-- No logos - show Generate button -->
                             <button
-                                wire:click="generateLogos"
+                                @click.prevent.stop="startLogoGeneration()"
                                 type="button"
-                                class="text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors"
+                                class="text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                :disabled="generatingLogos"
+                                x-text="generatingLogos ? 'Generating...' : 'Generate Logos'"
                             >
-                                Generate Logos
                             </button>
                         @endif
                     </div>
