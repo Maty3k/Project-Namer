@@ -1452,6 +1452,8 @@ class ProjectPage extends Component
                 'business_description' => $this->project->description,
                 'color_palette' => null,
                 'status' => 'pending',
+                'total_logos_requested' => 4, // Always 4 logos (one for each style)
+                'logos_completed' => 0,
             ]);
 
             // Dispatch job to generate logos
