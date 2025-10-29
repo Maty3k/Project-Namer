@@ -290,7 +290,7 @@
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
-                            <span>This feature is also available as a standalone tool in <a href="{{ route('settings') }}" class="underline hover:text-primary-600 dark:hover:text-primary-400" wire:navigate>Settings</a></span>
+                            <span>This feature is also available as a standalone <a href="{{ route('domain-checker') }}" class="underline hover:text-primary-600 dark:hover:text-primary-400" wire:navigate>Domain Checker Tool</a></span>
                         </p>
                     </div>
 
