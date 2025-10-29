@@ -36,6 +36,7 @@ class OpenAILogoService
      */
     public function generateLogos(LogoGeneration $logoGeneration): void
     {
+        $styleIndex = 0;
         foreach (self::LOGO_STYLES as $style) {
             // Check if a logo with this style already exists for this generation
             $existingLogo = GeneratedLogo::where('logo_generation_id', $logoGeneration->id)
@@ -49,6 +50,12 @@ class OpenAILogoService
                 ]);
 
                 continue;
+            }
+
+            // Add delay between API calls to prevent SSL connection issues
+            // Skip delay for first logo
+            if ($styleIndex > 0) {
+                sleep(2); // 2 second delay between logos
             }
 
             try {
@@ -67,6 +74,8 @@ class OpenAILogoService
                     'error_message' => $e->getMessage(),
                 ]);
             }
+
+            $styleIndex++;
         }
     }
 
@@ -173,29 +182,51 @@ class OpenAILogoService
      */
     protected function callDalleApi(string $prompt, PromptData $promptData): string
     {
-        try {
-            $response = Prism::image()
-                ->using($promptData->provider, $promptData->model)
-                ->withPrompt($prompt)
-                ->withClientOptions([
-                    'n' => $promptData->metadata['n'] ?? 1,
-                    'size' => $promptData->metadata['size'] ?? '256x256',
-                    'response_format' => $promptData->metadata['response_format'] ?? 'url',
-                ])
-                ->generate();
+        $maxRetries = 3;
+        $attempt = 0;
 
-            $image = $response->firstImage();
+        while ($attempt < $maxRetries) {
+            try {
+                $response = Prism::image()
+                    ->using($promptData->provider, $promptData->model)
+                    ->withPrompt($prompt)
+                    ->withClientOptions([
+                        'n' => $promptData->metadata['n'] ?? 1,
+                        'size' => $promptData->metadata['size'] ?? '256x256',
+                        'response_format' => $promptData->metadata['response_format'] ?? 'url',
+                    ])
+                    ->generate();
 
-            if (! $image || ! $image->url) {
-                throw new LogoGenerationException('Invalid response from DALL-E API');
+                $image = $response->firstImage();
+
+                if (! $image || ! $image->url) {
+                    throw new LogoGenerationException('Invalid response from DALL-E API');
+                }
+
+                return $image->url;
+            } catch (\Exception $e) {
+                $attempt++;
+
+                // If this was the last attempt, throw the exception
+                if ($attempt >= $maxRetries) {
+                    throw new LogoGenerationException(
+                        'DALL-E API request failed: '.$e->getMessage()
+                    );
+                }
+
+                // Log retry attempt
+                Log::warning("DALL-E API call failed, retrying (attempt {$attempt}/{$maxRetries})", [
+                    'error' => $e->getMessage(),
+                ]);
+
+                // Exponential backoff: 1s, 2s, 4s
+                $sleepTime = pow(2, $attempt - 1);
+                sleep($sleepTime);
             }
-
-            return $image->url;
-        } catch (\Exception $e) {
-            throw new LogoGenerationException(
-                'DALL-E API request failed: '.$e->getMessage()
-            );
         }
+
+        // This should never be reached, but satisfies type checking
+        throw new LogoGenerationException('Failed to generate logo after retries');
     }
 
     /**
