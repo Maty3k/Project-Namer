@@ -127,12 +127,13 @@ class OpenAILogoService
             // Increment completed logos count
             $logoGeneration->incrementCompletedLogos();
 
+            // Update NameSuggestion with completed logos after EACH logo
+            // This enables real-time one-by-one logo display in the UI
+            $this->updateNameSuggestionWithLogos($logoGeneration);
+
             // Check if all logos are complete
             if ($logoGeneration->logos_completed >= $logoGeneration->total_logos_requested) {
                 $logoGeneration->markAsCompleted();
-
-                // Update NameSuggestion with completed logos
-                $this->updateNameSuggestionWithLogos($logoGeneration);
             }
         } catch (\Exception $e) {
             $generatedLogo->markAsFailed($e->getMessage());
@@ -194,6 +195,8 @@ class OpenAILogoService
                         'n' => $promptData->metadata['n'] ?? 1,
                         'size' => $promptData->metadata['size'] ?? '256x256',
                         'response_format' => $promptData->metadata['response_format'] ?? 'url',
+                        'timeout' => 60, // 60 second timeout for API call
+                        'connect_timeout' => 30, // 30 second connection timeout
                     ])
                     ->generate();
 
