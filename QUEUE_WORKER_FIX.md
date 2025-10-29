@@ -17,7 +17,24 @@ The Laravel queue worker is not running, or it's not processing the correct queu
 
 ## Solution
 
-### Option 1: Start Queue Worker for All Queues (Recommended)
+### Option 1: Use Monitor Script (Recommended for Development)
+
+**NEW:** Use the included monitoring script that automatically keeps the queue worker running:
+
+```bash
+cd /Users/anamariaradulescu/Herd/Project-Namer
+./monitor-queue.sh
+```
+
+This script will:
+- Check every 10 seconds if the worker is running
+- Automatically restart it if it crashes or stops
+- Log all activity to `storage/logs/queue-worker.log`
+- Keep your terminal window active with status updates
+
+Keep this terminal window open while developing. The monitor ensures jobs are always processed.
+
+### Option 2: Start Queue Worker Manually
 
 **IMPORTANT:** This application uses multiple queues. You must specify both queues when starting the worker.
 
@@ -32,9 +49,9 @@ php artisan queue:work --queue=image-processing,default --tries=3
 - `image-processing`: Processes uploaded inspiration images (fast, ~300ms)
 - `default`: Generates logos with AI (slower, ~50-60 seconds per job)
 
-Keep this terminal window open while working on the application. The queue worker will process all pending jobs immediately.
+**Note:** Workers can stop unexpectedly. If jobs stop processing, restart the worker manually.
 
-### Option 2: Use Sync Queue Driver (For Testing Only)
+### Option 3: Use Sync Queue Driver (For Testing Only)
 
 If you don't want to run a separate queue worker, you can temporarily use the sync driver:
 
@@ -47,7 +64,7 @@ QUEUE_CONNECTION=sync
 
 **Note:** This will process jobs synchronously (blocking), which means logo generation will freeze your page until it completes. Not recommended for production or user experience.
 
-### Option 3: Process Queue Once
+### Option 4: Process Queue Once
 
 If you just want to process the current stuck jobs without keeping a worker running:
 
