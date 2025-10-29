@@ -127,6 +127,16 @@ test('can update image metadata from modal', function (): void {
         ->assertDispatched('notify');
 });
 
+test('can delete image directly by uuid', function (): void {
+    $image = $this->images->first();
+
+    Livewire::test(PhotoGallery::class, ['project' => $this->project])
+        ->call('deleteImage', $image->uuid)
+        ->assertDispatched('notify');
+
+    expect(ProjectImage::find($image->id))->toBeNull();
+});
+
 test('can delete image from modal', function (): void {
     $image = $this->images->first();
 

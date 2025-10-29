@@ -236,6 +236,14 @@ class PhotoGallery extends Component
     }
 
     /**
+     * Delete single image by UUID.
+     */
+    public function deleteImage(string $imageUuid): void
+    {
+        $this->deleteImages([$imageUuid]);
+    }
+
+    /**
      * Delete single image from modal.
      */
     public function deleteImageFromModal(): void

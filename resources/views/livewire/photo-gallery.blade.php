@@ -132,7 +132,8 @@
                             <!-- Delete Button - Always visible on completed images -->
                             <div class="absolute top-4 left-4">
                                 <button
-                                    wire:click.stop="openImageModal('{{ $image->uuid }}')"
+                                    wire:click.stop="deleteImage('{{ $image->uuid }}')"
+                                    wire:confirm="Are you sure you want to delete this image? This action cannot be undone."
                                     class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full shadow-lg transition-colors duration-200 flex items-center gap-2"
                                     title="Delete image">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
