@@ -132,8 +132,7 @@
                             <!-- Delete Button - Always visible on completed images -->
                             <div class="absolute top-4 left-4">
                                 <button
-                                    wire:click.stop="deleteImage('{{ $image->uuid }}')"
-                                    wire:confirm="Are you sure you want to delete this image? This action cannot be undone."
+                                    @click.stop="$wire.set('imageToDelete', '{{ $image->uuid }}'); $wire.set('showDeleteModal', true)"
                                     class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full shadow-lg transition-colors duration-200 flex items-center gap-2"
                                     title="Delete image">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -257,6 +256,44 @@
             </template>
         </div>
     </div>
+
+    <!-- Delete Confirmation Modal -->
+    <flux:modal name="delete-confirmation" wire:model="showDeleteModal" class="max-w-md">
+        <div class="p-6">
+            <!-- Icon -->
+            <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 dark:bg-red-900/30 rounded-full mb-4">
+                <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+            </div>
+
+            <!-- Title -->
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white text-center mb-2">
+                Delete Image
+            </h3>
+
+            <!-- Description -->
+            <p class="text-sm text-gray-600 dark:text-gray-400 text-center mb-6">
+                Are you sure you want to delete this image? This action cannot be undone and the image will be permanently removed from your project.
+            </p>
+
+            <!-- Actions -->
+            <div class="flex gap-3">
+                <flux:button
+                    wire:click="$set('showDeleteModal', false)"
+                    variant="ghost"
+                    class="flex-1">
+                    Cancel
+                </flux:button>
+                <flux:button
+                    wire:click="confirmDelete"
+                    variant="danger"
+                    class="flex-1">
+                    Delete Image
+                </flux:button>
+            </div>
+        </div>
+    </flux:modal>
 </div>
 
 @push('scripts')

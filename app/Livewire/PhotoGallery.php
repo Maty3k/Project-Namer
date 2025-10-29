@@ -40,6 +40,10 @@ class PhotoGallery extends Component
 
     public ?ProjectImage $modalImage = null;
 
+    public bool $showDeleteModal = false;
+
+    public ?string $imageToDelete = null;
+
     public string $bulkAction = '';
 
     /** @var array<string> */
@@ -233,6 +237,20 @@ class PhotoGallery extends Component
 
         $this->dispatch('image-updated', imageId: $this->modalImage->id);
         $this->dispatch('notify', message: 'Image updated successfully', type: 'success');
+    }
+
+    /**
+     * Confirm deletion of the selected image.
+     */
+    public function confirmDelete(): void
+    {
+        if (! $this->imageToDelete) {
+            return;
+        }
+
+        $this->deleteImages([$this->imageToDelete]);
+        $this->showDeleteModal = false;
+        $this->imageToDelete = null;
     }
 
     /**

@@ -137,6 +137,36 @@ test('can delete image directly by uuid', function (): void {
     expect(ProjectImage::find($image->id))->toBeNull();
 });
 
+test('can show delete confirmation modal and delete image', function (): void {
+    $image = $this->images->first();
+
+    Livewire::test(PhotoGallery::class, ['project' => $this->project])
+        ->set('imageToDelete', $image->uuid)
+        ->set('showDeleteModal', true)
+        ->assertSet('showDeleteModal', true)
+        ->assertSet('imageToDelete', $image->uuid)
+        ->call('confirmDelete')
+        ->assertSet('showDeleteModal', false)
+        ->assertSet('imageToDelete', null)
+        ->assertDispatched('notify');
+
+    expect(ProjectImage::find($image->id))->toBeNull();
+});
+
+test('can cancel delete confirmation modal', function (): void {
+    $image = $this->images->first();
+
+    Livewire::test(PhotoGallery::class, ['project' => $this->project])
+        ->set('imageToDelete', $image->uuid)
+        ->set('showDeleteModal', true)
+        ->assertSet('showDeleteModal', true)
+        ->set('showDeleteModal', false)
+        ->assertSet('showDeleteModal', false);
+
+    // Image should still exist
+    expect(ProjectImage::find($image->id))->not->toBeNull();
+});
+
 test('can delete image from modal', function (): void {
     $image = $this->images->first();
 
