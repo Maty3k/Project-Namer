@@ -38,18 +38,36 @@ class OpenAILogoService
     {
         $styleIndex = 0;
         foreach (self::LOGO_STYLES as $style) {
-            // Check if a logo with this style already exists for this generation
+            // Check if a logo with this style already exists AND is completed/failed
+            // We should NOT skip logos stuck in "processing" status - they need to be regenerated
             $existingLogo = GeneratedLogo::where('logo_generation_id', $logoGeneration->id)
                 ->where('style', $style)
+                ->whereIn('status', ['completed', 'failed'])
                 ->first();
 
             if ($existingLogo) {
-                Log::info("Skipping {$style} logo - already exists", [
+                Log::info("Skipping {$style} logo - already exists with status: {$existingLogo->status}", [
                     'logo_generation_id' => $logoGeneration->id,
                     'style' => $style,
+                    'status' => $existingLogo->status,
                 ]);
 
                 continue;
+            }
+
+            // If there's a stuck "processing" logo, delete it before regenerating
+            $stuckLogo = GeneratedLogo::where('logo_generation_id', $logoGeneration->id)
+                ->where('style', $style)
+                ->where('status', 'processing')
+                ->first();
+
+            if ($stuckLogo) {
+                Log::warning("Deleting stuck {$style} logo in 'processing' status", [
+                    'logo_generation_id' => $logoGeneration->id,
+                    'style' => $style,
+                    'logo_id' => $stuckLogo->id,
+                ]);
+                $stuckLogo->delete();
             }
 
             // Add delay between API calls to prevent SSL connection issues
