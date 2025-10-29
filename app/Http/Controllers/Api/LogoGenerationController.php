@@ -22,6 +22,20 @@ class LogoGenerationController extends Controller
             'business_description' => ['nullable', 'string', 'max:1000'],
         ]);
 
+        // Check if there's already a pending or processing logo generation for this business name
+        $existingGeneration = LogoGeneration::where('user_id', auth()->id())
+            ->where('business_name', $validated['business_name'])
+            ->whereIn('status', ['pending', 'processing'])
+            ->first();
+
+        if ($existingGeneration) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Logo generation already in progress',
+                'logo_generation_id' => $existingGeneration->id,
+            ], 200);
+        }
+
         // Create logo generation record
         $logoGeneration = LogoGeneration::create([
             'user_id' => auth()->id(),

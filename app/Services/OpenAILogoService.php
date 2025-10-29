@@ -37,6 +37,20 @@ class OpenAILogoService
     public function generateLogos(LogoGeneration $logoGeneration): void
     {
         foreach (self::LOGO_STYLES as $style) {
+            // Check if a logo with this style already exists for this generation
+            $existingLogo = GeneratedLogo::where('logo_generation_id', $logoGeneration->id)
+                ->where('style', $style)
+                ->first();
+
+            if ($existingLogo) {
+                Log::info("Skipping {$style} logo - already exists", [
+                    'logo_generation_id' => $logoGeneration->id,
+                    'style' => $style,
+                ]);
+
+                continue;
+            }
+
             try {
                 $this->generateSingleLogo($logoGeneration, $style);
             } catch (LogoGenerationException $e) {
