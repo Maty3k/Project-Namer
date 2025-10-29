@@ -28,10 +28,50 @@
         </div>
     </div>
 
-    <!-- Upload Section (only visible when no images exist) -->
-    @if($images->total() === 0)
+    <!-- Upload Section (only visible when no completed images exist) -->
+    @php
+        $hasCompletedImage = $images->contains(fn($img) => $img->processing_status === 'completed');
+        $totalImages = $images->total();
+    @endphp
+
+    @if(!$hasCompletedImage && $totalImages === 0)
+        <!-- Show uploader when no images at all -->
         <div class="mb-4">
             @livewire('image-uploader', ['project' => $project], key('uploader-'.$project->id))
+        </div>
+    @elseif($totalImages > 0 && !$hasCompletedImage)
+        <!-- Processing message when images exist but none are completed yet -->
+        <div class="mb-4 p-6 bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-lg">
+            <div class="flex items-center gap-3">
+                <div class="flex-shrink-0">
+                    <div class="animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent"></div>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-100">Processing Your Image</h3>
+                    <p class="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                        We're analyzing your photo to extract color palettes and inspiration. This usually takes 20-60 seconds.
+                    </p>
+                </div>
+            </div>
+        </div>
+    @elseif($hasCompletedImage)
+        <!-- Success message when image is completed -->
+        <div class="mb-4 p-6 bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-800 rounded-lg">
+            <div class="flex items-center gap-3">
+                <div class="flex-shrink-0">
+                    <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-green-900 dark:text-green-100">Image Ready!</h3>
+                    <p class="text-sm text-green-700 dark:text-green-300 mt-1">
+                        Your inspiration photo has been processed successfully. You can now generate names with AI-powered color palette suggestions.
+                    </p>
+                </div>
+            </div>
         </div>
     @endif
 
