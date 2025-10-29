@@ -168,22 +168,30 @@
 
                    if (data.status === 'completed') {
                        clearInterval(this.pollInterval);
+                       this.pollInterval = null;
                        this.generatingLogos = false;
 
                        // Update logos array with the generated logos
                        if (data.logos && Array.isArray(data.logos)) {
-                           this.logos = data.logos;
+                           this.logos = [...data.logos]; // Force reactivity with new array
                        }
 
-                       // Show completion toast
+                       // Show completion toast with logo count
+                       const logoCount = data.logos ? data.logos.length : 0;
                        if (window.Livewire) {
                            window.Livewire.dispatch('show-toast', {
-                               message: '4 logos generated successfully!',
+                               message: `✓ ${logoCount} logos generated successfully! Scroll down to view them.`,
                                type: 'success'
                            });
                        }
+
+                       // Refresh the Livewire component to update the server-side state
+                       if (this.$wire) {
+                           this.$wire.$refresh();
+                       }
                    } else if (data.status === 'failed') {
                        clearInterval(this.pollInterval);
+                       this.pollInterval = null;
                        this.generatingLogos = false;
 
                        if (window.Livewire) {
@@ -192,11 +200,34 @@
                                type: 'error'
                            });
                        }
+
+                       // Refresh to get latest state
+                       if (this.$wire) {
+                           this.$wire.$refresh();
+                       }
+                   } else if (data.status === 'processing' || data.status === 'pending') {
+                       // Update progress in real-time
+                       const progress = data.logos_completed || 0;
+                       const total = data.total_logos_requested || 4;
+
+                       // Update current logos as they complete
+                       if (data.logos && Array.isArray(data.logos) && data.logos.length > 0) {
+                           this.logos = [...data.logos]; // Force reactivity
+                       }
                    }
                }
            } catch (error) {
                // Silently fail - polling will continue
            }
+       },
+       init() {
+           // Cleanup on component destroy
+           this.$watch('generatingLogos', (value) => {
+               if (!value && this.pollInterval) {
+                   clearInterval(this.pollInterval);
+                   this.pollInterval = null;
+               }
+           });
        },
        async fetchLogos() {
            try {
@@ -657,7 +688,8 @@
                     </div>
                 </div>
 
-                @if($this->logoGenerationStatus)
+                <!-- Show progress or completed logos -->
+                <div x-show="generatingLogos && !hasLogos" x-cloak>
                     <!-- Logo generation progress indicator -->
                     <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
                         <div class="flex items-start gap-3">
@@ -666,23 +698,50 @@
                             </svg>
                             <div class="flex-1">
                                 <p class="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
-                                    Generating logos: {{ $this->logoGenerationStatus['progress'] }} of {{ $this->logoGenerationStatus['total'] }} complete
+                                    <span x-text="`Generating logos: ${logos.length} of 4 complete`"></span>
                                 </p>
-                                <div class="w-full bg-blue-200 dark:bg-blue-800 rounded-full h-2 overflow-hidden">
+                                <div class="w-full bg-blue-200 dark:bg-blue-800 rounded-full h-2 overflow-hidden mb-3">
                                     <div
                                         class="bg-blue-600 dark:bg-blue-500 h-full transition-all duration-500 ease-out"
-                                        style="width: {{ ($this->logoGenerationStatus['progress'] / $this->logoGenerationStatus['total']) * 100 }}%"
+                                        :style="`width: ${(logos.length / 4) * 100}%`"
                                     ></div>
                                 </div>
-                                <p class="text-xs text-blue-700 dark:text-blue-300 mt-2">
-                                    This may take a few moments. The page will refresh automatically.
+
+                                <!-- Show individual logo styles as they complete -->
+                                <div class="flex flex-wrap gap-2" x-show="logos.length > 0">
+                                    <template x-for="logo in logos" :key="logo.style">
+                                        <div class="flex items-center gap-1 text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-2 py-1 rounded-full">
+                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span x-text="logo.style.charAt(0).toUpperCase() + logo.style.slice(1)"></span>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <p class="text-xs text-blue-700 dark:text-blue-300 mt-3">
+                                    <span x-show="logos.length === 0">Starting logo generation...</span>
+                                    <span x-show="logos.length > 0 && logos.length < 4">Logos will appear below as they complete. This may take 1-2 minutes.</span>
                                 </p>
                             </div>
                         </div>
                     </div>
-                @elseif($this->hasLogos)
+                </div>
+
+                <!-- Show logos grid when they start appearing (Alpine.js controlled) -->
+                <div x-show="hasLogos" x-cloak>
+                    <!-- Completion message -->
+                    <div x-show="!generatingLogos && logos.length === 4" class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 mb-4">
+                        <div class="flex items-center gap-2 text-sm text-green-800 dark:text-green-200">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="font-medium">All 4 logos generated successfully!</span>
+                        </div>
+                    </div>
+
                     <!-- Show generated logos grid -->
-                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3" wire:ignore>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                         <template x-for="(logo, logoIndex) in logos" :key="`logo-{{ $suggestion->id }}-${logoIndex}`">
                             <div class="relative aspect-square rounded-lg border-2 border-gray-900 dark:border-gray-100 bg-white overflow-hidden hover:shadow-md transition-shadow">
                                 <template x-if="logo.url">
@@ -699,15 +758,17 @@
                             </div>
                         </template>
                     </div>
-                @else
-                    <!-- No logos yet -->
+                </div>
+
+                <!-- No logos state (only show when not generating and no logos) -->
+                <div x-show="!generatingLogos && !hasLogos" x-cloak>
                     <div class="text-center py-4 text-gray-500 dark:text-gray-400">
                         <svg class="w-8 h-8 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
                         <p class="text-sm">No logos generated yet</p>
                     </div>
-                @endif
+                </div>
             </div>
 
             <!-- Generation Metadata (if available) -->
