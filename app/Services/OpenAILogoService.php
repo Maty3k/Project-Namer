@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Exceptions\LogoGenerationException;
+use App\Jobs\GenerateSingleLogoJob;
 use App\Models\GeneratedLogo;
 use App\Models\LogoGeneration;
 use App\Models\NameSuggestion;
@@ -32,75 +33,30 @@ class OpenAILogoService
     ) {}
 
     /**
-     * Generate all 4 logos for a logo generation request.
+     * Generate all 4 logos for a logo generation request by dispatching parallel jobs.
      */
     public function generateLogos(LogoGeneration $logoGeneration): void
     {
-        $styleIndex = 0;
+        Log::info('Dispatching parallel logo generation jobs', [
+            'logo_generation_id' => $logoGeneration->id,
+            'styles' => self::LOGO_STYLES,
+        ]);
+
+        // Dispatch all 4 logo generation jobs in parallel
         foreach (self::LOGO_STYLES as $style) {
-            // Check if a logo with this style already exists AND is completed/failed
-            // We should NOT skip logos stuck in "processing" status - they need to be regenerated
-            $existingLogo = GeneratedLogo::where('logo_generation_id', $logoGeneration->id)
-                ->where('style', $style)
-                ->whereIn('status', ['completed', 'failed'])
-                ->first();
-
-            if ($existingLogo) {
-                Log::info("Skipping {$style} logo - already exists with status: {$existingLogo->status}", [
-                    'logo_generation_id' => $logoGeneration->id,
-                    'style' => $style,
-                    'status' => $existingLogo->status,
-                ]);
-
-                continue;
-            }
-
-            // If there's a stuck "processing" logo, delete it before regenerating
-            $stuckLogo = GeneratedLogo::where('logo_generation_id', $logoGeneration->id)
-                ->where('style', $style)
-                ->where('status', 'processing')
-                ->first();
-
-            if ($stuckLogo) {
-                Log::warning("Deleting stuck {$style} logo in 'processing' status", [
-                    'logo_generation_id' => $logoGeneration->id,
-                    'style' => $style,
-                    'logo_id' => $stuckLogo->id,
-                ]);
-                $stuckLogo->delete();
-            }
-
-            // Add delay between API calls to prevent SSL connection issues
-            // Skip delay for first logo
-            if ($styleIndex > 0) {
-                sleep(5); // 5 second delay between logos to prevent SSL issues
-            }
-
-            try {
-                $this->generateSingleLogo($logoGeneration, $style);
-            } catch (LogoGenerationException $e) {
-                Log::error("Failed to generate {$style} logo", [
-                    'logo_generation_id' => $logoGeneration->id,
-                    'error' => $e->getMessage(),
-                ]);
-
-                // Create a failed logo record
-                GeneratedLogo::create([
-                    'logo_generation_id' => $logoGeneration->id,
-                    'style' => $style,
-                    'status' => 'failed',
-                    'error_message' => $e->getMessage(),
-                ]);
-            }
-
-            $styleIndex++;
+            GenerateSingleLogoJob::dispatch($logoGeneration, $style);
         }
+
+        Log::info('All logo generation jobs dispatched', [
+            'logo_generation_id' => $logoGeneration->id,
+            'job_count' => count(self::LOGO_STYLES),
+        ]);
     }
 
     /**
-     * Generate a single logo with the specified style.
+     * Generate a single logo with the specified style (public method for GenerateSingleLogoJob).
      */
-    protected function generateSingleLogo(
+    public function generateSingleLogoPublic(
         LogoGeneration $logoGeneration,
         string $style
     ): void {

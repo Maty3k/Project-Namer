@@ -110,7 +110,7 @@
                                 {{ $logo->style }}
                             </h3>
                             <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
-                                256x256
+                                1024x1024
                             </p>
 
                             {{-- Action Buttons --}}
@@ -171,7 +171,7 @@
                     </div>
                     <div>
                         <p class="text-gray-500 dark:text-gray-400">Size</p>
-                        <p class="font-medium text-gray-900 dark:text-white">256x256</p>
+                        <p class="font-medium text-gray-900 dark:text-white">1024x1024</p>
                     </div>
                 </div>
 
