@@ -9,4 +9,25 @@ style_description: professional, corporate, business-focused
 description: "Logo generation prompt for corporate style"
 ---
 
-Create a {$styleDescription} logo for a business called '{$businessName}'{$businessDescriptionClause}. The logo should be simple, memorable, and work well at small sizes. No text in the logo.
+Design a professional corporate logo for '{$businessName}'{$businessDescriptionClause}.
+
+STYLE REQUIREMENTS:
+- Professional, trustworthy, and authoritative design
+- Conservative color palette (navy, gray, black, or deep blues)
+- Strong, stable geometric shapes
+- Classic, timeless aesthetic
+- Conveys reliability and competence
+
+TEXT REQUIREMENTS:
+- Include the business name '{$businessName}' in the logo
+- Use professional serif or strong sans-serif font
+- Text must be exceptionally clear, formal, and expertly typeset
+- Traditional, authoritative typography that inspires confidence
+
+COMPOSITION:
+- Formal, balanced layout with strong foundation
+- Icon symbolizing strength, trust, or expertise
+- Clean white or subtle gradient background
+- Premium quality suitable for corporate materials and presentations
+
+The logo must exude professionalism, trustworthiness, and corporate excellence - ready for Fortune 500 presentations.
