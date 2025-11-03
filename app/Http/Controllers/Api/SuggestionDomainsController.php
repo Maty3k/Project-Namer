@@ -21,9 +21,8 @@ class SuggestionDomainsController extends Controller
         // Refresh from database to get latest data
         $suggestion->refresh();
 
-        // Find the most recent completed LogoGeneration for this name
+        // Find the most recent LogoGeneration for this name (any status)
         $logoGeneration = \App\Models\LogoGeneration::where('business_name', $suggestion->name)
-            ->where('status', 'completed')
             ->latest()
             ->first();
 
