@@ -55,6 +55,18 @@ class GeneratedLogo extends Model
         'prompt',
         'status',
         'error_message',
+        'is_selected_for_refinement',
+        'is_refined',
+        'refined_file_path',
+        'quality',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     */
+    protected $casts = [
+        'is_selected_for_refinement' => 'boolean',
+        'is_refined' => 'boolean',
     ];
 
     /**
@@ -128,5 +140,57 @@ class GeneratedLogo extends Model
         if ($this->file_path && Storage::disk('public')->exists($this->file_path)) {
             Storage::disk('public')->delete($this->file_path);
         }
+
+        if ($this->refined_file_path && Storage::disk('public')->exists($this->refined_file_path)) {
+            Storage::disk('public')->delete($this->refined_file_path);
+        }
+    }
+
+    /**
+     * Mark this logo as selected for refinement.
+     */
+    public function selectForRefinement(): void
+    {
+        $this->update(['is_selected_for_refinement' => true]);
+    }
+
+    /**
+     * Mark this logo as refined and store the high-quality file path.
+     */
+    public function markAsRefined(string $refinedFilePath): void
+    {
+        $this->update([
+            'is_refined' => true,
+            'refined_file_path' => $refinedFilePath,
+            'quality' => 'high',
+        ]);
+    }
+
+    /**
+     * Get the URL for the best quality logo (refined if available, otherwise draft).
+     *
+     * @return Attribute<string, never>
+     */
+    protected function bestUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->is_refined && $this->refined_file_path
+                ? Storage::disk('public')->url($this->refined_file_path)
+                : Storage::disk('public')->url($this->file_path)
+        );
+    }
+
+    /**
+     * Get the URL for the refined logo.
+     *
+     * @return Attribute<string|null, never>
+     */
+    protected function refinedUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->refined_file_path
+                ? Storage::disk('public')->url($this->refined_file_path)
+                : null
+        );
     }
 }
