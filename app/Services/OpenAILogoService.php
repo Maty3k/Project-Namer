@@ -197,7 +197,7 @@ class OpenAILogoService
     }
 
     /**
-     * Call the DALL-E 2 API via Prism to generate an image using markdown config.
+     * Call the image generation API via Prism (supports DALL-E 2/3 and gpt-image-1).
      */
     protected function callDalleApi(string $prompt, PromptData $promptData): string
     {
@@ -206,25 +206,42 @@ class OpenAILogoService
 
         while ($attempt < $maxRetries) {
             try {
+                $clientOptions = [
+                    'n' => $promptData->metadata['n'] ?? 1,
+                    'size' => $promptData->metadata['size'] ?? '1024x1024',
+                    'response_format' => $promptData->metadata['response_format'] ?? 'b64_json',
+                    'timeout' => 60, // 60 second timeout for API call
+                    'connect_timeout' => 30, // 30 second connection timeout
+                ];
+
+                // Add quality parameter if specified (for gpt-image-1 and DALL-E 3)
+                if (isset($promptData->metadata['quality'])) {
+                    $clientOptions['quality'] = $promptData->metadata['quality'];
+                }
+
                 $response = Prism::image()
                     ->using($promptData->provider, $promptData->model)
                     ->withPrompt($prompt)
-                    ->withClientOptions([
-                        'n' => $promptData->metadata['n'] ?? 1,
-                        'size' => $promptData->metadata['size'] ?? '256x256',
-                        'response_format' => $promptData->metadata['response_format'] ?? 'url',
-                        'timeout' => 60, // 60 second timeout for API call
-                        'connect_timeout' => 30, // 30 second connection timeout
-                    ])
+                    ->withClientOptions($clientOptions)
                     ->generate();
 
                 $image = $response->firstImage();
 
-                if (! $image || ! $image->url) {
-                    throw new LogoGenerationException('Invalid response from DALL-E API');
+                if (! $image) {
+                    throw new LogoGenerationException('Invalid response from image generation API');
                 }
 
-                return $image->url;
+                // Handle both URL and base64 responses
+                if ($image->url) {
+                    return $image->url;
+                }
+
+                if ($image->data) {
+                    // Save base64 data directly and return file path
+                    return $this->saveBase64Image($image->data, uniqid('logo_', true));
+                }
+
+                throw new LogoGenerationException('No image URL or data in API response');
             } catch (\Exception $e) {
                 $attempt++;
 
@@ -251,15 +268,42 @@ class OpenAILogoService
     }
 
     /**
+     * Save base64 encoded image data to storage.
+     */
+    protected function saveBase64Image(string $base64Data, string $uniqueId): string
+    {
+        // Decode base64 data
+        $imageContent = base64_decode($base64Data);
+
+        // Generate temporary file path that will be used by downloadAndSaveImage
+        $filename = $uniqueId.'.png';
+        $tempPath = "temp/{$filename}";
+
+        // Save to temporary location
+        Storage::disk('public')->put($tempPath, $imageContent);
+
+        // Return full path
+        return Storage::disk('public')->path($tempPath);
+    }
+
+    /**
      * Download the image from URL and save it to storage.
+     * Also handles local file paths from saveBase64Image.
      */
     protected function downloadAndSaveImage(
-        string $imageUrl,
+        string $imageUrlOrPath,
         int $logoGenerationId,
         string $style
     ): string {
-        // Download the image
-        $imageContent = Http::timeout(30)->get($imageUrl)->body();
+        // Check if this is a local file path (from base64)
+        if (file_exists($imageUrlOrPath)) {
+            $imageContent = file_get_contents($imageUrlOrPath);
+            // Clean up temp file
+            unlink($imageUrlOrPath);
+        } else {
+            // Download the image from URL
+            $imageContent = Http::timeout(30)->get($imageUrlOrPath)->body();
+        }
 
         // Generate filename
         $filename = Str::slug("{$logoGenerationId}-{$style}").'-'.Str::random(8).'.png';
