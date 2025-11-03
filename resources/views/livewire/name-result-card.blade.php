@@ -185,10 +185,9 @@
                            });
                        }
 
-                       // Refresh the Livewire component to update the server-side state
-                       if (this.$wire) {
-                           this.$wire.$refresh();
-                       }
+                       // NOTE: We do NOT call $wire.$refresh() here because it triggers Livewire
+                       // DOM morphing which breaks Alpine.js state and causes name cards to render
+                       // as wire IDs. The logos array is already updated via Alpine.js reactivity.
                    } else if (data.status === 'failed') {
                        clearInterval(this.pollInterval);
                        this.pollInterval = null;
@@ -201,10 +200,7 @@
                            });
                        }
 
-                       // Refresh to get latest state
-                       if (this.$wire) {
-                           this.$wire.$refresh();
-                       }
+                       // NOTE: We do NOT call $wire.$refresh() here to avoid breaking Alpine.js state
                    } else if (data.status === 'processing' || data.status === 'pending') {
                        // Update progress in real-time
                        const progress = data.logos_completed || 0;
