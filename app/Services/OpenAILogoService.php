@@ -236,12 +236,12 @@ class OpenAILogoService
                     return $image->url;
                 }
 
-                if ($image->data) {
+                if ($image->base64) {
                     // Save base64 data directly and return file path
-                    return $this->saveBase64Image($image->data, uniqid('logo_', true));
+                    return $this->saveBase64Image($image->base64, uniqid('logo_', true));
                 }
 
-                throw new LogoGenerationException('No image URL or data in API response');
+                throw new LogoGenerationException('No image URL or base64 data in API response');
             } catch (\Exception $e) {
                 $attempt++;
 

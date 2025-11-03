@@ -83,12 +83,12 @@ class RefineLogoJob implements ShouldQueue
 
             $image = $response->firstImage();
 
-            if (! $image || ! $image->data) {
-                throw new LogoGenerationException('No image data in refinement response');
+            if (! $image || ! $image->base64) {
+                throw new LogoGenerationException('No image base64 data in refinement response');
             }
 
             // Save the refined logo
-            $refinedFilePath = $this->saveRefinedLogo($image->data);
+            $refinedFilePath = $this->saveRefinedLogo($image->base64);
 
             // Update the logo record
             $this->generatedLogo->markAsRefined($refinedFilePath);
