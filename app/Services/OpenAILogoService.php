@@ -101,6 +101,9 @@ class OpenAILogoService
             // Increment completed logos count
             $logoGeneration->incrementCompletedLogos();
 
+            // Refresh the model to get the updated count (important for parallel processing)
+            $logoGeneration->refresh();
+
             // Update NameSuggestion with completed logos after EACH logo
             // This enables real-time one-by-one logo display in the UI
             $this->updateNameSuggestionWithLogos($logoGeneration);
