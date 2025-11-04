@@ -14,7 +14,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('ai_generations', function (Blueprint $table) {
-            $table->integer('project_id')->nullable()->change();
+            // Drop the foreign key constraint first
+            $table->dropForeign(['project_id']);
+        });
+
+        Schema::table('ai_generations', function (Blueprint $table) {
+            // Make the column nullable (use unsignedBigInteger to match foreignId type)
+            $table->unsignedBigInteger('project_id')->nullable()->change();
+        });
+
+        Schema::table('ai_generations', function (Blueprint $table) {
+            // Re-add the foreign key constraint with nullable support
+            $table->foreign('project_id')
+                ->references('id')
+                ->on('projects')
+                ->onDelete('cascade');
         });
     }
 
@@ -24,7 +38,21 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('ai_generations', function (Blueprint $table) {
-            $table->integer('project_id')->nullable(false)->change();
+            // Drop the foreign key constraint
+            $table->dropForeign(['project_id']);
+        });
+
+        Schema::table('ai_generations', function (Blueprint $table) {
+            // Make the column not nullable
+            $table->unsignedBigInteger('project_id')->nullable(false)->change();
+        });
+
+        Schema::table('ai_generations', function (Blueprint $table) {
+            // Re-add the original foreign key constraint
+            $table->foreign('project_id')
+                ->references('id')
+                ->on('projects')
+                ->onDelete('cascade');
         });
     }
 };
