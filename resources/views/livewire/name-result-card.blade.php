@@ -15,7 +15,7 @@
        // Logo state - similar to domains
        generatingLogos: false,
        logos: {{ Js::from($suggestion->logos ?? []) }},
-       logoGenerationId: null,
+       logoGenerationId: {{ $this->logoGenerationId ?? 'null' }},
        pollInterval: null,
        // Favorite state
        isFavorited: {{ $suggestion->is_favorited ? 'true' : 'false' }},

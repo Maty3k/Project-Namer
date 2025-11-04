@@ -472,13 +472,9 @@ class NameResultCard extends Component
      */
     public function getLogoGenerationIdProperty(): ?int
     {
-        if (! $this->hasLogos) {
-            return null;
-        }
-
-        // Find the most recent LogoGeneration for this name
+        // Find the most recent LogoGeneration for this name (any status)
+        // This allows the "View Gallery" button to work even when logos are still processing
         $logoGeneration = \App\Models\LogoGeneration::where('business_name', $this->suggestion->name)
-            ->where('status', 'completed')
             ->latest()
             ->first();
 
