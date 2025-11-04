@@ -56,13 +56,15 @@ return new class extends Migration
 
         // Add indexes to name_suggestions table
         Schema::table('name_suggestions', function (Blueprint $table) {
-            // Index for AI generation relationship
-            if (! Schema::hasIndex('name_suggestions', 'name_suggestions_ai_generation_id_index')) {
+            // Index for AI generation relationship (only if column exists)
+            if (Schema::hasColumn('name_suggestions', 'ai_generation_id')
+                && ! Schema::hasIndex('name_suggestions', 'name_suggestions_ai_generation_id_index')) {
                 $table->index('ai_generation_id', 'name_suggestions_ai_generation_id_index');
             }
 
-            // Index for session relationship
-            if (! Schema::hasIndex('name_suggestions', 'name_suggestions_generation_session_id_index')) {
+            // Index for session relationship (only if column exists)
+            if (Schema::hasColumn('name_suggestions', 'generation_session_id')
+                && ! Schema::hasIndex('name_suggestions', 'name_suggestions_generation_session_id_index')) {
                 $table->index('generation_session_id', 'name_suggestions_generation_session_id_index');
             }
 
@@ -116,9 +118,15 @@ return new class extends Migration
 
         // Remove indexes from name_suggestions table
         Schema::table('name_suggestions', function (Blueprint $table) {
-            $table->dropIndex('name_suggestions_ai_generation_id_index');
-            $table->dropIndex('name_suggestions_generation_session_id_index');
-            $table->dropIndex('name_suggestions_name_index');
+            if (Schema::hasIndex('name_suggestions', 'name_suggestions_ai_generation_id_index')) {
+                $table->dropIndex('name_suggestions_ai_generation_id_index');
+            }
+            if (Schema::hasIndex('name_suggestions', 'name_suggestions_generation_session_id_index')) {
+                $table->dropIndex('name_suggestions_generation_session_id_index');
+            }
+            if (Schema::hasIndex('name_suggestions', 'name_suggestions_name_index')) {
+                $table->dropIndex('name_suggestions_name_index');
+            }
         });
 
         // Remove indexes from ai_model_performance table
