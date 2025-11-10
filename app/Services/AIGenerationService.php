@@ -37,10 +37,10 @@ final readonly class AIGenerationService
     private const RETRY_DELAY_SECONDS = 1;
 
     private const FALLBACK_MODEL_ORDER = [
-        'gpt-4' => ['claude-3.5-sonnet', 'gemini-1.5-pro', 'grok-beta'],
-        'claude-3.5-sonnet' => ['gpt-4', 'gemini-1.5-pro', 'grok-beta'],
-        'gemini-1.5-pro' => ['gpt-4', 'claude-3.5-sonnet', 'grok-beta'],
-        'grok-beta' => ['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro'],
+        'gpt-4o' => ['claude-3-5-sonnet-20241022', 'gemini-1.5-pro', 'grok-beta'],
+        'claude-3-5-sonnet-20241022' => ['gpt-4o', 'gemini-1.5-pro', 'grok-beta'],
+        'gemini-1.5-pro' => ['gpt-4o', 'claude-3-5-sonnet-20241022', 'grok-beta'],
+        'grok-beta' => ['gpt-4o', 'claude-3-5-sonnet-20241022', 'gemini-1.5-pro'],
     ];
 
     public function __construct(
@@ -113,7 +113,7 @@ final readonly class AIGenerationService
         bool $deepThinking = false
     ): array {
         // Use only the fastest, most reliable models for quick generation
-        $quickModels = ['gpt-4', 'claude-3.5-sonnet'];
+        $quickModels = ['gpt-4o', 'claude-3-5-sonnet-20241022'];
 
         return $this->generateNamesParallel(
             $businessIdea,
@@ -134,7 +134,7 @@ final readonly class AIGenerationService
         string $mode = 'creative'
     ): array {
         // Use all available models for maximum coverage and quality
-        $allModels = ['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro', 'grok-beta'];
+        $allModels = ['gpt-4o', 'claude-3-5-sonnet-20241022', 'gemini-1.5-pro', 'grok-beta'];
 
         return $this->generateNamesParallel(
             $businessIdea,
@@ -249,14 +249,14 @@ final readonly class AIGenerationService
             'quick' => [
                 'name' => 'Quick Generation',
                 'description' => 'Fast results using reliable models',
-                'models' => ['gpt-4', 'claude-3.5-sonnet'],
+                'models' => ['gpt-4o', 'claude-3-5-sonnet-20241022'],
                 'estimated_time' => '2-5 seconds',
                 'best_for' => 'Rapid prototyping and iteration',
             ],
             'comprehensive' => [
                 'name' => 'Comprehensive Generation',
                 'description' => 'High-quality results from all models with deep thinking',
-                'models' => ['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro', 'grok-beta'],
+                'models' => ['gpt-4o', 'claude-3-5-sonnet-20241022', 'gemini-1.5-pro', 'grok-beta'],
                 'estimated_time' => '5-15 seconds',
                 'best_for' => 'Final name selection and brand development',
             ],
@@ -280,7 +280,7 @@ final readonly class AIGenerationService
     public function generateNamesWithContext(
         string $businessIdea,
         GenerationSession $session,
-        array $models = ['gpt-4'],
+        array $models = ['gpt-4o'],
         string $mode = 'creative',
         bool $deepThinking = false,
         array $customParams = []
