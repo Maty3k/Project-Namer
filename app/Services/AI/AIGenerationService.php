@@ -24,8 +24,8 @@ use Illuminate\Support\Str;
 class AIGenerationService
 {
     private const VALID_MODELS = [
-        'gpt-4',
-        'claude-3.5-sonnet',
+        'gpt-4o',
+        'claude-3-5-sonnet-20241022',
         'gemini-1.5-pro',
         'grok-beta',
     ];
