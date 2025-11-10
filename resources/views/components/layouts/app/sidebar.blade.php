@@ -4,6 +4,17 @@
     @include('partials.head')
 
     <style>
+        /* PREVENT HORIZONTAL SCROLLING ON MOBILE */
+        html, body {
+            overflow-x: hidden !important;
+            max-width: 100vw !important;
+        }
+
+        /* Prevent all elements from causing horizontal scroll */
+        * {
+            max-width: 100%;
+        }
+
         /* Minimal sidebar styling - let Flux handle most of it */
         aside[data-flux-sidebar] {
             display: flex;
@@ -88,7 +99,11 @@
 
 <x-mobile-user-menu/>
 
-{{ $slot }}
+<flux:main class="min-h-screen w-full overflow-x-hidden">
+    <div class="w-full max-w-full overflow-x-hidden px-2 sm:px-4 md:px-6 lg:px-8">
+        {{ $slot }}
+    </div>
+</flux:main>
 
 <!-- Toast Notifications -->
 @livewire('toastnotifications')

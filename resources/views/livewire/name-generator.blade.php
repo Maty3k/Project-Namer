@@ -2138,7 +2138,7 @@ new class extends Component {
 
 
 } ?>
-<div class="mx-auto max-w-4xl fade-in pull-to-refresh refreshable gesture-support gesture-state swipe-persistence mobile-scroll-optimized gpu-accelerated transform3d memory-efficient mobile-nav
+<div class="mx-auto w-full max-w-full sm:max-w-4xl fade-in pull-to-refresh refreshable gesture-support gesture-state swipe-persistence mobile-scroll-optimized gpu-accelerated transform3d memory-efficient mobile-nav
             p-3
             xs:p-4
             sm:p-5

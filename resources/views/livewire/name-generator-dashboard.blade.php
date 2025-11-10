@@ -14,7 +14,7 @@
 
         {{-- Generation Tab --}}
         <flux:tab.panel name="generate" class="flex-1 flex flex-col gap-6">
-            <div class="max-w-4xl mx-auto w-full space-y-8">
+            <div class="w-full max-w-full sm:max-w-4xl mx-auto space-y-8">
                 {{-- Header --}}
                 <div class="text-center space-y-4">
                     <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">

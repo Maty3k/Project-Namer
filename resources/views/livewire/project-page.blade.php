@@ -1,4 +1,4 @@
-<div class="max-w-4xl mx-auto p-3 sm:p-4 md:p-6" wire:key="project-page-{{ $project->id }}">
+<div class="w-full max-w-full sm:max-w-4xl mx-auto p-3 sm:p-4 md:p-6" wire:key="project-page-{{ $project->id }}">
     <div class="rounded-lg shadow-lg p-3 sm:p-4 md:p-6 lg:p-8 themed-project-box"
          @php
              $userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
