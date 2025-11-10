@@ -17,16 +17,16 @@
             <div class="max-w-4xl mx-auto w-full space-y-8">
                 {{-- Header --}}
                 <div class="text-center space-y-4">
-                    <h1 class="text-4xl font-bold text-gray-900 dark:text-white">
+                    <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
                         AI-Powered Business Name Generator
                     </h1>
-                    <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                    <p class="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
                         Ready to generate unique business names with AI assistance.
                     </p>
                 </div>
 
                 {{-- Business Idea Input Form --}}
-                <flux:card class="p-8">
+                <flux:card class="p-4 sm:p-6 md:p-8">
                     <form wire:submit="{{ $useAIGeneration ? 'generateNamesWithAI' : 'generateNames' }}" class="space-y-6">
                         {{-- Business Idea Textarea --}}
                         <div class="space-y-3">
@@ -136,7 +136,7 @@
                                         type="submit"
                                         variant="primary"
                                         size="base"
-                                        class="px-6 sm:px-8 py-3 text-base sm:text-lg min-h-12 sm:min-h-14"
+                                        class="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base min-h-10 sm:min-h-12"
                                         wire:loading.attr="disabled"
                                         wire:loading.class="opacity-50"
                                     >
@@ -156,7 +156,7 @@
                                         type="submit"
                                         variant="primary"
                                         size="base"
-                                        class="px-6 sm:px-8 py-3 text-base sm:text-lg min-h-12 sm:min-h-14"
+                                        class="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base min-h-10 sm:min-h-12"
                                         wire:loading.attr="disabled"
                                         wire:loading.class="opacity-50"
                                     >

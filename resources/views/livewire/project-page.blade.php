@@ -1,5 +1,5 @@
-<div class="max-w-4xl mx-auto p-4 sm:p-6" wire:key="project-page-{{ $project->id }}">
-    <div class="rounded-lg shadow-lg p-4 sm:p-6 lg:p-8 themed-project-box"
+<div class="max-w-4xl mx-auto p-3 sm:p-4 md:p-6" wire:key="project-page-{{ $project->id }}">
+    <div class="rounded-lg shadow-lg p-3 sm:p-4 md:p-6 lg:p-8 themed-project-box"
          @php
              $userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
          @endphp
@@ -17,7 +17,7 @@
         <!-- Project Description with Auto-save -->
         <div class="mb-8">
             <flux:field>
-                <flux:label for="description" class="text-lg font-semibold mb-3">Description</flux:label>
+                <flux:label for="description" class="text-base sm:text-lg font-semibold mb-3">Description</flux:label>
                 <flux:textarea
                     id="description"
                     wire:model.live.debounce.1000ms="editableDescription"
@@ -57,9 +57,9 @@
         
         @if($showAIControls && $this->filteredSuggestions->isEmpty())
             <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <div class="bg-primary-50 dark:bg-gray-800 rounded-lg p-6">
+                <div class="bg-primary-50 dark:bg-gray-800 rounded-lg p-4 sm:p-6">
                     <div class="mb-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">AI Name Generation</h3>
+                        <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">AI Name Generation</h3>
                     </div>
 
                     <!-- AI Controls -->

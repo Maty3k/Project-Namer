@@ -2139,11 +2139,11 @@ new class extends Component {
 
 } ?>
 <div class="mx-auto max-w-4xl fade-in pull-to-refresh refreshable gesture-support gesture-state swipe-persistence mobile-scroll-optimized gpu-accelerated transform3d memory-efficient mobile-nav
+            p-3
             xs:p-4
-            sm:p-6
-            md:p-8
-            lg:p-10
-            xl:p-12"
+            sm:p-5
+            md:p-6
+            lg:p-8"
      x-data="pullToRefresh()"
      x-on:touchstart="handlePullStart($event)"
      x-on:touchmove="handlePullMove($event)"
@@ -2173,24 +2173,25 @@ new class extends Component {
         @endif
     </div>
     <main class="glass shadow-soft-xl rounded-2xl backdrop-blur-xl border border-white/20 dark:border-white/10 {{ $businessDescription === 'Focus during loading test' ? '' : 'focus-trap' }}
-                xs:p-6
-                sm:p-8
-                md:p-10
-                lg:p-12
-                xl:p-14" 
+                p-4
+                xs:p-5
+                sm:p-6
+                md:p-8
+                lg:p-10" 
           aria-expanded="true">
         <div class="mb-8 slide-up">
             <h1 class="font-bold text-gray-900 dark:text-gray-100 mb-2 tracking-tight leading-tight
+                       text-xl
                        xs:text-2xl
-                       sm:text-3xl
-                       md:text-4xl
-                       lg:text-5xl">
+                       sm:text-2xl
+                       md:text-3xl
+                       lg:text-4xl">
                 Business Name Generator
             </h1>
             <p class="text-gray-600 dark:text-gray-400 opacity-80 overflow-hidden max-w-prose
-                     xs:text-sm
+                     text-sm
                      sm:text-base
-                     md:text-lg">
+                     md:text-base">
                 Generate creative business names powered by AI
             </p>
         </div>
