@@ -1,9 +1,8 @@
-<flux:header {{ $attributes->class(['lg:hidden', 'glass', 'shadow-soft', 'backdrop-blur-xl', 'border-b', 'border-white/20', 'dark:border-white/10', 'flex', 'items-center', 'justify-between', 'w-full', 'fixed', 'top-0', 'left-0', 'right-0', 'z-50', 'h-14']) }}>
-    <flux:sidebar.toggle class="lg:hidden btn-modern focus-modern touch-action-manipulation" icon="bars-2" inset="left"/>
+<flux:header {{ $attributes->class(['lg:hidden', 'glass', 'shadow-soft', 'backdrop-blur-xl', 'border-b', 'border-white/20', 'dark:border-white/10', 'fixed', 'top-0', 'left-0', 'right-0', 'z-50', 'h-14']) }}>
+    <div class="flex items-center justify-between w-full h-full px-4">
+        <flux:sidebar.toggle class="lg:hidden btn-modern focus-modern touch-action-manipulation" icon="bars-2" inset="left"/>
 
-    <flux:spacer/>
-
-    <flux:dropdown position="top" align="end" class="ml-auto">
+        <flux:dropdown position="top" align="end">
         <div class="transition-all duration-200 ease-out hover:scale-105 active:scale-95">
             <flux:profile
                     :initials="auth()->user()->initials()"
@@ -53,4 +52,5 @@
             </form>
         </flux:menu>
     </flux:dropdown>
+    </div>
 </flux:header>
