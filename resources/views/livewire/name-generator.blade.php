@@ -38,11 +38,11 @@ new class extends Component {
     // AI Model Selection Properties
     public bool $enableModelComparison = false;
     /** @var array<int, string> */
-    public array $selectedAIModels = ['claude-3.5-sonnet'];
+    public array $selectedAIModels = ['claude-3-5-sonnet-20241022'];
     /** @var array<int, array<string, string>> */
     public array $availableAIModels = [
-        ['id' => 'gpt-4', 'name' => 'GPT-4', 'provider' => 'OpenAI'],
-        ['id' => 'claude-3.5-sonnet', 'name' => 'Claude 3.5', 'provider' => 'Anthropic'],
+        ['id' => 'gpt-4o', 'name' => 'GPT-4o', 'provider' => 'OpenAI'],
+        ['id' => 'claude-3-5-sonnet-20241022', 'name' => 'Claude 3.5', 'provider' => 'Anthropic'],
         ['id' => 'gemini-1.5-pro', 'name' => 'Gemini Pro', 'provider' => 'Google'],
         ['id' => 'grok-beta', 'name' => 'Grok', 'provider' => 'xAI'],
     ];
@@ -1924,8 +1924,8 @@ new class extends Component {
 
         // Mode-specific suffixes based on the AI model and generation mode
         $suffixes = match ($modelId) {
-            'gpt-4' => ['Pro', 'Hub', 'Core', 'AI', 'Labs', 'Tech', 'Plus', 'Max', 'Zone', 'Link'],
-            'claude-3.5-sonnet' => ['Studio', 'Works', 'Craft', 'House', 'Space', 'Mind', 'Logic', 'Smart', 'Swift', 'Wise'],
+            'gpt-4o' => ['Pro', 'Hub', 'Core', 'AI', 'Labs', 'Tech', 'Plus', 'Max', 'Zone', 'Link'],
+            'claude-3-5-sonnet-20241022' => ['Studio', 'Works', 'Craft', 'House', 'Space', 'Mind', 'Logic', 'Smart', 'Swift', 'Wise'],
             'gemini-1.5-pro' => ['Digital', 'Cloud', 'Net', 'Web', 'App', 'System', 'Data', 'Code', 'Flow', 'Sync'],
             'grok-beta' => ['X', 'Edge', 'Boost', 'Rush', 'Spark', 'Volt', 'Pulse', 'Wave', 'Beat', 'Fire'],
             default => ['Pro', 'Hub', 'Core', 'Zone', 'Labs', 'Tech', 'Plus', 'Max', 'AI', 'Link']

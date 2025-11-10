@@ -72,17 +72,17 @@
                                         <div class="flex items-center gap-2">
                                             <flux:checkbox
                                                 wire:model.live="selectedAIModels"
-                                                value="gpt-4"
+                                                value="gpt-4o"
                                                 id="gpt4"
                                             />
-                                            <flux:label for="gpt4">GPT-4</flux:label>
+                                            <flux:label for="gpt4">GPT-4o</flux:label>
                                         </div>
                                     </flux:field>
                                     <flux:field>
                                         <div class="flex items-center gap-2">
                                             <flux:checkbox
                                                 wire:model.live="selectedAIModels"
-                                                value="claude-3.5-sonnet"
+                                                value="claude-3-5-sonnet-20241022"
                                                 id="claude"
                                             />
                                             <flux:label for="claude">Claude 3.5</flux:label>
