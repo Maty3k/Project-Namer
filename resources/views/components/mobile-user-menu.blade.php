@@ -1,5 +1,5 @@
 <flux:header {{ $attributes->class(['lg:hidden', 'glass', 'shadow-soft', 'backdrop-blur-xl', 'border-b', 'border-white/20', 'dark:border-white/10']) }} style="position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 9999 !important; height: 56px !important;">
-        <flux:sidebar.toggle class="lg:hidden btn-modern focus-modern touch-action-manipulation" icon="bars-2" style="position: absolute !important; right: 64px !important; top: 50% !important; transform: translateY(-50%) !important;"/>
+        <flux:sidebar.toggle class="lg:hidden btn-modern focus-modern touch-action-manipulation" icon="bars-2" style="position: absolute !important; right: 72px !important; top: 50% !important; transform: translateY(-50%) !important;"/>
 
         <flux:dropdown position="top" align="end" style="position: absolute !important; right: 12px !important; top: 50% !important; transform: translateY(-50%) !important;">
         <div class="transition-all duration-200 ease-out hover:scale-105 active:scale-95">
