@@ -17,8 +17,8 @@ final readonly class PromptBuilder
      * Map model IDs to prompt file suffixes.
      */
     private const MODEL_SUFFIX_MAP = [
-        'gpt-4' => 'gpt4',
-        'claude-3.5-sonnet' => 'claude',
+        'gpt-4o' => 'gpt4',
+        'claude-3-5-sonnet-20241022' => 'claude',
         'gemini-1.5-pro' => 'gemini',
         'grok-beta' => 'grok',
     ];
