@@ -110,7 +110,7 @@ class ProjectPage extends Component
         'editableName' => 'required|string|min:2|max:255',
         'editableDescription' => 'required|string|min:10|max:2000',
         'selectedAIModels' => 'required_if:useAIGeneration,true|array|min:1',
-        'selectedAIModels.*' => 'string|in:gpt-4,claude-3.5-sonnet,gemini-1.5-pro,grok-beta',
+        'selectedAIModels.*' => 'string|in:gpt-4o,claude-3-5-sonnet-20241022,gemini-1.5-pro,grok-beta',
         'generationMode' => 'nullable|string|in:creative,professional,brandable,tech-focused',
         'deepThinking' => 'boolean',
         'manualNameInput' => 'required|string|min:2|max:100',
