@@ -1,8 +1,8 @@
 ---
 provider: openai
-model: gpt-image-1
+model: dall-e-3
 size: 1024x1024
-quality: low
+quality: standard
 response_format: b64_json
 n: 1
 style: minimalist
