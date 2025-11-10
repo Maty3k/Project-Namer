@@ -19,7 +19,8 @@
         "pragmarx/google2fa": "^8.0",
         "pragmarx/google2fa-qrcode": "^3.0",
         "spatie/dns": "^2.7",
-        "spatie/laravel-medialibrary": "^11.14"
+        "spatie/laravel-medialibrary": "^11.14",
+        "symfony/yaml": "^7.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.15",
