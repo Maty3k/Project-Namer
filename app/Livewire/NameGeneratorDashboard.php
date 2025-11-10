@@ -56,8 +56,8 @@ class NameGeneratorDashboard extends Component
 
     /** @var array<int, array<string, string>> */
     public array $availableAIModels = [
-        ['id' => 'gpt-4', 'name' => 'GPT-4', 'provider' => 'OpenAI'],
-        ['id' => 'claude-3.5-sonnet', 'name' => 'Claude 3.5', 'provider' => 'Anthropic'],
+        ['id' => 'gpt-4o', 'name' => 'GPT-4o', 'provider' => 'OpenAI'],
+        ['id' => 'claude-3-5-sonnet-20241022', 'name' => 'Claude 3.5', 'provider' => 'Anthropic'],
         ['id' => 'gemini-1.5-pro', 'name' => 'Gemini Pro', 'provider' => 'Google'],
         ['id' => 'grok-beta', 'name' => 'Grok', 'provider' => 'xAI'],
     ];

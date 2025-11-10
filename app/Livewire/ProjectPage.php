@@ -1113,7 +1113,7 @@ class ProjectPage extends Component
         }
 
         // Analyze each model's performance
-        foreach (['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro', 'grok-beta'] as $modelId) {
+        foreach (['gpt-4o', 'claude-3-5-sonnet-20241022', 'gemini-1.5-pro', 'grok-beta'] as $modelId) {
             $modelGenerations = $userGenerations->filter(fn ($generation) => in_array($modelId, $generation->models_requested ?? []));
 
             if ($modelGenerations->count() === 0) {
@@ -1196,10 +1196,10 @@ class ProjectPage extends Component
     protected function getDefaultModelRecommendations(): array
     {
         return [
-            'recommended_models' => ['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro'],
+            'recommended_models' => ['gpt-4o', 'claude-3-5-sonnet-20241022', 'gemini-1.5-pro'],
             'model_scores' => [
-                'gpt-4' => 85,
-                'claude-3.5-sonnet' => 80,
+                'gpt-4o' => 85,
+                'claude-3-5-sonnet-20241022' => 80,
                 'gemini-1.5-pro' => 75,
                 'grok-beta' => 70,
             ],
