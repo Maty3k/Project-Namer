@@ -1,16 +1,23 @@
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-7xl mx-auto">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-4 px-3
+            sm:py-6 sm:px-4
+            lg:py-8 lg:px-8">
+    <div class="w-full max-w-full mx-auto
+                lg:max-w-7xl">
         {{-- Header --}}
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+        <div class="mb-6
+                    sm:mb-8">
+            <h1 class="font-bold text-gray-900 dark:text-white text-2xl
+                       sm:text-3xl">
                 Logo Generations
             </h1>
-            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <p class="mt-2 text-gray-600 dark:text-gray-400 text-xs
+                      sm:text-sm">
                 View all your AI-generated logo collections
             </p>
 
             {{-- Search and Filter --}}
-            <div class="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="mt-4 flex flex-col gap-3
+                        sm:mt-6 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
                 {{-- Search Bar --}}
                 <div class="relative flex-1 max-w-md">
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -27,14 +34,17 @@
                 </div>
 
                 {{-- Filter and Actions --}}
-                <div class="flex items-center gap-3">
-                    <label for="filter" class="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                <div class="flex flex-col gap-3
+                            sm:flex-row sm:items-center sm:gap-3">
+                    <label for="filter" class="font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap text-xs
+                                                sm:text-sm">
                         Sort by:
                     </label>
                     <select
                         id="filter"
                         wire:model.live="filterBy"
-                        class="block w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        class="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm
+                               sm:w-auto sm:px-4"
                     >
                         <option value="newest">Newest</option>
                         <option value="oldest">Oldest</option>
@@ -45,9 +55,11 @@
                     @if($logoGenerations->count() >= 2)
                         <button
                             wire:click="confirmDeleteAllGenerations"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white font-medium rounded-lg transition-colors shadow-sm hover:shadow-md whitespace-nowrap"
+                            class="inline-flex items-center justify-center gap-2 w-full px-3 py-2 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white font-medium rounded-lg transition-colors shadow-sm hover:shadow-md whitespace-nowrap text-sm
+                                   sm:w-auto sm:px-4"
                         >
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4
+                                        sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                             </svg>
                             Delete All
@@ -69,7 +81,12 @@
                 </p>
             </div>
         @else
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8">
+            <div class="grid gap-4 grid-cols-1
+                        xs:grid-cols-2 xs:gap-5
+                        sm:grid-cols-3 sm:gap-6
+                        md:grid-cols-4
+                        lg:grid-cols-5 lg:gap-8
+                        xl:grid-cols-6">
                 @foreach($logoGenerations as $generation)
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow relative">
                         {{-- Delete Button --}}

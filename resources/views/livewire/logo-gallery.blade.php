@@ -1,17 +1,25 @@
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-7xl mx-auto">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-4 px-3
+            sm:py-6 sm:px-4
+            lg:py-8 lg:px-8">
+    <div class="w-full max-w-full mx-auto
+                lg:max-w-7xl">
         {{-- Header --}}
-        <div class="mb-8">
-            <div class="flex items-center justify-between">
+        <div class="mb-6
+                    sm:mb-8">
+            <div class="flex flex-col gap-4
+                        md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+                    <h1 class="font-bold text-gray-900 dark:text-white text-2xl
+                               sm:text-3xl">
                         Logo Gallery
                     </h1>
-                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    <p class="mt-2 text-gray-600 dark:text-gray-400 text-xs
+                              sm:text-sm">
                         {{ $logoGeneration->business_name }}
                     </p>
                     @if($logoGeneration->business_description)
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-500">
+                        <p class="mt-1 text-gray-500 dark:text-gray-500 text-xs
+                                  sm:text-sm">
                             {{ $logoGeneration->business_description }}
                         </p>
                     @endif
@@ -19,12 +27,15 @@
 
                 {{-- Action Buttons --}}
                 @if($logos->isNotEmpty())
-                    <div class="flex gap-3">
+                    <div class="flex flex-col gap-2 w-full
+                                sm:flex-row sm:gap-3 sm:w-auto">
                         <button
                             wire:click="downloadAll"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white font-medium rounded-lg transition-colors shadow-sm hover:shadow-md"
+                            class="inline-flex items-center justify-center gap-2 px-3 py-2 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white font-medium rounded-lg transition-colors shadow-sm hover:shadow-md text-sm
+                                   sm:px-4"
                         >
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4
+                                        sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                             </svg>
                             Download All (ZIP)
@@ -32,9 +43,11 @@
 
                         <button
                             wire:click="toggleSaved"
-                            class="inline-flex items-center gap-2 px-4 py-2 {{ $logoGeneration->is_saved ? 'bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600' : 'bg-gray-600 hover:bg-gray-700 dark:bg-gray-500 dark:hover:bg-gray-600' }} text-white font-medium rounded-lg transition-colors shadow-sm hover:shadow-md"
+                            class="inline-flex items-center justify-center gap-2 px-3 py-2 {{ $logoGeneration->is_saved ? 'bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600' : 'bg-gray-600 hover:bg-gray-700 dark:bg-gray-500 dark:hover:bg-gray-600' }} text-white font-medium rounded-lg transition-colors shadow-sm hover:shadow-md text-sm
+                                   sm:px-4"
                         >
-                            <svg class="w-5 h-5" fill="{{ $logoGeneration->is_saved ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4
+                                        sm:w-5 sm:h-5" fill="{{ $logoGeneration->is_saved ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
                             </svg>
                             {{ $logoGeneration->is_saved ? 'Favorited' : 'Favorite' }}
@@ -76,7 +89,12 @@
                 </p>
             </div>
         @else
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8">
+            <div class="grid gap-4 grid-cols-1
+                        xs:grid-cols-2 xs:gap-5
+                        sm:grid-cols-3 sm:gap-6
+                        md:grid-cols-4
+                        lg:grid-cols-5 lg:gap-8
+                        xl:grid-cols-6">
                 @foreach($logos as $logo)
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                         {{-- Logo Image --}}

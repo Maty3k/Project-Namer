@@ -154,7 +154,8 @@
                         </div>
 
                         <!-- Generation Actions -->
-                        <div class="flex gap-3 mt-8">
+                        <div class="flex flex-col gap-3 mt-6
+                                    sm:flex-row sm:mt-8">
                             <flux:button
                                 wire:click="generateMoreNames"
                                 variant="primary"

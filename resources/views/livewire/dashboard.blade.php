@@ -1,15 +1,24 @@
-<div class="max-w-2xl mx-auto p-6">
-    <div class="rounded-lg shadow-lg p-8 transition-all duration-300 bg-white dark:bg-zinc-900">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold mb-2 text-zinc-900 dark:text-zinc-100">
+<div class="w-full max-w-full mx-auto p-3
+            sm:max-w-2xl sm:p-4
+            md:p-6">
+    <div class="rounded-lg shadow-lg transition-all duration-300 bg-white dark:bg-zinc-900 p-4
+                sm:p-6
+                md:p-8">
+        <div class="text-center mb-6
+                    sm:mb-8">
+            <h1 class="font-bold mb-2 text-zinc-900 dark:text-zinc-100 text-xl
+                       sm:text-2xl
+                       md:text-3xl">
                 Create New Project
             </h1>
-            <p class="text-zinc-600 dark:text-zinc-400">
+            <p class="text-zinc-600 dark:text-zinc-400 text-sm
+                      sm:text-base">
                 Describe your business idea to get started with name generation
             </p>
         </div>
 
-        <form wire:submit="createProject" class="space-y-6">
+        <form wire:submit="createProject" class="space-y-4
+                                                 sm:space-y-6">
             <div>
                 <flux:field>
                     <flux:label for="description">Describe your project</flux:label>
@@ -28,14 +37,18 @@
                 </flux:field>
             </div>
 
-            <div class="flex justify-between items-center">
-                <div class="text-sm text-zinc-500 dark:text-zinc-400">
+            <div class="flex flex-col gap-3
+                        sm:flex-row sm:justify-between sm:items-center">
+                <div class="text-xs text-zinc-500 dark:text-zinc-400 text-center
+                            sm:text-sm sm:text-left">
                     Your project will be saved automatically
                 </div>
-                <flux:button 
+                <flux:button
                     type="submit"
                     variant="primary"
                     :disabled="strlen(trim($description)) < 10"
+                    class="w-full
+                           sm:w-auto"
                 >
                     Save & Generate Names
                 </flux:button>
