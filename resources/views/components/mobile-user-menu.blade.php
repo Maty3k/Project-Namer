@@ -49,4 +49,4 @@
             </form>
         </flux:menu>
     </flux:dropdown>
-</flux:header>
+</div>
