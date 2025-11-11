@@ -29,6 +29,13 @@
             height: 100vh;
         }
 
+        /* Add top padding to sidebar on mobile to account for fixed header */
+        @media (max-width: 1023px) {
+            [data-flux-sidebar] {
+                padding-top: 80px !important;
+            }
+        }
+
         /* Force immediate background color application - no transition delay */
         body, [data-flux-sidebar] {
             transition: background-color 0ms !important;
