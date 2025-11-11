@@ -61,6 +61,13 @@
                 z-index: 60 !important;
             }
         }
+
+        /* Hide sidebar toggle button on desktop */
+        @media (min-width: 1024px) {
+            [data-flux-sidebar-toggle] {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen bg-zinc-50 dark:bg-zinc-900">
