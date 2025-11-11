@@ -34,11 +34,12 @@
             [data-flux-sidebar] {
                 z-index: 10000 !important; /* Higher than mobile header */
                 position: relative !important;
+                padding-top: 88px !important; /* Space for mobile header (72px) + extra (16px) */
             }
 
-            /* Push the first element (close button) down below mobile header */
+            /* Add space between close button and next element */
             [data-flux-sidebar] > *:first-child {
-                margin-top: 96px !important;
+                margin-bottom: 16px !important;
             }
         }
 
