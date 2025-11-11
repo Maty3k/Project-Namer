@@ -29,16 +29,14 @@
             aside[data-flux-sidebar] {
                 /* Sidebar appears above mobile header when open */
                 z-index: 70;
-                /* Add significant padding at top to push content below mobile header */
-                padding-top: 100px !important;
+                /* Add VERY significant padding at top to push ALL content below mobile header */
+                padding-top: 0 !important;
             }
 
-            /* Ensure sidebar toggle button is visible and prominent */
-            aside[data-flux-sidebar] > button:first-child,
-            aside[data-flux-sidebar] > [data-flux-sidebar-close] {
-                margin-bottom: 24px !important;
-                padding: 12px !important;
-                min-height: 48px !important;
+            /* Push the FIRST child element (close button) way down */
+            aside[data-flux-sidebar] > *:first-child {
+                margin-top: 88px !important;
+                margin-bottom: 20px !important;
             }
         }
 
