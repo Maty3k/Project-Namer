@@ -60,21 +60,13 @@
             aside[data-flux-sidebar] {
                 z-index: 60 !important;
             }
-
-            /* Ensure close button (X) has proper touch target sizing and visibility */
-            aside[data-flux-sidebar] button[data-flux-sidebar-toggle] {
-                min-width: 44px !important;
-                min-height: 44px !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-            }
         }
     </style>
 </head>
 <body class="min-h-screen bg-zinc-50 dark:bg-zinc-900">
 <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900">
-    <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
+    {{-- X close button removed on mobile - hamburger button handles both open/close --}}
+    <flux:sidebar.toggle class="hidden lg:block" icon="x-mark" />
 
     <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
         <x-app-logo />
