@@ -54,7 +54,7 @@
                            href="{{ route('keyboard-shortcuts') }}"
                            :current="request()->routeIs('keyboard-shortcuts')"
                            wire:navigate
-                           class="touch-target interactive focus-modern">
+                           class="touch-target interactive focus-modern hidden lg:flex">
             {{ __('Keyboard Shortcuts') }}
         </flux:navlist.item>
     </flux:navlist.group>
