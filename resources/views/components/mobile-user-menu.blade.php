@@ -1,10 +1,5 @@
 {{-- Modern Mobile Header using Flux header component --}}
 <flux:header class="lg:hidden z-50">
-    {{-- Sidebar Toggle Button (Hamburger) - Opens/closes sidebar --}}
-    <flux:sidebar.toggle icon="bars-2" inset="left" />
-
-    <flux:spacer />
-
     {{-- App Logo and Brand Name --}}
     <a href="{{ route('dashboard') }}" class="flex items-center gap-2" wire:navigate>
         <x-app-logo-icon class="h-8 w-8" />
