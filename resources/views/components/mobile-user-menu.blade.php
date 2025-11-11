@@ -1,4 +1,10 @@
 <flux:header {{ $attributes->class(['lg:hidden', 'glass', 'shadow-soft', 'backdrop-blur-xl', 'border-b', 'border-white/20', 'dark:border-white/10']) }} style="position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 9999 !important; height: 56px !important;">
+        {{-- App Logo and Name --}}
+        <div style="position: absolute !important; left: 12px !important; top: 50% !important; transform: translateY(-50%) !important;" class="flex items-center gap-2">
+            <x-app-logo-icon class="h-8 w-8 object-contain" style="filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.8));" />
+            <span class="font-semibold text-base text-gray-900 dark:text-white">Brandify</span>
+        </div>
+
         <flux:sidebar.toggle class="lg:hidden btn-modern focus-modern touch-action-manipulation" icon="bars-2" style="position: absolute !important; right: 88px !important; top: 50% !important; transform: translateY(-50%) !important;"/>
 
         <flux:dropdown position="top" align="end" style="position: absolute !important; right: 12px !important; top: 50% !important; transform: translateY(-50%) !important;">
