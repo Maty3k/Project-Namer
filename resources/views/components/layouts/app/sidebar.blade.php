@@ -68,6 +68,14 @@
                 display: none !important;
             }
         }
+
+        /* Prevent horizontal overflow on mobile that would affect fixed positioning */
+        @media (max-width: 1023px) {
+            html, body {
+                overflow-x: hidden;
+                max-width: 100vw;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen bg-zinc-50 dark:bg-zinc-900">
