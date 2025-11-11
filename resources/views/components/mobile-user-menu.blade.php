@@ -1,11 +1,5 @@
 {{-- Modern Mobile Header using Flux header component --}}
 <flux:header class="lg:hidden z-50">
-    {{-- App Logo and Brand Name --}}
-    <a href="{{ route('dashboard') }}" class="flex items-center gap-2" wire:navigate>
-        <x-app-logo-icon class="h-8 w-8" />
-        <span class="font-semibold text-base text-zinc-900 dark:text-white">Brandify</span>
-    </a>
-
     <flux:spacer />
 
     {{-- User Profile Dropdown - Right side --}}
