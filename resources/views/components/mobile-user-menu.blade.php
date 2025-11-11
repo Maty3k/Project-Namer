@@ -1,14 +1,14 @@
 {{-- Mobile Header: Fixed top bar visible only on mobile (below lg breakpoint) --}}
-<div class="lg:hidden fixed top-0 left-0 right-0 h-16 z-[60] bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700 shadow-sm">
-    <div class="h-full flex items-center justify-between px-4">
+<div class="lg:hidden fixed top-0 left-0 right-0 h-14 z-[60] bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700 shadow-sm">
+    <div class="h-full flex items-center justify-between px-3">
         {{-- Left: App Logo and Name --}}
         <div class="flex items-center gap-2">
-            <x-app-logo-icon class="h-8 w-8" />
-            <span class="font-semibold text-base text-gray-900 dark:text-white">Brandify</span>
+            <x-app-logo-icon class="h-7 w-7" />
+            <span class="font-semibold text-sm text-gray-900 dark:text-white">Brandify</span>
         </div>
 
         {{-- Right: Hamburger Menu and Profile --}}
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
             {{-- Hamburger Menu Button --}}
             <flux:sidebar.toggle class="lg:hidden" icon="bars-2" />
 

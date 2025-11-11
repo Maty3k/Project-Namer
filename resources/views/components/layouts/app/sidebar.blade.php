@@ -28,15 +28,16 @@
         @media (max-width: 1023px) {
             aside[data-flux-sidebar] {
                 /* Sidebar appears above mobile header when open */
-                z-index: 70;
-                /* Add VERY significant padding at top to push ALL content below mobile header */
+                z-index: 70 !important;
                 padding-top: 0 !important;
             }
 
-            /* Push the FIRST child element (close button) way down */
+            /* Push the FIRST child element (close button X) way down below the mobile header */
             aside[data-flux-sidebar] > *:first-child {
-                margin-top: 88px !important;
-                margin-bottom: 20px !important;
+                margin-top: 72px !important;
+                margin-bottom: 16px !important;
+                display: block !important;
+                visibility: visible !important;
             }
         }
 
@@ -111,8 +112,8 @@
 <x-mobile-user-menu/>
 
 <flux:main class="min-h-screen w-full overflow-x-hidden">
-    {{-- Add top padding on mobile for fixed header, no padding on desktop --}}
-    <div class="w-full max-w-full overflow-x-hidden px-2 sm:px-4 md:px-6 lg:px-8 pt-20 lg:pt-0">
+    {{-- Add top padding on mobile for smaller fixed header (56px), no padding on desktop --}}
+    <div class="w-full max-w-full overflow-x-hidden px-2 sm:px-4 md:px-6 lg:px-8 pt-16 lg:pt-0">
         {{ $slot }}
     </div>
 </flux:main>
