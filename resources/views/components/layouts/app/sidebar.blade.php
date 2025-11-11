@@ -29,8 +29,16 @@
             aside[data-flux-sidebar] {
                 /* Sidebar appears above mobile header when open */
                 z-index: 70;
-                /* Add padding at top to account for fixed mobile header */
-                padding-top: 80px;
+                /* Add significant padding at top to push content below mobile header */
+                padding-top: 100px !important;
+            }
+
+            /* Ensure sidebar toggle button is visible and prominent */
+            aside[data-flux-sidebar] > button:first-child,
+            aside[data-flux-sidebar] > [data-flux-sidebar-close] {
+                margin-bottom: 24px !important;
+                padding: 12px !important;
+                min-height: 48px !important;
             }
         }
 
