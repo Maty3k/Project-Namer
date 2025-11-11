@@ -4,7 +4,7 @@
 
     {{-- User Profile Dropdown - Right side --}}
     <flux:dropdown position="bottom" align="end">
-        <div class="flex items-center justify-center h-10 w-10 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors cursor-pointer">
+        <div class="flex items-center justify-center h-10 w-10 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors cursor-pointer -mt-1">
             <span class="text-sm font-medium text-zinc-900 dark:text-white">
                 {{ auth()->user()->initials() }}
             </span>
