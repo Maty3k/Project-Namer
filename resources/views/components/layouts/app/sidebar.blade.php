@@ -15,31 +15,22 @@
             max-width: 100%;
         }
 
-        /* Minimal sidebar styling - let Flux handle most of it */
+        /* Sidebar Base Styles */
         aside[data-flux-sidebar] {
             display: flex;
             flex-direction: column;
-            /* Smooth background transitions to prevent flash */
             transition: background-color 0ms !important;
-        }
-
-        /* Ensure sidebar content doesn't overflow */
-        [data-flux-sidebar] {
             overflow-y: auto;
             height: 100vh;
         }
 
-        /* Add top padding to sidebar on mobile to account for fixed header */
+        /* Mobile Sidebar Adjustments */
         @media (max-width: 1023px) {
-            [data-flux-sidebar] {
-                z-index: 10000 !important; /* Higher than mobile header */
-                position: relative !important;
-                padding-top: 88px !important; /* Space for mobile header (72px) + extra (16px) */
-            }
-
-            /* Add space between close button and next element */
-            [data-flux-sidebar] > *:first-child {
-                margin-bottom: 16px !important;
+            aside[data-flux-sidebar] {
+                /* Sidebar appears above mobile header when open */
+                z-index: 70;
+                /* Add padding at top to account for fixed mobile header */
+                padding-top: 80px;
             }
         }
 
@@ -114,6 +105,7 @@
 <x-mobile-user-menu/>
 
 <flux:main class="min-h-screen w-full overflow-x-hidden">
+    {{-- Add top padding on mobile for fixed header, no padding on desktop --}}
     <div class="w-full max-w-full overflow-x-hidden px-2 sm:px-4 md:px-6 lg:px-8 pt-20 lg:pt-0">
         {{ $slot }}
     </div>

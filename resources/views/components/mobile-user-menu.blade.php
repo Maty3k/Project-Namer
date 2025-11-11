@@ -1,60 +1,55 @@
-<flux:header {{ $attributes->class(['lg:hidden', 'glass', 'shadow-soft', 'backdrop-blur-xl', 'border-b', 'border-white/20', 'dark:border-white/10']) }} style="position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 100vw !important; z-index: 9999 !important; height: 72px !important; margin: 0 !important;">
-        {{-- App Logo and Name --}}
-        <div style="position: absolute !important; left: 12px !important; top: 50% !important; transform: translateY(-50%) !important;" class="flex items-center gap-2">
-            <x-app-logo-icon class="h-8 w-8 object-contain" style="filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.8));" />
+{{-- Mobile Header: Fixed top bar visible only on mobile (below lg breakpoint) --}}
+<div class="lg:hidden fixed top-0 left-0 right-0 h-16 z-[60] bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700 shadow-sm">
+    <div class="h-full flex items-center justify-between px-4">
+        {{-- Left: App Logo and Name --}}
+        <div class="flex items-center gap-2">
+            <x-app-logo-icon class="h-8 w-8" />
             <span class="font-semibold text-base text-gray-900 dark:text-white">Brandify</span>
         </div>
 
-        <flux:sidebar.toggle class="lg:hidden btn-modern focus-modern touch-action-manipulation" icon="bars-2" style="position: absolute !important; right: 88px !important; top: 50% !important; transform: translateY(-50%) !important; padding: 12px !important;"/>
+        {{-- Right: Hamburger Menu and Profile --}}
+        <div class="flex items-center gap-3">
+            {{-- Hamburger Menu Button --}}
+            <flux:sidebar.toggle class="lg:hidden" icon="bars-2" />
 
-        <flux:dropdown position="top" align="end" style="position: absolute !important; right: 12px !important; top: 50% !important; transform: translateY(-50%) !important;">
-        <div class="transition-all duration-200 ease-out hover:scale-105 active:scale-95">
-            <flux:profile
+            {{-- User Profile Dropdown --}}
+            <flux:dropdown position="bottom" align="end">
+                <flux:profile
                     :initials="auth()->user()->initials()"
                     icon-trailing="chevron-down"
-                    class="transition-all duration-200 ease-out"
-            />
-        </div>
+                />
 
-        <flux:menu class="animate-in slide-in-from-bottom-2 fade-in-0 duration-200 ease-out">
-            <flux:menu.radio.group>
-                <div class="p-0 text-sm font-normal">
-                    <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
-                                <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
-                                    <span
-                                            class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
-                                    >
-                                        {{ auth()->user()->initials() }}
-                                    </span>
+                <flux:menu>
+                    <flux:menu.radio.group>
+                        <div class="p-3">
+                            <div class="flex items-center gap-3">
+                                <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-200 dark:bg-zinc-700">
+                                    {{ auth()->user()->initials() }}
                                 </span>
-
-                        <div class="grid flex-1 text-start text-sm leading-tight">
-                            <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
-                            <span class="truncate text-xs">{{ auth()->user()->email }}</span>
+                                <div class="flex-1">
+                                    <div class="font-semibold text-sm">{{ auth()->user()->name }}</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400">{{ auth()->user()->email }}</div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </flux:menu.radio.group>
+                    </flux:menu.radio.group>
 
-            <flux:menu.separator/>
+                    <flux:menu.separator/>
 
-            <flux:menu.item
-                :href="route('settings.profile')"
-                icon="cog"
-                wire:navigate
-                class="transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-sm"
-            >
-                {{ __('Settings') }}
-            </flux:menu.item>
+                    <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>
+                        {{ __('Settings') }}
+                    </flux:menu.item>
 
-            <flux:menu.separator/>
+                    <flux:menu.separator/>
 
-            <form method="POST" action="{{ route('logout') }}" class="w-full">
-                @csrf
-                <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-sm hover:bg-red-50 dark:hover:bg-red-900/20">
-                    {{ __('Log Out') }}
-                </flux:menu.item>
-            </form>
-        </flux:menu>
-    </flux:dropdown>
-</flux:header>
+                    <form method="POST" action="{{ route('logout') }}" class="w-full">
+                        @csrf
+                        <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full hover:bg-red-50 dark:hover:bg-red-900/20">
+                            {{ __('Log Out') }}
+                        </flux:menu.item>
+                    </form>
+                </flux:menu>
+            </flux:dropdown>
+        </div>
+    </div>
+</div>
