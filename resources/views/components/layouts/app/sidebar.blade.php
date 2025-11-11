@@ -71,32 +71,55 @@
 
         /* Prevent horizontal overflow on mobile that would affect fixed positioning */
         @media (max-width: 1023px) {
-            html, body {
+            html {
                 overflow-x: hidden !important;
+                overflow-y: auto !important;
+                width: 100vw !important;
                 max-width: 100vw !important;
-                width: 100% !important;
+                position: relative !important;
+            }
+
+            body {
+                overflow-x: hidden !important;
+                overflow-y: auto !important;
+                max-width: 100vw !important;
+                width: 100vw !important;
+                position: relative !important;
+                margin: 0 !important;
             }
 
             /* Ensure main content doesn't overflow */
             [data-flux-main] {
                 max-width: 100vw !important;
                 overflow-x: hidden !important;
+                box-sizing: border-box !important;
             }
 
             /* Ensure sidebar doesn't cause overflow when closed */
             [data-flux-sidebar] {
                 max-width: 100vw !important;
+                box-sizing: border-box !important;
+            }
+
+            /* Lock all direct children of body to viewport width */
+            body > * {
+                max-width: 100vw !important;
+                box-sizing: border-box !important;
             }
         }
 
-        /* Extra small screens - more aggressive overflow prevention */
+        /* Extra small screens - nuclear option to prevent any overflow */
         @media (max-width: 500px) {
             * {
                 max-width: 100vw !important;
+                box-sizing: border-box !important;
             }
 
             html, body {
                 overflow-x: hidden !important;
+                overflow-y: auto !important;
+                width: 100vw !important;
+                max-width: 100vw !important;
                 position: relative !important;
             }
         }
