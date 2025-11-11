@@ -32,7 +32,7 @@
         /* Add top padding to sidebar on mobile to account for fixed header */
         @media (max-width: 1023px) {
             [data-flux-sidebar] {
-                padding-top: 80px !important;
+                padding-top: 96px !important; /* Increased from 80px to 96px */
                 z-index: 10000 !important; /* Higher than mobile header */
                 position: relative !important;
             }
