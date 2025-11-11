@@ -32,15 +32,13 @@
         /* Add top padding to sidebar on mobile to account for fixed header */
         @media (max-width: 1023px) {
             [data-flux-sidebar] {
-                padding-top: 120px !important; /* Significantly increased for clear separation */
                 z-index: 10000 !important; /* Higher than mobile header */
                 position: relative !important;
             }
 
-            /* Ensure sidebar toggle button is visible above mobile header */
-            [data-flux-sidebar] .lg\:hidden {
-                position: relative !important;
-                z-index: 10001 !important;
+            /* Push the first element (close button) down below mobile header */
+            [data-flux-sidebar] > *:first-child {
+                margin-top: 96px !important;
             }
         }
 
