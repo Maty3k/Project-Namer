@@ -4,43 +4,6 @@
     @include('partials.head')
 
     <style>
-        /* PREVENT HORIZONTAL SCROLLING ON MOBILE */
-        html, body {
-            overflow-x: hidden !important;
-            max-width: 100vw !important;
-        }
-
-        /* Prevent all elements from causing horizontal scroll */
-        * {
-            max-width: 100%;
-        }
-
-        /* Sidebar Base Styles */
-        aside[data-flux-sidebar] {
-            display: flex;
-            flex-direction: column;
-            transition: background-color 0ms !important;
-            overflow-y: auto;
-            height: 100vh;
-        }
-
-        /* Mobile Sidebar Adjustments */
-        @media (max-width: 1023px) {
-            aside[data-flux-sidebar] {
-                /* Sidebar appears above mobile header when open */
-                z-index: 70 !important;
-                padding-top: 0 !important;
-            }
-
-            /* Push the FIRST child element (close button X) way down below the mobile header */
-            aside[data-flux-sidebar] > *:first-child {
-                margin-top: 120px !important;
-                margin-bottom: 24px !important;
-                display: block !important;
-                visibility: visible !important;
-            }
-        }
-
         /* Force immediate background color application - no transition delay */
         body, [data-flux-sidebar] {
             transition: background-color 0ms !important;
@@ -90,6 +53,23 @@
         html.dark [wire\\:id] {
             background-color: transparent !important;
         }
+
+        /* Mobile Sidebar Styling - Clean z-index layering */
+        @media (max-width: 1023px) {
+            /* Sidebar appears above mobile header (z-50) when open */
+            aside[data-flux-sidebar] {
+                z-index: 60 !important;
+            }
+
+            /* Ensure close button (X) has proper touch target sizing and visibility */
+            aside[data-flux-sidebar] button[data-flux-sidebar-toggle] {
+                min-width: 44px !important;
+                min-height: 44px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen bg-zinc-50 dark:bg-zinc-900">
@@ -111,9 +91,8 @@
 
 <x-mobile-user-menu/>
 
-<flux:main class="min-h-screen w-full overflow-x-hidden">
-    {{-- Add top padding on mobile for smaller fixed header (56px), no padding on desktop --}}
-    <div class="w-full max-w-full overflow-x-hidden px-2 sm:px-4 md:px-6 lg:px-8 pt-16 lg:pt-0">
+<flux:main class="min-h-screen w-full">
+    <div class="w-full px-4 md:px-6 lg:px-8">
         {{ $slot }}
     </div>
 </flux:main>
