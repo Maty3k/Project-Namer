@@ -33,6 +33,14 @@
         @media (max-width: 1023px) {
             [data-flux-sidebar] {
                 padding-top: 80px !important;
+                z-index: 10000 !important; /* Higher than mobile header */
+                position: relative !important;
+            }
+
+            /* Ensure sidebar toggle button is visible above mobile header */
+            [data-flux-sidebar] .lg\:hidden {
+                position: relative !important;
+                z-index: 10001 !important;
             }
         }
 
