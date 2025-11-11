@@ -1,4 +1,4 @@
-<flux:header {{ $attributes->class(['lg:hidden', 'glass', 'shadow-soft', 'backdrop-blur-xl', 'border-b', 'border-white/20', 'dark:border-white/10']) }} style="position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 9999 !important; height: 72px !important;">
+<flux:header {{ $attributes->class(['lg:hidden', 'glass', 'shadow-soft', 'backdrop-blur-xl', 'border-b', 'border-white/20', 'dark:border-white/10']) }} style="position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 100vw !important; z-index: 9999 !important; height: 72px !important; margin: 0 !important;">
         {{-- App Logo and Name --}}
         <div style="position: absolute !important; left: 12px !important; top: 50% !important; transform: translateY(-50%) !important;" class="flex items-center gap-2">
             <x-app-logo-icon class="h-8 w-8 object-contain" style="filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.8));" />
