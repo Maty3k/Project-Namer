@@ -72,8 +72,32 @@
         /* Prevent horizontal overflow on mobile that would affect fixed positioning */
         @media (max-width: 1023px) {
             html, body {
-                overflow-x: hidden;
-                max-width: 100vw;
+                overflow-x: hidden !important;
+                max-width: 100vw !important;
+                width: 100% !important;
+            }
+
+            /* Ensure main content doesn't overflow */
+            [data-flux-main] {
+                max-width: 100vw !important;
+                overflow-x: hidden !important;
+            }
+
+            /* Ensure sidebar doesn't cause overflow when closed */
+            [data-flux-sidebar] {
+                max-width: 100vw !important;
+            }
+        }
+
+        /* Extra small screens - more aggressive overflow prevention */
+        @media (max-width: 500px) {
+            * {
+                max-width: 100vw !important;
+            }
+
+            html, body {
+                overflow-x: hidden !important;
+                position: relative !important;
             }
         }
     </style>
