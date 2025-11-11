@@ -29,6 +29,11 @@
                 </div>
             </div>
 
+            {{-- Dashboard --}}
+            <flux:menu.item :href="route('dashboard')" icon="home" wire:navigate>
+                {{ __('Dashboard') }}
+            </flux:menu.item>
+
             {{-- Settings --}}
             <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>
                 {{ __('Settings') }}
