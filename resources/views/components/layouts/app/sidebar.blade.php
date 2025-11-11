@@ -100,7 +100,7 @@
 <x-mobile-user-menu/>
 
 <flux:main class="min-h-screen w-full overflow-x-hidden">
-    <div class="w-full max-w-full overflow-x-hidden px-2 sm:px-4 md:px-6 lg:px-8 pt-16 lg:pt-0">
+    <div class="w-full max-w-full overflow-x-hidden px-2 sm:px-4 md:px-6 lg:px-8 pt-20 lg:pt-0">
         {{ $slot }}
     </div>
 </flux:main>
