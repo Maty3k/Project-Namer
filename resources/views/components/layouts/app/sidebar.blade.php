@@ -34,8 +34,8 @@
 
             /* Push the FIRST child element (close button X) way down below the mobile header */
             aside[data-flux-sidebar] > *:first-child {
-                margin-top: 72px !important;
-                margin-bottom: 16px !important;
+                margin-top: 120px !important;
+                margin-bottom: 24px !important;
                 display: block !important;
                 visibility: visible !important;
             }
