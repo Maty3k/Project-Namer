@@ -143,7 +143,7 @@
 <x-mobile-user-menu/>
 
 <flux:main class="min-h-screen w-full">
-    <div class="w-full px-4 md:px-6 lg:px-8">
+    <div class="w-full px-2 sm:px-4 md:px-6 lg:px-8">
         {{ $slot }}
     </div>
 </flux:main>
