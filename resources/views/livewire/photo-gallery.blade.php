@@ -7,18 +7,30 @@
      wire:poll.2s="checkPendingImages">
 
     <!-- Gallery Header -->
-    <div class="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-4">
-        <div class="flex flex-col space-y-3
-                    sm:flex-row sm:space-y-0 sm:items-center sm:justify-between">
+    <div class="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-2 mb-2
+                sm:p-3 sm:mb-3
+                md:p-4 md:mb-4">
+        <div class="flex flex-col space-y-2
+                    sm:space-y-3 sm:flex-row sm:space-y-0 sm:items-center sm:justify-between">
             
             <div>
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+                <h2 class="text-sm font-semibold text-gray-900 dark:text-white
+                           sm:text-base
+                           md:text-lg">
                     Photo Gallery
-                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400 ml-2">
+                    <span class="text-xs font-normal text-gray-500 dark:text-gray-400 ml-1
+                                 sm:text-sm sm:ml-2">
                         ({{ $images->total() }} {{ Str::plural('photo', $images->total()) }})
                     </span>
                 </h2>
-                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                <!-- Short version for mobile -->
+                <p class="mt-1 text-xs text-gray-600 dark:text-gray-400
+                          lg:hidden">
+                    <span class="font-medium">Optional:</span> Add an image for logo color inspiration.
+                </p>
+                <!-- Full version for desktop -->
+                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400 hidden
+                          lg:block">
                     <span class="font-medium">Optional:</span> Upload an inspiration image to influence logo generation with its color palette. Everything works without it, but adding one provides more detailed, personalized results.
                 </p>
             </div>
