@@ -176,12 +176,20 @@
             </div>
         @else
             <!-- Empty State -->
-            <div class="flex flex-col items-center justify-center py-12">
-                <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex flex-col items-center justify-center py-6
+                        sm:py-8
+                        md:py-12">
+                <svg class="w-10 h-10 text-gray-400 mb-2
+                           sm:w-12 sm:h-12 sm:mb-3
+                           md:w-16 md:h-16 md:mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                 </svg>
-                <p class="text-gray-500 dark:text-gray-400">No photos yet</p>
-                <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">Upload your first photo to get started</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400
+                          sm:text-sm
+                          md:text-base">No photos yet</p>
+                <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5
+                          sm:text-xs sm:mt-1
+                          md:text-sm">Upload your first photo to get started</p>
             </div>
         @endif
     </div>
