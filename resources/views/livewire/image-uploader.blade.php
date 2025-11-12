@@ -22,10 +22,10 @@
           class="space-y-6">
         
         <!-- Drag and Drop Upload Area -->
-        <div class="upload-zone relative border-2 border-dashed rounded-lg transition-all duration-200 p-3
-                    sm:p-4
-                    md:p-6
-                    lg:p-8
+        <div class="upload-zone relative border-2 border-dashed rounded-lg transition-all duration-200 p-2
+                    sm:p-3
+                    md:p-4
+                    lg:p-6
                     {{ count($images) > 0 ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-300 dark:border-primary-600' : 'bg-gray-50 dark:bg-gray-800' }}"
              x-data="imageDropzone()"
              x-init="init()"
@@ -49,54 +49,64 @@
             <div class="text-center">
                 @if(count($images) > 0)
                     <flux:icon.photo
-                        class="mx-auto h-8 w-8 text-primary-500 dark:text-primary-400
-                               sm:h-10 sm:w-10
-                               md:h-12 md:w-12" />
-                    <p class="mt-1 text-xs font-medium text-primary-600 dark:text-primary-400
-                              sm:mt-2 sm:text-sm">
+                        class="mx-auto h-6 w-6 text-primary-500 dark:text-primary-400
+                               sm:h-8 sm:w-8
+                               md:h-10 md:w-10
+                               lg:h-12 lg:w-12" />
+                    <p class="mt-1 text-[11px] font-medium text-primary-600 dark:text-primary-400
+                              sm:text-xs
+                              md:mt-2 md:text-sm">
                         {{ count($images) }} {{ Str::plural('image', count($images)) }} selected
                     </p>
-                    <p class="mt-0.5 text-[10px] text-gray-500 dark:text-gray-400
-                              sm:mt-1 sm:text-xs"
+                    <p class="mt-0.5 text-[9px] text-gray-500 dark:text-gray-400
+                              sm:text-[10px]
+                              md:mt-1 md:text-xs"
                        x-show="!isDragging">
                         Click to add more or drag additional files here
                     </p>
-                    <p class="mt-0.5 text-[10px] text-primary-600 dark:text-primary-400 font-medium
-                              sm:mt-1 sm:text-xs"
+                    <p class="mt-0.5 text-[9px] text-primary-600 dark:text-primary-400 font-medium
+                              sm:text-[10px]
+                              md:mt-1 md:text-xs"
                        x-show="isDragging"
                        style="display: none;">
                         Drop files to add them to your selection
                     </p>
                 @else
                     <flux:icon.cloud-arrow-up
-                        class="mx-auto h-8 w-8 text-gray-400 dark:text-gray-500
-                               sm:h-10 sm:w-10
-                               md:h-12 md:w-12"
+                        class="mx-auto h-6 w-6 text-gray-400 dark:text-gray-500
+                               sm:h-8 sm:w-8
+                               md:h-10 md:w-10
+                               lg:h-12 lg:w-12"
                         x-show="!isDragging" />
                     <flux:icon.photo
-                        class="mx-auto h-8 w-8 text-primary-500 dark:text-primary-400 animate-bounce
-                               sm:h-10 sm:w-10
-                               md:h-12 md:w-12"
+                        class="mx-auto h-6 w-6 text-primary-500 dark:text-primary-400 animate-bounce
+                               sm:h-8 sm:w-8
+                               md:h-10 md:w-10
+                               lg:h-12 lg:w-12"
                         x-show="isDragging"
                         style="display: none;" />
-                    <p class="mt-1 text-xs font-medium text-gray-900 dark:text-gray-100
-                              sm:mt-2 sm:text-sm"
+                    <p class="mt-1 text-[11px] font-medium text-gray-900 dark:text-gray-100
+                              sm:text-xs
+                              md:mt-2 md:text-sm"
                        x-show="!isDragging">
                         Drag and drop images here, or click to browse
                     </p>
-                    <p class="mt-1 text-xs font-medium text-primary-600 dark:text-primary-400
-                              sm:mt-2 sm:text-sm"
+                    <p class="mt-1 text-[11px] font-medium text-primary-600 dark:text-primary-400
+                              sm:text-xs
+                              md:mt-2 md:text-sm"
                        x-show="isDragging"
                        style="display: none;">
                         Drop your images here!
                     </p>
-                    <p class="mt-0.5 text-[10px] text-gray-500 dark:text-gray-400
-                              sm:mt-1 sm:text-xs"
+                    <p class="mt-0.5 text-[9px] text-gray-500 dark:text-gray-400
+                              sm:text-[10px]
+                              md:mt-1 md:text-xs"
                        x-show="!isDragging">
                         JPEG, PNG, WebP, GIF up to 50MB each
                     </p>
-                    <p class="mt-0.5 text-[10px] text-primary-500 dark:text-primary-400
-                              sm:mt-1 sm:text-xs"
+                    <p class="mt-0.5 text-[9px] text-primary-500 dark:text-primary-400
+                              sm:text-[10px]
+                              md:mt-1 md:text-xs"
                        x-show="isDragging"
                        style="display: none;">
                         Multiple files supported
