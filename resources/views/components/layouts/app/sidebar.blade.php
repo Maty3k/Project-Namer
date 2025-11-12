@@ -235,52 +235,105 @@
 <x-command-palette />
 <x-keyboard-shortcuts-help />
 
-{{-- Ensure sidebar starts closed on mobile and closes on form submit --}}
+{{-- Override Flux sidebar behavior to stay closed on mobile --}}
 <script nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
-// Function to force close sidebar on mobile
-function forceCloseMobileSidebar() {
-    if (window.innerWidth < 1024) {
-        const sidebar = document.querySelector('[data-flux-sidebar]');
-        if (sidebar) {
-            // Remove data-open attribute to trigger CSS hiding
-            sidebar.removeAttribute('data-open');
-            sidebar.setAttribute('data-open', 'false');
-
-            // Also try to access Alpine state
-            if (sidebar.__x && sidebar.__x.$data) {
-                sidebar.__x.$data.open = false;
+// Intercept Alpine component before it initializes
+document.addEventListener('alpine:init', () => {
+    Alpine.interceptInit = Alpine.interceptInit || ((component) => {
+        // Intercept sidebar component initialization
+        if (component.el && component.el.hasAttribute('data-flux-sidebar')) {
+            // Override the initial 'open' state on mobile
+            if (window.innerWidth < 1024) {
+                const originalInit = component.init;
+                component.init = function() {
+                    // Set open to false BEFORE original init runs
+                    this.open = false;
+                    if (originalInit) {
+                        originalInit.call(this);
+                    }
+                    // Force it again AFTER init
+                    this.open = false;
+                };
             }
         }
+    });
+});
+
+// More direct approach - mutate Alpine data before component mounts
+window.Alpine = window.Alpine || {};
+window.Alpine.data = window.Alpine.data || function() {};
+
+const originalAlpineData = window.Alpine.data;
+window.Alpine.data = function(name, callback) {
+    if (typeof callback === 'function') {
+        const originalCallback = callback;
+        callback = function(...args) {
+            const result = originalCallback.apply(this, args);
+            // If this looks like a sidebar component and we're on mobile, force closed
+            if (result && typeof result === 'object' && 'open' in result && window.innerWidth < 1024) {
+                result.open = false;
+            }
+            return result;
+        };
     }
-}
+    return originalAlpineData.call(this, name, callback);
+};
 
-// Immediately set sidebar as closed before Alpine loads
-if (window.innerWidth < 1024) {
-    const style = document.createElement('style');
-    style.innerHTML = '@media (max-width: 1023px) { aside[data-flux-sidebar] { transform: translateX(-100%) !important; visibility: hidden !important; } }';
-    document.head.appendChild(style);
-}
-
-// Close after Alpine initializes
+// Aggressive approach: watch for any sidebar opening on mobile
 document.addEventListener('alpine:initialized', function() {
-    forceCloseMobileSidebar();
+    const observer = new MutationObserver(function(mutations) {
+        if (window.innerWidth < 1024) {
+            mutations.forEach(function(mutation) {
+                const sidebar = document.querySelector('[data-flux-sidebar]');
+                if (sidebar && sidebar.__x && sidebar.__x.$data && sidebar.__x.$data.open === true) {
+                    // Check if user actually clicked to open it
+                    const userAction = mutation.target.closest('[data-flux-sidebar-toggle]');
+                    if (!userAction) {
+                        // Not a user action, force close
+                        sidebar.__x.$data.open = false;
+                    }
+                }
+            });
+        }
+    });
+
+    const sidebar = document.querySelector('[data-flux-sidebar]');
+    if (sidebar) {
+        // Force close immediately
+        if (window.innerWidth < 1024 && sidebar.__x && sidebar.__x.$data) {
+            sidebar.__x.$data.open = false;
+        }
+        // Watch for changes
+        observer.observe(sidebar, {
+            attributes: true,
+            attributeFilter: ['data-open', 'class', 'style'],
+            subtree: true
+        });
+    }
 });
 
-// Close after full page load
-window.addEventListener('load', function() {
-    setTimeout(forceCloseMobileSidebar, 50);
+// Close on form submit
+document.addEventListener('submit', function() {
+    if (window.innerWidth < 1024) {
+        const sidebar = document.querySelector('[data-flux-sidebar]');
+        if (sidebar && sidebar.__x && sidebar.__x.$data) {
+            sidebar.__x.$data.open = false;
+        }
+    }
 });
 
-// Close sidebar when any form is submitted on mobile
-document.addEventListener('submit', function(e) {
-    forceCloseMobileSidebar();
-});
-
-// Close sidebar on Livewire events
-document.addEventListener('livewire:init', forceCloseMobileSidebar);
-document.addEventListener('livewire:navigating', forceCloseMobileSidebar);
-document.addEventListener('livewire:navigated', function() {
-    setTimeout(forceCloseMobileSidebar, 50);
+// Close on Livewire navigation
+['livewire:navigating', 'livewire:navigated'].forEach(event => {
+    document.addEventListener(event, function() {
+        setTimeout(() => {
+            if (window.innerWidth < 1024) {
+                const sidebar = document.querySelector('[data-flux-sidebar]');
+                if (sidebar && sidebar.__x && sidebar.__x.$data) {
+                    sidebar.__x.$data.open = false;
+                }
+            }
+        }, 10);
+    });
 });
 </script>
 </body>
