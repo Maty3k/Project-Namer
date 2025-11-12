@@ -55,6 +55,11 @@ class Sidebar extends Component
     {
         $this->activeProjectUuid = $activeProjectUuid;
 
+        // Start collapsed on mobile devices
+        if (request()->header('User-Agent') && preg_match('/Mobile|Android|iPhone/i', request()->header('User-Agent'))) {
+            $this->collapsed = true;
+        }
+
         if ($this->activeProjectUuid) {
             $this->selectedProject = Project::where('uuid', $this->activeProjectUuid)
                 ->where('user_id', Auth::id())
