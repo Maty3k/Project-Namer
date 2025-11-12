@@ -181,7 +181,7 @@
     </style>
 </head>
 <body class="min-h-screen bg-zinc-50 dark:bg-zinc-900">
-<flux:sidebar sticky collapsible="mobile" class="border-e border-zinc-200 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900">
+<flux:sidebar sticky collapsible="mobile" close-on-navigate class="border-e border-zinc-200 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900">
     <a href="{{ route('dashboard') }}" class="me-3 lg:me-5 flex items-center space-x-1 lg:space-x-2 rtl:space-x-reverse" wire:navigate>
         <x-app-logo class="scale-75 lg:scale-100" />
     </a>
@@ -222,5 +222,36 @@
 {{-- Keyboard Shortcuts Components - Load after Alpine is initialized --}}
 <x-command-palette />
 <x-keyboard-shortcuts-help />
+
+{{-- Ensure sidebar starts closed on mobile and closes on form submit --}}
+<script nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
+document.addEventListener('DOMContentLoaded', function() {
+    // Close sidebar on mobile on page load
+    if (window.innerWidth < 1024) {
+        const sidebar = document.querySelector('[data-flux-sidebar]');
+        if (sidebar) {
+            // Dispatch close event to Flux sidebar
+            window.dispatchEvent(new CustomEvent('flux-sidebar-close'));
+        }
+    }
+
+    // Close sidebar when any form is submitted on mobile
+    document.addEventListener('submit', function(e) {
+        if (window.innerWidth < 1024) {
+            const sidebar = document.querySelector('[data-flux-sidebar]');
+            if (sidebar) {
+                window.dispatchEvent(new CustomEvent('flux-sidebar-close'));
+            }
+        }
+    });
+
+    // Close sidebar on Livewire navigation on mobile
+    document.addEventListener('livewire:navigating', function() {
+        if (window.innerWidth < 1024) {
+            window.dispatchEvent(new CustomEvent('flux-sidebar-close'));
+        }
+    });
+});
+</script>
 </body>
 </html>
