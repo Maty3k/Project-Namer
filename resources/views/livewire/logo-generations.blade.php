@@ -89,18 +89,6 @@
                         xl:grid-cols-6">
                 @foreach($logoGenerations as $generation)
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow relative flex flex-col border-2 border-gray-200 dark:border-gray-700">
-                        {{-- Delete Button --}}
-                        <button
-                            wire:click.prevent="confirmDelete({{ $generation->id }})"
-                            class="absolute top-2 right-2 z-10 p-1.5 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white rounded-md transition-colors shadow-lg"
-                            title="Delete all logos"
-                        >
-                            <svg class="w-3.5 h-3.5
-                                        sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                            </svg>
-                        </button>
-
                         <a href="{{ route('logo.gallery', $generation) }}"
                            wire:navigate
                            class="block flex-1 flex flex-col">
@@ -184,6 +172,19 @@
                             </div>
                         </div>
                         </a>
+
+                        {{-- Delete Button --}}
+                        <button
+                            wire:click.prevent="confirmDelete({{ $generation->id }})"
+                            class="absolute bottom-2 right-2 z-10 p-2 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white rounded-lg transition-all shadow-lg hover:shadow-xl
+                                   sm:p-2.5"
+                            title="Delete all logos"
+                        >
+                            <svg class="w-4 h-4
+                                        sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
                     </div>
                 @endforeach
             </div>

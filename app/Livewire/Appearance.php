@@ -13,6 +13,8 @@ class Appearance extends Component
 {
     public string $currentTheme = 'default';
 
+    public ?array $selectedThemeData = null;
+
     public function mount(): void
     {
         $user = auth()->user();
@@ -20,6 +22,12 @@ class Appearance extends Component
         if ($user) {
             $preference = UserThemePreference::where('user_id', $user->id)->first();
             $this->currentTheme = $preference ? $preference->theme_name : ($user->current_theme ?? 'default');
+        }
+
+        // Load theme data from session if available
+        if (session()->has('theme_selected')) {
+            $themeData = session('theme_selected');
+            $this->selectedThemeData = $themeData['colors'];
         }
     }
 
@@ -63,8 +71,44 @@ class Appearance extends Component
         // Update current theme for UI
         $this->currentTheme = $themeName;
 
+        // Store theme colors in session for confirmation after reload
+        session()->flash('theme_selected', [
+            'name' => $themeName,
+            'colors' => $this->getThemeColors($themeName),
+        ]);
+
         // Reload page to apply theme immediately
         $this->redirect(route('appearance'), navigate: true);
+    }
+
+    /**
+     * Get theme colors from CSS file.
+     *
+     * @return array<string, string>|null
+     */
+    protected function getThemeColors(string $themeName): ?array
+    {
+        $cssPath = public_path("css/themes/{$themeName}.css");
+
+        if (! file_exists($cssPath)) {
+            return null;
+        }
+
+        $cssContent = file_get_contents($cssPath);
+
+        if ($cssContent === false) {
+            return null;
+        }
+
+        // Extract CSS variables from :root selector
+        preg_match_all('/--color-(\w+):\s*(#[0-9a-fA-F]{6});/m', $cssContent, $matches, PREG_SET_ORDER);
+
+        $colors = [];
+        foreach ($matches as $match) {
+            $colors[$match[1]] = $match[2];
+        }
+
+        return $colors;
     }
 
     /**

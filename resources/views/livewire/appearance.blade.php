@@ -9,6 +9,51 @@
             </p>
         </div>
 
+        {{-- Confirmation Message --}}
+        @if($selectedThemeData)
+            <div class="mb-6 rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-500 dark:bg-green-800"
+                 x-data="{ show: true }"
+                 x-show="show"
+                 x-transition>
+                <div class="flex items-start gap-3">
+                    <div class="flex-shrink-0 text-green-600 dark:text-green-200">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-green-900 dark:text-white">
+                            Theme successfully updated!
+                        </p>
+
+                        {{-- Color Swatches - Desktop Only --}}
+                        <div class="mt-3 hidden md:block">
+                            <p class="text-xs font-medium text-green-800 dark:text-green-100 mb-2">
+                                Theme Colors:
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                @foreach($selectedThemeData as $colorName => $colorValue)
+                                    <div class="flex items-center gap-1.5 rounded-md bg-white dark:bg-zinc-700 px-2 py-1 border border-zinc-200 dark:border-zinc-500">
+                                        <div class="w-4 h-4 rounded border border-zinc-300 dark:border-zinc-400"
+                                             style="background-color: {{ $colorValue }};"></div>
+                                        <span class="text-xs text-zinc-700 dark:text-white capitalize">
+                                            {{ str_replace('-', ' ', $colorName) }}
+                                        </span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    <button @click="show = false"
+                            class="flex-shrink-0 text-green-600 hover:text-green-800 dark:text-green-200 dark:hover:text-white">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        @endif
+
         {{-- Theme Grid --}}
         <div class="space-y-6">
             <div>
