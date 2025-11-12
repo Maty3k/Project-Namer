@@ -225,32 +225,51 @@
 
 {{-- Ensure sidebar starts closed on mobile and closes on form submit --}}
 <script nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
-document.addEventListener('DOMContentLoaded', function() {
-    // Close sidebar on mobile on page load
+// Function to close sidebar on mobile
+function closeMobileSidebar() {
     if (window.innerWidth < 1024) {
-        const sidebar = document.querySelector('[data-flux-sidebar]');
-        if (sidebar) {
-            // Dispatch close event to Flux sidebar
-            window.dispatchEvent(new CustomEvent('flux-sidebar-close'));
-        }
-    }
+        // Try multiple approaches to close the sidebar
+        setTimeout(() => {
+            // Method 1: Dispatch Alpine event
+            window.dispatchEvent(new CustomEvent('flux-sidebar-toggle'));
 
-    // Close sidebar when any form is submitted on mobile
-    document.addEventListener('submit', function(e) {
-        if (window.innerWidth < 1024) {
-            const sidebar = document.querySelector('[data-flux-sidebar]');
-            if (sidebar) {
-                window.dispatchEvent(new CustomEvent('flux-sidebar-close'));
+            // Method 2: Find and click close button if exists
+            const closeButton = document.querySelector('[data-flux-sidebar-toggle]');
+            if (closeButton) {
+                closeButton.click();
             }
-        }
-    });
 
-    // Close sidebar on Livewire navigation on mobile
-    document.addEventListener('livewire:navigating', function() {
-        if (window.innerWidth < 1024) {
-            window.dispatchEvent(new CustomEvent('flux-sidebar-close'));
-        }
-    });
+            // Method 3: Use Alpine's x-data state
+            const sidebar = document.querySelector('[data-flux-sidebar]');
+            if (sidebar && sidebar.__x) {
+                sidebar.__x.$data.open = false;
+            }
+        }, 100);
+    }
+}
+
+// Close on initial load
+document.addEventListener('alpine:init', function() {
+    closeMobileSidebar();
+});
+
+// Backup - close after everything loads
+window.addEventListener('load', function() {
+    closeMobileSidebar();
+});
+
+// Close sidebar when any form is submitted on mobile
+document.addEventListener('submit', function(e) {
+    closeMobileSidebar();
+});
+
+// Close sidebar on Livewire navigation on mobile
+document.addEventListener('livewire:navigating', function() {
+    closeMobileSidebar();
+});
+
+document.addEventListener('livewire:navigated', function() {
+    closeMobileSidebar();
 });
 </script>
 </body>
