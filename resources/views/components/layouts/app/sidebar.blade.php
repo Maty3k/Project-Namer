@@ -59,6 +59,61 @@
             /* Sidebar appears above mobile header (z-50) when open */
             aside[data-flux-sidebar] {
                 z-index: 60 !important;
+                max-width: 280px !important;
+                width: 280px !important;
+                padding: 0.75rem !important;
+            }
+        }
+
+        /* Extra narrow screens - even smaller sidebar */
+        @media (max-width: 500px) {
+            aside[data-flux-sidebar] {
+                max-width: 240px !important;
+                width: 240px !important;
+                padding: 0.5rem !important;
+            }
+        }
+
+        /* Compact sidebar content on mobile */
+        @media (max-width: 1023px) {
+            /* Make logo smaller */
+            [data-flux-sidebar] a[href*="dashboard"] {
+                margin-right: 0.5rem !important;
+            }
+
+            /* Compact navigation items */
+            [data-flux-navlist-item] {
+                padding: 0.5rem !important;
+                font-size: 0.875rem !important;
+                gap: 0.5rem !important;
+            }
+
+            /* Make icons smaller */
+            [data-flux-navlist-item] svg {
+                width: 1rem !important;
+                height: 1rem !important;
+            }
+
+            /* Compact group headings */
+            [data-flux-navlist-group] > span {
+                font-size: 0.75rem !important;
+                padding: 0.25rem 0.5rem !important;
+            }
+
+            /* Reduce spacing between groups */
+            [data-flux-navlist-group] {
+                gap: 0.25rem !important;
+            }
+
+            /* Make user menu more compact */
+            [data-flux-profile] {
+                padding: 0.5rem !important;
+                font-size: 0.875rem !important;
+            }
+
+            /* Compact separator */
+            [data-flux-separator] {
+                margin: 0.5rem 0 !important;
             }
         }
 
@@ -127,8 +182,8 @@
 </head>
 <body class="min-h-screen bg-zinc-50 dark:bg-zinc-900">
 <flux:sidebar sticky collapsible="mobile" class="border-e border-zinc-200 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900">
-    <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
-        <x-app-logo />
+    <a href="{{ route('dashboard') }}" class="me-3 lg:me-5 flex items-center space-x-1 lg:space-x-2 rtl:space-x-reverse" wire:navigate>
+        <x-app-logo class="scale-75 lg:scale-100" />
     </a>
 
     <x-desktop-user-menu class="mt-4" />
