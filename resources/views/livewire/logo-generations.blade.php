@@ -88,36 +88,49 @@
                         lg:grid-cols-5 lg:gap-8
                         xl:grid-cols-6">
                 @foreach($logoGenerations as $generation)
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow relative">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow relative flex flex-col border-2 border-gray-200 dark:border-gray-700">
                         {{-- Delete Button --}}
                         <button
                             wire:click.prevent="confirmDelete({{ $generation->id }})"
-                            class="absolute bottom-2 right-2 z-10 p-1.5 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white rounded-md transition-colors"
+                            class="absolute top-2 right-2 z-10 p-1.5 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white rounded-md transition-colors shadow-lg"
                             title="Delete all logos"
                         >
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-3.5 h-3.5
+                                        sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                             </svg>
                         </button>
 
                         <a href="{{ route('logo.gallery', $generation) }}"
                            wire:navigate
-                           class="block">
+                           class="block flex-1 flex flex-col">
 
                         {{-- Preview Grid --}}
-                        <div class="aspect-square bg-gray-100 dark:bg-gray-700 p-3">
+                        <div class="aspect-square p-1.5
+                                    sm:p-2
+                                    md:p-3"
+                             style="background-color: rgb(243, 244, 246) !important;">
                             @if($generation->generatedLogos->isNotEmpty())
-                                <div class="grid grid-cols-2 gap-2 h-full">
+                                <div class="grid grid-cols-2 gap-1 h-full
+                                            sm:gap-1.5
+                                            md:gap-2">
                                     @foreach($generation->generatedLogos->take(4) as $logo)
                                         @if($logo->status === 'completed' && $logo->file_path)
-                                            <div class="bg-white dark:bg-gray-600 rounded flex items-center justify-center p-2">
+                                            <div class="rounded flex items-center justify-center p-1 shadow-sm
+                                                        sm:p-1.5
+                                                        md:p-2"
+                                                 style="background-color: rgb(229, 231, 235) !important;">
                                                 <img src="{{ $logo->url }}"
                                                      alt="{{ $logo->style }}"
-                                                     class="max-w-full max-h-full object-contain">
+                                                     class="w-full h-full object-contain">
                                             </div>
                                         @else
-                                            <div class="bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center">
-                                                <svg class="h-8 w-8 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <div class="bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center p-1
+                                                        sm:p-1.5
+                                                        md:p-2">
+                                                <svg class="h-5 w-5 text-gray-400 dark:text-gray-500
+                                                            sm:h-6 sm:w-6
+                                                            md:h-8 md:w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                                 </svg>
                                             </div>
@@ -126,7 +139,9 @@
                                 </div>
                             @else
                                 <div class="flex items-center justify-center h-full">
-                                    <svg class="h-16 w-16 text-gray-400 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="h-10 w-10 text-gray-400 dark:text-gray-600
+                                                sm:h-12 sm:w-12
+                                                md:h-16 md:w-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
                                 </div>
@@ -134,20 +149,24 @@
                         </div>
 
                         {{-- Info --}}
-                        <div class="p-3">
+                        <div class="p-2.5
+                                    sm:p-3">
                             <div class="flex items-center gap-1.5">
-                                <h3 class="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                                <h3 class="text-xs font-semibold text-gray-900 dark:text-white truncate
+                                           sm:text-sm">
                                     {{ $generation->business_name }}
                                 </h3>
                                 @if($generation->is_saved)
-                                    <svg class="w-4 h-4 text-yellow-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-3.5 h-3.5 text-yellow-500 flex-shrink-0
+                                                sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
                                     </svg>
                                 @endif
                             </div>
 
-                            <div class="mt-1.5 flex flex-col gap-1.5">
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
+                            <div class="mt-1.5 flex flex-col gap-1">
+                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs font-medium w-fit
+                                            sm:px-2
                                     {{ $generation->status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : '' }}
                                     {{ $generation->status === 'processing' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' : '' }}
                                     {{ $generation->status === 'failed' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' : '' }}

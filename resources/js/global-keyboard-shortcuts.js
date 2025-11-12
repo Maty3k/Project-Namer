@@ -20,6 +20,14 @@ const SHORTCUTS = [
 let disabledShortcuts = [];
 
 /**
+ * Check if the device is mobile
+ */
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+           window.innerWidth < 768;
+}
+
+/**
  * Update disabled shortcuts from injected window variable or API
  */
 function updateDisabledShortcuts() {
@@ -34,6 +42,11 @@ function updateDisabledShortcuts() {
  * Initialize global keyboard shortcuts
  */
 function initGlobalKeyboardShortcuts() {
+    // Don't initialize keyboard shortcuts on mobile devices
+    if (isMobileDevice()) {
+        return;
+    }
+
     // Register global keydown listener
     window.addEventListener('keydown', handleGlobalKeydown);
 

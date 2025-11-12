@@ -8,11 +8,24 @@
                     sm:mb-8">
             <div class="flex flex-col gap-4
                         md:flex-row md:items-center md:justify-between">
-                <div>
-                    <h1 class="font-bold text-gray-900 dark:text-white text-2xl
-                               sm:text-3xl">
-                        Logo Gallery
-                    </h1>
+                <div class="flex items-start gap-3">
+                    {{-- Back Button --}}
+                    <a href="{{ route('logos.index') }}"
+                       wire:navigate
+                       class="inline-flex items-center justify-center w-10 h-10 text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-lg transition-all shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700
+                              sm:w-11 sm:h-11"
+                       title="Back to Logo Generations">
+                        <svg class="w-5 h-5
+                                    sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                    </a>
+
+                    <div>
+                        <h1 class="font-bold text-gray-900 dark:text-white text-2xl
+                                   sm:text-3xl">
+                            Logo Gallery
+                        </h1>
                     <p class="mt-2 text-gray-600 dark:text-gray-400 text-xs
                               sm:text-sm">
                         {{ $logoGeneration->business_name }}
@@ -23,6 +36,7 @@
                             {{ $logoGeneration->business_description }}
                         </p>
                     @endif
+                    </div>
                 </div>
 
                 {{-- Action Buttons --}}
@@ -89,42 +103,54 @@
                 </p>
             </div>
         @else
-            <div class="grid gap-4 grid-cols-1
-                        xs:grid-cols-2 xs:gap-5
-                        sm:grid-cols-3 sm:gap-6
-                        md:grid-cols-4
-                        lg:grid-cols-5 lg:gap-8
+            <div class="grid gap-3 grid-cols-2
+                        xs:gap-4
+                        sm:grid-cols-3 sm:gap-5
+                        md:grid-cols-4 md:gap-6
+                        lg:grid-cols-5 lg:gap-6
                         xl:grid-cols-6">
                 @foreach($logos as $logo)
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow flex flex-col">
                         {{-- Logo Image --}}
                         <div
                             @if($logo->file_path && $logo->status === 'completed')
                                 wire:click="previewLogo({{ $logo->id }})"
-                                class="aspect-square bg-gray-100 dark:bg-gray-700 flex items-center justify-center p-3 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                                style="background-color: rgb(243, 244, 246) !important;"
+                                class="aspect-square flex items-center justify-center p-3 cursor-pointer transition-colors shadow-sm
+                                       sm:p-4
+                                       md:p-5"
                             @else
-                                class="aspect-square bg-gray-100 dark:bg-gray-700 flex items-center justify-center p-3"
+                                class="aspect-square bg-gray-100 dark:bg-gray-700 flex items-center justify-center p-3
+                                       sm:p-4
+                                       md:p-5"
                             @endif
                         >
                             @if($logo->file_path && $logo->status === 'completed')
                                 <img
                                     src="{{ $logo->url }}"
                                     alt="{{ $logo->style }} logo"
-                                    class="max-w-full max-h-full object-contain"
+                                    class="w-full h-full object-contain"
                                 >
                             @else
                                 <div class="text-center">
-                                    <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="mx-auto h-10 w-10 text-gray-400 dark:text-gray-600
+                                                sm:h-12 sm:w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
-                                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ ucfirst($logo->status) }}</p>
+                                    <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400
+                                              sm:mt-2 sm:text-sm">
+                                        {{ ucfirst($logo->status) }}
+                                    </p>
                                 </div>
                             @endif
                         </div>
 
                         {{-- Logo Info --}}
-                        <div class="p-3">
-                            <h3 class="text-xs font-semibold text-gray-900 dark:text-white capitalize">
+                        <div class="p-2
+                                    sm:p-2.5
+                                    md:p-3">
+                            <h3 class="text-xs font-semibold text-gray-900 dark:text-white capitalize
+                                       sm:text-sm">
                                 {{ $logo->style }}
                             </h3>
                             <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
@@ -133,22 +159,32 @@
 
                             {{-- Action Buttons --}}
                             @if($logo->status === 'completed')
-                                <div class="mt-3 flex gap-1.5">
+                                <div class="mt-2 flex gap-1
+                                            sm:mt-2.5 sm:gap-1.5">
                                     <button
                                         wire:click="downloadLogo({{ $logo->id }})"
-                                        class="flex-1 inline-flex items-center justify-center gap-1 px-2 py-1.5 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white text-xs font-medium rounded-md transition-colors"
+                                        class="flex-1 inline-flex items-center justify-center gap-1 px-1.5 py-1.5 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white text-xs font-medium rounded-md transition-colors
+                                               sm:px-2
+                                               md:gap-1.5"
                                     >
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-3 h-3
+                                                    sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                                         </svg>
+                                        <span class="hidden
+                                                     sm:inline">
+                                            DL
+                                        </span>
                                     </button>
 
                                     <button
                                         wire:click="confirmDelete({{ $logo->id }})"
-                                        class="inline-flex items-center justify-center px-2 py-1.5 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white text-xs font-medium rounded-md transition-colors"
+                                        class="inline-flex items-center justify-center px-1.5 py-1.5 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white text-xs font-medium rounded-md transition-colors
+                                               sm:px-2"
                                         title="Delete logo"
                                     >
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-3 h-3
+                                                    sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                         </svg>
                                     </button>
@@ -173,7 +209,7 @@
                 </div>
 
                 {{-- Large Logo Preview --}}
-                <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-8 flex items-center justify-center min-h-[400px]">
+                <div class="bg-white dark:bg-white rounded-lg p-8 flex items-center justify-center min-h-[400px] shadow-sm">
                     <img
                         src="{{ $logoToPreview->url }}"
                         alt="{{ $logoToPreview->style }} logo"
