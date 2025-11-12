@@ -144,7 +144,8 @@
                             <!-- Generation Mode -->
                             <flux:field>
                                 <flux:label>Generation Style</flux:label>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                                <div class="grid grid-cols-2 gap-2
+                                            sm:gap-3 mt-2">
                                     @php
                                         $modes = [
                                             'creative' => ['emoji' => '🎨', 'label' => 'Creative'],
@@ -158,7 +159,10 @@
                                         <button
                                             type="button"
                                             wire:click="toggleGenerationMode('{{ $mode }}')"
-                                            class="flex items-center justify-center gap-3 p-4 rounded-lg border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 hover:scale-105 touch-manipulation {{ $generationMode === $mode
+                                            class="flex items-center justify-center gap-1.5 p-2 rounded-lg border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 hover:scale-105 touch-manipulation
+                                                   sm:gap-2 sm:p-3
+                                                   md:gap-3 md:p-4
+                                                   {{ $generationMode === $mode
                                                 ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 shadow-md'
                                                 : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700' }}"
                                             role="button"
@@ -166,8 +170,12 @@
                                             tabindex="0"
                                             onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }"
                                         >
-                                            <span class="text-xl">{{ $config['emoji'] }}</span>
-                                            <span class="font-medium">{{ $config['label'] }}</span>
+                                            <span class="text-base
+                                                         sm:text-lg
+                                                         md:text-xl">{{ $config['emoji'] }}</span>
+                                            <span class="font-medium text-xs
+                                                         sm:text-sm
+                                                         md:text-base">{{ $config['label'] }}</span>
                                             @if($generationMode === $mode)
                                                 <svg class="w-4 h-4 ml-auto text-primary-600 dark:text-primary-400" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
