@@ -1,5 +1,10 @@
-<div class="w-full max-w-full sm:max-w-4xl mx-auto p-3 sm:p-4 md:p-6" wire:key="project-page-{{ $project->id }}">
-    <div class="rounded-lg shadow-lg p-3 sm:p-4 md:p-6 lg:p-8 themed-project-box"
+<div class="w-full max-w-full mx-auto p-1
+            sm:max-w-4xl sm:p-3
+            md:p-6" wire:key="project-page-{{ $project->id }}">
+    <div class="rounded-lg shadow-lg themed-project-box p-2
+                sm:p-3
+                md:p-4
+                lg:p-6"
          @php
              $userTheme = \App\Helpers\ThemeHelper::getCurrentUserTheme();
          @endphp
@@ -10,24 +15,32 @@
              class="bg-white dark:bg-gray-900"
          @endif>
         <!-- Project Header with Editable Name -->
-        <div class="mb-8">
+        <div class="mb-4
+                    sm:mb-6
+                    md:mb-8">
             <livewire:project-name-editor :project="$project" />
         </div>
 
         <!-- Project Description with Auto-save -->
-        <div class="mb-8">
+        <div class="mb-4
+                    sm:mb-6
+                    md:mb-8">
             <flux:field>
-                <flux:label for="description" class="text-base sm:text-lg font-semibold mb-3">Description</flux:label>
+                <flux:label for="description" class="text-sm font-semibold mb-2
+                                                      sm:text-base
+                                                      md:text-lg md:mb-3">Description</flux:label>
                 <flux:textarea
                     id="description"
                     wire:model.live.debounce.1000ms="editableDescription"
                     wire:blur="saveDescription"
                     placeholder="Describe your project in detail..."
-                    rows="8"
+                    rows="6"
                     maxlength="2000"
-                    class="w-full"
+                    class="w-full text-sm
+                           sm:text-base"
                 />
-                <flux:description class="flex justify-between items-center">
+                <flux:description class="flex justify-between items-center text-xs
+                                         sm:text-sm">
                     <span>{{ $this->descriptionCharacterCount }} characters</span>
                     <span wire:loading wire:target="saveDescription" class="text-green-600">
                         Auto-saving...
@@ -38,8 +51,12 @@
         </div>
 
         <!-- Project Stats and Metadata -->
-        <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 dark:text-gray-400">
+        <div class="border-t border-gray-200 dark:border-gray-700 pt-3
+                    sm:pt-4
+                    md:pt-6">
+            <div class="grid grid-cols-1 gap-2 text-xs text-gray-600 dark:text-gray-400
+                        sm:gap-3 sm:text-sm
+                        md:grid-cols-3 md:gap-4">
                 <div>
                     <span class="font-medium">Created:</span>
                     {{ $project->created_at->format('M j, Y') }}
@@ -48,7 +65,8 @@
                     <span class="font-medium">Last Updated:</span>
                     {{ $project->updated_at->format('M j, Y g:i A') }}
                 </div>
-                <div>
+                <div class="hidden
+                            md:block">
                     <span class="font-medium">Project ID:</span>
                     <code class="px-2 py-1 rounded text-xs">{{ $project->uuid }}</code>
                 </div>
@@ -56,14 +74,24 @@
         </div>
         
         @if($showAIControls && $this->filteredSuggestions->isEmpty())
-            <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <div class="bg-primary-50 dark:bg-gray-800 rounded-lg p-4 sm:p-6">
-                    <div class="mb-6">
-                        <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">AI Name Generation</h3>
+            <div class="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700
+                        sm:mt-6 sm:pt-4
+                        md:mt-8 md:pt-6">
+                <div class="bg-primary-50 dark:bg-gray-800 rounded-lg p-2
+                            sm:p-4
+                            md:p-6">
+                    <div class="mb-3
+                                sm:mb-4
+                                md:mb-6">
+                        <h3 class="text-sm font-semibold text-gray-900 dark:text-white
+                                   sm:text-base
+                                   md:text-lg">AI Name Generation</h3>
                     </div>
 
                     <!-- AI Controls -->
-                    <div class="space-y-6">
+                    <div class="space-y-3
+                                sm:space-y-4
+                                md:space-y-6">
                             <!-- AI Model Selection -->
                             <flux:field>
                                 <flux:label>AI Model Selection</flux:label>
@@ -228,34 +256,52 @@
 
         <!-- Optional Tools Section Header -->
         @if($this->filteredSuggestions->isEmpty())
-            <div class="mt-8 pt-8 border-t-2 border-dashed border-gray-300 dark:border-gray-600">
+            <div class="mt-4 pt-4 border-t-2 border-dashed border-gray-300 dark:border-gray-600
+                        sm:mt-6 sm:pt-6
+                        md:mt-8 md:pt-8">
                 <div class="bg-gradient-to-r from-primary-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20
-                            rounded-lg border-2 border-primary-200 dark:border-primary-700 p-6 mb-6">
-                    <div class="flex items-start gap-4">
+                            rounded-lg border-2 border-primary-200 dark:border-primary-700 p-3 mb-3
+                            sm:p-4 sm:mb-4
+                            md:p-6 md:mb-6">
+                    <div class="flex items-start gap-2
+                                sm:gap-3
+                                md:gap-4">
                         <div class="flex-shrink-0">
-                            <div class="w-12 h-12 bg-primary-100 dark:bg-primary-800 rounded-lg flex items-center justify-center">
-                                <svg class="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-8 h-8 bg-primary-100 dark:bg-primary-800 rounded-lg flex items-center justify-center
+                                        sm:w-10 sm:h-10
+                                        md:w-12 md:h-12">
+                                <svg class="w-4 h-4 text-primary-600 dark:text-primary-400
+                                           sm:w-5 sm:h-5
+                                           md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
                                 </svg>
                             </div>
                         </div>
                         <div class="flex-1">
-                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                            <h2 class="text-base font-bold text-gray-900 dark:text-white mb-1
+                                       sm:text-lg
+                                       md:text-xl lg:text-2xl md:mb-2">
                                 Optional Tools
-                                <span class="ml-2 text-sm font-normal bg-primary-600 text-white px-2 py-1 rounded-full">
+                                <span class="ml-1 text-[10px] font-normal bg-primary-600 text-white px-1.5 py-0.5 rounded-full
+                                             sm:ml-2 sm:text-xs sm:px-2 sm:py-1">
                                     Not Required
                                 </span>
                             </h2>
-                            <p class="text-base text-gray-700 dark:text-gray-300">
+                            <p class="text-xs text-gray-700 dark:text-gray-300
+                                      sm:text-sm
+                                      md:text-base">
                                 Enhance your results with these optional features below. Everything works great without them!
                             </p>
                         </div>
-                        <div class="flex-shrink-0">
+                        <div class="flex-shrink-0 hidden
+                                    sm:block">
                             <div class="relative">
                                 <div class="absolute inset-0 bg-primary-400 dark:bg-primary-600 rounded-full blur-md opacity-50 animate-pulse"></div>
-                                <div class="relative w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700
-                                            rounded-full flex items-center justify-center shadow-lg animate-bounce">
-                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                                <div class="relative w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700
+                                            rounded-full flex items-center justify-center shadow-lg animate-bounce
+                                            sm:w-10 sm:h-10">
+                                    <svg class="w-4 h-4 text-white
+                                               sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
                                     </svg>
                                 </div>
@@ -268,13 +314,16 @@
 
         <!-- Photo Gallery Section - Only shown before name generation -->
         @if($this->filteredSuggestions->isEmpty())
-            <div class="mt-6">
+            <div class="mt-3
+                        sm:mt-4
+                        md:mt-6">
                 <!-- Embedded Photo Gallery -->
                 @livewire(\App\Livewire\PhotoGallery::class, ['project' => $project], 'gallery-'.$project->id)
             </div>
 
-            <!-- Try Your Own Name Section -->
-            <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <!-- Try Your Own Name Section - Hidden on mobile, shown on desktop -->
+            <div class="hidden
+                        lg:block lg:mt-8 lg:pt-6 lg:border-t lg:border-gray-200 dark:lg:border-gray-700">
                 <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
                     <!-- Section Header -->
                     <div class="mb-6">
@@ -416,12 +465,19 @@
 
         <!-- Name Suggestions Section - Only shown when suggestions exist or generation is in progress -->
         @if($this->filteredSuggestions->isNotEmpty() || $isGeneratingNames)
-        <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+        <div class="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700
+                    sm:mt-6 sm:pt-4
+                    md:mt-8 md:pt-6">
             <!-- Section Header -->
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div class="flex flex-col gap-2 mb-3
+                        sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:mb-4
+                        md:mb-6">
                 <div class="flex-1">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Name Suggestions</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    <h3 class="text-sm font-medium text-gray-900 dark:text-white
+                               sm:text-base
+                               md:text-lg">Name Suggestions</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1
+                              sm:text-sm">
                         @if($this->filteredSuggestions->isNotEmpty())
                             {{ $this->filteredSuggestions->count() }} suggestion{{ $this->filteredSuggestions->count() !== 1 ? 's' : '' }}
                         @else
