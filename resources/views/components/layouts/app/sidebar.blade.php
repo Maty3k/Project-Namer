@@ -63,6 +63,18 @@
                 width: 280px !important;
                 padding: 0.75rem !important;
             }
+
+            /* Force sidebar closed by default on mobile - hide it off-screen */
+            aside[data-flux-sidebar]:not([data-open="true"]) {
+                transform: translateX(-100%) !important;
+                visibility: hidden !important;
+            }
+
+            /* Only show when explicitly opened */
+            aside[data-flux-sidebar][data-open="true"] {
+                transform: translateX(0) !important;
+                visibility: visible !important;
+            }
         }
 
         /* Extra narrow screens - even smaller sidebar */
@@ -225,51 +237,50 @@
 
 {{-- Ensure sidebar starts closed on mobile and closes on form submit --}}
 <script nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
-// Function to close sidebar on mobile
-function closeMobileSidebar() {
+// Function to force close sidebar on mobile
+function forceCloseMobileSidebar() {
     if (window.innerWidth < 1024) {
-        // Try multiple approaches to close the sidebar
-        setTimeout(() => {
-            // Method 1: Dispatch Alpine event
-            window.dispatchEvent(new CustomEvent('flux-sidebar-toggle'));
+        const sidebar = document.querySelector('[data-flux-sidebar]');
+        if (sidebar) {
+            // Remove data-open attribute to trigger CSS hiding
+            sidebar.removeAttribute('data-open');
+            sidebar.setAttribute('data-open', 'false');
 
-            // Method 2: Find and click close button if exists
-            const closeButton = document.querySelector('[data-flux-sidebar-toggle]');
-            if (closeButton) {
-                closeButton.click();
-            }
-
-            // Method 3: Use Alpine's x-data state
-            const sidebar = document.querySelector('[data-flux-sidebar]');
-            if (sidebar && sidebar.__x) {
+            // Also try to access Alpine state
+            if (sidebar.__x && sidebar.__x.$data) {
                 sidebar.__x.$data.open = false;
             }
-        }, 100);
+        }
     }
 }
 
-// Close on initial load
-document.addEventListener('alpine:init', function() {
-    closeMobileSidebar();
+// Immediately set sidebar as closed before Alpine loads
+if (window.innerWidth < 1024) {
+    const style = document.createElement('style');
+    style.innerHTML = '@media (max-width: 1023px) { aside[data-flux-sidebar] { transform: translateX(-100%) !important; visibility: hidden !important; } }';
+    document.head.appendChild(style);
+}
+
+// Close after Alpine initializes
+document.addEventListener('alpine:initialized', function() {
+    forceCloseMobileSidebar();
 });
 
-// Backup - close after everything loads
+// Close after full page load
 window.addEventListener('load', function() {
-    closeMobileSidebar();
+    setTimeout(forceCloseMobileSidebar, 50);
 });
 
 // Close sidebar when any form is submitted on mobile
 document.addEventListener('submit', function(e) {
-    closeMobileSidebar();
+    forceCloseMobileSidebar();
 });
 
-// Close sidebar on Livewire navigation on mobile
-document.addEventListener('livewire:navigating', function() {
-    closeMobileSidebar();
-});
-
+// Close sidebar on Livewire events
+document.addEventListener('livewire:init', forceCloseMobileSidebar);
+document.addEventListener('livewire:navigating', forceCloseMobileSidebar);
 document.addEventListener('livewire:navigated', function() {
-    closeMobileSidebar();
+    setTimeout(forceCloseMobileSidebar, 50);
 });
 </script>
 </body>
