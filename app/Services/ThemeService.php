@@ -135,7 +135,7 @@ final class ThemeService
                 'display_name' => 'Cyberpunk 2077',
                 'theme_name' => 'cyberpunk',
                 'is_dark_mode' => true,
-                'preview_url' => '/images/theme-previews/cyberpunk.png',
+                'preview_url' => '/images/theme-previews/cyberpunk.svg',
                 'category' => 'standard',
             ],
             // Seasonal Themes
@@ -247,7 +247,7 @@ final class ThemeService
                 'display_name' => 'Sakura Blossom',
                 'theme_name' => 'sakura',
                 'is_dark_mode' => false,
-                'preview_url' => '/images/theme-previews/sakura.png',
+                'preview_url' => '/images/theme-previews/sakura.svg',
                 'category' => 'elegant',
             ],
             [
@@ -255,7 +255,7 @@ final class ThemeService
                 'display_name' => 'Arctic Ice',
                 'theme_name' => 'arctic',
                 'is_dark_mode' => false,
-                'preview_url' => '/images/theme-previews/arctic.png',
+                'preview_url' => '/images/theme-previews/arctic.svg',
                 'category' => 'elegant',
             ],
             [
@@ -263,7 +263,7 @@ final class ThemeService
                 'display_name' => 'Mocha Cream',
                 'theme_name' => 'mocha',
                 'is_dark_mode' => false,
-                'preview_url' => '/images/theme-previews/mocha.png',
+                'preview_url' => '/images/theme-previews/mocha.svg',
                 'category' => 'elegant',
             ],
             [
@@ -271,7 +271,7 @@ final class ThemeService
                 'display_name' => 'Lavender Fields',
                 'theme_name' => 'lavender-fields',
                 'is_dark_mode' => false,
-                'preview_url' => '/images/theme-previews/lavender-fields.png',
+                'preview_url' => '/images/theme-previews/lavender-fields.svg',
                 'category' => 'elegant',
             ],
         ];

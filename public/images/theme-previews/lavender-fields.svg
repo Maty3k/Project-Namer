@@ -1,0 +1,52 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background sky -->
+  <defs>
+    <linearGradient id="lavenderSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0edf5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f9f7fb;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" fill="url(#lavenderSky)"/>
+
+  <!-- Hills -->
+  <ellipse cx="100" cy="180" rx="120" ry="40" fill="#d4c9df" opacity="0.6"/>
+  <ellipse cx="150" cy="195" rx="80" ry="30" fill="#b8a9c9" opacity="0.5"/>
+
+  <!-- Lavender plants -->
+  <g>
+    <!-- Plant 1 -->
+    <line x1="50" y1="150" x2="50" y2="110" stroke="#7aa874" stroke-width="2"/>
+    <circle cx="50" cy="105" r="4" fill="#9d84b7"/>
+    <circle cx="48" cy="112" r="3.5" fill="#b8a9c9"/>
+    <circle cx="52" cy="112" r="3.5" fill="#9d84b7"/>
+    <circle cx="50" cy="118" r="3" fill="#b8a9c9"/>
+
+    <!-- Plant 2 -->
+    <line x1="75" y1="155" x2="75" y2="120" stroke="#7aa874" stroke-width="2"/>
+    <circle cx="75" cy="115" r="4.5" fill="#9d84b7"/>
+    <circle cx="73" cy="123" r="4" fill="#b8a9c9"/>
+    <circle cx="77" cy="123" r="4" fill="#9d84b7"/>
+    <circle cx="75" cy="130" r="3.5" fill="#b8a9c9"/>
+
+    <!-- Plant 3 -->
+    <line x1="100" y1="160" x2="100" y2="125" stroke="#7aa874" stroke-width="2.5"/>
+    <circle cx="100" cy="120" r="5" fill="#9d84b7"/>
+    <circle cx="98" cy="128" r="4.5" fill="#b8a9c9"/>
+    <circle cx="102" cy="128" r="4.5" fill="#9d84b7"/>
+    <circle cx="100" cy="136" r="4" fill="#b8a9c9"/>
+
+    <!-- Plant 4 -->
+    <line x1="125" y1="158" x2="125" y2="118" stroke="#7aa874" stroke-width="2"/>
+    <circle cx="125" cy="113" r="4.5" fill="#9d84b7"/>
+    <circle cx="123" cy="121" r="4" fill="#b8a9c9"/>
+    <circle cx="127" cy="121" r="4" fill="#9d84b7"/>
+    <circle cx="125" cy="128" r="3.5" fill="#b8a9c9"/>
+
+    <!-- Plant 5 -->
+    <line x1="150" y1="153" x2="150" y2="115" stroke="#7aa874" stroke-width="2"/>
+    <circle cx="150" cy="110" r="4" fill="#9d84b7"/>
+    <circle cx="148" cy="117" r="3.5" fill="#b8a9c9"/>
+    <circle cx="152" cy="117" r="3.5" fill="#9d84b7"/>
+    <circle cx="150" cy="123" r="3" fill="#b8a9c9"/>
+  </g>
+</svg>

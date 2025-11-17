@@ -1,0 +1,19 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="200" height="200" fill="#fff5f8"/>
+
+  <!-- Cherry blossom tree trunk -->
+  <rect x="85" y="100" width="30" height="100" fill="#8B4513" rx="5"/>
+
+  <!-- Cherry blossoms -->
+  <circle cx="70" cy="70" r="25" fill="#ff9ec7" opacity="0.9"/>
+  <circle cx="100" cy="50" r="30" fill="#ffb3d9" opacity="0.9"/>
+  <circle cx="130" cy="65" r="28" fill="#ff9ec7" opacity="0.9"/>
+  <circle cx="85" cy="85" r="22" fill="#ffc8dd" opacity="0.9"/>
+  <circle cx="115" cy="80" r="26" fill="#ff6b9d" opacity="0.9"/>
+
+  <!-- Falling petals -->
+  <circle cx="40" cy="140" r="4" fill="#ff9ec7"/>
+  <circle cx="160" cy="120" r="3" fill="#ffb3d9"/>
+  <circle cx="55" cy="165" r="3.5" fill="#ffc8dd"/>
+</svg>

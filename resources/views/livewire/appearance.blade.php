@@ -82,14 +82,21 @@
                                 </div>
                             @endif
 
-                            {{-- Theme Emoji with Background --}}
-                            <div class="flex items-center justify-center w-14 h-14 rounded-xl text-3xl transition-transform duration-200
+                            {{-- Theme Preview Image --}}
+                            <div class="flex items-center justify-center w-14 h-14 rounded-xl overflow-hidden transition-transform duration-200
                                         sm:w-16 sm:h-16
                                         {{ $theme['is_dark_mode']
                                            ? 'bg-slate-100 dark:bg-slate-800'
-                                           : 'bg-amber-50 dark:bg-amber-900/20' }}
+                                           : 'bg-white dark:bg-zinc-800' }}
+                                        ring-1 ring-zinc-200 dark:ring-zinc-700
                                         group-hover:scale-105">
-                                {{ $themeEmojis[$theme['name']] ?? '🎨' }}
+                                @if(file_exists(public_path('images/theme-previews/' . $theme['name'] . '.svg')))
+                                    <img src="{{ asset('images/theme-previews/' . $theme['name'] . '.svg') }}"
+                                         alt="{{ $theme['display_name'] }}"
+                                         class="w-full h-full object-cover">
+                                @else
+                                    <span class="text-3xl">{{ $themeEmojis[$theme['name']] ?? '🎨' }}</span>
+                                @endif
                             </div>
 
                             {{-- Theme Name --}}
