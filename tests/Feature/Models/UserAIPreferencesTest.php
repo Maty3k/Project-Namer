@@ -10,12 +10,12 @@ test('UserAIPreferences model can be created with required attributes', function
 
     $preferences = UserAIPreferences::create([
         'user_id' => $user->id,
-        'preferred_models' => ['gpt-4', 'claude-3.5-sonnet'],
+        'preferred_models' => ['gpt-4o', 'claude-3-5-sonnet-20241022'],
         'default_generation_mode' => 'creative',
         'default_deep_thinking' => true,
         'model_priorities' => [
-            'gpt-4' => 1,
-            'claude-3.5-sonnet' => 2,
+            'gpt-4o' => 1,
+            'claude-3-5-sonnet-20241022' => 2,
             'gemini-1.5-pro' => 3,
             'grok-beta' => 4,
         ],
@@ -31,7 +31,7 @@ test('UserAIPreferences model can be created with required attributes', function
 
     expect($preferences)->toBeInstanceOf(UserAIPreferences::class)
         ->and($preferences->user_id)->toBe($user->id)
-        ->and($preferences->preferred_models)->toBe(['gpt-4', 'claude-3.5-sonnet'])
+        ->and($preferences->preferred_models)->toBe(['gpt-4o', 'claude-3-5-sonnet-20241022'])
         ->and($preferences->default_generation_mode)->toBe('creative')
         ->and($preferences->default_deep_thinking)->toBeTrue()
         ->and($preferences->model_priorities)->toBeArray()
@@ -55,10 +55,10 @@ test('UserAIPreferences casts arrays and boolean properly', function (): void {
 
     $preferences = UserAIPreferences::create([
         'user_id' => $user->id,
-        'preferred_models' => ['gpt-4', 'claude-3.5-sonnet'],
+        'preferred_models' => ['gpt-4o', 'claude-3-5-sonnet-20241022'],
         'default_generation_mode' => 'creative',
         'default_deep_thinking' => 1,
-        'model_priorities' => ['gpt-4' => 1],
+        'model_priorities' => ['gpt-4o' => 1],
         'custom_parameters' => ['temperature' => 0.8],
         'notification_settings' => ['email_on_completion' => true],
     ]);
@@ -78,7 +78,7 @@ test('UserAIPreferences can find or create for user', function (): void {
 
     expect($preferences1)->toBeInstanceOf(UserAIPreferences::class)
         ->and($preferences1->user_id)->toBe($user->id)
-        ->and($preferences1->preferred_models)->toBe(['gpt-4', 'claude-3.5-sonnet'])
+        ->and($preferences1->preferred_models)->toBe(['gpt-4o', 'claude-3-5-sonnet-20241022'])
         ->and($preferences1->default_generation_mode)->toBe('creative')
         ->and($preferences1->default_deep_thinking)->toBeFalse();
 
@@ -93,17 +93,17 @@ test('UserAIPreferences can get preferred models in priority order', function ()
 
     $preferences = UserAIPreferences::factory()->create([
         'user_id' => $user->id,
-        'preferred_models' => ['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro'],
+        'preferred_models' => ['gpt-4o', 'claude-3-5-sonnet-20241022', 'gemini-1.5-pro'],
         'model_priorities' => [
-            'claude-3.5-sonnet' => 1,
-            'gpt-4' => 2,
+            'claude-3-5-sonnet-20241022' => 1,
+            'gpt-4o' => 2,
             'gemini-1.5-pro' => 3,
         ],
     ]);
 
     $ordered = $preferences->getPreferredModelsOrdered();
 
-    expect($ordered)->toBe(['claude-3.5-sonnet', 'gpt-4', 'gemini-1.5-pro']);
+    expect($ordered)->toBe(['claude-3-5-sonnet-20241022', 'gpt-4o', 'gemini-1.5-pro']);
 });
 
 test('UserAIPreferences returns preferred models as-is when no priorities set', function (): void {
@@ -111,13 +111,13 @@ test('UserAIPreferences returns preferred models as-is when no priorities set', 
 
     $preferences = UserAIPreferences::factory()->create([
         'user_id' => $user->id,
-        'preferred_models' => ['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro'],
+        'preferred_models' => ['gpt-4o', 'claude-3-5-sonnet-20241022', 'gemini-1.5-pro'],
         'model_priorities' => [],
     ]);
 
     $ordered = $preferences->getPreferredModelsOrdered();
 
-    expect($ordered)->toBe(['gpt-4', 'claude-3.5-sonnet', 'gemini-1.5-pro']);
+    expect($ordered)->toBe(['gpt-4o', 'claude-3-5-sonnet-20241022', 'gemini-1.5-pro']);
 });
 
 test('UserAIPreferences can update preferred models', function (): void {
@@ -125,12 +125,12 @@ test('UserAIPreferences can update preferred models', function (): void {
 
     $preferences = UserAIPreferences::factory()->create([
         'user_id' => $user->id,
-        'preferred_models' => ['gpt-4'],
+        'preferred_models' => ['gpt-4o'],
     ]);
 
-    $preferences->updatePreferredModels(['claude-3.5-sonnet', 'gemini-1.5-pro']);
+    $preferences->updatePreferredModels(['claude-3-5-sonnet-20241022', 'gemini-1.5-pro']);
 
-    expect($preferences->fresh()->preferred_models)->toBe(['claude-3.5-sonnet', 'gemini-1.5-pro']);
+    expect($preferences->fresh()->preferred_models)->toBe(['claude-3-5-sonnet-20241022', 'gemini-1.5-pro']);
 });
 
 test('UserAIPreferences can update model priorities', function (): void {
@@ -138,12 +138,12 @@ test('UserAIPreferences can update model priorities', function (): void {
 
     $preferences = UserAIPreferences::factory()->create([
         'user_id' => $user->id,
-        'model_priorities' => ['gpt-4' => 1, 'claude-3.5-sonnet' => 2],
+        'model_priorities' => ['gpt-4o' => 1, 'claude-3-5-sonnet-20241022' => 2],
     ]);
 
     $newPriorities = [
-        'claude-3.5-sonnet' => 1,
-        'gpt-4' => 2,
+        'claude-3-5-sonnet-20241022' => 1,
+        'gpt-4o' => 2,
         'gemini-1.5-pro' => 3,
     ];
 
@@ -195,11 +195,11 @@ test('UserAIPreferences can check if model is preferred', function (): void {
 
     $preferences = UserAIPreferences::factory()->create([
         'user_id' => $user->id,
-        'preferred_models' => ['gpt-4', 'claude-3.5-sonnet'],
+        'preferred_models' => ['gpt-4o', 'claude-3-5-sonnet-20241022'],
     ]);
 
-    expect($preferences->isModelPreferred('gpt-4'))->toBeTrue()
-        ->and($preferences->isModelPreferred('claude-3.5-sonnet'))->toBeTrue()
+    expect($preferences->isModelPreferred('gpt-4o'))->toBeTrue()
+        ->and($preferences->isModelPreferred('claude-3-5-sonnet-20241022'))->toBeTrue()
         ->and($preferences->isModelPreferred('gemini-1.5-pro'))->toBeFalse();
 });
 
@@ -243,12 +243,12 @@ test('UserAIPreferences has scope for users with preferred model', function (): 
 
     UserAIPreferences::factory()->create([
         'user_id' => $user1->id,
-        'preferred_models' => ['gpt-4', 'claude-3.5-sonnet'],
+        'preferred_models' => ['gpt-4o', 'claude-3-5-sonnet-20241022'],
     ]);
 
     UserAIPreferences::factory()->create([
         'user_id' => $user2->id,
-        'preferred_models' => ['claude-3.5-sonnet', 'gemini-1.5-pro'],
+        'preferred_models' => ['claude-3-5-sonnet-20241022', 'gemini-1.5-pro'],
     ]);
 
     UserAIPreferences::factory()->create([
@@ -256,8 +256,8 @@ test('UserAIPreferences has scope for users with preferred model', function (): 
         'preferred_models' => ['gemini-1.5-pro'],
     ]);
 
-    $gptUsers = UserAIPreferences::withPreferredModel('gpt-4')->get();
-    $claudeUsers = UserAIPreferences::withPreferredModel('claude-3.5-sonnet')->get();
+    $gptUsers = UserAIPreferences::withPreferredModel('gpt-4o')->get();
+    $claudeUsers = UserAIPreferences::withPreferredModel('claude-3-5-sonnet-20241022')->get();
 
     expect($gptUsers)->toHaveCount(1)
         ->and($claudeUsers)->toHaveCount(2);
@@ -268,15 +268,15 @@ test('UserAIPreferences has proper fillable attributes', function (): void {
 
     $preferences = new UserAIPreferences([
         'user_id' => $user->id,
-        'preferred_models' => ['gpt-4'],
+        'preferred_models' => ['gpt-4o'],
         'default_generation_mode' => 'creative',
         'default_deep_thinking' => true,
-        'model_priorities' => ['gpt-4' => 1],
+        'model_priorities' => ['gpt-4o' => 1],
         'custom_parameters' => ['temperature' => 0.8],
         'notification_settings' => ['email_on_completion' => true],
     ]);
 
     expect($preferences->user_id)->toBe($user->id)
-        ->and($preferences->preferred_models)->toBe(['gpt-4'])
+        ->and($preferences->preferred_models)->toBe(['gpt-4o'])
         ->and($preferences->default_generation_mode)->toBe('creative');
 });

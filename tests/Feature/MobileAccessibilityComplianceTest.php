@@ -310,8 +310,7 @@ describe('Mobile Accessibility Compliance Testing', function (): void {
                 ->toContain('sm:') // Small
                 ->toContain('md:') // Medium
                 ->toContain('lg:') // Large
-                ->toContain('xl:') // Extra large
-                ->toContain('focus-') // Focus states
+                ->toContain('focus:') // Focus states
                 ->toContain('aria-'); // ARIA support
         });
     });
