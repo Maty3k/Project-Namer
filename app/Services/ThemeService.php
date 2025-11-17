@@ -230,7 +230,7 @@ final class ThemeService
                 'display_name' => 'Gold Rush',
                 'theme_name' => 'gold-rush',
                 'is_dark_mode' => true,
-                'preview_url' => '/images/theme-previews/gold-rush.png',
+                'preview_url' => '/images/theme-previews/gold-rush.jpg',
                 'category' => 'bold',
             ],
             [
