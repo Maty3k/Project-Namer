@@ -132,6 +132,11 @@ class Sidebar extends Component
                     sidebar.style.willChange = "auto";
                 }, 600);
             }
+
+            // Dispatch event to notify other components about sidebar state
+            window.dispatchEvent(new CustomEvent("sidebar-toggled", {
+                detail: { open: '.($this->collapsed ? 'false' : 'true').' }
+            }));
         ');
     }
 
