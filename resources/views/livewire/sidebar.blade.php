@@ -1,4 +1,4 @@
-<div class="{{ $collapsed ? 'w-16' : 'w-64' }} transition-all duration-500 ease-out transform {{ $collapsed ? 'translate-x-0' : 'translate-x-0' }} border-r h-screen flex flex-col themed-sidebar will-change-transform bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-700">
+<div class="{{ $collapsed ? 'w-16' : 'w-80 lg:w-64' }} transition-all duration-500 ease-out transform {{ $collapsed ? 'translate-x-0' : 'translate-x-0' }} border-r h-screen flex flex-col themed-sidebar will-change-transform bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-700">
     <!-- Sidebar Header -->
     <div class="p-4 border-b border-gray-200 dark:border-slate-600 transition-all duration-300 ease-out">
         <div class="flex items-center transition-all duration-300 ease-out {{ $collapsed ? 'justify-center' : 'justify-between' }}">
