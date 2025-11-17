@@ -139,6 +139,10 @@ class Appearance extends Component
             'lime-punch' => '🍋',
             'gold-rush' => '💰',
             'matrix-green' => '🟢',
+            'sakura' => '🌸',
+            'arctic' => '🧊',
+            'mocha' => '☕',
+            'lavender-fields' => '💜',
         ];
     }
 
