@@ -103,7 +103,7 @@ final class ThemeService
                 'display_name' => 'Warm Sunset',
                 'theme_name' => 'sunset',
                 'is_dark_mode' => false,
-                'preview_url' => '/images/theme-previews/sunset.png',
+                'preview_url' => '/images/theme-previews/sunset.jpg',
                 'category' => 'standard',
             ],
             [
