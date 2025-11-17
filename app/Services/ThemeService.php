@@ -222,7 +222,7 @@ final class ThemeService
                 'display_name' => 'Lime Punch',
                 'theme_name' => 'lime-punch',
                 'is_dark_mode' => false,
-                'preview_url' => '/images/theme-previews/lime-punch.png',
+                'preview_url' => '/images/theme-previews/lime-punch.jpg',
                 'category' => 'bold',
             ],
             [
