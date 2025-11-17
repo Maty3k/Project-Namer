@@ -1,0 +1,25 @@
+/* Mocha Theme - Warm Coffee-Inspired Browns and Creams */
+
+/* Light Mode (Default) */
+:root {
+  --color-primary: #8b6f47;
+  --color-secondary: #a68a64;
+  --color-accent: #d4a574;
+  --color-background: #faf8f3;
+  --color-surface: #f5f1e8;
+  --color-text-primary: #2d2416;
+  --color-text-secondary: #4d3d28;
+  --color-border: #d9cbb8;
+}
+
+/* Dark Mode */
+:root.dark {
+  --color-primary: #d4a574;
+  --color-secondary: #a68a64;
+  --color-accent: #e6c196;
+  --color-background: #1a1410;
+  --color-surface: #2d2416;
+  --color-text-primary: #f5f1e8;
+  --color-text-secondary: #d9cbb8;
+  --color-border: #4d3d28;
+}

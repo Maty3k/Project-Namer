@@ -241,6 +241,39 @@ final class ThemeService
                 'preview_url' => '/images/theme-previews/matrix-green.png',
                 'category' => 'bold',
             ],
+            // Elegant & Sophisticated Themes
+            [
+                'name' => 'sakura',
+                'display_name' => 'Sakura Blossom',
+                'theme_name' => 'sakura',
+                'is_dark_mode' => false,
+                'preview_url' => '/images/theme-previews/sakura.png',
+                'category' => 'elegant',
+            ],
+            [
+                'name' => 'arctic',
+                'display_name' => 'Arctic Ice',
+                'theme_name' => 'arctic',
+                'is_dark_mode' => false,
+                'preview_url' => '/images/theme-previews/arctic.png',
+                'category' => 'elegant',
+            ],
+            [
+                'name' => 'mocha',
+                'display_name' => 'Mocha Cream',
+                'theme_name' => 'mocha',
+                'is_dark_mode' => false,
+                'preview_url' => '/images/theme-previews/mocha.png',
+                'category' => 'elegant',
+            ],
+            [
+                'name' => 'lavender-fields',
+                'display_name' => 'Lavender Fields',
+                'theme_name' => 'lavender-fields',
+                'is_dark_mode' => false,
+                'preview_url' => '/images/theme-previews/lavender-fields.png',
+                'category' => 'elegant',
+            ],
         ];
     }
 

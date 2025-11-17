@@ -1,0 +1,25 @@
+/* Lavender Fields Theme - Soft Purples and Greens */
+
+/* Light Mode (Default) */
+:root {
+  --color-primary: #9d84b7;
+  --color-secondary: #b8a9c9;
+  --color-accent: #7aa874;
+  --color-background: #f9f7fb;
+  --color-surface: #f0edf5;
+  --color-text-primary: #2d2333;
+  --color-text-secondary: #4d4356;
+  --color-border: #d4c9df;
+}
+
+/* Dark Mode */
+:root.dark {
+  --color-primary: #b8a9c9;
+  --color-secondary: #9d84b7;
+  --color-accent: #8cc487;
+  --color-background: #1a1521;
+  --color-surface: #2d2333;
+  --color-text-primary: #f0edf5;
+  --color-text-secondary: #d4c9df;
+  --color-border: #4d4356;
+}

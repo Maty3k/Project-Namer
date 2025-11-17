@@ -1,0 +1,25 @@
+/* Sakura Theme - Japanese Cherry Blossom Inspired */
+
+/* Light Mode (Default) */
+:root {
+  --color-primary: #ff9ec7;
+  --color-secondary: #ffb3d9;
+  --color-accent: #ff6b9d;
+  --color-background: #fff5f8;
+  --color-surface: #ffe8f0;
+  --color-text-primary: #2d1b1f;
+  --color-text-secondary: #5d4047;
+  --color-border: #ffc8dd;
+}
+
+/* Dark Mode */
+:root.dark {
+  --color-primary: #ff9ec7;
+  --color-secondary: #c77d9f;
+  --color-accent: #ff6b9d;
+  --color-background: #1a0f13;
+  --color-surface: #2d1b1f;
+  --color-text-primary: #ffe8f0;
+  --color-text-secondary: #ffc8dd;
+  --color-border: #5d4047;
+}
