@@ -162,7 +162,7 @@ final class ThemeService
                 'display_name' => 'Halloween Night',
                 'theme_name' => 'halloween',
                 'is_dark_mode' => true,
-                'preview_url' => '/images/theme-previews/halloween.png',
+                'preview_url' => '/images/theme-previews/halloween.jpg',
                 'category' => 'seasonal',
                 'season' => 'halloween',
             ],
