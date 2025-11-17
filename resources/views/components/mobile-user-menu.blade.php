@@ -1,5 +1,8 @@
 {{-- Modern Mobile Header - Profile button with dropdown menu --}}
-<div class="lg:hidden fixed top-4 right-4 z-50">
+<div class="lg:hidden fixed top-4 right-4 z-50 transition-all duration-300"
+     x-data="{ sidebarOpen: false }"
+     @sidebar-toggled.window="sidebarOpen = $event.detail.open"
+     :class="{ 'opacity-0 translate-x-full pointer-events-none': sidebarOpen }">
     <flux:dropdown position="bottom" align="end">
         <flux:button variant="ghost" size="sm" class="!p-0 !h-10 !w-10">
             <div class="flex items-center justify-center h-10 w-10 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
