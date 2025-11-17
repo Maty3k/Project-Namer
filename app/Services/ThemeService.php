@@ -263,7 +263,7 @@ final class ThemeService
                 'display_name' => 'Mocha Cream',
                 'theme_name' => 'mocha',
                 'is_dark_mode' => false,
-                'preview_url' => '/images/theme-previews/mocha.jpg',
+                'preview_url' => '/images/theme-previews/mocha.png',
                 'category' => 'elegant',
             ],
             [
