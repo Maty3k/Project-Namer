@@ -11,7 +11,7 @@
                 wire:click="toggleCollapse"
                 variant="ghost"
                 size="sm"
-                class="flex-shrink-0 transition-transform duration-300 ease-out hover:scale-110 active:scale-95"
+                class="flex-shrink-0 transition-all duration-300 ease-out hover:scale-110 active:scale-95 {{ !$collapsed ? 'lg:opacity-100 opacity-0 lg:translate-x-0 translate-x-full pointer-events-none lg:pointer-events-auto' : '' }}"
             >
                 <div class="transition-transform duration-300 ease-out {{ $collapsed ? 'rotate-0' : 'rotate-180' }}">
                     @if($collapsed)
