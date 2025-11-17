@@ -190,7 +190,7 @@ final class ThemeService
                 'display_name' => 'Neon Cyber',
                 'theme_name' => 'neon-cyber',
                 'is_dark_mode' => true,
-                'preview_url' => '/images/theme-previews/neon-cyber.png',
+                'preview_url' => '/images/theme-previews/neon-cyber.jpg',
                 'category' => 'bold',
             ],
             [
