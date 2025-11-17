@@ -318,8 +318,8 @@
                                             rounded-full flex items-center justify-center shadow-lg animate-bounce
                                             sm:w-10 sm:h-10">
                                     <svg class="w-4 h-4 text-white
-                                               sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                                               sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
                                     </svg>
                                 </div>
                             </div>
