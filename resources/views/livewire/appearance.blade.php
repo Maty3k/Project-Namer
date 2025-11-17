@@ -90,8 +90,17 @@
                                            : 'bg-white dark:bg-zinc-800' }}
                                         ring-1 ring-zinc-200 dark:ring-zinc-700
                                         group-hover:scale-105">
-                                @if(file_exists(public_path('images/theme-previews/' . $theme['name'] . '.svg')))
-                                    <img src="{{ asset('images/theme-previews/' . $theme['name'] . '.svg') }}"
+                                @php
+                                    $imagePath = null;
+                                    foreach (['svg', 'jpg', 'png'] as $ext) {
+                                        if (file_exists(public_path('images/theme-previews/' . $theme['name'] . '.' . $ext))) {
+                                            $imagePath = 'images/theme-previews/' . $theme['name'] . '.' . $ext;
+                                            break;
+                                        }
+                                    }
+                                @endphp
+                                @if($imagePath)
+                                    <img src="{{ asset($imagePath) }}"
                                          alt="{{ $theme['display_name'] }}"
                                          class="w-full h-full object-cover">
                                 @else

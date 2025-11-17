@@ -135,7 +135,7 @@ final class ThemeService
                 'display_name' => 'Cyberpunk 2077',
                 'theme_name' => 'cyberpunk',
                 'is_dark_mode' => true,
-                'preview_url' => '/images/theme-previews/cyberpunk.svg',
+                'preview_url' => '/images/theme-previews/cyberpunk.jpg',
                 'category' => 'standard',
             ],
             // Seasonal Themes
