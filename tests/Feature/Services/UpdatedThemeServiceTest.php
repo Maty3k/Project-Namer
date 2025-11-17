@@ -26,7 +26,7 @@ describe('Updated ThemeService', function (): void {
         }
     });
 
-    it('returns all 20 predefined theme names', function (): void {
+    it('returns all 24 predefined theme names', function (): void {
         $themes = $this->themeService->getPredefinedThemes();
         $themeNames = array_column($themes, 'name');
 
@@ -36,6 +36,7 @@ describe('Updated ThemeService', function (): void {
             'summer', 'winter', 'halloween', 'spring', 'autumn',
             'neon-cyber', 'electric-blue', 'hot-pink', 'lava-red',
             'lime-punch', 'gold-rush', 'matrix-green',
+            'sakura', 'arctic', 'mocha', 'lavender-fields',
         ];
 
         expect($themeNames)->toEqual($expectedThemes);
@@ -47,7 +48,7 @@ describe('Updated ThemeService', function (): void {
         foreach ($themes as $theme) {
             expect($theme)->toHaveKey('preview_url')
                 ->and($theme['preview_url'])->toStartWith('/images/theme-previews/')
-                ->and($theme['preview_url'])->toEndWith('.png');
+                ->and($theme['preview_url'])->toMatch('/\.(png|jpg|svg)$/');
         }
     });
 
@@ -86,7 +87,7 @@ describe('Updated ThemeService', function (): void {
     it('returns all themes when category is "all"', function (): void {
         $allThemes = $this->themeService->getThemesByCategory('all');
 
-        expect($allThemes)->toHaveCount(20);
+        expect($allThemes)->toHaveCount(24);
     });
 
     it('returns available categories', function (): void {
