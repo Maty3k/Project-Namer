@@ -198,7 +198,7 @@ final class ThemeService
                 'display_name' => 'Electric Blue',
                 'theme_name' => 'electric-blue',
                 'is_dark_mode' => true,
-                'preview_url' => '/images/theme-previews/electric-blue.png',
+                'preview_url' => '/images/theme-previews/electric-blue.jpg',
                 'category' => 'bold',
             ],
             [
