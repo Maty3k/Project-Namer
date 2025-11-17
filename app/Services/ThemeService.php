@@ -127,7 +127,7 @@ final class ThemeService
                 'display_name' => 'Coral Reef',
                 'theme_name' => 'coral-reef',
                 'is_dark_mode' => false,
-                'preview_url' => '/images/theme-previews/coral-reef.png',
+                'preview_url' => '/images/theme-previews/coral-reef.jpg',
                 'category' => 'standard',
             ],
             [
