@@ -247,7 +247,7 @@ final class ThemeService
                 'display_name' => 'Sakura Blossom',
                 'theme_name' => 'sakura',
                 'is_dark_mode' => false,
-                'preview_url' => '/images/theme-previews/sakura.svg',
+                'preview_url' => '/images/theme-previews/sakura.jpg',
                 'category' => 'elegant',
             ],
             [
