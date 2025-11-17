@@ -315,7 +315,7 @@
                             <div class="relative">
                                 <div class="absolute inset-0 bg-primary-400 dark:bg-primary-600 rounded-full blur-md opacity-50 animate-pulse"></div>
                                 <div class="relative w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700
-                                            rounded-full flex items-center justify-center shadow-lg animate-bounce
+                                            rounded-full flex items-center justify-center shadow-lg
                                             sm:w-10 sm:h-10">
                                     <svg class="w-4 h-4 text-white
                                                sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
