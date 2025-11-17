@@ -95,7 +95,7 @@ final class ThemeService
                 'display_name' => 'Ocean Breeze',
                 'theme_name' => 'ocean',
                 'is_dark_mode' => false,
-                'preview_url' => '/images/theme-previews/ocean.png',
+                'preview_url' => '/images/theme-previews/ocean.jpg',
                 'category' => 'standard',
             ],
             [
