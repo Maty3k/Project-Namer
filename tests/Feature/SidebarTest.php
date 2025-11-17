@@ -253,9 +253,9 @@ test('sidebar responsive behavior works across different states', function (): v
 
     $component = Livewire::test(Sidebar::class);
 
-    // Initial state - expanded (64 width) - check for duration-500 instead of duration-300
+    // Initial state - expanded (80 width on mobile, 64 on desktop) - check for duration-500 instead of duration-300
     $component->assertSet('collapsed', false)
-        ->assertSeeHtml('class="w-64 transition-all duration-500');
+        ->assertSeeHtml('class="w-80 lg:w-64 transition-all duration-500');
 
     // Collapse - should switch to 16 width - check for duration-500 instead of duration-300
     $component->call('toggleCollapse')
@@ -268,7 +268,7 @@ test('sidebar responsive behavior works across different states', function (): v
     // Expand again - should go back to full width
     $component->call('toggleCollapse')
         ->assertSet('collapsed', false)
-        ->assertSeeHtml('class="w-64 transition-all duration-500');
+        ->assertSeeHtml('class="w-80 lg:w-64 transition-all duration-500');
 });
 
 test('sidebar shows selected project name in project', function (): void {
