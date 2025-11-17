@@ -111,7 +111,7 @@ final class ThemeService
                 'display_name' => 'Forest Green',
                 'theme_name' => 'forest',
                 'is_dark_mode' => false,
-                'preview_url' => '/images/theme-previews/forest.png',
+                'preview_url' => '/images/theme-previews/forest.jpg',
                 'category' => 'standard',
             ],
             [
