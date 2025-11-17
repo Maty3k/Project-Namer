@@ -71,7 +71,7 @@ describe('Simplified Integration Workflow Tests', function (): void {
         ];
 
         // PrismAIService includes model in cache key
-        $businessDescription = 'coffee shop|model:claude-3.5-sonnet|params:[]';
+        $businessDescription = 'coffee shop|model:claude-3-5-sonnet-20241022|params:[]';
         GenerationCache::create([
             'input_hash' => GenerationCache::generateHash($businessDescription, 'creative', false),
             'business_description' => 'coffee shop',
@@ -120,7 +120,7 @@ describe('Simplified Integration Workflow Tests', function (): void {
             'ProfessionalName6', 'ProfessionalName7', 'ProfessionalName8', 'ProfessionalName9', 'ProfessionalName10'];
 
         // PrismAIService includes model in cache key
-        $creativeBusinessDescription = 'restaurant|model:claude-3.5-sonnet|params:[]';
+        $creativeBusinessDescription = 'restaurant|model:claude-3-5-sonnet-20241022|params:[]';
         GenerationCache::create([
             'input_hash' => GenerationCache::generateHash($creativeBusinessDescription, 'creative', false),
             'business_description' => 'restaurant',
@@ -130,7 +130,7 @@ describe('Simplified Integration Workflow Tests', function (): void {
             'cached_at' => now(),
         ]);
 
-        $professionalBusinessDescription = 'restaurant|model:claude-3.5-sonnet|params:[]';
+        $professionalBusinessDescription = 'restaurant|model:claude-3-5-sonnet-20241022|params:[]';
         GenerationCache::create([
             'input_hash' => GenerationCache::generateHash($professionalBusinessDescription, 'professional', false),
             'business_description' => 'restaurant',
@@ -176,7 +176,7 @@ describe('Simplified Integration Workflow Tests', function (): void {
             'ThoughtfulName6', 'ThoughtfulName7', 'ThoughtfulName8', 'ThoughtfulName9', 'ThoughtfulName10'];
 
         // PrismAIService includes model in cache key
-        $regularBusinessDescription = 'startup|model:claude-3.5-sonnet|params:[]';
+        $regularBusinessDescription = 'startup|model:claude-3-5-sonnet-20241022|params:[]';
         GenerationCache::create([
             'input_hash' => GenerationCache::generateHash($regularBusinessDescription, 'tech-focused', false),
             'business_description' => 'startup',
@@ -186,7 +186,7 @@ describe('Simplified Integration Workflow Tests', function (): void {
             'cached_at' => now(),
         ]);
 
-        $deepBusinessDescription = 'startup|model:claude-3.5-sonnet|params:[]';
+        $deepBusinessDescription = 'startup|model:claude-3-5-sonnet-20241022|params:[]';
         GenerationCache::create([
             'input_hash' => GenerationCache::generateHash($deepBusinessDescription, 'tech-focused', true),
             'business_description' => 'startup',
@@ -257,7 +257,7 @@ describe('Simplified Integration Workflow Tests', function (): void {
         $component->assertHasErrors(['mode']);
 
         // Test valid input with cached results - PrismAIService includes model in cache key
-        $validBusinessDescription = 'valid business idea|model:claude-3.5-sonnet|params:[]';
+        $validBusinessDescription = 'valid business idea|model:claude-3-5-sonnet-20241022|params:[]';
         GenerationCache::create([
             'input_hash' => GenerationCache::generateHash($validBusinessDescription, 'creative', false),
             'business_description' => 'valid business idea',
@@ -325,7 +325,7 @@ describe('Simplified Integration Workflow Tests', function (): void {
 
     test('mode changes clear generated results and domain results', function (): void {
         // Pre-populate cache - PrismAIService includes model in cache key
-        $businessDescription = 'test business|model:claude-3.5-sonnet|params:[]';
+        $businessDescription = 'test business|model:claude-3-5-sonnet-20241022|params:[]';
         GenerationCache::create([
             'input_hash' => GenerationCache::generateHash($businessDescription, 'creative', false),
             'business_description' => 'test business',
@@ -378,7 +378,7 @@ describe('Simplified Integration Workflow Tests', function (): void {
 
     test('workflow performance meets requirements with cached results', function (): void {
         // Pre-populate cache for instant response - PrismAIService includes model in cache key
-        $businessDescription = 'performance test|model:claude-3.5-sonnet|params:[]';
+        $businessDescription = 'performance test|model:claude-3-5-sonnet-20241022|params:[]';
         GenerationCache::create([
             'input_hash' => GenerationCache::generateHash($businessDescription, 'professional', false),
             'business_description' => 'performance test',
@@ -409,7 +409,7 @@ describe('Simplified Integration Workflow Tests', function (): void {
 
     test('domain results structure supports responsive layout needs', function (): void {
         // Pre-populate cache - PrismAIService includes model in cache key
-        $businessDescription = 'layout test|model:claude-3.5-sonnet|params:[]';
+        $businessDescription = 'layout test|model:claude-3-5-sonnet-20241022|params:[]';
         GenerationCache::create([
             'input_hash' => GenerationCache::generateHash($businessDescription, 'creative', false),
             'business_description' => 'layout test',

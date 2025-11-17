@@ -52,8 +52,8 @@ test('name generation incorporates image analysis context', function (): void {
 
     expect($result)->toBeArray()
         ->and($result['results'])->toBeArray()
-        ->and($result['results']['gpt-4']['names'])->toHaveCount(5)
-        ->and($result['results']['gpt-4']['names'])->toContain('TechFlow Solutions');
+        ->and($result['results']['gpt-4o']['names'])->toHaveCount(5)
+        ->and($result['results']['gpt-4o']['names'])->toContain('TechFlow Solutions');
 });
 
 test('multiple images provide richer context for name generation', function (): void {
@@ -89,7 +89,7 @@ test('multiple images provide richer context for name generation', function (): 
     $aiService = app(AIGenerationService::class);
     $result = $aiService->generateNamesWithContext('restaurant concept', $session);
 
-    expect($result['results']['gpt-4']['names'])->toContain('Artisan Table');
+    expect($result['results']['gpt-4o']['names'])->toContain('Artisan Table');
 });
 
 test('image context can be cleared and updated in session', function (): void {
@@ -135,7 +135,7 @@ test('handles missing image analysis gracefully', function (): void {
     $result = $aiService->generateNamesWithContext('business idea', $session);
 
     // Should still work but without image context
-    expect($result['results']['gpt-4']['names'])->toContain('Generic Name');
+    expect($result['results']['gpt-4o']['names'])->toContain('Generic Name');
 });
 
 test('vision analysis results influence name creativity and relevance', function (): void {
@@ -185,6 +185,6 @@ test('vision analysis results influence name creativity and relevance', function
     $professionalResult = $aiService->generateNamesWithContext('consulting firm', $professionalSession);
 
     // Verify both generations worked
-    expect($creativeResult['results']['gpt-4']['names'])->toContain('Creative Agency Name');
-    expect($professionalResult['results']['gpt-4']['names'])->toContain('Professional Consulting Name');
+    expect($creativeResult['results']['gpt-4o']['names'])->toContain('Creative Agency Name');
+    expect($professionalResult['results']['gpt-4o']['names'])->toContain('Professional Consulting Name');
 });
