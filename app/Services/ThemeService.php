@@ -119,7 +119,7 @@ final class ThemeService
                 'display_name' => 'Cosmic Violet',
                 'theme_name' => 'cosmic-violet',
                 'is_dark_mode' => true,
-                'preview_url' => '/images/theme-previews/cosmic-violet.png',
+                'preview_url' => '/images/theme-previews/cosmic-violet.jpg',
                 'category' => 'standard',
             ],
             [
