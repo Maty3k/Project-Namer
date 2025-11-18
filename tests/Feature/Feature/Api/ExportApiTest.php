@@ -22,6 +22,7 @@ describe('Export API Endpoints', function (): void {
         $this->user = User::factory()->create();
         $this->logoGeneration = LogoGeneration::factory()->create([
             'user_id' => $this->user->id,
+            'status' => 'completed', // Required for exports
         ]);
     });
 

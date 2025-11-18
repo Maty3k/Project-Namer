@@ -16,6 +16,10 @@ uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
     Storage::fake('local');
+    // Setup CSRF token for all tests
+    $this->withSession(['_token' => 'test-token'])
+        ->withHeaders(['X-CSRF-TOKEN' => 'test-token']);
+
     $this->user = User::factory()->create();
     $this->logoGeneration = LogoGeneration::factory()->create([
         'user_id' => $this->user->id,
@@ -446,11 +450,9 @@ describe('Share Management Dashboard Flow', function (): void {
         $response->assertOk()
             ->assertJson(['message' => 'Share deactivated successfully']);
 
-        // Step 5: Verify share is deleted
-        $this->assertDatabaseMissing('shares', [
-            'id' => $shareToDelete->id,
-            'deactivated_at' => null,
-        ]);
+        // Step 5: Verify share is deactivated (is_active is false)
+        $shareToDelete->refresh();
+        expect($shareToDelete->is_active)->toBeFalse();
 
         // Step 6: Verify deleted share is inaccessible
         $response = $this->get($shareToDelete->getShareUrl());

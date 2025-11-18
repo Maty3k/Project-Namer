@@ -224,7 +224,7 @@ describe('Share Model', function (): void {
     it('has proper fillable attributes', function (): void {
         $fillable = [
             'uuid', 'shareable_type', 'shareable_id', 'user_id', 'title',
-            'description', 'share_type', 'password', 'expires_at', 'is_active', 'settings', 'last_viewed_at',
+            'description', 'share_type', 'password', 'expires_at', 'is_active', 'settings', 'last_viewed_at', 'deactivated_at',
         ];
 
         $share = new Share;
