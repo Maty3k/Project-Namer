@@ -1,6 +1,6 @@
 <div>
     {{-- Modal Component --}}
-    <flux:modal name="share-modal-{{ $logoGeneration->id }}" wire:model="showModal" class="max-w-2xl">
+    <flux:modal name="share-modal-{{ $logoGeneration->id }}" wire:model="showModal" class="max-w-4xl">
         <div class="space-y-6">
             {{-- Header --}}
             <div>
@@ -260,14 +260,7 @@
                     </div>
 
                     {{-- Action Buttons --}}
-                    <div class="flex justify-end gap-2">
-                        <flux:button
-                            variant="ghost"
-                            wire:click="resetForm"
-                        >
-                            Create Another
-                        </flux:button>
-
+                    <div class="flex justify-end">
                         <flux:modal.close>
                             <flux:button variant="primary">
                                 Done
