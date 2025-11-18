@@ -7,41 +7,41 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
 
 ## Tasks
 
-- [ ] 1. Database Schema & Models Setup
-  - [ ] 1.1 Write tests for Share model
-  - [ ] 1.2 Create shares table migration
-  - [ ] 1.3 Create Share model with relationships and methods
-  - [ ] 1.4 Write tests for ShareAccess model
-  - [ ] 1.5 Create share_accesses table migration
-  - [ ] 1.6 Create ShareAccess model
-  - [ ] 1.7 Write tests for Export model
-  - [ ] 1.8 Create exports table migration
-  - [ ] 1.9 Create Export model with polymorphic relationships
-  - [ ] 1.10 Create migration to add sharing fields to sessions table
-  - [ ] 1.11 Run migrations and verify database structure
-  - [ ] 1.12 Verify all model tests pass
+- [x] 1. Database Schema & Models Setup
+  - [x] 1.1 Write tests for Share model
+  - [x] 1.2 Create shares table migration
+  - [x] 1.3 Create Share model with relationships and methods
+  - [x] 1.4 Write tests for ShareAccess model
+  - [x] 1.5 Create share_accesses table migration
+  - [x] 1.6 Create ShareAccess model
+  - [x] 1.7 Write tests for Export model
+  - [x] 1.8 Create exports table migration
+  - [x] 1.9 Create Export model with polymorphic relationships
+  - [x] 1.10 Create migration to add sharing fields to sessions table
+  - [x] 1.11 Run migrations and verify database structure
+  - [x] 1.12 Verify all model tests pass
 
-- [ ] 2. Share Service & Business Logic
-  - [ ] 2.1 Write tests for ShareService
-  - [ ] 2.2 Create ShareService class
-  - [ ] 2.3 Implement token generation logic
-  - [ ] 2.4 Implement share creation with privacy settings
-  - [ ] 2.5 Implement password hashing and verification
-  - [ ] 2.6 Implement share access tracking
-  - [ ] 2.7 Implement expiration checking logic
-  - [ ] 2.8 Implement share analytics methods
-  - [ ] 2.9 Verify all ShareService tests pass
+- [x] 2. Share Service & Business Logic
+  - [x] 2.1 Write tests for ShareService
+  - [x] 2.2 Create ShareService class
+  - [x] 2.3 Implement token generation logic
+  - [x] 2.4 Implement share creation with privacy settings
+  - [x] 2.5 Implement password hashing and verification
+  - [x] 2.6 Implement share access tracking
+  - [x] 2.7 Implement expiration checking logic
+  - [x] 2.8 Implement share analytics methods
+  - [x] 2.9 Verify all ShareService tests pass
 
-- [ ] 3. Export Service & File Generation
-  - [ ] 3.1 Write tests for ExportService
-  - [ ] 3.2 Install barryvdh/laravel-dompdf package
-  - [ ] 3.3 Create ExportService class
-  - [ ] 3.4 Implement PDF export generation
-  - [ ] 3.5 Implement CSV export generation
-  - [ ] 3.6 Implement JSON export generation
-  - [ ] 3.7 Implement file storage and cleanup
-  - [ ] 3.8 Create export file templates (PDF layout)
-  - [ ] 3.9 Verify all ExportService tests pass
+- [x] 3. Export Service & File Generation
+  - [x] 3.1 Write tests for ExportService
+  - [x] 3.2 Install barryvdh/laravel-dompdf package
+  - [x] 3.3 Create ExportService class
+  - [x] 3.4 Implement PDF export generation
+  - [x] 3.5 Implement CSV export generation
+  - [x] 3.6 Implement JSON export generation
+  - [x] 3.7 Implement file storage and cleanup
+  - [x] 3.8 Create export file templates (PDF layout)
+  - [x] 3.9 Verify all ExportService tests pass
 
 - [ ] 4. API Routes & Controllers
   - [ ] 4.1 Write tests for Share API endpoints

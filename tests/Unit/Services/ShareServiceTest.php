@@ -271,4 +271,75 @@ describe('ShareService', function (): void {
         expect($result['success'])->toBeFalse();
         expect($result['error'])->toBe('Share not found or inactive');
     });
+
+    it('generates Twitter share URL with proper encoding', function (): void {
+        $share = Share::factory()->create([
+            'title' => 'My Awesome Project',
+            'uuid' => 'test-uuid-123',
+        ]);
+
+        $url = $this->shareService->generateTwitterShareUrl($share);
+
+        expect($url)->toContain('https://twitter.com/intent/tweet');
+        expect($url)->toContain(urlencode($share->getShareUrl()));
+        expect($url)->toContain('text=');
+    });
+
+    it('generates LinkedIn share URL', function (): void {
+        $share = Share::factory()->create(['uuid' => 'test-uuid-123']);
+
+        $url = $this->shareService->generateLinkedInShareUrl($share);
+
+        expect($url)->toContain('https://www.linkedin.com/sharing/share-offsite/');
+        expect($url)->toContain(urlencode($share->getShareUrl()));
+    });
+
+    it('generates Facebook share URL', function (): void {
+        $share = Share::factory()->create(['uuid' => 'test-uuid-123']);
+
+        $url = $this->shareService->generateFacebookShareUrl($share);
+
+        expect($url)->toContain('https://www.facebook.com/sharer/sharer.php');
+        expect($url)->toContain(urlencode($share->getShareUrl()));
+    });
+
+    it('generates Reddit share URL with title', function (): void {
+        $share = Share::factory()->create([
+            'title' => 'Check this out!',
+            'uuid' => 'test-uuid-123',
+        ]);
+
+        $url = $this->shareService->generateRedditShareUrl($share);
+
+        expect($url)->toContain('https://reddit.com/submit');
+        expect($url)->toContain(urlencode($share->getShareUrl()));
+        expect($url)->toContain('title=');
+    });
+
+    it('generates WhatsApp share URL with text', function (): void {
+        $share = Share::factory()->create([
+            'title' => 'Amazing logos!',
+            'uuid' => 'test-uuid-123',
+        ]);
+
+        $url = $this->shareService->generateWhatsAppShareUrl($share);
+
+        expect($url)->toContain('https://wa.me/');
+        expect($url)->toContain('text=');
+        expect($url)->toContain(urlencode($share->getShareUrl()));
+    });
+
+    it('generates all social media URLs at once', function (): void {
+        $share = Share::factory()->create(['uuid' => 'test-uuid-123']);
+
+        $urls = $this->shareService->generateAllSocialMediaUrls($share);
+
+        expect($urls)->toBeArray();
+        expect($urls)->toHaveKeys(['twitter', 'linkedin', 'facebook', 'reddit', 'whatsapp']);
+        expect($urls['twitter'])->toContain('twitter.com');
+        expect($urls['linkedin'])->toContain('linkedin.com');
+        expect($urls['facebook'])->toContain('facebook.com');
+        expect($urls['reddit'])->toContain('reddit.com');
+        expect($urls['whatsapp'])->toContain('wa.me');
+    });
 });

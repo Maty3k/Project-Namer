@@ -362,4 +362,94 @@ final readonly class ShareService
 
         return $mapped->all();
     }
+
+    /**
+     * Generate Twitter/X share URL with pre-filled text.
+     */
+    public function generateTwitterShareUrl(Share $share): string
+    {
+        $shareUrl = $share->getShareUrl();
+        $text = $share->title
+            ? "Check out: {$share->title}"
+            : 'Check out these amazing logo designs!';
+
+        return sprintf(
+            'https://twitter.com/intent/tweet?text=%s&url=%s',
+            urlencode($text),
+            urlencode($shareUrl)
+        );
+    }
+
+    /**
+     * Generate LinkedIn share URL.
+     */
+    public function generateLinkedInShareUrl(Share $share): string
+    {
+        $shareUrl = $share->getShareUrl();
+
+        return sprintf(
+            'https://www.linkedin.com/sharing/share-offsite/?url=%s',
+            urlencode($shareUrl)
+        );
+    }
+
+    /**
+     * Generate Facebook share URL.
+     */
+    public function generateFacebookShareUrl(Share $share): string
+    {
+        $shareUrl = $share->getShareUrl();
+
+        return sprintf(
+            'https://www.facebook.com/sharer/sharer.php?u=%s',
+            urlencode($shareUrl)
+        );
+    }
+
+    /**
+     * Generate Reddit submit URL with title.
+     */
+    public function generateRedditShareUrl(Share $share): string
+    {
+        $shareUrl = $share->getShareUrl();
+        $title = $share->title ?: 'Check out these logo designs';
+
+        return sprintf(
+            'https://reddit.com/submit?url=%s&title=%s',
+            urlencode($shareUrl),
+            urlencode($title)
+        );
+    }
+
+    /**
+     * Generate WhatsApp share URL with text.
+     */
+    public function generateWhatsAppShareUrl(Share $share): string
+    {
+        $shareUrl = $share->getShareUrl();
+        $text = $share->title
+            ? "{$share->title} - {$shareUrl}"
+            : "Check out these amazing logo designs! {$shareUrl}";
+
+        return sprintf(
+            'https://wa.me/?text=%s',
+            urlencode($text)
+        );
+    }
+
+    /**
+     * Generate all social media share URLs at once.
+     *
+     * @return array<string, string>
+     */
+    public function generateAllSocialMediaUrls(Share $share): array
+    {
+        return [
+            'twitter' => $this->generateTwitterShareUrl($share),
+            'linkedin' => $this->generateLinkedInShareUrl($share),
+            'facebook' => $this->generateFacebookShareUrl($share),
+            'reddit' => $this->generateRedditShareUrl($share),
+            'whatsapp' => $this->generateWhatsAppShareUrl($share),
+        ];
+    }
 }
