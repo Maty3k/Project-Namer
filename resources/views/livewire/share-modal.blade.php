@@ -151,17 +151,6 @@
                                     <flux:error name="exportType" />
                                 </flux:field>
 
-                                {{-- Export Options --}}
-                                <div class="space-y-2">
-                                    <flux:checkbox wire:model="includeMetadata" :disabled="$isGenerating">
-                                        Include metadata (business name, industry, etc.)
-                                    </flux:checkbox>
-
-                                    <flux:checkbox wire:model="includeDomains" :disabled="$isGenerating">
-                                        Include domain availability information
-                                    </flux:checkbox>
-                                </div>
-
                                 {{-- Generate Button --}}
                                 <flux:button
                                     wire:click="generateExport"
