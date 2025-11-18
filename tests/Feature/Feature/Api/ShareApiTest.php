@@ -257,6 +257,7 @@ describe('Share API Endpoints', function (): void {
         it('shows a specific share', function (): void {
             $logoGen = LogoGeneration::factory()->create([
                 'user_id' => $this->user->id,
+                'status' => 'completed',
             ]);
 
             $share = Share::factory()->create([
@@ -382,7 +383,10 @@ describe('Share API Endpoints', function (): void {
 
     describe('GET /api/shares/{share}/analytics', function (): void {
         it('returns share analytics', function (): void {
-            $logoGen = LogoGeneration::factory()->create(['user_id' => $this->user->id]);
+            $logoGen = LogoGeneration::factory()->create([
+                'user_id' => $this->user->id,
+                'status' => 'completed',
+            ]);
             $share = Share::factory()->create([
                 'user_id' => $this->user->id,
                 'shareable_id' => $logoGen->id,
@@ -415,7 +419,10 @@ describe('Share API Endpoints', function (): void {
 
     describe('GET /api/shares/{share}/metadata', function (): void {
         it('returns social media metadata', function (): void {
-            $logoGen = LogoGeneration::factory()->create(['user_id' => $this->user->id]);
+            $logoGen = LogoGeneration::factory()->create([
+                'user_id' => $this->user->id,
+                'status' => 'completed',
+            ]);
             $share = Share::factory()->create([
                 'user_id' => $this->user->id,
                 'shareable_id' => $logoGen->id,
