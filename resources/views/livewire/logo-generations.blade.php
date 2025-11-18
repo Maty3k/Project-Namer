@@ -174,11 +174,10 @@
                         </a>
 
                         {{-- Action Buttons --}}
-                        <div class="absolute bottom-2 right-2 z-10 flex gap-2">
+                        <div class="absolute top-2 right-2 z-10 flex gap-2">
                             {{-- Share Button --}}
                             <button
-                                x-data
-                                x-on:click.prevent="$dispatch('open-modal', 'share-modal-{{ $generation->id }}')"
+                                wire:click.prevent="$dispatch('openShareModal', { generationId: {{ $generation->id }} })"
                                 class="p-2 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white rounded-lg transition-all shadow-lg hover:shadow-xl
                                        sm:p-2.5"
                                 title="Share project"

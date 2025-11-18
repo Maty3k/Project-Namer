@@ -10,6 +10,7 @@ use App\Models\Share;
 use App\Services\ExportService;
 use App\Services\ShareService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
@@ -258,6 +259,7 @@ class ShareModal extends Component
     /**
      * Open the share modal.
      */
+    #[On('openShareModal')]
     public function openModal(): void
     {
         $this->showModal = true;
