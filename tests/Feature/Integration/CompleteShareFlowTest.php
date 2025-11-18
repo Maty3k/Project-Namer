@@ -332,8 +332,9 @@ describe('Export Generation and Download Flow', function (): void {
         $response = $this->actingAs($this->user)
             ->get(route('api.exports.download', $export->uuid));
 
-        $response->assertSuccessful()
-            ->assertHeader('Content-Type', fn($value) => str_contains($value, 'text/csv'));
+        $response->assertSuccessful();
+
+        expect(str_contains($response->headers->get('Content-Type'), 'text/csv'))->toBeTrue();
 
         $export->refresh();
         expect($export->download_count)->toBe(1);
@@ -442,7 +443,8 @@ describe('Share Management Dashboard Flow', function (): void {
         $response = $this->actingAs($this->user)
             ->delete(route('api.shares.destroy', $shareToDelete->id));
 
-        $response->assertNoContent();
+        $response->assertOk()
+            ->assertJson(['message' => 'Share deactivated successfully']);
 
         // Step 5: Verify share is deleted
         $this->assertDatabaseMissing('shares', [
