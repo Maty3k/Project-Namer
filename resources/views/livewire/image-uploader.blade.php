@@ -22,7 +22,7 @@
           class="space-y-6">
         
         <!-- Drag and Drop Upload Area -->
-        <div class="upload-zone relative border-2 border-dashed rounded-lg transition-all duration-200 p-2
+        <div class="upload-zone relative border-[4px] border-dashed rounded-lg transition-all duration-200 p-2
                     sm:p-3
                     md:p-4
                     lg:p-6
@@ -129,8 +129,8 @@
                         lg:grid-cols-6">
                 @foreach($images as $index => $image)
                     <div class="relative group rounded-lg overflow-hidden shadow-sm
-                                border
-                                hover:shadow-md transition-shadow duration-200">
+                                border-[3px] border-gray-300 dark:border-gray-600
+                                hover:shadow-md hover:border-primary-400 dark:hover:border-primary-500 transition-all duration-200">
                         
                         @if($image->temporaryUrl())
                             <img src="{{ $image->temporaryUrl() }}" 
@@ -154,9 +154,9 @@
                         <!-- Remove button -->
                         <button type="button"
                                 wire:click="removeImage({{ $index }})"
-                                class="absolute top-1 right-1 p-1 rounded-full bg-red-500 text-white opacity-0
-                                       group-hover:opacity-100 transition-opacity duration-200
-                                       hover:bg-red-600 focus:opacity-100 focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                                class="absolute top-1 right-1 p-1 rounded-full bg-red-500 dark:bg-red-600 text-white opacity-0 border-[2px] border-red-700 dark:border-red-400
+                                       group-hover:opacity-100 transition-all duration-200 hover:scale-110 active:scale-95
+                                       hover:bg-red-600 dark:hover:bg-red-700 focus:opacity-100 focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
                             <flux:icon.x-mark class="h-3 w-3" />
                         </button>
 
@@ -192,7 +192,8 @@
             <div class="flex justify-end">
                 <flux:button type="submit"
                             variant="primary"
-                            :disabled="$isUploading || !trim($inspiration)">
+                            :disabled="$isUploading || !trim($inspiration)"
+                            class="border-[3px] border-primary-700 dark:border-primary-300 hover:scale-105 active:scale-95 transition-all">
                     <span wire:loading.remove wire:target="uploadImages">
                         @if(empty(trim($inspiration)))
                             Enter inspiration to upload

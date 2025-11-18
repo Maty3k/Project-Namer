@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-4 px-3
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 py-4 px-3
             sm:py-6 sm:px-4
             lg:py-8 lg:px-8">
     <div class="w-full max-w-full mx-auto
@@ -12,7 +12,7 @@
                     {{-- Back Button --}}
                     <a href="{{ route('logos.index') }}"
                        wire:navigate
-                       class="inline-flex items-center justify-center w-10 h-10 text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-lg transition-all shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700
+                       class="inline-flex items-center justify-center w-10 h-10 text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-lg transition-all shadow-sm hover:shadow-md border-[3px] border-gray-300 dark:border-gray-500 hover:border-primary-400 dark:hover:border-primary-600
                               sm:w-11 sm:h-11"
                        title="Back to Logo Generations">
                         <svg class="w-5 h-5
@@ -45,7 +45,7 @@
                                 sm:flex-row sm:gap-3 sm:w-auto">
                         <button
                             wire:click="downloadAll"
-                            class="inline-flex items-center justify-center gap-2 px-3 py-2 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white font-medium rounded-lg transition-colors shadow-sm hover:shadow-md text-sm
+                            class="inline-flex items-center justify-center gap-2 px-3 py-2 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white font-medium rounded-lg transition-all shadow-md hover:shadow-xl text-sm border-[3px] border-primary-700 dark:border-primary-300 hover:scale-105 active:scale-95
                                    sm:px-4"
                         >
                             <svg class="w-4 h-4
@@ -57,7 +57,7 @@
 
                         <button
                             wire:click="toggleSaved"
-                            class="inline-flex items-center justify-center gap-2 px-3 py-2 {{ $logoGeneration->is_saved ? 'bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600' : 'bg-gray-600 hover:bg-gray-700 dark:bg-gray-500 dark:hover:bg-gray-600' }} text-white font-medium rounded-lg transition-colors shadow-sm hover:shadow-md text-sm
+                            class="inline-flex items-center justify-center gap-2 px-3 py-2 {{ $logoGeneration->is_saved ? 'bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600 border-yellow-700 dark:border-yellow-300' : 'bg-gray-600 hover:bg-gray-700 dark:bg-gray-500 dark:hover:bg-gray-600 border-gray-700 dark:border-gray-300' }} text-white font-medium rounded-lg transition-all shadow-md hover:shadow-xl text-sm border-[3px] hover:scale-105 active:scale-95
                                    sm:px-4"
                         >
                             <svg class="w-4 h-4
@@ -110,7 +110,7 @@
                         lg:grid-cols-5 lg:gap-6
                         xl:grid-cols-6">
                 @foreach($logos as $logo)
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow flex flex-col">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all flex flex-col border-[3px] border-gray-300 dark:border-gray-500 hover:border-primary-400 dark:hover:border-primary-600 hover:-translate-y-1">
                         {{-- Logo Image --}}
                         <div
                             @if($logo->file_path && $logo->status === 'completed')
@@ -146,7 +146,7 @@
                         </div>
 
                         {{-- Logo Info --}}
-                        <div class="p-2
+                        <div class="p-2 bg-gray-50 dark:bg-gray-750 border-t-[3px] border-gray-300 dark:border-gray-600
                                     sm:p-2.5
                                     md:p-3">
                             <h3 class="text-xs font-semibold text-gray-900 dark:text-white capitalize

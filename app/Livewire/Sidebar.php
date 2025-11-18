@@ -38,11 +38,11 @@ class Sidebar extends Component
 
     /** @var array<string, string> */
     protected $listeners = [
-        'project-created' => 'refreshProjects',
-        'project-updated' => 'refreshProjects',
+        'project-created' => 'refreshProjectsOnly',
+        'project-updated' => 'refreshProjectsOnly',
         'project-deleted' => 'refreshProjects',
-        'name-selected' => 'refreshProjects',
-        'name-deselected' => 'refreshProjects',
+        'name-selected' => 'refreshProjectsOnly',
+        'name-deselected' => 'refreshProjectsOnly',
         'theme-updated' => 'onThemeUpdated',
         'theme-applied' => 'onThemeUpdated',
         'theme-saved' => 'onThemeUpdated',
@@ -55,9 +55,15 @@ class Sidebar extends Component
     {
         $this->activeProjectUuid = $activeProjectUuid;
 
-        // Start collapsed on mobile devices
-        if (request()->header('User-Agent') && preg_match('/Mobile|Android|iPhone/i', request()->header('User-Agent'))) {
-            $this->collapsed = true;
+        // Restore collapsed state from session
+        $this->collapsed = session('sidebar.collapsed', false);
+
+        // On mobile, default to collapsed if no session exists
+        if (! session()->has('sidebar.collapsed')) {
+            if (request()->header('User-Agent') && preg_match('/Mobile|Android|iPhone/i', request()->header('User-Agent'))) {
+                $this->collapsed = true;
+                session(['sidebar.collapsed' => true]);
+            }
         }
 
         if ($this->activeProjectUuid) {
@@ -65,6 +71,15 @@ class Sidebar extends Component
                 ->where('user_id', Auth::id())
                 ->first();
         }
+    }
+
+    /**
+     * Hydrate the component and restore collapsed state from session.
+     */
+    public function hydrate(): void
+    {
+        // Always restore from session on every request
+        $this->collapsed = session('sidebar.collapsed', false);
     }
 
     /**
@@ -115,29 +130,19 @@ class Sidebar extends Component
     {
         $this->collapsed = ! $this->collapsed;
 
-        // Add JavaScript to enhance animations with GPU acceleration
-        $this->js('
-            const sidebar = document.querySelector(".themed-sidebar");
-            if (sidebar) {
-                // Enable GPU acceleration for smoother animations
-                sidebar.style.transform = "translateZ(0)";
-                sidebar.style.willChange = "transform, width, opacity";
+        // Save to session
+        session(['sidebar.collapsed' => $this->collapsed]);
+    }
 
-                // Add a temporary class for enhanced animation
-                sidebar.classList.add("transitioning");
-
-                // Remove the transitioning class after animation completes
-                setTimeout(() => {
-                    sidebar.classList.remove("transitioning");
-                    sidebar.style.willChange = "auto";
-                }, 600);
-            }
-
-            // Dispatch event to notify other components about sidebar state
-            window.dispatchEvent(new CustomEvent("sidebar-toggled", {
-                detail: { open: '.($this->collapsed ? 'false' : 'true').' }
-            }));
-        ');
+    /**
+     * Refresh projects list without affecting sidebar state.
+     */
+    public function refreshProjectsOnly(?string $projectUuid = null): void
+    {
+        // Trigger component refresh to update the projects list.
+        // The collapsed state is now managed by Alpine + localStorage,
+        // so it will persist across this refresh.
+        $this->dispatch('$refresh');
     }
 
     /**

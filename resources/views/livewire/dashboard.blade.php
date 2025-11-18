@@ -1,7 +1,7 @@
 <div class="w-full max-w-full mx-auto p-1
             sm:max-w-2xl sm:p-4
             md:p-6">
-    <div class="rounded-lg shadow-lg transition-all duration-300 bg-white dark:bg-zinc-900 p-3
+    <div class="rounded-lg shadow-lg transition-all duration-300 bg-white dark:bg-zinc-900 border-[4px] border-gray-300 dark:border-gray-600 p-3
                 sm:p-6
                 md:p-8">
         <div class="text-center mb-4
@@ -47,7 +47,7 @@
                     type="submit"
                     variant="primary"
                     :disabled="strlen(trim($description)) < 10"
-                    class="w-full text-sm py-2
+                    class="w-full text-sm py-2 border-[3px] border-primary-700 dark:border-primary-300 hover:scale-105 active:scale-95 transition-all
                            sm:w-auto sm:text-base sm:py-auto"
                 >
                     Save & Generate Names

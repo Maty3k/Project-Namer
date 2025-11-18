@@ -7,7 +7,7 @@
      wire:poll.2s="checkPendingImages">
 
     <!-- Gallery Header -->
-    <div class="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-2 mb-2
+    <div class="bg-white dark:bg-gray-900 rounded-lg border-[4px] border-gray-300 dark:border-gray-600 p-2 mb-2 shadow-lg
                 sm:p-3 sm:mb-3
                 md:p-4 md:mb-4">
         <div class="flex flex-col space-y-2
@@ -51,7 +51,7 @@
         </div>
     @elseif($totalImages > 0 && !$hasCompletedImage)
         <!-- Processing message when images exist but none are completed yet -->
-        <div class="mb-4 p-6 bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-lg">
+        <div class="mb-4 p-6 bg-blue-50 dark:bg-blue-900/20 border-[4px] border-blue-300 dark:border-blue-700 rounded-lg shadow-lg">
             <div class="flex items-center gap-3">
                 <div class="flex-shrink-0">
                     <div class="animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent"></div>
@@ -66,7 +66,7 @@
         </div>
     @elseif($hasCompletedImage)
         <!-- Success message when image is completed + Max limit notice -->
-        <div class="mb-4 p-6 bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-800 rounded-lg">
+        <div class="mb-4 p-6 bg-green-50 dark:bg-green-900/20 border-[4px] border-green-300 dark:border-green-700 rounded-lg shadow-lg">
             <div class="flex items-center gap-3">
                 <div class="flex-shrink-0">
                     <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
@@ -145,7 +145,7 @@
                             <div class="absolute top-4 left-4">
                                 <button
                                     @click.stop="$wire.set('imageToDelete', '{{ $image->uuid }}'); $wire.set('showDeleteModal', true)"
-                                    class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full shadow-lg transition-colors duration-200 flex items-center gap-2"
+                                    class="bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white p-2 rounded-full shadow-lg transition-all duration-200 flex items-center gap-2 border-[3px] border-red-700 dark:border-red-400 hover:scale-110 active:scale-95"
                                     title="Delete image">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
