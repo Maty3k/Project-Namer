@@ -137,8 +137,8 @@
                         </div>
 
                         {{-- Info --}}
-                        <div class="p-2.5
-                                    sm:p-3">
+                        <div class="p-2.5 pr-20
+                                    sm:p-3 sm:pr-24">
                             <div class="flex items-center gap-1.5">
                                 <h3 class="text-xs font-semibold text-gray-900 dark:text-white truncate
                                            sm:text-sm">
@@ -174,7 +174,7 @@
                         </a>
 
                         {{-- Action Buttons --}}
-                        <div class="absolute top-2 right-2 z-10 flex gap-2">
+                        <div class="absolute bottom-2 right-2 z-10 flex gap-2">
                             {{-- Share Button --}}
                             <button
                                 wire:click.prevent="$dispatch('openShareModal', { generationId: {{ $generation->id }} })"
