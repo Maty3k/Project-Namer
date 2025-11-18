@@ -119,25 +119,36 @@ describe('Share API Endpoints', function (): void {
         });
 
         it('respects rate limiting', function (): void {
-            RateLimiter::shouldReceive('tooManyAttempts')
-                ->with("share-creation:{$this->user->id}", 10)
-                ->andReturn(true);
+            // Clear rate limit cache
+            \Illuminate\Support\Facades\Cache::flush();
 
-            RateLimiter::shouldReceive('availableIn')
-                ->with("share-creation:{$this->user->id}")
-                ->andReturn(300);
+            $successfulRequests = 0;
+            $rateLimitedRequests = 0;
 
-            $response = $this->actingAs($this->user)
-                ->postJson('/api/shares', [
-                    'shareable_type' => LogoGeneration::class,
-                    'shareable_id' => $this->logoGeneration->id,
-                    'share_type' => 'public',
+            // Attempt 12 share creations (limit is 10 per minute)
+            for ($i = 0; $i < 12; $i++) {
+                $logoGen = LogoGeneration::factory()->create([
+                    'user_id' => $this->user->id,
                 ]);
 
-            $response->assertStatus(429)
-                ->assertJson([
-                    'retry_after' => 300,
-                ]);
+                $response = $this->actingAs($this->user)
+                    ->postJson('/api/shares', [
+                        'shareable_type' => LogoGeneration::class,
+                        'shareable_id' => $logoGen->id,
+                        'share_type' => 'public',
+                        'title' => "Test Share {$i}",
+                    ]);
+
+                if ($response->status() === 201) {
+                    $successfulRequests++;
+                } elseif ($response->status() === 429) {
+                    $rateLimitedRequests++;
+                }
+            }
+
+            // Should allow 10 successful requests and rate limit the rest
+            expect($successfulRequests)->toBe(10);
+            expect($rateLimitedRequests)->toBe(2);
         });
     });
 
@@ -244,8 +255,13 @@ describe('Share API Endpoints', function (): void {
 
     describe('GET /api/shares/{share}', function (): void {
         it('shows a specific share', function (): void {
+            $logoGen = LogoGeneration::factory()->create([
+                'user_id' => $this->user->id,
+            ]);
+
             $share = Share::factory()->create([
                 'user_id' => $this->user->id,
+                'shareable_id' => $logoGen->id,
                 'title' => 'My Share',
             ]);
 
@@ -366,7 +382,11 @@ describe('Share API Endpoints', function (): void {
 
     describe('GET /api/shares/{share}/analytics', function (): void {
         it('returns share analytics', function (): void {
-            $share = Share::factory()->create(['user_id' => $this->user->id]);
+            $logoGen = LogoGeneration::factory()->create(['user_id' => $this->user->id]);
+            $share = Share::factory()->create([
+                'user_id' => $this->user->id,
+                'shareable_id' => $logoGen->id,
+            ]);
 
             $response = $this->actingAs($this->user)
                 ->getJson("/api/shares/{$share->id}/analytics");
@@ -395,8 +415,10 @@ describe('Share API Endpoints', function (): void {
 
     describe('GET /api/shares/{share}/metadata', function (): void {
         it('returns social media metadata', function (): void {
+            $logoGen = LogoGeneration::factory()->create(['user_id' => $this->user->id]);
             $share = Share::factory()->create([
                 'user_id' => $this->user->id,
+                'shareable_id' => $logoGen->id,
                 'title' => 'Amazing Project',
             ]);
 
