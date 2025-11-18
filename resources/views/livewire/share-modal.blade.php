@@ -136,8 +136,6 @@
 
                     {{-- Export Options --}}
                     <div class="space-y-3">
-                        <flux:heading size="sm">Export Options</flux:heading>
-
                         @if(!$exportUrl)
                             <div class="space-y-4">
                                 {{-- Export Format Selector --}}
