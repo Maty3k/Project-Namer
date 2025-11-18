@@ -165,10 +165,18 @@ final class ExportController extends Controller
 
     /**
      * Public download endpoint using UUID (no authentication required).
+     * However, if user is authenticated, they can only download their own exports.
      */
-    public function publicDownload(string $uuid): StreamedResponse|JsonResponse
+    public function publicDownload(Request $request, string $uuid): StreamedResponse|JsonResponse
     {
         $export = Export::where('uuid', $uuid)->firstOrFail();
+
+        // If user is authenticated, verify they own the export
+        if ($request->user() && $export->user_id !== $request->user()->id) {
+            return response()->json([
+                'message' => 'You do not have permission to download this export',
+            ], 403);
+        }
 
         if ($export->isExpired()) {
             return response()->json([

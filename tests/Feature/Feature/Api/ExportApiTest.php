@@ -283,7 +283,7 @@ describe('Export API Endpoints', function (): void {
             Storage::put($export->file_path, 'PDF content');
 
             $response = $this->actingAs($this->user)
-                ->get("/download/{$export->uuid}");
+                ->get("/downloads/{$export->uuid}");
 
             $response->assertSuccessful();
             expect($response->headers->get('Content-Type'))->toBe('application/pdf');
@@ -300,7 +300,7 @@ describe('Export API Endpoints', function (): void {
             ]);
 
             $response = $this->actingAs($this->user)
-                ->get("/download/{$export->uuid}");
+                ->get("/downloads/{$export->uuid}");
 
             $response->assertNotFound();
         });
@@ -313,7 +313,7 @@ describe('Export API Endpoints', function (): void {
             Storage::put($export->file_path, 'PDF content');
 
             $response = $this->actingAs($this->user)
-                ->get("/download/{$export->uuid}");
+                ->get("/downloads/{$export->uuid}");
 
             $response->assertStatus(410);
         });
@@ -349,7 +349,7 @@ describe('Export API Endpoints', function (): void {
             Storage::put($export->file_path, 'PDF content');
 
             $response = $this->actingAs($this->user)
-                ->get("/download/{$export->uuid}");
+                ->get("/downloads/{$export->uuid}");
 
             $response->assertForbidden();
         });
