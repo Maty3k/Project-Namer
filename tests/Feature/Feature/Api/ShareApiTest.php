@@ -190,7 +190,7 @@ describe('Share API Endpoints', function (): void {
             ]);
 
             $response = $this->actingAs($this->user)
-                ->getJson('/api/shares?is_active=true');
+                ->getJson('/api/shares?is_active=1');
 
             $response->assertSuccessful()
                 ->assertJsonCount(3, 'data');
