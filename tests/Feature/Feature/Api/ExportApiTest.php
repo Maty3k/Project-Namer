@@ -32,7 +32,12 @@ describe('Export API Endpoints', function (): void {
                     'exportable_type' => LogoGeneration::class,
                     'exportable_id' => $this->logoGeneration->id,
                     'export_type' => 'pdf',
+                    'expires_in_days' => 7,
+                    'template' => 'default',
                     'include_metadata' => true,
+                    'include_domains' => true,
+                    'include_logos' => true,
+                    'include_branding' => true,
                 ]);
 
             $response->assertCreated()
@@ -62,7 +67,12 @@ describe('Export API Endpoints', function (): void {
                     'exportable_type' => LogoGeneration::class,
                     'exportable_id' => $this->logoGeneration->id,
                     'export_type' => 'csv',
+                    'expires_in_days' => 7,
+                    'template' => 'default',
+                    'include_metadata' => true,
                     'include_domains' => true,
+                    'include_logos' => true,
+                    'include_branding' => true,
                 ]);
 
             $response->assertCreated();
@@ -78,7 +88,12 @@ describe('Export API Endpoints', function (): void {
                     'exportable_type' => LogoGeneration::class,
                     'exportable_id' => $this->logoGeneration->id,
                     'export_type' => 'json',
+                    'expires_in_days' => 7,
+                    'template' => 'default',
                     'include_metadata' => true,
+                    'include_domains' => true,
+                    'include_logos' => true,
+                    'include_branding' => true,
                 ]);
 
             $response->assertCreated();

@@ -134,6 +134,71 @@
                         </div>
                     </flux:field>
 
+                    {{-- Export Options --}}
+                    <div class="space-y-3">
+                        <flux:heading size="sm">Export Options</flux:heading>
+
+                        @if(!$exportUrl)
+                            <div class="space-y-4">
+                                {{-- Export Format Selector --}}
+                                <flux:field>
+                                    <flux:label>Export Format</flux:label>
+                                    <flux:select wire:model="exportType" :disabled="$isGenerating">
+                                        <option value="pdf">PDF Document</option>
+                                        <option value="csv">CSV Spreadsheet</option>
+                                        <option value="json">JSON Data</option>
+                                    </flux:select>
+                                    <flux:error name="exportType" />
+                                </flux:field>
+
+                                {{-- Export Options --}}
+                                <div class="space-y-2">
+                                    <flux:checkbox wire:model="includeMetadata" :disabled="$isGenerating">
+                                        Include metadata (business name, industry, etc.)
+                                    </flux:checkbox>
+
+                                    <flux:checkbox wire:model="includeDomains" :disabled="$isGenerating">
+                                        Include domain availability information
+                                    </flux:checkbox>
+                                </div>
+
+                                {{-- Generate Button --}}
+                                <flux:button
+                                    wire:click="generateExport"
+                                    variant="filled"
+                                    class="w-full"
+                                    :disabled="$isGenerating"
+                                >
+                                    <span wire:loading.remove wire:target="generateExport">Generate Export</span>
+                                    <span wire:loading wire:target="generateExport">Generating...</span>
+                                </flux:button>
+                            </div>
+                        @else
+                            {{-- Download Link --}}
+                            <div class="rounded-lg bg-blue-50 dark:bg-blue-900/20 p-4 border border-blue-200 dark:border-blue-800">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    <p class="text-sm font-medium text-blue-800 dark:text-blue-200">
+                                        Export ready for download!
+                                    </p>
+                                </div>
+                                <a
+                                    href="{{ $exportUrl }}"
+                                    wire:click="downloadExport"
+                                    target="_blank"
+                                    class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                                >
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                    </svg>
+                                    Download {{ strtoupper($exportType) }}
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+
                     {{-- Social Media Sharing --}}
                     <div class="space-y-3">
                         <flux:heading size="sm">Share on Social Media</flux:heading>

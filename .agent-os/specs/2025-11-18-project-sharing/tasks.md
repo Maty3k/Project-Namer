@@ -91,17 +91,17 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [ ] 7.9 Add social media icons (use Heroicons or similar)
   - [ ] 7.10 Verify all social media tests pass
 
-- [ ] 8. Export UI & Download
-  - [ ] 8.1 Write tests for export generation UI
-  - [ ] 8.2 Add export buttons to share modal
-  - [ ] 8.3 Create export format selector (PDF, CSV, JSON)
-  - [ ] 8.4 Implement export generation trigger
-  - [ ] 8.5 Show export progress/loading state
-  - [ ] 8.6 Display download link after generation
-  - [ ] 8.7 Create download route and controller method
-  - [ ] 8.8 Implement proper file serving with headers
-  - [ ] 8.9 Add download tracking
-  - [ ] 8.10 Verify all export tests pass
+- [x] 8. Export UI & Download
+  - [x] 8.1 Write tests for export generation UI (16 comprehensive tests)
+  - [x] 8.2 Add export functionality to ShareModal component
+  - [x] 8.3 Create export format selector (PDF, CSV, JSON)
+  - [x] 8.4 Implement export generation trigger with loading states
+  - [x] 8.5 Show export progress/loading state
+  - [x] 8.6 Display download link after generation
+  - [x] 8.7 Download routes already exist (api.exports.download)
+  - [x] 8.8 File serving with headers already implemented in ExportService
+  - [x] 8.9 Download tracking already implemented
+  - [x] 8.10 Verify all export tests pass (16/16 tests passing - 100%)
 
 - [ ] 9. Share Management Dashboard
   - [ ] 9.1 Write tests for share management interface

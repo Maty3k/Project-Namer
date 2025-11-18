@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
+use App\Models\Export;
 use App\Models\LogoGeneration;
 use App\Models\Share;
+use App\Services\ExportService;
 use App\Services\ShareService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Gate;
@@ -41,6 +43,20 @@ class ShareModal extends Component
 
     public bool $isLoading = false;
 
+    // Export properties
+    #[Validate]
+    public string $exportType = 'pdf';
+
+    #[Validate]
+    public bool $includeMetadata = true;
+
+    #[Validate]
+    public bool $includeDomains = false;
+
+    public ?string $exportUrl = null;
+
+    public bool $isGenerating = false;
+
     /**
      * Validation rules for the share form.
      *
@@ -54,6 +70,9 @@ class ShareModal extends Component
             'shareType' => ['required', 'in:public,password_protected'],
             'password' => ['required_if:shareType,password_protected', 'string', 'min:6'],
             'expiresInDays' => ['nullable', 'integer', 'min:1'],
+            'exportType' => ['required', 'in:pdf,csv,json'],
+            'includeMetadata' => ['boolean'],
+            'includeDomains' => ['boolean'],
         ];
     }
 
@@ -150,6 +169,75 @@ class ShareModal extends Component
     }
 
     /**
+     * Generate an export for the logo generation.
+     */
+    public function generateExport(): void
+    {
+        // Authorize that the user owns this logo generation
+        if ($this->logoGeneration->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $this->isGenerating = true;
+
+        $this->validate([
+            'exportType' => ['required', 'in:pdf,csv,json'],
+        ]);
+
+        try {
+            $exportService = app(ExportService::class);
+
+            $exportData = [
+                'exportable_type' => LogoGeneration::class,
+                'exportable_id' => $this->logoGeneration->id,
+                'export_type' => $this->exportType,
+                'include_metadata' => $this->includeMetadata,
+                'include_domains' => $this->includeDomains,
+            ];
+
+            $export = $exportService->createExport(auth()->user(), $exportData);
+
+            $this->exportUrl = route('api.exports.download', $export->uuid);
+
+            $this->dispatch('export-generated');
+            $this->dispatch('show-toast', [
+                'message' => 'Export generated successfully!',
+                'type' => 'success',
+            ]);
+        } catch (\Exception $e) {
+            $this->dispatch('show-toast', [
+                'message' => 'Failed to generate export. Please try again.',
+                'type' => 'error',
+            ]);
+        } finally {
+            $this->isGenerating = false;
+        }
+    }
+
+    /**
+     * Download the generated export.
+     */
+    public function downloadExport(): void
+    {
+        if (! $this->exportUrl) {
+            return;
+        }
+
+        // Extract UUID from URL
+        $uuid = basename($this->exportUrl);
+
+        // Find the export
+        $export = Export::where('uuid', $uuid)->first();
+
+        if (! $export) {
+            return;
+        }
+
+        // Increment download count
+        $export->increment('download_count');
+    }
+
+    /**
      * Reset the form to its initial state.
      */
     public function resetForm(): void
@@ -161,6 +249,10 @@ class ShareModal extends Component
         $this->expiresInDays = null;
         $this->shareUrl = null;
         $this->socialMediaUrls = [];
+        $this->exportType = 'pdf';
+        $this->includeMetadata = true;
+        $this->includeDomains = false;
+        $this->exportUrl = null;
         $this->resetValidation();
     }
 
