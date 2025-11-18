@@ -1,11 +1,11 @@
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-4 px-3
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 py-4 px-3
             sm:py-6 sm:px-4
             lg:py-8 lg:px-8">
     <div class="w-full max-w-full mx-auto
                 lg:max-w-7xl">
         {{-- Header --}}
-        <div class="mb-6
-                    sm:mb-8">
+        <div class="mb-6 p-6 bg-white dark:bg-gray-800 rounded-xl border-[4px] border-gray-300 dark:border-gray-600 shadow-lg
+                    sm:mb-8 sm:p-8">
             <h1 class="font-bold text-gray-900 dark:text-white text-2xl
                        sm:text-3xl">
                 Logo Generations
@@ -29,7 +29,7 @@
                         type="text"
                         wire:model.live.debounce.300ms="search"
                         placeholder="Search by business name..."
-                        class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        class="block w-full pl-10 pr-3 py-2 border-[3px] border-gray-300 dark:border-gray-500 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:border-primary-400 shadow-sm hover:shadow-md transition-all"
                     >
                 </div>
 
@@ -43,7 +43,7 @@
                     <select
                         id="filter"
                         wire:model.live="filterBy"
-                        class="block w-full px-3 py-2 pr-8 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm appearance-none bg-no-repeat
+                        class="block w-full px-3 py-2 pr-8 border-[3px] border-gray-300 dark:border-gray-500 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:border-primary-400 text-sm appearance-none bg-no-repeat shadow-sm hover:shadow-md transition-all
                                sm:w-auto sm:px-4 sm:pr-10"
                         style="background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 20%27 fill=%27none%27%3e%3cpath d=%27M7 7l3 3 3-3%27 stroke=%27%239ca3af%27 stroke-width=%271.5%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3e%3c/svg%3e'); background-position: right 0.25rem center; background-size: 1.25rem 1.25rem;"
                     >
@@ -56,7 +56,7 @@
                     @if($logoGenerations->count() >= 2)
                         <button
                             wire:click="confirmDeleteAllGenerations"
-                            class="inline-flex items-center justify-center gap-2 w-full px-3 py-2 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white font-medium rounded-lg transition-colors shadow-sm hover:shadow-md whitespace-nowrap text-sm
+                            class="inline-flex items-center justify-center gap-2 w-full px-3 py-2 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white font-medium rounded-lg transition-all shadow-md hover:shadow-xl whitespace-nowrap text-sm border-[3px] border-red-700 dark:border-red-400 hover:scale-105 active:scale-95
                                    sm:w-auto sm:px-4"
                         >
                             <svg class="w-4 h-4
@@ -83,13 +83,13 @@
             </div>
         @else
             <div class="grid gap-4 grid-cols-1
-                        xs:grid-cols-2 xs:gap-5
-                        sm:grid-cols-3 sm:gap-6
-                        md:grid-cols-4
-                        lg:grid-cols-5 lg:gap-8
-                        xl:grid-cols-6">
+                        sm:grid-cols-2 sm:gap-5
+                        md:grid-cols-3 md:gap-6
+                        lg:grid-cols-4 lg:gap-8
+                        xl:grid-cols-5
+                        2xl:grid-cols-6">
                 @foreach($logoGenerations as $generation)
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow relative flex flex-col border-2 border-gray-200 dark:border-gray-700">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all relative flex flex-col border-[3px] border-gray-300 dark:border-gray-500 hover:border-primary-400 dark:hover:border-primary-600 hover:-translate-y-1">
                         <a href="{{ route('logo.gallery', $generation) }}"
                            wire:navigate
                            class="block flex-1 flex flex-col">
@@ -138,7 +138,7 @@
                         </div>
 
                         {{-- Info --}}
-                        <div class="p-2.5 pr-16
+                        <div class="p-2.5 pr-16 bg-gray-50 dark:bg-gray-750 border-t-[3px] border-gray-300 dark:border-gray-600
                                     sm:p-3 sm:pr-20">
                             <div class="flex items-center gap-1.5">
                                 <h3 class="text-xs font-semibold text-gray-900 dark:text-white truncate
@@ -179,12 +179,12 @@
                             {{-- Share Button --}}
                             <button
                                 wire:click.prevent="$dispatch('openShareModal', { generationId: {{ $generation->id }} })"
-                                class="p-1.5 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white rounded-md transition-all shadow-md hover:shadow-lg
-                                       sm:p-2"
+                                class="p-3 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white rounded-md transition-all shadow-lg hover:shadow-xl border-[3px] border-primary-700 dark:border-primary-300 hover:scale-110 active:scale-95
+                                       sm:p-2.5"
                                 title="Share project"
                             >
-                                <svg class="w-3.5 h-3.5
-                                            sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5
+                                            sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
                                 </svg>
                             </button>
@@ -192,12 +192,12 @@
                             {{-- Delete Button --}}
                             <button
                                 wire:click.prevent="confirmDelete({{ $generation->id }})"
-                                class="p-1.5 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white rounded-md transition-all shadow-md hover:shadow-lg
-                                       sm:p-2"
+                                class="p-3 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white rounded-md transition-all shadow-lg hover:shadow-xl border-[3px] border-red-700 dark:border-red-300 hover:scale-110 active:scale-95
+                                       sm:p-2.5"
                                 title="Delete all logos"
                             >
-                                <svg class="w-3.5 h-3.5
-                                            sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5
+                                            sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                 </svg>
                             </button>

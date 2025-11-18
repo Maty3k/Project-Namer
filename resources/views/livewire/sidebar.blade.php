@@ -1,6 +1,6 @@
-<div class="{{ $collapsed ? 'w-16' : 'w-80 lg:w-64' }} transition-all duration-500 ease-out transform {{ $collapsed ? 'translate-x-0' : 'translate-x-0' }} border-r h-screen flex flex-col themed-sidebar will-change-transform bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-700">
+<div class="{{ $collapsed ? 'w-16' : 'w-80 lg:w-64' }} transition-all duration-500 ease-out transform translate-x-0 border-r-[4px] h-screen flex flex-col themed-sidebar will-change-transform bg-gray-50 dark:bg-slate-900 border-gray-400 dark:border-slate-500 shadow-lg">
     <!-- Sidebar Header -->
-    <div class="p-4 border-b border-gray-200 dark:border-slate-600 transition-all duration-300 ease-out">
+    <div class="p-4 border-b-[3px] border-gray-300 dark:border-slate-600 transition-all duration-300 ease-out">
         <div class="flex items-center transition-all duration-300 ease-out {{ $collapsed ? 'justify-center' : 'justify-between' }}">
             <div class="overflow-hidden transition-all duration-500 ease-out {{ $collapsed ? 'max-w-0 opacity-0' : 'max-w-full opacity-100' }}">
                 @if(!$collapsed)
@@ -48,7 +48,7 @@
 
     <!-- Bulk Delete Controls -->
     @if(!$this->projects->isEmpty() && !$collapsed)
-        <div class="px-4 pb-4 border-b border-gray-200 dark:border-slate-600">
+        <div class="px-4 pb-4 border-b-[3px] border-gray-300 dark:border-slate-600">
             @if($bulkDeleteMode)
                 <div class="space-y-2">
                     <div class="flex gap-2">
@@ -128,11 +128,11 @@
                 @foreach($this->projects as $project)
                     <div
                         wire:click="{{ $bulkDeleteMode ? '' : 'selectProject(\'' . $project->uuid . '\')' }}"
-                        class="group {{ $bulkDeleteMode ? 'cursor-default' : 'cursor-pointer' }} rounded-lg transition-all duration-300 ease-out {{ $collapsed ? 'p-2' : 'p-3' }}
-                        {{ !$bulkDeleteMode ? 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm transform hover:scale-[1.02]' : '' }}
-                        {{ !$bulkDeleteMode && $this->isActiveProject($project) ? 'bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-500 shadow-sm' : '' }}
-                        {{ $bulkDeleteMode && in_array($project->uuid, $selectedProjects) ? 'bg-blue-50 dark:bg-blue-900/30 shadow-md ring-2 ring-blue-500 dark:ring-blue-400 border-l-4 border-blue-500' : '' }}
-                        {{ $bulkDeleteMode && !in_array($project->uuid, $selectedProjects) ? 'hover:bg-gray-50 dark:hover:bg-gray-800/50' : '' }}"
+                        class="group {{ $bulkDeleteMode ? 'cursor-default' : 'cursor-pointer' }} rounded-lg transition-all duration-300 ease-out {{ $collapsed ? 'p-2' : 'p-3' }} border-2 border-transparent
+                        {{ !$bulkDeleteMode ? 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 transform hover:scale-[1.02]' : '' }}
+                        {{ !$bulkDeleteMode && $this->isActiveProject($project) ? 'bg-blue-50 dark:bg-blue-900/30 border-l-[4px] border-blue-500 shadow-md' : '' }}
+                        {{ $bulkDeleteMode && in_array($project->uuid, $selectedProjects) ? 'bg-blue-50 dark:bg-blue-900/30 shadow-md ring-2 ring-blue-500 dark:ring-blue-400 border-l-[4px] border-blue-500' : '' }}
+                        {{ $bulkDeleteMode && !in_array($project->uuid, $selectedProjects) ? 'hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:border-gray-300 dark:hover:border-gray-600' : '' }}"
                         wire:key="project-{{ $project->uuid }}"
                         @if($collapsed)
                             title="{{ $project->name }}"
@@ -205,7 +205,7 @@
                                         </div>
 
                                         @if(!$bulkDeleteMode)
-                                            <div class="flex-shrink-0 ml-2 flex items-center transition-all duration-300 ease-out delay-100">
+                                            <div class="flex-shrink-0 ml-2 flex items-center transition-all duration-300 ease-out delay-100 mt-1">
                                                 @if($this->isActiveProject($project))
                                                     <div class="w-2 h-2 bg-blue-500 dark:bg-blue-400 rounded-full mr-2 transition-all duration-200 ease-out"></div>
                                                 @endif
@@ -215,11 +215,11 @@
                                                     wire:click.stop="confirmDeleteProject('{{ $project->uuid }}')"
                                                     variant="ghost"
                                                     size="sm"
-                                                    class="opacity-0 group-hover:opacity-100 w-9 h-9 rounded-lg shadow-sm transition-all duration-200 ease-out hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400 text-red-500 border border-red-200 hover:scale-105 active:scale-95"
+                                                    class="opacity-0 group-hover:opacity-100 w-9 h-9 rounded-lg shadow-sm transition-all duration-200 ease-out hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400 text-red-500 border border-red-200 hover:scale-105 active:scale-95 overflow-hidden"
                                                     style="display: flex !important; align-items: center !important; justify-content: center !important; padding: 0 !important;"
                                                     title="Delete project"
                                                 >
-                                                    <svg class="w-5 h-5 transition-transform duration-200 ease-out" fill="currentColor" viewBox="0 0 24 24">
+                                                    <svg class="w-4 h-4 transition-transform duration-200 ease-out flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                                                         <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clip-rule="evenodd"/>
                                                     </svg>
                                                 </flux:button>

@@ -6,7 +6,8 @@
     <div class="container mx-auto px-4 py-6
                 sm:px-6 sm:py-8
                 lg:px-8 lg:py-12">
-        <div class="max-w-6xl mx-auto">
+        <div class="max-w-6xl mx-auto
+                    lg:max-w-7xl">
             <!-- Share Header -->
             <flux:card class="mb-6
                              sm:mb-8">
