@@ -1,168 +1,249 @@
-<div>
-    {{-- Share Management Interface --}}
-    
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     {{-- Header Section --}}
     <div class="mb-6">
-        <div class="flex flex-col gap-4
-                    sm:flex-row sm:items-center sm:justify-between">
-            <div>
-                <flux:heading size="lg" class="text-gray-900 dark:text-gray-100">
-                    My Shares
-                </flux:heading>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    Manage your shared logo designs and view analytics
-                </p>
-            </div>
-        </div>
+        <flux:heading size="lg" class="text-gray-900 dark:text-gray-100">
+            My Shares
+        </flux:heading>
+        <flux:subheading class="mt-1">
+            Manage your shared logo designs and view analytics
+        </flux:subheading>
     </div>
 
-    {{-- Filters Section --}}
-    <div class="mb-6 grid grid-cols-1 gap-4
-                sm:grid-cols-3">
-        <flux:field>
-            <flux:input
-                wire:model.live="search"
-                type="search"
-                placeholder="Search shares..."
-                class="w-full"
-            />
-        </flux:field>
-        
-        <flux:field>
-            <flux:select wire:model.live="filterType" class="w-full">
-                <option value="">All Types</option>
-                <option value="public">Public</option>
-                <option value="password_protected">Password Protected</option>
-            </flux:select>
-        </flux:field>
-        
-        <flux:field>
-            <flux:select wire:model.live="filterActive" class="w-full">
-                <option value="">All Status</option>
-                <option value="1">Active</option>
-                <option value="0">Inactive</option>
-            </flux:select>
-        </flux:field>
+    {{-- Filters and Search Section --}}
+    <div class="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {{-- Search --}}
+            <flux:field>
+                <flux:label>Search</flux:label>
+                <flux:input
+                    wire:model.live.debounce.300ms="search"
+                    type="search"
+                    placeholder="Search shares..."
+                />
+            </flux:field>
+
+            {{-- Status Filter --}}
+            <flux:field>
+                <flux:label>Status</flux:label>
+                <flux:select wire:model.live="filterStatus">
+                    <option value="all">All Shares</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="expired">Expired</option>
+                </flux:select>
+            </flux:field>
+
+            {{-- Sort Field --}}
+            <flux:field>
+                <flux:label>Sort By</flux:label>
+                <flux:select wire:model.live="sortField">
+                    <option value="created_at">Date Created</option>
+                    <option value="view_count">View Count</option>
+                    <option value="title">Title</option>
+                </flux:select>
+            </flux:field>
+
+            {{-- Sort Direction --}}
+            <flux:field>
+                <flux:label>Direction</flux:label>
+                <flux:select wire:model.live="sortDirection">
+                    <option value="desc">Descending</option>
+                    <option value="asc">Ascending</option>
+                </flux:select>
+            </flux:field>
+        </div>
+
+        {{-- Reset Filters Button --}}
+        @if($search || $filterStatus !== 'all' || $sortField !== 'created_at' || $sortDirection !== 'desc')
+            <div class="mt-4">
+                <flux:button
+                    wire:click="resetFilters"
+                    variant="ghost"
+                    size="sm"
+                >
+                    Reset Filters
+                </flux:button>
+            </div>
+        @endif
     </div>
 
     {{-- Shares List --}}
-    @php
-        $sharesData = $this->getShares();
-    @endphp
-    @if (count($sharesData['data']) > 0)
+    @if($shares->count() > 0)
         <div class="space-y-4">
-            @foreach ($sharesData['data'] as $share)
+            @foreach($shares as $share)
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <div class="flex flex-col gap-4
-                                lg:flex-row lg:items-center lg:justify-between">
+                    <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                        {{-- Share Info --}}
                         <div class="flex-1">
                             <div class="flex items-start gap-3">
                                 <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-900 dark:text-gray-100">
+                                    <h3 class="font-semibold text-lg text-gray-900 dark:text-gray-100">
                                         {{ $share->title ?: 'Untitled Share' }}
                                     </h3>
-                                    
-                                    @if ($share->description)
+
+                                    @if($share->description)
                                         <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
                                             {{ Str::limit($share->description, 120) }}
                                         </p>
                                     @endif
-                                    
-                                    <div class="flex items-center gap-4 mt-3">
-                                        <flux:badge 
+
+                                    {{-- Badges and Meta --}}
+                                    <div class="flex flex-wrap items-center gap-3 mt-3">
+                                        {{-- Share Type Badge --}}
+                                        <flux:badge
                                             :variant="$share->share_type === 'public' ? 'success' : 'warning'"
                                             size="sm"
                                         >
-                                            {{ ucfirst(str_replace('_', ' ', $share->share_type)) }}
+                                            @if($share->share_type === 'public')
+                                                Public
+                                            @else
+                                                Password Protected
+                                            @endif
                                         </flux:badge>
-                                        
-                                        <flux:badge 
+
+                                        {{-- Active Status Badge --}}
+                                        <flux:badge
                                             :variant="$share->is_active ? 'success' : 'secondary'"
                                             size="sm"
                                         >
                                             {{ $share->is_active ? 'Active' : 'Inactive' }}
                                         </flux:badge>
-                                        
-                                        <span class="text-xs text-gray-500 dark:text-gray-400">
+
+                                        {{-- View Count --}}
+                                        <span class="text-xs text-gray-600 dark:text-gray-400">
+                                            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                            </svg>
                                             {{ $share->view_count }} views
                                         </span>
-                                        
+
+                                        {{-- Unique Visitors --}}
+                                        @if($share->unique_visitors)
+                                            <span class="text-xs text-gray-600 dark:text-gray-400">
+                                                <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                                </svg>
+                                                {{ $share->unique_visitors }} unique
+                                            </span>
+                                        @endif
+
+                                        {{-- Created Date --}}
                                         <span class="text-xs text-gray-500 dark:text-gray-400">
                                             Created {{ $share->created_at->diffForHumans() }}
                                         </span>
-                                        
-                                        @if ($share->expires_at)
-                                            <span class="text-xs {{ $share->isExpired() ? 'text-red-500' : 'text-yellow-500' }}">
-                                                {{ $share->isExpired() ? 'Expired' : 'Expires' }} {{ $share->expires_at->diffForHumans() }}
+
+                                        {{-- Expiration Status --}}
+                                        @if($share->expires_at)
+                                            <span class="text-xs {{ $share->isExpired() ? 'text-red-600 dark:text-red-400' : 'text-yellow-600 dark:text-yellow-400' }}">
+                                                @if($share->isExpired())
+                                                    Expired {{ $share->expires_at->diffForHumans() }}
+                                                @else
+                                                    Expires {{ $share->expires_at->diffForHumans() }}
+                                                @endif
+                                            </span>
+                                        @else
+                                            <span class="text-xs text-gray-500 dark:text-gray-400">
+                                                Never expires
                                             </span>
                                         @endif
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
+
                         {{-- Actions --}}
-                        <div class="flex items-center gap-2">
+                        <div class="flex flex-wrap items-center gap-2">
+                            {{-- Copy Link --}}
                             <flux:button
-                                wire:click="copyShareUrl('{{ $share->uuid }}')"
-                                variant="outline"
+                                wire:click="copyShareUrl({{ $share->id }})"
+                                variant="ghost"
                                 size="sm"
+                                x-data
+                                x-on:click="navigator.clipboard.writeText('{{ $share->getShareUrl() }}'); $dispatch('show-toast', { message: 'Link copied!', type: 'success' })"
                             >
-                                Copy Link
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                </svg>
+                                Copy
                             </flux:button>
-                            
+
+                            {{-- View Share --}}
                             <flux:button
                                 href="{{ $share->getShareUrl() }}"
                                 target="_blank"
-                                variant="outline"
+                                variant="ghost"
                                 size="sm"
                             >
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                </svg>
                                 View
                             </flux:button>
-                            
-                            @if ($share->is_active)
-                                <flux:button
-                                    wire:click="deactivateShare({{ $share->id }})"
-                                    wire:confirm="Are you sure you want to deactivate this share?"
-                                    variant="danger"
-                                    size="sm"
-                                >
-                                    Deactivate
-                                </flux:button>
-                            @endif
+
+                            {{-- Toggle Active Status --}}
+                            <flux:button
+                                wire:click="toggleShareStatus({{ $share->id }})"
+                                variant="{{ $share->is_active ? 'ghost' : 'filled' }}"
+                                size="sm"
+                            >
+                                @if($share->is_active)
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Pause
+                                @else
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Activate
+                                @endif
+                            </flux:button>
+
+                            {{-- Delete --}}
+                            <flux:button
+                                wire:click="deleteShare({{ $share->id }})"
+                                wire:confirm="Are you sure you want to delete this share? This action cannot be undone."
+                                variant="danger"
+                                size="sm"
+                            >
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                                Delete
+                            </flux:button>
                         </div>
                     </div>
                 </div>
             @endforeach
         </div>
-        
+
         {{-- Pagination --}}
-        @if ($sharesData['pagination']['last_page'] > 1)
-            <div class="mt-6">
-                {{-- Manual pagination since we're not using a paginator object --}}
-                <div class="flex justify-center">
-                    Page {{ $sharesData['pagination']['current_page'] }} of {{ $sharesData['pagination']['last_page'] }}
-                </div>
-            </div>
-        @endif
+        <div class="mt-6">
+            {{ $shares->links() }}
+        </div>
     @else
-        <div class="text-center py-12">
-            <div class="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-                <flux:icon name="share" class="w-8 h-8 text-gray-400" />
+        {{-- Empty State --}}
+        <div class="text-center py-12 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div class="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                </svg>
             </div>
             <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
                 No shares found
             </h3>
             <p class="text-gray-600 dark:text-gray-400 mb-4">
-                @if ($search || $filterType || $filterActive !== '')
+                @if($search || $filterStatus !== 'all')
                     No shares match your current filters.
                 @else
-                    You haven't created any shares yet.
+                    You haven't created any shares yet. Start sharing your logo designs!
                 @endif
             </p>
-            @if ($search || $filterType || $filterActive !== '')
-                <flux:button 
-                    wire:click="$set('search', ''); $set('filterType', ''); $set('filterActive', '')"
+            @if($search || $filterStatus !== 'all')
+                <flux:button
+                    wire:click="resetFilters"
                     variant="outline"
                 >
                     Clear Filters
@@ -170,179 +251,4 @@
             @endif
         </div>
     @endif
-
-    {{-- Create Share Modal --}}
-    <flux:modal wire:model="showCreateModal" class="max-w-2xl">
-        <div class="space-y-6">
-            {{-- Header --}}
-            <div>
-                <flux:heading size="lg">Create New Share</flux:heading>
-            </div>
-            
-            {{-- Form Content --}}
-            <form wire:submit="createShare" class="space-y-6">
-                {{-- Share Details --}}
-                <div class="space-y-4">
-                    <flux:field>
-                        <flux:label>Title</flux:label>
-                        <flux:input 
-                            wire:model="title"
-                            type="text"
-                            placeholder="Enter a title for your share..."
-                            class="w-full"
-                        />
-                        <flux:error name="title" />
-                    </flux:field>
-                    
-                    <flux:field>
-                        <flux:label>Description</flux:label>
-                        <flux:textarea 
-                            wire:model="description"
-                            placeholder="Add a description (optional)..."
-                            rows="3"
-                            class="w-full"
-                        />
-                        <flux:error name="description" />
-                    </flux:field>
-                </div>
-                
-                {{-- Share Type --}}
-                <div class="space-y-4">
-                    <flux:field>
-                        <flux:label>Share Type</flux:label>
-                        <div class="space-y-3">
-                            <flux:radio
-                                wire:model.live="shareType"
-                                value="public"
-                                label="Public - Anyone with the link can view"
-                            />
-                            <flux:radio
-                                wire:model.live="shareType"
-                                value="password_protected"
-                                label="Password Protected - Requires password to view"
-                            />
-                        </div>
-                        <flux:error name="shareType" />
-                    </flux:field>
-                    
-                    @if ($shareType === 'password_protected')
-                        <flux:field>
-                            <flux:label>Password</flux:label>
-                            <flux:input 
-                                wire:model="password"
-                                type="password"
-                                placeholder="Enter password..."
-                                class="w-full"
-                            />
-                            <flux:error name="password" />
-                        </flux:field>
-                    @endif
-                </div>
-                
-                {{-- Advanced Options --}}
-                <div class="space-y-4">
-                    <flux:field>
-                        <flux:label>Expiration (Optional)</flux:label>
-                        <flux:input 
-                            wire:model="expiresAt"
-                            type="datetime-local"
-                            class="w-full"
-                        />
-                        <flux:error name="expiresAt" />
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                            Leave blank for permanent share
-                        </p>
-                    </flux:field>
-                    
-                    <div class="space-y-3">
-                        <flux:label>Display Options</flux:label>
-                        <div class="space-y-2">
-                            <flux:checkbox
-                                wire:model="settings.show_title"
-                                label="Show title in shared view"
-                            />
-                            <flux:checkbox
-                                wire:model="settings.show_description"
-                                label="Show description in shared view"
-                            />
-                            <flux:checkbox
-                                wire:model="settings.allow_downloads"
-                                label="Allow viewers to download logos"
-                            />
-                        </div>
-                    </div>
-                </div>
-                
-                @if ($errors->has('general'))
-                    <flux:callout variant="danger">
-                        {{ $errors->first('general') }}
-                    </flux:callout>
-                @endif
-                
-                @if ($errors->has('validation'))
-                    <flux:callout variant="danger">
-                        {{ $errors->first('validation') }}
-                    </flux:callout>
-                @endif
-            </form>
-            
-            {{-- Footer --}}
-            <div class="flex gap-2">
-                <flux:spacer />
-                <flux:button 
-                    wire:click="closeCreateModal"
-                    variant="ghost"
-                >
-                    Cancel
-                </flux:button>
-                <flux:button 
-                    wire:click="createShare"
-                    type="submit"
-                    variant="primary"
-                >
-                    Create Share
-                </flux:button>
-            </div>
-        </div>
-    </flux:modal>
-
-    {{-- Flash Messages --}}
-    @if (session('success'))
-        <div x-data="{ show: true }" 
-             x-show="show" 
-             x-transition 
-             x-init="setTimeout(() => show = false, 5000)"
-             class="fixed top-4 right-4 z-50">
-            <flux:callout variant="success" class="max-w-sm">
-                {{ session('success') }}
-            </flux:callout>
-        </div>
-    @endif
-
-    {{-- JavaScript for copy functionality --}}
-    <script>
-        document.addEventListener('livewire:init', () => {
-            Livewire.on('copy-to-clipboard', (event) => {
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(event.shareUrl).then(() => {
-                        // Show success feedback
-                        const flash = document.createElement('div');
-                        flash.className = 'fixed top-4 right-4 z-50 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded';
-                        flash.innerHTML = 'Share URL copied to clipboard!';
-                        document.body.appendChild(flash);
-                        
-                        setTimeout(() => {
-                            flash.remove();
-                        }, 3000);
-                    }).catch(() => {
-                        // Fallback - show the URL in an alert
-                        alert('Share URL: ' + event.shareUrl);
-                    });
-                } else {
-                    // Fallback for older browsers
-                    alert('Share URL: ' + event.shareUrl);
-                }
-            });
-        });
-    </script>
 </div>
