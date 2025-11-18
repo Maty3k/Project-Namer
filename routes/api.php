@@ -51,9 +51,8 @@ Route::middleware('api')->group(function (): void {
 
     // Sharing API Routes - CSRF protected state-changing operations
     Route::prefix('shares')->middleware(['auth', 'web'])->group(function (): void {
-        // List user's shares with filtering and pagination (read-only, no CSRF needed)
+        // List user's shares with filtering and pagination
         Route::get('/', [ShareController::class, 'index'])
-            ->withoutMiddleware('web')
             ->name('api.shares.index');
 
         // Create a new share (state-changing, requires CSRF)
@@ -61,9 +60,8 @@ Route::middleware('api')->group(function (): void {
             ->middleware('throttle.shares')
             ->name('api.shares.store');
 
-        // Show specific share (read-only, no CSRF needed)
+        // Show specific share
         Route::get('{share}', [ShareController::class, 'show'])
-            ->withoutMiddleware('web')
             ->name('api.shares.show');
 
         // Update share (state-changing, requires CSRF)
@@ -74,14 +72,12 @@ Route::middleware('api')->group(function (): void {
         Route::delete('{share}', [ShareController::class, 'destroy'])
             ->name('api.shares.destroy');
 
-        // Get share analytics (read-only, no CSRF needed)
+        // Get share analytics
         Route::get('{share}/analytics', [ShareController::class, 'analytics'])
-            ->withoutMiddleware('web')
             ->name('api.shares.analytics');
 
-        // Get social media metadata (read-only, no CSRF needed)
+        // Get social media metadata
         Route::get('{share}/metadata', [ShareController::class, 'metadata'])
-            ->withoutMiddleware('web')
             ->name('api.shares.metadata');
     });
 
@@ -89,9 +85,8 @@ Route::middleware('api')->group(function (): void {
     Route::prefix('exports')->group(function (): void {
         // Authenticated export routes with CSRF protection for state changes
         Route::middleware(['auth', 'web'])->group(function (): void {
-            // List user's exports with filtering and pagination (read-only, no CSRF needed)
+            // List user's exports with filtering and pagination
             Route::get('/', [ExportController::class, 'index'])
-                ->withoutMiddleware('web')
                 ->name('api.exports.index');
 
             // Create a new export (state-changing, requires CSRF)
@@ -99,18 +94,16 @@ Route::middleware('api')->group(function (): void {
                 ->middleware('throttle.exports')
                 ->name('api.exports.store');
 
-            // Get export analytics (read-only, no CSRF needed)
+            // Get export analytics
             Route::get('analytics', [ExportController::class, 'analytics'])
-                ->withoutMiddleware('web')
                 ->name('api.exports.analytics');
 
             // Cleanup expired exports (state-changing, requires CSRF)
             Route::delete('cleanup', [ExportController::class, 'cleanup'])
                 ->name('api.exports.cleanup');
 
-            // Show specific export (read-only, no CSRF needed)
+            // Show specific export
             Route::get('{export}', [ExportController::class, 'show'])
-                ->withoutMiddleware('web')
                 ->name('api.exports.show');
 
             // Delete export (state-changing, requires CSRF)

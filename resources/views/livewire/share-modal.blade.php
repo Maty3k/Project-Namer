@@ -1,6 +1,6 @@
 <div>
     {{-- Modal Component --}}
-    <flux:modal name="share-modal-{{ $logoGeneration->id }}" wire:model="showModal" class="!max-w-5xl w-full">
+    <flux:modal name="share-modal-{{ $logoGeneration->id }}" wire:model="showModal" class="w-[90%] max-w-md sm:max-w-2xl lg:!max-w-5xl">
         <div class="space-y-6 w-full">
             {{-- Header --}}
             <div>

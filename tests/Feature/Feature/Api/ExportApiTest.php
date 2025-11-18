@@ -335,7 +335,7 @@ describe('Export API Endpoints', function (): void {
             Storage::put($export->file_path, 'PDF content');
 
             $this->actingAs($this->user)
-                ->get("/download/{$export->uuid}");
+                ->get("/downloads/{$export->uuid}");
 
             $export->refresh();
             expect($export->download_count)->toBe(6);

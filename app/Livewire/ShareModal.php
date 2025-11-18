@@ -260,9 +260,13 @@ class ShareModal extends Component
      * Open the share modal.
      */
     #[On('openShareModal')]
-    public function openModal(): void
+    public function openModal(?int $generationId = null): void
     {
-        $this->showModal = true;
+        // If no generationId provided (e.g., in tests), open the modal
+        // Otherwise, only open if the event is for this specific generation
+        if ($generationId === null || $this->logoGeneration->id === $generationId) {
+            $this->showModal = true;
+        }
     }
 
     /**
