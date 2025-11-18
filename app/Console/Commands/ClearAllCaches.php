@@ -15,15 +15,15 @@ class ClearAllCaches extends Command
     public function handle(): int
     {
         $this->info('Clearing all caches...');
-        
+
         $this->call('cache:clear');
         $this->call('config:clear');
         $this->call('route:clear');
         $this->call('view:clear');
         $this->call('event:clear');
-        
+
         $this->info('✅ All caches cleared successfully!');
-        
+
         return self::SUCCESS;
     }
 }

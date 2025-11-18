@@ -76,7 +76,7 @@ class Sidebar extends Component
     {
         return Project::where('user_id', Auth::id())
             ->with('selectedName')
-            ->withCount(['nameSuggestions as favorited_names_count' => function ($query) {
+            ->withCount(['nameSuggestions as favorited_names_count' => function ($query): void {
                 $query->where('is_favorited', true);
             }])
             ->orderBy('updated_at', 'desc')

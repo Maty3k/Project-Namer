@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Jobs\CleanupExpiredShares;
+use App\Jobs\CleanupOldExports;
 use App\Jobs\CleanupOldFilesJob;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -22,5 +24,21 @@ Schedule::job(new CleanupOldFilesJob(30, true))
 Schedule::command('domain:clear-expired-cache')
     ->dailyAt('03:00')
     ->name('clear-expired-domain-cache')
+    ->withoutOverlapping()
+    ->onOneServer();
+
+// Schedule expired shares cleanup
+Schedule::job(new CleanupExpiredShares)
+    ->daily()
+    ->at('01:00')
+    ->name('cleanup-expired-shares')
+    ->withoutOverlapping()
+    ->onOneServer();
+
+// Schedule old exports cleanup
+Schedule::job(new CleanupOldExports)
+    ->daily()
+    ->at('01:30')
+    ->name('cleanup-old-exports')
     ->withoutOverlapping()
     ->onOneServer();

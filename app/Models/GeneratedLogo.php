@@ -21,7 +21,13 @@ use Illuminate\Support\Facades\Storage;
  * @property string|null $error_message
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property bool $is_selected_for_refinement
+ * @property bool $is_refined
+ * @property string|null $refined_file_path
+ * @property string $quality
+ * @property-read mixed $best_url
  * @property-read \App\Models\LogoGeneration $logoGeneration
+ * @property-read mixed $refined_url
  * @property-read mixed $url
  *
  * @method static \Database\Factories\GeneratedLogoFactory factory($count = null, $state = [])
@@ -32,8 +38,12 @@ use Illuminate\Support\Facades\Storage;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo whereErrorMessage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo whereFilePath($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo whereIsRefined($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo whereIsSelectedForRefinement($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo whereLogoGenerationId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo wherePrompt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo whereQuality($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo whereRefinedFilePath($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo whereStyle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GeneratedLogo whereUpdatedAt($value)
@@ -59,14 +69,6 @@ class GeneratedLogo extends Model
         'is_refined',
         'refined_file_path',
         'quality',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     */
-    protected $casts = [
-        'is_selected_for_refinement' => 'boolean',
-        'is_refined' => 'boolean',
     ];
 
     /**
@@ -192,5 +194,16 @@ class GeneratedLogo extends Model
                 ? Storage::disk('public')->url($this->refined_file_path)
                 : null
         );
+    }
+
+    /**
+     * The attributes that should be cast.
+     */
+    protected function casts(): array
+    {
+        return [
+            'is_selected_for_refinement' => 'boolean',
+            'is_refined' => 'boolean',
+        ];
     }
 }

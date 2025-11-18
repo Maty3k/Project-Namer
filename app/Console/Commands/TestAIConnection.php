@@ -16,21 +16,21 @@ class TestAIConnection extends Command
     public function handle(): int
     {
         $model = $this->argument('model');
-        
+
         $this->info("Testing connection to {$model}...");
-        
+
         try {
             // Determine provider and model based on input
-            [$provider, $actualModel] = match($model) {
+            [$provider, $actualModel] = match ($model) {
                 'gpt-4o' => ['openai', 'gpt-4o'],
                 'claude-3-5-sonnet-20241022' => ['anthropic', 'claude-3-5-sonnet-20241022'],
                 'gemini-1.5-pro' => ['gemini', 'gemini-1.5-pro'],
                 'grok-beta' => ['xai', 'grok-beta'],
                 default => ['openai', 'gpt-4o'],
             };
-            
+
             $this->info("Using provider: {$provider}, model: {$actualModel}");
-            
+
             $response = Prism::text()
                 ->using($provider, $actualModel)
                 ->withPrompt('Say "Hello, I am working!" in exactly those words.')
@@ -39,14 +39,14 @@ class TestAIConnection extends Command
                     'temperature' => 0.7,
                 ])
                 ->asText();
-            
-            $this->info("✅ Success! Response: " . $response->text);
-            
+
+            $this->info('✅ Success! Response: '.$response->text);
+
             return self::SUCCESS;
         } catch (\Exception $e) {
-            $this->error("❌ Failed: " . $e->getMessage());
-            $this->error("Stack trace: " . $e->getTraceAsString());
-            
+            $this->error('❌ Failed: '.$e->getMessage());
+            $this->error('Stack trace: '.$e->getTraceAsString());
+
             return self::FAILURE;
         }
     }

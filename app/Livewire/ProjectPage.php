@@ -1457,7 +1457,7 @@ class ProjectPage extends Component
             ]);
 
             // Dispatch job to generate logos
-            \App\Jobs\GenerateLogosJob::dispatch($logoGeneration);
+            dispatch(new \App\Jobs\GenerateLogosJob($logoGeneration));
 
             $this->dispatch('show-toast', [
                 'message' => 'Logo generation started! This may take a moment.',

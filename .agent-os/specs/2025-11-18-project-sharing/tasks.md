@@ -115,15 +115,15 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 9.9 Style dashboard with responsive design and dark mode
   - [x] 9.10 Verify all dashboard tests pass (22/22 tests passing - 100%)
 
-- [ ] 10. Cleanup Jobs & Maintenance
-  - [ ] 10.1 Write tests for cleanup jobs
-  - [ ] 10.2 Create CleanupExpiredShares scheduled job
-  - [ ] 10.3 Create CleanupOldExports scheduled job
-  - [ ] 10.4 Register jobs in console kernel
-  - [ ] 10.5 Implement soft delete for shares
-  - [ ] 10.6 Implement file deletion for exports
-  - [ ] 10.7 Add logging for cleanup operations
-  - [ ] 10.8 Verify cleanup jobs work correctly
+- [x] 10. Cleanup Jobs & Maintenance
+  - [x] 10.1 Write tests for cleanup jobs
+  - [x] 10.2 Create CleanupExpiredShares scheduled job
+  - [x] 10.3 Create CleanupOldExports scheduled job
+  - [x] 10.4 Register jobs in console kernel
+  - [x] 10.5 Implement soft delete for shares
+  - [x] 10.6 Implement file deletion for exports
+  - [x] 10.7 Add logging for cleanup operations
+  - [x] 10.8 Verify cleanup jobs work correctly
 
 - [ ] 11. Security & Performance
   - [ ] 11.1 Implement CSRF protection verification

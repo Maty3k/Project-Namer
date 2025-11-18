@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $project_id
  * @property string $name
- * @property bool $is_favorited
  * @property array<array-key, mixed>|null $domains
  * @property array<array-key, mixed>|null $logos
  * @property array<array-key, mixed>|null $generation_metadata
@@ -27,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int|null $ai_cost_cents
  * @property string|null $ai_generation_session_id
  * @property array<array-key, mixed>|null $ai_prompt_metadata
+ * @property bool $is_favorited
  * @property-read \App\Models\Project $project
  *
  * @method static Builder<static>|NameSuggestion aiGenerated()
@@ -47,6 +47,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|NameSuggestion whereDomains($value)
  * @method static Builder<static>|NameSuggestion whereGenerationMetadata($value)
  * @method static Builder<static>|NameSuggestion whereId($value)
+ * @method static Builder<static>|NameSuggestion whereIsFavorited($value)
  * @method static Builder<static>|NameSuggestion whereLogos($value)
  * @method static Builder<static>|NameSuggestion whereName($value)
  * @method static Builder<static>|NameSuggestion whereProjectId($value)

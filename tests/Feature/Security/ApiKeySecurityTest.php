@@ -79,8 +79,8 @@ describe('API Key Security & Environment Configuration Tests', function (): void
         // Verify no API keys in environment that could leak to cache
         $apiKey = config('services.openai.api_key');
         if ($apiKey) {
-            expect(str_contains(env('APP_NAME') ?? '', $apiKey))->toBeFalse();
-            expect(str_contains(config('app.name'), $apiKey))->toBeFalse();
+            expect(str_contains((string) env('APP_NAME', ''), $apiKey))->toBeFalse();
+            expect(str_contains((string) config('app.name'), $apiKey))->toBeFalse();
         }
     });
 

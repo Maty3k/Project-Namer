@@ -71,7 +71,10 @@ final class CleanupExpiredShares implements ShouldQueue
     {
         try {
             // Deactivate the share instead of deleting it for audit trail
-            $share->update(['is_active' => false]);
+            $share->update([
+                'is_active' => false,
+                'deactivated_at' => now(),
+            ]);
 
             // Clear cache entries for this share
             Cache::forget("share_access:{$share->uuid}");

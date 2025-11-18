@@ -44,7 +44,7 @@ class OpenAILogoService
 
         // Dispatch all 4 logo generation jobs in parallel
         foreach (self::LOGO_STYLES as $style) {
-            GenerateSingleLogoJob::dispatch($logoGeneration, $style);
+            dispatch(new \App\Jobs\GenerateSingleLogoJob($logoGeneration, $style));
         }
 
         Log::info('All logo generation jobs dispatched', [
@@ -217,8 +217,8 @@ class OpenAILogoService
                 ]);
 
                 // Exponential backoff: 2s, 4s, 8s (longer delays for SSL issues)
-                $sleepTime = pow(2, $attempt);
-                sleep($sleepTime);
+                $sleepTime = 2 ** $attempt;
+                \Illuminate\Support\Sleep::sleep($sleepTime);
             }
         }
 

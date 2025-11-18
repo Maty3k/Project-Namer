@@ -28002,6 +28002,10 @@ namespace App\Livewire {
      */
     class KeyboardShortcuts extends \Livewire\Component {
             }
+    /**
+     */
+    class DomainChecker extends \Livewire\Component {
+            }
     }
 
 namespace App\Livewire\Settings {

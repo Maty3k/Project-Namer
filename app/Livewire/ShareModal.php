@@ -10,7 +10,6 @@ use App\Models\Share;
 use App\Services\ExportService;
 use App\Services\ShareService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
@@ -127,7 +126,7 @@ class ShareModal extends Component
                 'message' => 'Share created successfully!',
                 'type' => 'success',
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->dispatch('show-toast', [
                 'message' => 'Failed to create share. Please try again.',
                 'type' => 'error',
@@ -204,7 +203,7 @@ class ShareModal extends Component
                 'message' => 'Export generated successfully!',
                 'type' => 'success',
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->dispatch('show-toast', [
                 'message' => 'Failed to generate export. Please try again.',
                 'type' => 'error',

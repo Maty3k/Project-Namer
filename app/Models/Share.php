@@ -34,6 +34,7 @@ use Illuminate\Support\Str;
  * @property array<array-key, mixed>|null $settings
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deactivated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ShareAccess> $accesses
  * @property-read int|null $accesses_count
  * @property-write string|null $password
@@ -48,6 +49,7 @@ use Illuminate\Support\Str;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Share ofType(string $type)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Share query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereDeactivatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereExpiresAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereId($value)
@@ -84,6 +86,7 @@ final class Share extends Model
         'is_active',
         'settings',
         'last_viewed_at',
+        'deactivated_at',
     ];
 
     protected $hidden = [
@@ -239,6 +242,7 @@ final class Share extends Model
         return [
             'expires_at' => 'datetime',
             'last_viewed_at' => 'datetime',
+            'deactivated_at' => 'datetime',
             'is_active' => 'boolean',
             'settings' => 'array',
             'view_count' => 'integer',
