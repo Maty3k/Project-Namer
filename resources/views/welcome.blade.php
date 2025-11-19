@@ -132,7 +132,7 @@
                         <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                         </svg>
-                        <span>No signup needed</span>
+                        <span>Quick signup</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
@@ -140,48 +140,6 @@
                         </svg>
                         <span>Open source</span>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- How It Works Section --}}
-    <section class="py-32 px-4 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-800/50">
-        <div class="container mx-auto max-w-4xl">
-            <h2 class="text-4xl sm:text-5xl font-bold text-center mb-20">Simple Process</h2>
-
-            <div class="grid md:grid-cols-3 gap-12">
-                {{-- Step 1 --}}
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-purple-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
-                        1
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Share Your Vision</h3>
-                    <p class="text-zinc-600 dark:text-zinc-400">
-                        Describe what you're building
-                    </p>
-                </div>
-
-                {{-- Step 2 --}}
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-purple-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
-                        2
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Explore Options</h3>
-                    <p class="text-zinc-600 dark:text-zinc-400">
-                        Browse AI-generated suggestions
-                    </p>
-                </div>
-
-                {{-- Step 3 --}}
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-purple-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
-                        3
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Claim Your Name</h3>
-                    <p class="text-zinc-600 dark:text-zinc-400">
-                        Choose one with an available domain
-                    </p>
                 </div>
             </div>
         </div>
