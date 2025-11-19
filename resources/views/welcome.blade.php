@@ -124,44 +124,50 @@
     {{-- Features Section --}}
     <section class="py-24 px-4 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-800/50">
         <div class="container mx-auto max-w-6xl">
-            <div class="grid md:grid-cols-3 gap-12 lg:gap-16">
+            <div class="grid md:grid-cols-3 gap-8 lg:gap-10">
                 {{-- Feature 1 --}}
-                <div class="text-center space-y-4">
-                    <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                        </svg>
+                <div class="bg-white dark:bg-zinc-900 rounded-2xl p-8 shadow-sm border border-zinc-200 dark:border-zinc-700">
+                    <div class="flex flex-col items-center text-center space-y-5">
+                        <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold">Smart Generation</h3>
+                        <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                            Powered by advanced AI technology that understands your business and creates names that truly resonate with your brand vision.
+                        </p>
                     </div>
-                    <h3 class="text-xl font-bold">Smart Generation</h3>
-                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                        Powered by advanced AI technology that understands your business and creates names that truly resonate with your brand vision.
-                    </p>
                 </div>
 
                 {{-- Feature 2 --}}
-                <div class="text-center space-y-4">
-                    <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
-                        </svg>
+                <div class="bg-white dark:bg-zinc-900 rounded-2xl p-8 shadow-sm border border-zinc-200 dark:border-zinc-700">
+                    <div class="flex flex-col items-center text-center space-y-5">
+                        <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold">Real-Time Checks</h3>
+                        <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                            Verify domain availability instantly across popular extensions. No more falling in love with names you can't use.
+                        </p>
                     </div>
-                    <h3 class="text-xl font-bold">Real-Time Checks</h3>
-                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                        Verify domain availability instantly across popular extensions. No more falling in love with names you can't use.
-                    </p>
                 </div>
 
                 {{-- Feature 3 --}}
-                <div class="text-center space-y-4">
-                    <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
-                        </svg>
+                <div class="bg-white dark:bg-zinc-900 rounded-2xl p-8 shadow-sm border border-zinc-200 dark:border-zinc-700">
+                    <div class="flex flex-col items-center text-center space-y-5">
+                        <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold">Visual Identity</h3>
+                        <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                            Generate logo concepts to visualize your brand. Get inspiration and bring your business identity to life quickly.
+                        </p>
                     </div>
-                    <h3 class="text-xl font-bold">Visual Identity</h3>
-                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                        Generate logo concepts to visualize your brand. Get inspiration and bring your business identity to life quickly.
-                    </p>
                 </div>
             </div>
         </div>
