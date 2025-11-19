@@ -145,6 +145,48 @@
         </div>
     </section>
 
+    {{-- How It Works Section --}}
+    <section class="py-32 px-4 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-800/50">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-4xl sm:text-5xl font-bold text-center mb-20">How It Works</h2>
+
+            <div class="grid md:grid-cols-3 gap-12">
+                {{-- Step 1 --}}
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-purple-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
+                        1
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Describe Your Idea</h3>
+                    <p class="text-zinc-600 dark:text-zinc-400">
+                        Tell us about your business or project in a few words
+                    </p>
+                </div>
+
+                {{-- Step 2 --}}
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-purple-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
+                        2
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Get AI Suggestions</h3>
+                    <p class="text-zinc-600 dark:text-zinc-400">
+                        Our AI generates creative, memorable brand names instantly
+                    </p>
+                </div>
+
+                {{-- Step 3 --}}
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-purple-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
+                        3
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Check Availability</h3>
+                    <p class="text-zinc-600 dark:text-zinc-400">
+                        See which domains are available and pick your favorite
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     {{-- Benefits Section --}}
     <section class="py-48 px-4 sm:px-6 lg:px-8">
         <div class="container mx-auto max-w-5xl">
