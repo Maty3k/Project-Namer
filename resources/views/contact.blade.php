@@ -141,7 +141,6 @@
                                             id="name"
                                             name="name"
                                             value="{{ old('name') }}"
-                                            required
                                             placeholder="John Doe"
                                             class="w-full px-4 py-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-purple-600 focus:border-purple-600 transition-all @error('name') border-red-500 @enderror">
                                         @error('name')
@@ -156,7 +155,6 @@
                                             id="email"
                                             name="email"
                                             value="{{ old('email') }}"
-                                            required
                                             placeholder="john@example.com"
                                             class="w-full px-4 py-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-purple-600 focus:border-purple-600 transition-all @error('email') border-red-500 @enderror">
                                         @error('email')
@@ -173,7 +171,6 @@
                                         id="subject"
                                         name="subject"
                                         value="{{ old('subject') }}"
-                                        required
                                         placeholder="How can we help?"
                                         class="w-full px-4 py-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-purple-600 focus:border-purple-600 transition-all @error('subject') border-red-500 @enderror">
                                     @error('subject')
@@ -188,7 +185,6 @@
                                         id="message"
                                         name="message"
                                         rows="6"
-                                        required
                                         placeholder="Tell us more about your question or feedback..."
                                         class="w-full px-4 py-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-purple-600 focus:border-purple-600 transition-all resize-none @error('message') border-red-500 @enderror">{{ old('message') }}</textarea>
                                     @error('message')
