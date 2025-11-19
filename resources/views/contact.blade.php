@@ -113,7 +113,13 @@
                     {{-- Right Column - Contact Form (5 columns) --}}
                     <div class="lg:col-span-5">
                         <div class="bg-white dark:bg-zinc-900 rounded-2xl p-8 lg:p-10 shadow-xl border-2 border-purple-100 dark:border-purple-900/30">
-                            <form action="#" method="POST" class="space-y-6">
+                            @if (session('success'))
+                                <div class="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-800 rounded-xl">
+                                    <p class="text-green-800 dark:text-green-200 font-medium">{{ session('success') }}</p>
+                                </div>
+                            @endif
+
+                            <form action="{{ route('contact.store') }}" method="POST" class="space-y-6">
                                 @csrf
 
                                 {{-- Name and Email Row --}}
@@ -124,9 +130,13 @@
                                             type="text"
                                             id="name"
                                             name="name"
+                                            value="{{ old('name') }}"
                                             required
                                             placeholder="John Doe"
-                                            class="w-full px-4 py-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-purple-600 focus:border-purple-600 transition-all">
+                                            class="w-full px-4 py-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-purple-600 focus:border-purple-600 transition-all @error('name') border-red-500 @enderror">
+                                        @error('name')
+                                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                        @enderror
                                     </div>
 
                                     <div>
@@ -135,9 +145,13 @@
                                             type="email"
                                             id="email"
                                             name="email"
+                                            value="{{ old('email') }}"
                                             required
                                             placeholder="john@example.com"
-                                            class="w-full px-4 py-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-purple-600 focus:border-purple-600 transition-all">
+                                            class="w-full px-4 py-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-purple-600 focus:border-purple-600 transition-all @error('email') border-red-500 @enderror">
+                                        @error('email')
+                                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                 </div>
 
@@ -148,9 +162,13 @@
                                         type="text"
                                         id="subject"
                                         name="subject"
+                                        value="{{ old('subject') }}"
                                         required
                                         placeholder="How can we help?"
-                                        class="w-full px-4 py-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-purple-600 focus:border-purple-600 transition-all">
+                                        class="w-full px-4 py-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-purple-600 focus:border-purple-600 transition-all @error('subject') border-red-500 @enderror">
+                                    @error('subject')
+                                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 {{-- Message --}}
@@ -162,7 +180,10 @@
                                         rows="6"
                                         required
                                         placeholder="Tell us more about your question or feedback..."
-                                        class="w-full px-4 py-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-purple-600 focus:border-purple-600 transition-all resize-none"></textarea>
+                                        class="w-full px-4 py-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-purple-600 focus:border-purple-600 transition-all resize-none @error('message') border-red-500 @enderror">{{ old('message') }}</textarea>
+                                    @error('message')
+                                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 {{-- Submit Button --}}
