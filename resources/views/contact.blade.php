@@ -92,7 +92,7 @@
                                 </div>
                                 <div>
                                     <p class="text-sm text-zinc-500 dark:text-zinc-400">Email us at</p>
-                                    <p class="font-semibold">hello@brandify.com</p>
+                                    <p class="font-semibold">darius@artisan.build</p>
                                 </div>
                             </div>
 
@@ -104,7 +104,7 @@
                                 </div>
                                 <div>
                                     <p class="text-sm text-zinc-500 dark:text-zinc-400">Response time</p>
-                                    <p class="font-semibold">Within 24 hours</p>
+                                    <p class="font-semibold">As soon as possible</p>
                                 </div>
                             </div>
                         </div>
