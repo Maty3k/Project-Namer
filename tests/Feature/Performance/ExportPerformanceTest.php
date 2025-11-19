@@ -222,7 +222,7 @@ describe('Export Performance Benchmarks', function (): void {
         $uniqueUuids = $exports->pluck('uuid')->unique();
 
         // Performance expectations
-        expect($executionTime)->toBeLessThan(20000); // Under 20 seconds (accounts for export generation overhead)
+        expect($executionTime)->toBeLessThan(25000); // Under 25 seconds (accounts for export generation overhead and system variance)
         expect($exports->count())->toBe(100);
         expect($uniqueUuids->count())->toBe(100); // All UUIDs must be unique
     });

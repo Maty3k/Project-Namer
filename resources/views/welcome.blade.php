@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="AI-powered business name generator with instant domain availability checking. Find your perfect brand name in seconds.">
     <meta name="keywords" content="business name generator, brand name, domain checker, AI naming, startup naming">
 
@@ -35,7 +36,7 @@
     </style>
 </head>
 
-<body class="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 antialiased">
+<body class="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 antialiased" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))" :class="{ 'dark': darkMode }">
 
     {{-- Navigation --}}
     <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-lg border-b border-zinc-200 dark:border-zinc-800">
