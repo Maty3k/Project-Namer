@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactFormMail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class ContactController extends Controller
@@ -30,8 +32,15 @@ class ContactController extends Controller
             'message' => ['required', 'string', 'max:5000'],
         ]);
 
-        // TODO: Send email with the contact form data
-        // For now, just redirect back with success message
+        // Send email to darius@artisan.build
+        Mail::to('darius@artisan.build')->send(
+            new ContactFormMail(
+                name: $validated['name'],
+                email: $validated['email'],
+                subject: $validated['subject'],
+                message: $validated['message'],
+            )
+        );
 
         return redirect()
             ->route('contact')
