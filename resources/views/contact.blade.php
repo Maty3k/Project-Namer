@@ -27,7 +27,7 @@
     </style>
 </head>
 
-<body class="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 antialiased">
+<body class="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 antialiased flex flex-col min-h-screen">
 
     {{-- Navigation --}}
     <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-lg border-b border-zinc-200 dark:border-zinc-800">
@@ -66,7 +66,7 @@
     </nav>
 
     {{-- Contact Section --}}
-    <section class="pt-96 pb-32 px-4 sm:px-6 lg:px-8">
+    <section class="pt-96 pb-32 px-4 sm:px-6 lg:px-8 flex-grow">
         <div class="container mx-auto max-w-6xl">
             <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
                 {{-- Left Column - Contact Info --}}
