@@ -155,7 +155,7 @@
     </section>
 
     {{-- Footer --}}
-    <footer class="py-12 px-4 sm:px-6 lg:px-8 bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800">
+    <footer class="py-24 px-4 sm:px-6 lg:px-8 bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 mt-32">
         <div class="container mx-auto max-w-6xl text-center">
             <p class="text-sm text-zinc-500 dark:text-zinc-400">
                 &copy; {{ date('Y') }} Brandify • Powered by AI •
