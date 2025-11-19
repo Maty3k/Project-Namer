@@ -92,7 +92,7 @@
     {{-- Hero Section --}}
     <section class="pt-48 pb-48 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div class="container mx-auto max-w-6xl">
-            <div class="text-center space-y-10">
+            <div class="text-center space-y-16">
                 {{-- Headline --}}
                 <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight">
                     Generate Perfect
