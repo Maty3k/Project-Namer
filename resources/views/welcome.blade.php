@@ -109,8 +109,8 @@
 
                 {{-- Subheadline --}}
                 <p class="text-xl sm:text-2xl text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto leading-relaxed">
-                    Stop wasting hours brainstorming. Get AI-powered business names with
-                    <span class="font-semibold text-zinc-900 dark:text-white">instant domain availability</span>
+                    AI-powered business names with
+                    <span class="font-semibold text-zinc-900 dark:text-white">instant domain checks</span>
                     in seconds.
                 </p>
 
@@ -155,8 +155,7 @@
     <section class="py-28 px-4 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-800/50">
         <div class="container mx-auto max-w-6xl">
             <div class="text-center mb-20">
-                <h2 class="text-3xl sm:text-4xl font-bold mb-6">Why Choose Brandify?</h2>
-                <p class="text-xl text-zinc-600 dark:text-zinc-400">Everything you need to find the perfect brand name</p>
+                <h2 class="text-3xl sm:text-4xl font-bold">Why Brandify?</h2>
             </div>
 
             <div class="grid md:grid-cols-3 gap-10">
@@ -167,9 +166,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">AI-Powered Generation</h3>
+                    <h3 class="text-xl font-bold mb-3">AI-Powered Names</h3>
                     <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                        Generate 50+ creative, brandable names in seconds using advanced AI models. No more hours of brainstorming.
+                        Generate creative, brandable names instantly using advanced AI.
                     </p>
                 </div>
 
@@ -180,9 +179,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">Instant Domain Check</h3>
+                    <h3 class="text-xl font-bold mb-3">Domain Availability</h3>
                     <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                        See .com, .io, .co, and .net availability instantly. No more manual checking across multiple sites.
+                        Check .com, .io, .co, and .net availability instantly.
                     </p>
                 </div>
 
@@ -193,9 +192,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">Logo Inspiration</h3>
+                    <h3 class="text-xl font-bold mb-3">Logo Ideas</h3>
                     <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                        Get AI-generated logo ideas for your favorite names. Visualize your brand before you build it.
+                        Get AI-generated logo inspiration to visualize your brand.
                     </p>
                 </div>
             </div>
@@ -206,8 +205,7 @@
     <section id="how-it-works" class="py-28 px-4 sm:px-6 lg:px-8">
         <div class="container mx-auto max-w-6xl">
             <div class="text-center mb-20">
-                <h2 class="text-3xl sm:text-4xl font-bold mb-6">How It Works</h2>
-                <p class="text-xl text-zinc-600 dark:text-zinc-400">Get your perfect name in 3 simple steps</p>
+                <h2 class="text-3xl sm:text-4xl font-bold">How It Works</h2>
             </div>
 
             <div class="grid md:grid-cols-3 gap-12 relative">
@@ -219,9 +217,9 @@
                     <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg relative z-10">
                         <span class="text-2xl font-bold text-white">1</span>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">Describe Your Business</h3>
+                    <h3 class="text-xl font-bold mb-3">Describe Your Idea</h3>
                     <p class="text-zinc-600 dark:text-zinc-400">
-                        Tell us about your business idea, industry, or the vibe you're going for.
+                        Tell us what you're building.
                     </p>
                 </div>
 
@@ -230,9 +228,9 @@
                     <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg relative z-10">
                         <span class="text-2xl font-bold text-white">2</span>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">AI Generates Names</h3>
+                    <h3 class="text-xl font-bold mb-3">Get Name Ideas</h3>
                     <p class="text-zinc-600 dark:text-zinc-400">
-                        Our AI creates 50+ unique, brandable names tailored to your description.
+                        AI generates creative names instantly.
                     </p>
                 </div>
 
@@ -243,7 +241,7 @@
                     </div>
                     <h3 class="text-xl font-bold mb-3">Pick & Launch</h3>
                     <p class="text-zinc-600 dark:text-zinc-400">
-                        Choose your favorite name, check domain availability, and start building!
+                        Choose your favorite and start building.
                     </p>
                 </div>
             </div>
@@ -271,11 +269,10 @@
                         </div>
                     </div>
                     <div class="flex-1">
-                        <h3 class="text-2xl font-bold mb-4">Built for Indie Hackers, By Developers</h3>
+                        <h3 class="text-2xl font-bold mb-4">Built for Indie Hackers</h3>
                         <p class="text-zinc-600 dark:text-zinc-400 mb-6 leading-relaxed">
-                            We understand the struggle of finding the perfect name while building your startup.
-                            That's why Brandify is 100% free and open-source. No hidden fees, no credit card required,
-                            no BS. Just a tool that works, built by people who've been there.
+                            Brandify is 100% free and open-source. No hidden fees, no credit card required.
+                            Just a tool that works.
                         </p>
                         <div class="flex flex-wrap gap-4">
                             <div class="flex items-center gap-2 text-sm">
@@ -320,8 +317,7 @@
                         </svg>
                     </summary>
                     <p class="mt-4 text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                        Yes! Brandify is 100% free with no hidden costs. We believe in making naming tools accessible to everyone,
-                        especially indie hackers and startups who are just getting started.
+                        Yes! Brandify is 100% free with no hidden costs.
                     </p>
                 </details>
 
@@ -347,8 +343,7 @@
                         </svg>
                     </summary>
                     <p class="mt-4 text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                        We check domain availability in real-time across popular TLDs (.com, .io, .co, .net).
-                        This saves you from manually checking each name on multiple domain registrar sites.
+                        We check domain availability in real-time across .com, .io, .co, and .net.
                     </p>
                 </details>
 
@@ -374,8 +369,7 @@
                         </svg>
                     </summary>
                     <p class="mt-4 text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                        Yes! We take privacy seriously. Your business ideas and generated names are private to your account.
-                        We never sell your data or use it for any purpose other than providing you the service.
+                        Yes! Your ideas and names are private to your account. We never sell your data.
                     </p>
                 </details>
             </div>
@@ -385,9 +379,9 @@
     {{-- Final CTA Section --}}
     <section class="py-28 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
         <div class="container mx-auto max-w-4xl text-center">
-            <h2 class="text-4xl sm:text-5xl font-bold mb-6">Ready to Name Your Next Big Idea?</h2>
+            <h2 class="text-4xl sm:text-5xl font-bold mb-6">Ready to Find Your Brand Name?</h2>
             <p class="text-xl sm:text-2xl mb-8 text-purple-100">
-                Join thousands of entrepreneurs who've found their perfect brand name
+                Join thousands finding their perfect name
             </p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <a href="{{ route('register') }}"
