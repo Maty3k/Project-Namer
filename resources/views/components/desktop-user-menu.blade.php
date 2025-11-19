@@ -1,22 +1,24 @@
 <flux:dropdown {{ $attributes->class(['hidden lg:block']) }} position="bottom" align="start">
-    <div class="transition-all duration-200 ease-out hover:scale-105 active:scale-95 [&_span.truncate]:!text-zinc-900 dark:[&_span.truncate]:!text-zinc-100">
-        @if(auth()->user()->profilePhotoUrl())
-            <div class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer">
-                <img src="{{ auth()->user()->profilePhotoUrl() }}"
-                     alt="{{ auth()->user()->name }}"
-                     class="h-8 w-8 rounded-full object-cover border-2 border-gray-300 dark:border-gray-600">
-                <span class="font-medium text-zinc-900 dark:text-zinc-100 truncate max-w-[150px]">{{ auth()->user()->name }}</span>
-                <flux:icon name="chevrons-up-down" class="text-zinc-500" />
-            </div>
-        @else
-            <flux:profile
-                    :name="auth()->user()->name"
-                    :initials="auth()->user()->initials()"
-                    icon:trailing="chevrons-up-down"
-                    class="transition-all duration-200 ease-out"
-            />
-        @endif
-    </div>
+    <x-slot name="trigger">
+        <div class="transition-all duration-200 ease-out hover:scale-105 active:scale-95 [&_span.truncate]:!text-zinc-900 dark:[&_span.truncate]:!text-zinc-100">
+            @if(auth()->user()->profilePhotoUrl())
+                <button type="button" class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer">
+                    <img src="{{ auth()->user()->profilePhotoUrl() }}"
+                         alt="{{ auth()->user()->name }}"
+                         class="h-8 w-8 rounded-full object-cover border-2 border-gray-300 dark:border-gray-600">
+                    <span class="font-medium text-zinc-900 dark:text-zinc-100 truncate max-w-[150px]">{{ auth()->user()->name }}</span>
+                    <flux:icon name="chevrons-up-down" class="text-zinc-500" />
+                </button>
+            @else
+                <flux:profile
+                        :name="auth()->user()->name"
+                        :initials="auth()->user()->initials()"
+                        icon:trailing="chevrons-up-down"
+                        class="transition-all duration-200 ease-out"
+                />
+            @endif
+        </div>
+    </x-slot>
 
     <flux:menu class="w-[220px] animate-in slide-in-from-top-2 fade-in-0 duration-200 ease-out">
         <flux:menu.radio.group>
