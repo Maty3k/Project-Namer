@@ -4,23 +4,35 @@
      @sidebar-toggled.window="sidebarOpen = $event.detail.open"
      :class="{ 'opacity-0 translate-x-full pointer-events-none': sidebarOpen }">
     <flux:dropdown position="bottom" align="end">
-        <flux:button variant="ghost" size="sm" class="!p-0 !h-10 !w-10">
-            <div class="flex items-center justify-center h-10 w-10 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
-                <span class="text-sm font-medium text-zinc-900 dark:text-white">
-                    {{ auth()->user()->initials() }}
-                </span>
-            </div>
+        <flux:button variant="ghost" size="sm" class="!p-0 !h-12 !w-12">
+            @if(auth()->user()->profilePhotoUrl())
+                <img src="{{ auth()->user()->profilePhotoUrl() }}"
+                     alt="{{ auth()->user()->name }}"
+                     class="h-12 w-12 rounded-full object-cover border-2 border-gray-300 dark:border-gray-600 hover:border-primary-500 dark:hover:border-primary-400 transition-colors">
+            @else
+                <div class="flex items-center justify-center h-12 w-12 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
+                    <span class="text-base font-medium text-zinc-900 dark:text-white">
+                        {{ auth()->user()->initials() }}
+                    </span>
+                </div>
+            @endif
         </flux:button>
 
         <flux:menu class="w-56">
             {{-- User Info Section --}}
             <div class="px-4 py-3 border-b border-zinc-200 dark:border-zinc-700">
                 <div class="flex items-center gap-3">
-                    <div class="flex items-center justify-center h-10 w-10 rounded-full bg-zinc-200 dark:bg-zinc-700 flex-shrink-0">
-                        <span class="text-sm font-medium text-zinc-900 dark:text-white">
-                            {{ auth()->user()->initials() }}
-                        </span>
-                    </div>
+                    @if(auth()->user()->profilePhotoUrl())
+                        <img src="{{ auth()->user()->profilePhotoUrl() }}"
+                             alt="{{ auth()->user()->name }}"
+                             class="h-12 w-12 rounded-full object-cover border-2 border-gray-300 dark:border-gray-600 flex-shrink-0">
+                    @else
+                        <div class="flex items-center justify-center h-12 w-12 rounded-full bg-zinc-200 dark:bg-zinc-700 flex-shrink-0">
+                            <span class="text-base font-medium text-zinc-900 dark:text-white">
+                                {{ auth()->user()->initials() }}
+                            </span>
+                        </div>
+                    @endif
                     <div class="flex-1 min-w-0">
                         <div class="font-semibold text-sm text-zinc-900 dark:text-white truncate">
                             {{ auth()->user()->name }}

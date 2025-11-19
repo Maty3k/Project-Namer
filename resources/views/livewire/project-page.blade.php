@@ -275,7 +275,8 @@
         @if($this->filteredSuggestions->isEmpty())
             <div class="mt-4 pt-4 border-t-2 border-dashed border-gray-300 dark:border-gray-600
                         sm:mt-6 sm:pt-6
-                        md:mt-8 md:pt-8">
+                        md:mt-8 md:pt-8"
+                 x-data="{ toolsExpanded: false }">
                 <div class="bg-gradient-to-r from-primary-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20
                             rounded-lg border-2 border-primary-200 dark:border-primary-700 p-3 mb-3
                             sm:p-4 sm:mb-4
@@ -307,33 +308,45 @@
                             <p class="text-xs text-gray-700 dark:text-gray-300
                                       sm:text-sm
                                       md:text-base">
-                                Enhance your results with these optional features below. Everything works great without them!
+                                <span x-show="!toolsExpanded">Click the button to reveal optional features that can enhance your results!</span>
+                                <span x-show="toolsExpanded" style="display: none;">Enhance your results with these optional features below. Everything works great without them!</span>
                             </p>
                         </div>
-                        <div class="flex-shrink-0 hidden
-                                    sm:block">
-                            <div class="relative">
-                                <div class="absolute inset-0 bg-primary-400 dark:bg-primary-600 rounded-full blur-md opacity-50 animate-pulse"></div>
+                        <div class="flex-shrink-0">
+                            <button
+                                @click="toolsExpanded = !toolsExpanded"
+                                class="relative group"
+                                :aria-label="toolsExpanded ? 'Hide optional tools' : 'Show optional tools'">
+                                <div class="absolute inset-0 bg-primary-400 dark:bg-primary-600 rounded-full blur-md opacity-50 animate-pulse group-hover:opacity-70 transition-opacity"></div>
                                 <div class="relative w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700
-                                            rounded-full flex items-center justify-center shadow-lg
-                                            sm:w-10 sm:h-10">
-                                    <svg class="w-4 h-4 text-white
-                                               sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                            rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all
+                                            sm:w-10 sm:h-10 group-hover:scale-110 active:scale-95">
+                                    <svg class="w-4 h-4 text-white transition-transform duration-300
+                                               sm:w-5 sm:h-5"
+                                         :class="{ 'rotate-180': toolsExpanded }"
+                                         fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
                                     </svg>
                                 </div>
-                            </div>
+                            </button>
                         </div>
                     </div>
                 </div>
-            </div>
-        @endif
 
-        <!-- Photo Gallery Section - Only shown before name generation -->
-        @if($this->filteredSuggestions->isEmpty())
-            <div class="mt-3
-                        sm:mt-4
-                        md:mt-6">
+            <!-- Collapsible Content Wrapper for Optional Tools -->
+            <div x-show="toolsExpanded"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 -translate-y-4"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 -translate-y-4"
+                 style="display: none;">
+
+                <!-- Photo Gallery Section - Only shown before name generation -->
+                <div class="mt-3
+                            sm:mt-4
+                            md:mt-6">
                 <!-- Embedded Photo Gallery -->
                 @livewire(\App\Livewire\PhotoGallery::class, ['project' => $project], 'gallery-'.$project->id)
             </div>
@@ -478,6 +491,8 @@
                     </div>
                 </div>
             </div>
+            </div>
+            <!-- End Collapsible Content Wrapper -->
         @endif
 
         <!-- Name Suggestions Section - Only shown when suggestions exist or generation is in progress -->

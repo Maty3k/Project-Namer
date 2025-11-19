@@ -78,6 +78,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'profile_photo_path',
         'current_theme',
         'prefers_dark_mode',
         'theme_auto_switch',
@@ -179,6 +180,18 @@ class User extends Authenticatable
             ->take(2)
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
+    }
+
+    /**
+     * Get the URL to the user's profile photo
+     */
+    public function profilePhotoUrl(): ?string
+    {
+        if ($this->profile_photo_path) {
+            return asset('storage/'.$this->profile_photo_path);
+        }
+
+        return null;
     }
 
     /**

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\ExportController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PublicShareController;
 use App\Livewire\Appearance;
 use App\Livewire\DomainChecker;
@@ -19,6 +20,8 @@ use Illuminate\Support\Facades\Route;
 // In production with proper Nginx config, this will return 200 status.
 
 Route::get('/', fn () => view('welcome'))->name('home');
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 // Debug route for testing name generation
 Route::get('/test-generation', function () {

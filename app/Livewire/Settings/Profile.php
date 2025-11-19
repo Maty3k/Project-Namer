@@ -7,14 +7,20 @@ namespace App\Livewire\Settings;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Profile extends Component
 {
+    use WithFileUploads;
+
     public string $name = '';
 
     public string $email = '';
+
+    public $profilePhoto;
 
     /**
      * Mount the component.
@@ -72,5 +78,51 @@ class Profile extends Component
         $user->sendEmailVerificationNotification();
 
         Session::flash('status', 'verification-link-sent');
+    }
+
+    /**
+     * Update the user's profile photo
+     */
+    public function updateProfilePhoto(): void
+    {
+        $this->validate([
+            'profilePhoto' => ['required', 'image', 'mimes:jpg,jpeg,png,gif,bmp,svg,webp,avif', 'max:2048'], // 2MB max
+        ]);
+
+        $user = Auth::user();
+
+        // Delete old profile photo if exists
+        if ($user->profile_photo_path) {
+            Storage::disk('public')->delete($user->profile_photo_path);
+        }
+
+        // Store new profile photo
+        $path = $this->profilePhoto->store('profile-photos', 'public');
+
+        $user->update([
+            'profile_photo_path' => $path,
+        ]);
+
+        $this->profilePhoto = null;
+
+        $this->dispatch('profile-photo-updated');
+    }
+
+    /**
+     * Delete the user's profile photo
+     */
+    public function deleteProfilePhoto(): void
+    {
+        $user = Auth::user();
+
+        if ($user->profile_photo_path) {
+            Storage::disk('public')->delete($user->profile_photo_path);
+
+            $user->update([
+                'profile_photo_path' => null,
+            ]);
+        }
+
+        $this->dispatch('profile-photo-deleted');
     }
 }

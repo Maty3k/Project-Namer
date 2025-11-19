@@ -8,7 +8,6 @@ use App\Models\ShareAccess;
 use App\Models\User;
 use App\Services\ShareService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 uses(RefreshDatabase::class);
