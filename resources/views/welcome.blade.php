@@ -152,47 +152,47 @@
     </section>
 
     {{-- Benefits Section --}}
-    <section class="py-28 px-4 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-800/50">
+    <section class="py-32 px-4 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-800/50">
         <div class="container mx-auto max-w-6xl">
             <div class="text-center mb-20">
                 <h2 class="text-3xl sm:text-4xl font-bold">Why Brandify?</h2>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-10">
+            <div class="grid md:grid-cols-3 gap-16">
                 {{-- Benefit 1 --}}
-                <div class="bg-white dark:bg-zinc-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                    <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mb-6">
-                        <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">AI-Powered Names</h3>
+                    <h3 class="text-xl font-bold mb-4">AI-Powered Names</h3>
                     <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
                         Generate creative, brandable names instantly using advanced AI.
                     </p>
                 </div>
 
                 {{-- Benefit 2 --}}
-                <div class="bg-white dark:bg-zinc-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                    <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center mb-6">
-                        <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">Domain Availability</h3>
+                    <h3 class="text-xl font-bold mb-4">Domain Availability</h3>
                     <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
                         Check .com, .io, .co, and .net availability instantly.
                     </p>
                 </div>
 
                 {{-- Benefit 3 --}}
-                <div class="bg-white dark:bg-zinc-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                    <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center mb-6">
-                        <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">Logo Ideas</h3>
+                    <h3 class="text-xl font-bold mb-4">Logo Ideas</h3>
                     <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
                         Get AI-generated logo inspiration to visualize your brand.
                     </p>
@@ -202,13 +202,13 @@
     </section>
 
     {{-- How It Works Section --}}
-    <section id="how-it-works" class="py-28 px-4 sm:px-6 lg:px-8">
+    <section id="how-it-works" class="py-32 px-4 sm:px-6 lg:px-8">
         <div class="container mx-auto max-w-6xl">
             <div class="text-center mb-20">
                 <h2 class="text-3xl sm:text-4xl font-bold">How It Works</h2>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-12 relative">
+            <div class="grid md:grid-cols-3 gap-16 relative">
                 {{-- Connection Lines (hidden on mobile) --}}
                 <div class="hidden md:block absolute top-16 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-200 via-purple-400 to-indigo-200 dark:from-purple-800 dark:via-purple-600 dark:to-indigo-800" style="top: 4rem;"></div>
 
@@ -257,7 +257,7 @@
     </section>
 
     {{-- Trust Builders Section --}}
-    <section class="py-28 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20">
+    <section class="py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20">
         <div class="container mx-auto max-w-4xl">
             <div class="bg-white dark:bg-zinc-900 rounded-3xl p-8 sm:p-12 shadow-2xl">
                 <div class="flex flex-col md:flex-row gap-8 items-start">
@@ -301,15 +301,15 @@
     </section>
 
     {{-- FAQ Section --}}
-    <section class="py-28 px-4 sm:px-6 lg:px-8">
+    <section class="py-32 px-4 sm:px-6 lg:px-8">
         <div class="container mx-auto max-w-3xl">
             <div class="text-center mb-20">
                 <h2 class="text-3xl sm:text-4xl font-bold mb-6">Frequently Asked Questions</h2>
             </div>
 
-            <div class="space-y-4">
+            <div class="space-y-6">
                 {{-- FAQ 1 --}}
-                <details class="group bg-white dark:bg-zinc-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                <details class="group pb-6 border-b border-zinc-200 dark:border-zinc-700">
                     <summary class="flex items-center justify-between cursor-pointer list-none font-semibold text-lg">
                         <span>Is Brandify really free?</span>
                         <svg class="w-5 h-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -322,7 +322,7 @@
                 </details>
 
                 {{-- FAQ 2 --}}
-                <details class="group bg-white dark:bg-zinc-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                <details class="group pb-6 border-b border-zinc-200 dark:border-zinc-700">
                     <summary class="flex items-center justify-between cursor-pointer list-none font-semibold text-lg">
                         <span>Do I need a credit card to sign up?</span>
                         <svg class="w-5 h-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -335,7 +335,7 @@
                 </details>
 
                 {{-- FAQ 3 --}}
-                <details class="group bg-white dark:bg-zinc-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                <details class="group pb-6 border-b border-zinc-200 dark:border-zinc-700">
                     <summary class="flex items-center justify-between cursor-pointer list-none font-semibold text-lg">
                         <span>How does the domain checking work?</span>
                         <svg class="w-5 h-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -348,7 +348,7 @@
                 </details>
 
                 {{-- FAQ 4 --}}
-                <details class="group bg-white dark:bg-zinc-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                <details class="group pb-6 border-b border-zinc-200 dark:border-zinc-700">
                     <summary class="flex items-center justify-between cursor-pointer list-none font-semibold text-lg">
                         <span>Can I export my naming results?</span>
                         <svg class="w-5 h-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -361,7 +361,7 @@
                 </details>
 
                 {{-- FAQ 5 --}}
-                <details class="group bg-white dark:bg-zinc-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                <details class="group pb-6">
                     <summary class="flex items-center justify-between cursor-pointer list-none font-semibold text-lg">
                         <span>Is my data private and secure?</span>
                         <svg class="w-5 h-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -377,7 +377,7 @@
     </section>
 
     {{-- Final CTA Section --}}
-    <section class="py-28 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
+    <section class="py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
         <div class="container mx-auto max-w-4xl text-center">
             <h2 class="text-4xl sm:text-5xl font-bold mb-6">Ready to Find Your Brand Name?</h2>
             <p class="text-xl sm:text-2xl mb-8 text-purple-100">
@@ -440,9 +440,8 @@
                 </div>
             </div>
 
-            <div class="border-t border-zinc-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="border-t border-zinc-800 pt-8 text-center">
                 <p class="text-sm">&copy; {{ date('Y') }} Brandify. All rights reserved.</p>
-                <p class="text-sm">Made with ❤️ for indie hackers</p>
             </div>
         </div>
     </footer>
