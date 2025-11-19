@@ -1,5 +1,5 @@
 <flux:dropdown {{ $attributes->class(['hidden lg:block']) }} position="bottom" align="start">
-    <div class="transition-all duration-200 ease-out hover:scale-105 active:scale-95 [&_span.truncate]:!text-zinc-900 dark:[&_span.truncate]:!text-zinc-100 [&_[data-flux-avatar]]:!w-12 [&_[data-flux-avatar]]:!h-12 [&_[data-flux-avatar]]:!text-lg">
+    <div class="transition-all duration-200 ease-out hover:scale-105 active:scale-95 [&_span.truncate]:!text-zinc-900 dark:[&_span.truncate]:!text-zinc-100 [&_[data-flux-avatar]]:!w-14 [&_[data-flux-avatar]]:!h-14 [&_img]:!w-14 [&_img]:!h-14 [&_[data-flux-avatar]]:!text-xl">
         <flux:profile
                 size="lg"
                 :name="auth()->user()->name"
