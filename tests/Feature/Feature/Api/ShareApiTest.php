@@ -6,7 +6,6 @@ use App\Models\LogoGeneration;
 use App\Models\Share;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\RateLimiter;
 
 uses(RefreshDatabase::class);
 

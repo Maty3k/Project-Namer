@@ -504,7 +504,7 @@ describe('Network and Server Error Handling', function (): void {
         }
 
         // All requests should succeed
-        $responses->each(fn($response) => $response->assertSuccessful());
+        $responses->each(fn ($response) => $response->assertSuccessful());
 
         // View count should match number of accesses
         $share->refresh();

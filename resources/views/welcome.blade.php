@@ -6,7 +6,7 @@
     <meta name="description" content="AI-powered business name generator with instant domain availability checking. Find your perfect brand name in seconds.">
     <meta name="keywords" content="business name generator, brand name, domain checker, AI naming, startup naming">
 
-    <title>Project Namer - Find Your Perfect Brand Name with AI</title>
+    <title>Brandify - Find Your Perfect Brand Name with AI</title>
 
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -59,8 +59,8 @@
             <div class="flex items-center justify-between h-16">
                 {{-- Logo --}}
                 <div class="flex items-center gap-2">
-                    <img src="/images/brandify-logo.png" alt="Project Namer" class="h-8 w-auto">
-                    <span class="text-xl font-bold">Project Namer</span>
+                    <img src="/images/brandify-logo.png" alt="Brandify" class="h-8 w-auto">
+                    <span class="text-xl font-bold">Brandify</span>
                 </div>
 
                 {{-- Auth Links --}}
@@ -90,9 +90,9 @@
     </nav>
 
     {{-- Hero Section --}}
-    <section class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section class="pt-40 pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div class="container mx-auto max-w-6xl">
-            <div class="text-center space-y-8">
+            <div class="text-center space-y-10">
                 {{-- Badge --}}
                 <div class="inline-flex items-center gap-2 px-4 py-2 bg-purple-50 dark:bg-purple-900/20 rounded-full border border-purple-200 dark:border-purple-800">
                     <svg class="w-4 h-4 text-purple-600 dark:text-purple-400" fill="currentColor" viewBox="0 0 20 20">
@@ -152,14 +152,14 @@
     </section>
 
     {{-- Benefits Section --}}
-    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-800/50">
+    <section class="py-28 px-4 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-800/50">
         <div class="container mx-auto max-w-6xl">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl sm:text-4xl font-bold mb-4">Why Choose Project Namer?</h2>
+            <div class="text-center mb-20">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-6">Why Choose Brandify?</h2>
                 <p class="text-xl text-zinc-600 dark:text-zinc-400">Everything you need to find the perfect brand name</p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8">
+            <div class="grid md:grid-cols-3 gap-10">
                 {{-- Benefit 1 --}}
                 <div class="bg-white dark:bg-zinc-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
                     <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mb-6">
@@ -203,10 +203,10 @@
     </section>
 
     {{-- How It Works Section --}}
-    <section id="how-it-works" class="py-20 px-4 sm:px-6 lg:px-8">
+    <section id="how-it-works" class="py-28 px-4 sm:px-6 lg:px-8">
         <div class="container mx-auto max-w-6xl">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl sm:text-4xl font-bold mb-4">How It Works</h2>
+            <div class="text-center mb-20">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-6">How It Works</h2>
                 <p class="text-xl text-zinc-600 dark:text-zinc-400">Get your perfect name in 3 simple steps</p>
             </div>
 
@@ -259,7 +259,7 @@
     </section>
 
     {{-- Trust Builders Section --}}
-    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20">
+    <section class="py-28 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20">
         <div class="container mx-auto max-w-4xl">
             <div class="bg-white dark:bg-zinc-900 rounded-3xl p-8 sm:p-12 shadow-2xl">
                 <div class="flex flex-col md:flex-row gap-8 items-start">
@@ -274,7 +274,7 @@
                         <h3 class="text-2xl font-bold mb-4">Built for Indie Hackers, By Developers</h3>
                         <p class="text-zinc-600 dark:text-zinc-400 mb-6 leading-relaxed">
                             We understand the struggle of finding the perfect name while building your startup.
-                            That's why Project Namer is 100% free and open-source. No hidden fees, no credit card required,
+                            That's why Brandify is 100% free and open-source. No hidden fees, no credit card required,
                             no BS. Just a tool that works, built by people who've been there.
                         </p>
                         <div class="flex flex-wrap gap-4">
@@ -304,23 +304,23 @@
     </section>
 
     {{-- FAQ Section --}}
-    <section class="py-20 px-4 sm:px-6 lg:px-8">
+    <section class="py-28 px-4 sm:px-6 lg:px-8">
         <div class="container mx-auto max-w-3xl">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl sm:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+            <div class="text-center mb-20">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-6">Frequently Asked Questions</h2>
             </div>
 
             <div class="space-y-4">
                 {{-- FAQ 1 --}}
                 <details class="group bg-white dark:bg-zinc-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
                     <summary class="flex items-center justify-between cursor-pointer list-none font-semibold text-lg">
-                        <span>Is Project Namer really free?</span>
+                        <span>Is Brandify really free?</span>
                         <svg class="w-5 h-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </summary>
                     <p class="mt-4 text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                        Yes! Project Namer is 100% free with no hidden costs. We believe in making naming tools accessible to everyone,
+                        Yes! Brandify is 100% free with no hidden costs. We believe in making naming tools accessible to everyone,
                         especially indie hackers and startups who are just getting started.
                     </p>
                 </details>
@@ -383,7 +383,7 @@
     </section>
 
     {{-- Final CTA Section --}}
-    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
+    <section class="py-28 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
         <div class="container mx-auto max-w-4xl text-center">
             <h2 class="text-4xl sm:text-5xl font-bold mb-6">Ready to Name Your Next Big Idea?</h2>
             <p class="text-xl sm:text-2xl mb-8 text-purple-100">
@@ -404,14 +404,14 @@
     </section>
 
     {{-- Footer --}}
-    <footer class="py-12 px-4 sm:px-6 lg:px-8 bg-zinc-900 dark:bg-zinc-950 text-zinc-400">
+    <footer class="py-16 px-4 sm:px-6 lg:px-8 bg-zinc-900 dark:bg-zinc-950 text-zinc-400">
         <div class="container mx-auto max-w-6xl">
             <div class="grid md:grid-cols-4 gap-8 mb-8">
                 {{-- Column 1 --}}
                 <div>
                     <div class="flex items-center gap-2 mb-4">
-                        <img src="/images/brandify-logo.png" alt="Project Namer" class="h-8 w-auto">
-                        <span class="text-lg font-bold text-white">Project Namer</span>
+                        <img src="/images/brandify-logo.png" alt="Brandify" class="h-8 w-auto">
+                        <span class="text-lg font-bold text-white">Brandify</span>
                     </div>
                     <p class="text-sm">AI-powered naming for your next big idea.</p>
                 </div>
@@ -447,7 +447,7 @@
             </div>
 
             <div class="border-t border-zinc-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p class="text-sm">&copy; {{ date('Y') }} Project Namer. All rights reserved.</p>
+                <p class="text-sm">&copy; {{ date('Y') }} Brandify. All rights reserved.</p>
                 <p class="text-sm">Made with ❤️ for indie hackers</p>
             </div>
         </div>
