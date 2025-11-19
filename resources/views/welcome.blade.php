@@ -65,21 +65,21 @@
 
                 {{-- Auth Links --}}
                 @if (Route::has('login'))
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-6">
                         @auth
                             <a href="{{ url('/dashboard') }}"
-                               class="px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                               class="text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors">
                                 Dashboard
                             </a>
                         @else
                             <a href="{{ route('login') }}"
-                               class="px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                               class="text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors">
                                 Log in
                             </a>
                             @if (Route::has('register'))
                                 <a href="{{ route('register') }}"
-                                   class="px-6 py-2 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 rounded-lg transition-all duration-200 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40">
-                                    Get Started Free
+                                   class="text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                                    Sign up
                                 </a>
                             @endif
                         @endauth
@@ -113,14 +113,10 @@
                 </p>
 
                 {{-- Primary CTA --}}
-                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                <div class="flex items-center justify-center pt-4">
                     <a href="{{ route('register') }}"
-                       class="w-full sm:w-auto px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 rounded-xl transition-all duration-200 shadow-xl shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-105">
-                        Start Naming Free →
-                    </a>
-                    <a href="#how-it-works"
-                       class="w-full sm:w-auto px-8 py-4 text-lg font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-xl transition-all duration-200">
-                        See How It Works
+                       class="px-12 py-5 text-xl font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 rounded-2xl transition-all duration-200 shadow-2xl shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-105">
+                        Start Free
                     </a>
                 </div>
 
