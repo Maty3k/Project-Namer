@@ -191,16 +191,6 @@
         </div>
     </section>
 
-    {{-- CTA Section --}}
-    <section class="py-48 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
-        <div class="container mx-auto max-w-4xl text-center">
-            <h2 class="text-5xl sm:text-6xl font-bold mb-12">Ready?</h2>
-            <a href="{{ route('register') }}"
-               class="inline-block px-12 py-6 text-xl font-bold text-purple-600 bg-white hover:bg-purple-50 rounded-2xl transition-all duration-200 shadow-2xl hover:shadow-3xl hover:scale-105">
-                Start Free
-            </a>
-        </div>
-    </section>
 
 
     {{-- Footer --}}
