@@ -95,6 +95,9 @@
                         Get Started
                     </a>
                 </div>
+
+                {{-- Spacing (trust signals removed) --}}
+                <div class="pt-6"></div>
             </div>
         </div>
     </section>
