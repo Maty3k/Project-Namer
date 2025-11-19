@@ -73,8 +73,13 @@
         </div>
     </nav>
 
-    {{-- Hero Section --}}
-    <section class="pt-40 pb-32 px-4 sm:px-6 lg:px-8">
+    {{-- Main Content Wrapper --}}
+    <div class="min-h-screen flex flex-col">
+        {{-- Spacer for fixed nav --}}
+        <div class="h-16"></div>
+
+            {{-- Hero Section --}}
+        <section class="pt-24 pb-32 px-4 sm:px-6 lg:px-8">
         <div class="container mx-auto max-w-4xl">
             <div class="text-center space-y-8">
                 {{-- Headline --}}
@@ -100,10 +105,11 @@
                 <div class="pt-6"></div>
             </div>
         </div>
-    </section>
+        </section>
 
-    {{-- Features Section --}}
-    <section class="py-24 px-4 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-800/50">
+        {{-- Features Section --}}
+        <main class="flex-grow">
+            <section class="py-24 px-4 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-800/50">
         <div class="container mx-auto max-w-6xl">
             <div class="grid md:grid-cols-3 gap-8 lg:gap-10">
                 {{-- Feature 1 --}}
@@ -152,17 +158,19 @@
                 </div>
             </div>
         </div>
-    </section>
+            </section>
+        </main>
 
-    {{-- Footer --}}
-    <footer class="py-24 px-4 sm:px-6 lg:px-8 bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 mt-32">
+        {{-- Footer --}}
+        <footer class="py-12 px-4 sm:px-6 lg:px-8 bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800">
         <div class="container mx-auto max-w-6xl text-center">
             <p class="text-sm text-zinc-500 dark:text-zinc-400">
                 &copy; {{ date('Y') }} Brandify • Powered by AI •
                 <a href="{{ route('contact') }}" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">Contact</a>
             </p>
         </div>
-    </footer>
+        </footer>
+    </div>
 
 </body>
 </html>
