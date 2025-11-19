@@ -66,7 +66,7 @@
     </nav>
 
     {{-- Contact Section --}}
-    <section class="pt-96 pb-32 px-4 sm:px-6 lg:px-8 flex-grow">
+    <section class="pt-[32rem] pb-32 px-4 sm:px-6 lg:px-8 flex-grow">
         <div class="container mx-auto max-w-6xl">
             <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
                 {{-- Left Column - Contact Info --}}
