@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 // In production with proper Nginx config, this will return 200 status.
 
 Route::get('/', fn () => view('welcome'))->name('home');
+Route::get('/contact', fn () => view('contact'))->name('contact');
 
 // Debug route for testing name generation
 Route::get('/test-generation', function () {

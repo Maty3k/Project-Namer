@@ -157,7 +157,10 @@
     {{-- Footer --}}
     <footer class="py-12 px-4 sm:px-6 lg:px-8 bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800">
         <div class="container mx-auto max-w-6xl text-center">
-            <p class="text-sm text-zinc-500 dark:text-zinc-400">&copy; {{ date('Y') }} Brandify</p>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400">
+                &copy; {{ date('Y') }} Brandify • Powered by AI •
+                <a href="{{ route('contact') }}" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">Contact</a>
+            </p>
         </div>
     </footer>
 
