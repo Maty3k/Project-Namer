@@ -71,7 +71,7 @@
         {{-- Contact Section --}}
         <main class="flex-grow py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
             <div class="container mx-auto max-w-6xl">
-                <div class="grid lg:grid-cols-5 gap-12 lg:gap-16">
+                <div class="grid lg:grid-cols-6 gap-12 lg:gap-16">
                     {{-- Left Column - Contact Info (2 columns) --}}
                     <div class="lg:col-span-2 space-y-8">
                         <div>
@@ -110,8 +110,8 @@
                         </div>
                     </div>
 
-                    {{-- Right Column - Contact Form (3 columns) --}}
-                    <div class="lg:col-span-3">
+                    {{-- Right Column - Contact Form (4 columns) --}}
+                    <div class="lg:col-span-4">
                         <div class="bg-white dark:bg-zinc-900 rounded-2xl p-8 lg:p-10 shadow-xl border-2 border-purple-100 dark:border-purple-900/30">
                             <form action="#" method="POST" class="space-y-6">
                                 @csrf
