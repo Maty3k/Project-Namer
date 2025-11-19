@@ -332,23 +332,21 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-        <!-- Collapsible Content Wrapper for Optional Tools -->
-        <div x-show="toolsExpanded"
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0 -translate-y-4"
-             x-transition:enter-end="opacity-100 translate-y-0"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0"
-             x-transition:leave-end="opacity-0 -translate-y-4"
-             style="display: none;">
+            <!-- Collapsible Content Wrapper for Optional Tools -->
+            <div x-show="toolsExpanded"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 -translate-y-4"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 -translate-y-4"
+                 style="display: none;">
 
-        <!-- Photo Gallery Section - Only shown before name generation -->
-        @if($this->filteredSuggestions->isEmpty())
-            <div class="mt-3
-                        sm:mt-4
-                        md:mt-6">
+                <!-- Photo Gallery Section - Only shown before name generation -->
+                <div class="mt-3
+                            sm:mt-4
+                            md:mt-6">
                 <!-- Embedded Photo Gallery -->
                 @livewire(\App\Livewire\PhotoGallery::class, ['project' => $project], 'gallery-'.$project->id)
             </div>
@@ -493,8 +491,8 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- End Collapsible Content Wrapper -->
+            </div>
+            <!-- End Collapsible Content Wrapper -->
         @endif
 
         <!-- Name Suggestions Section - Only shown when suggestions exist or generation is in progress -->
