@@ -115,7 +115,7 @@
                 {{-- Primary CTA --}}
                 <div class="flex items-center justify-center pt-4">
                     <a href="{{ route('register') }}"
-                       class="px-12 py-5 text-xl font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 rounded-2xl transition-all duration-200 shadow-2xl shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-105">
+                       class="px-12 py-5 text-xl font-bold text-purple-600 bg-white hover:bg-purple-50 rounded-2xl transition-all duration-200 shadow-2xl hover:shadow-3xl hover:scale-105">
                         Start Free
                     </a>
                 </div>
