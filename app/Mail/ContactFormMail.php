@@ -22,7 +22,7 @@ class ContactFormMail extends Mailable
         public readonly string $name,
         public readonly string $email,
         public readonly string $contactSubject,
-        public readonly string $message,
+        public readonly string $contactMessage,
     ) {}
 
     /**

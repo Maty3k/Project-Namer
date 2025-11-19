@@ -85,7 +85,7 @@
 
         <div class="field">
             <div class="field-label">Message</div>
-            <div class="message-box">{{ $message }}</div>
+            <div class="message-box">{{ $contactMessage }}</div>
         </div>
 
         <div class="footer">

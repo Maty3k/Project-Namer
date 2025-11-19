@@ -38,7 +38,7 @@ class ContactController extends Controller
                 name: $validated['name'],
                 email: $validated['email'],
                 contactSubject: $validated['subject'],
-                message: $validated['message'],
+                contactMessage: $validated['message'],
             )
         );
 
