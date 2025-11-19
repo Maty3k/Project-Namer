@@ -32,22 +32,6 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
-        .gradient-border {
-            position: relative;
-        }
-
-        .gradient-border::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            padding: 2px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-        }
     </style>
 </head>
 
@@ -90,30 +74,30 @@
     </nav>
 
     {{-- Hero Section --}}
-    <section class="pt-96 pb-48 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div class="container mx-auto max-w-6xl">
-            <div class="text-center space-y-16">
+    <section class="pt-40 pb-32 px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto max-w-4xl">
+            <div class="text-center space-y-8">
                 {{-- Headline --}}
-                <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight">
+                <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-tight">
                     Generate Perfect
                     <span class="gradient-text block mt-2">Brand Names</span>
                 </h1>
 
                 {{-- Subheadline --}}
-                <p class="text-xl sm:text-2xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
-                    AI creates unique names. We check domain availability.
+                <p class="text-xl sm:text-2xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+                    Our AI creates unique, memorable names for your business. We instantly check domain availability so you can launch faster.
                 </p>
 
-                {{-- Primary CTA --}}
-                <div class="flex items-center justify-center pt-4">
+                {{-- CTA Button --}}
+                <div class="pt-4">
                     <a href="{{ route('register') }}"
-                       class="px-12 py-5 text-xl font-bold text-purple-600 bg-white hover:bg-purple-50 rounded-2xl transition-all duration-200 shadow-2xl hover:shadow-3xl hover:scale-105">
+                       class="inline-block px-10 py-4 text-lg font-semibold text-purple-600 bg-white hover:bg-purple-50 rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl hover:scale-105 border-2 border-purple-200">
                         Get Started
                     </a>
                 </div>
 
                 {{-- Trust Signals --}}
-                <div class="flex flex-wrap items-center justify-center gap-6 pt-8 text-sm text-zinc-500 dark:text-zinc-400">
+                <div class="flex flex-wrap items-center justify-center gap-8 pt-6 text-sm text-zinc-500 dark:text-zinc-400">
                     <div class="flex items-center gap-2">
                         <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -137,58 +121,56 @@
         </div>
     </section>
 
-    {{-- Benefits Section --}}
-    <section class="py-48 px-4 sm:px-6 lg:px-8">
-        <div class="container mx-auto max-w-5xl">
-            <div class="grid md:grid-cols-3 gap-24">
-                {{-- Benefit 1 --}}
-                <div class="text-center">
-                    <div class="w-20 h-20 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-3xl flex items-center justify-center mx-auto mb-8">
-                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    {{-- Features Section --}}
+    <section class="py-24 px-4 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-800/50">
+        <div class="container mx-auto max-w-6xl">
+            <div class="grid md:grid-cols-3 gap-12 lg:gap-16">
+                {{-- Feature 1 --}}
+                <div class="text-center space-y-4">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                         </svg>
                     </div>
-                    <h3 class="text-2xl font-bold mb-4">Smart Generation</h3>
-                    <p class="text-lg text-zinc-600 dark:text-zinc-400">
-                        Powered by advanced AI
+                    <h3 class="text-xl font-bold">Smart Generation</h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                        Powered by advanced AI technology that understands your business and creates names that truly resonate with your brand vision.
                     </p>
                 </div>
 
-                {{-- Benefit 2 --}}
-                <div class="text-center">
-                    <div class="w-20 h-20 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-3xl flex items-center justify-center mx-auto mb-8">
-                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {{-- Feature 2 --}}
+                <div class="text-center space-y-4">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
                         </svg>
                     </div>
-                    <h3 class="text-2xl font-bold mb-4">Real-Time Checks</h3>
-                    <p class="text-lg text-zinc-600 dark:text-zinc-400">
-                        Verify domains instantly
+                    <h3 class="text-xl font-bold">Real-Time Checks</h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                        Verify domain availability instantly across popular extensions. No more falling in love with names you can't use.
                     </p>
                 </div>
 
-                {{-- Benefit 3 --}}
-                <div class="text-center">
-                    <div class="w-20 h-20 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-3xl flex items-center justify-center mx-auto mb-8">
-                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {{-- Feature 3 --}}
+                <div class="text-center space-y-4">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
                         </svg>
                     </div>
-                    <h3 class="text-2xl font-bold mb-4">Visual Identity</h3>
-                    <p class="text-lg text-zinc-600 dark:text-zinc-400">
-                        Generate logo concepts
+                    <h3 class="text-xl font-bold">Visual Identity</h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                        Generate logo concepts to visualize your brand. Get inspiration and bring your business identity to life quickly.
                     </p>
                 </div>
             </div>
         </div>
     </section>
 
-
-
     {{-- Footer --}}
-    <footer class="py-24 px-4 sm:px-6 lg:px-8 bg-white dark:bg-zinc-900 text-zinc-500 dark:text-zinc-500">
-        <div class="container mx-auto max-w-4xl text-center">
-            <p class="text-sm">&copy; {{ date('Y') }} Brandify</p>
+    <footer class="py-12 px-4 sm:px-6 lg:px-8 bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800">
+        <div class="container mx-auto max-w-6xl text-center">
+            <p class="text-sm text-zinc-500 dark:text-zinc-400">&copy; {{ date('Y') }} Brandify</p>
         </div>
     </footer>
 
