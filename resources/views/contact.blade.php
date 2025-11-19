@@ -68,9 +68,9 @@
     {{-- Contact Section --}}
     <section class="pt-48 pb-32 px-4 sm:px-6 lg:px-8">
         <div class="container mx-auto max-w-6xl">
-            <div class="grid lg:grid-cols-2 gap-12 lg:gap-16">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
                 {{-- Left Column - Contact Info --}}
-                <div class="flex flex-col justify-center space-y-8">
+                <div class="space-y-8 lg:pt-12">
                     <div>
                         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
                             Get in <span class="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">Touch</span>
@@ -165,7 +165,7 @@
                         <div>
                             <button
                                 type="submit"
-                                class="w-full px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-3">
+                                class="w-full px-8 py-4 text-lg font-bold text-purple-600 bg-white hover:bg-purple-50 rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl hover:scale-105 border-2 border-purple-200 flex items-center justify-center gap-3">
                                 <span>Send Message</span>
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
