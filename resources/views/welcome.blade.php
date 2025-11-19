@@ -79,7 +79,7 @@
         <div class="h-16"></div>
 
             {{-- Hero Section --}}
-        <section class="pt-24 pb-32 px-4 sm:px-6 lg:px-8">
+        <section class="pt-8 pb-32 px-4 sm:px-6 lg:px-8">
         <div class="container mx-auto max-w-4xl">
             <div class="text-center space-y-8">
                 {{-- Headline --}}
