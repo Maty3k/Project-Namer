@@ -46,7 +46,7 @@
                                 class="w-full"
                             />
                             <flux:description>
-                                <span class="text-xs">{{ __('JPG, PNG or GIF. Max size 2MB.') }}</span>
+                                <span class="text-xs">{{ __('JPG, PNG, GIF, WebP, or AVIF. Max size 2MB.') }}</span>
                             </flux:description>
                             <flux:error name="profilePhoto" />
                         </flux:field>

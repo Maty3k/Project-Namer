@@ -86,7 +86,7 @@ class Profile extends Component
     public function updateProfilePhoto(): void
     {
         $this->validate([
-            'profilePhoto' => ['required', 'image', 'max:2048'], // 2MB max
+            'profilePhoto' => ['required', 'image', 'mimes:jpg,jpeg,png,gif,bmp,svg,webp,avif', 'max:2048'], // 2MB max
         ]);
 
         $user = Auth::user();
