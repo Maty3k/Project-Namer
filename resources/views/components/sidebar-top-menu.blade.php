@@ -57,5 +57,13 @@
                            class="touch-target interactive focus-modern hidden lg:flex">
             {{ __('Keyboard Shortcuts') }}
         </flux:navlist.item>
+
+        <flux:navlist.item icon="chat-bubble-left-right"
+                           :href="route('contact')"
+                           :current="request()->routeIs('contact')"
+                           wire:navigate
+                           class="touch-target interactive focus-modern">
+            {{ __('Feedback') }}
+        </flux:navlist.item>
     </flux:navlist.group>
 </flux:navlist>
