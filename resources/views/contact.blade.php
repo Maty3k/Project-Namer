@@ -71,9 +71,9 @@
         {{-- Contact Section --}}
         <main class="flex-grow py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
             <div class="container mx-auto max-w-6xl">
-                <div class="grid lg:grid-cols-7 gap-12 lg:gap-16">
-                    {{-- Left Column - Contact Info (2 columns) --}}
-                    <div class="lg:col-span-2 space-y-8">
+                <div class="grid lg:grid-cols-3 gap-12 lg:gap-16">
+                    {{-- Left Column - Contact Info (1 column) --}}
+                    <div class="lg:col-span-1 space-y-8">
                         <div>
                             <h1 class="text-4xl sm:text-5xl font-bold mb-6">
                                 Get in <span class="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">Touch</span>
@@ -110,8 +110,8 @@
                         </div>
                     </div>
 
-                    {{-- Right Column - Contact Form (5 columns) --}}
-                    <div class="lg:col-span-5">
+                    {{-- Right Column - Contact Form (2 columns) --}}
+                    <div class="lg:col-span-2">
                         <div class="bg-white dark:bg-zinc-900 rounded-2xl p-8 lg:p-10 shadow-xl border-2 border-purple-100 dark:border-purple-900/30">
                             <form action="#" method="POST" class="space-y-6">
                                 @csrf
