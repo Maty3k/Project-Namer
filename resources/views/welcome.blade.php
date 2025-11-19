@@ -103,20 +103,20 @@
 
                 {{-- Headline --}}
                 <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight">
-                    Find Your Perfect
-                    <span class="gradient-text block mt-2">Brand Name</span>
+                    Generate Perfect
+                    <span class="gradient-text block mt-2">Brand Names</span>
                 </h1>
 
                 {{-- Subheadline --}}
                 <p class="text-xl sm:text-2xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
-                    AI-powered names. Instant domain checks.
+                    AI creates unique names. We check domain availability.
                 </p>
 
                 {{-- Primary CTA --}}
                 <div class="flex items-center justify-center pt-4">
                     <a href="{{ route('register') }}"
                        class="px-12 py-5 text-xl font-bold text-purple-600 bg-white hover:bg-purple-50 rounded-2xl transition-all duration-200 shadow-2xl hover:shadow-3xl hover:scale-105">
-                        Start Free
+                        Get Started
                     </a>
                 </div>
 
@@ -126,19 +126,19 @@
                         <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                         </svg>
-                        <span>No credit card required</span>
+                        <span>Always free</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                         </svg>
-                        <span>Free forever</span>
+                        <span>No signup needed</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                         </svg>
-                        <span>10,000+ names generated</span>
+                        <span>Open source</span>
                     </div>
                 </div>
             </div>
@@ -148,7 +148,7 @@
     {{-- How It Works Section --}}
     <section class="py-32 px-4 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-800/50">
         <div class="container mx-auto max-w-4xl">
-            <h2 class="text-4xl sm:text-5xl font-bold text-center mb-20">How It Works</h2>
+            <h2 class="text-4xl sm:text-5xl font-bold text-center mb-20">Simple Process</h2>
 
             <div class="grid md:grid-cols-3 gap-12">
                 {{-- Step 1 --}}
@@ -156,9 +156,9 @@
                     <div class="w-16 h-16 bg-purple-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
                         1
                     </div>
-                    <h3 class="text-xl font-bold mb-3">Describe Your Idea</h3>
+                    <h3 class="text-xl font-bold mb-3">Share Your Vision</h3>
                     <p class="text-zinc-600 dark:text-zinc-400">
-                        Tell us about your business or project in a few words
+                        Describe what you're building
                     </p>
                 </div>
 
@@ -167,9 +167,9 @@
                     <div class="w-16 h-16 bg-purple-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
                         2
                     </div>
-                    <h3 class="text-xl font-bold mb-3">Get AI Suggestions</h3>
+                    <h3 class="text-xl font-bold mb-3">Explore Options</h3>
                     <p class="text-zinc-600 dark:text-zinc-400">
-                        Our AI generates creative, memorable brand names instantly
+                        Browse AI-generated suggestions
                     </p>
                 </div>
 
@@ -178,9 +178,9 @@
                     <div class="w-16 h-16 bg-purple-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
                         3
                     </div>
-                    <h3 class="text-xl font-bold mb-3">Check Availability</h3>
+                    <h3 class="text-xl font-bold mb-3">Claim Your Name</h3>
                     <p class="text-zinc-600 dark:text-zinc-400">
-                        See which domains are available and pick your favorite
+                        Choose one with an available domain
                     </p>
                 </div>
             </div>
@@ -198,9 +198,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                         </svg>
                     </div>
-                    <h3 class="text-2xl font-bold mb-4">AI Names</h3>
+                    <h3 class="text-2xl font-bold mb-4">Smart Generation</h3>
                     <p class="text-lg text-zinc-600 dark:text-zinc-400">
-                        Creative names instantly
+                        Powered by advanced AI
                     </p>
                 </div>
 
@@ -211,9 +211,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
                         </svg>
                     </div>
-                    <h3 class="text-2xl font-bold mb-4">Domain Check</h3>
+                    <h3 class="text-2xl font-bold mb-4">Real-Time Checks</h3>
                     <p class="text-lg text-zinc-600 dark:text-zinc-400">
-                        Instant availability
+                        Verify domains instantly
                     </p>
                 </div>
 
@@ -224,9 +224,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
                         </svg>
                     </div>
-                    <h3 class="text-2xl font-bold mb-4">Logo Ideas</h3>
+                    <h3 class="text-2xl font-bold mb-4">Visual Identity</h3>
                     <p class="text-lg text-zinc-600 dark:text-zinc-400">
-                        Visual inspiration
+                        Generate logo concepts
                     </p>
                 </div>
             </div>
