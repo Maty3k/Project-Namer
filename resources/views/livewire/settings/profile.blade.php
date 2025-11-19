@@ -87,14 +87,37 @@
 
                     {{-- Delete Photo Button --}}
                     @if(auth()->user()->profilePhotoUrl())
-                        <flux:button
-                            wire:click="deleteProfilePhoto"
-                            variant="danger"
-                            size="sm"
-                            wire:confirm="Are you sure you want to remove your profile photo?"
-                            class="border-[3px] border-red-700 dark:border-red-300 hover:scale-105 active:scale-95 transition-all">
-                            {{ __('Remove Photo') }}
-                        </flux:button>
+                        <div x-data="{ showDeleteModal: false }">
+                            <flux:button
+                                @click="showDeleteModal = true"
+                                variant="danger"
+                                size="sm"
+                                class="border-[3px] border-red-700 dark:border-red-300 hover:scale-105 active:scale-95 transition-all">
+                                {{ __('Remove Photo') }}
+                            </flux:button>
+
+                            {{-- Delete Confirmation Modal --}}
+                            <flux:modal x-model="showDeleteModal" class="space-y-6">
+                                <div>
+                                    <flux:heading size="lg">{{ __('Remove Profile Photo') }}</flux:heading>
+                                    <flux:subheading class="mt-2">
+                                        {{ __('Are you sure you want to remove your profile photo? Your initials will be displayed instead.') }}
+                                    </flux:subheading>
+                                </div>
+
+                                <div class="flex gap-2 justify-end">
+                                    <flux:button variant="ghost" @click="showDeleteModal = false">
+                                        {{ __('Cancel') }}
+                                    </flux:button>
+                                    <flux:button
+                                        variant="danger"
+                                        wire:click="deleteProfilePhoto"
+                                        @click="showDeleteModal = false">
+                                        {{ __('Remove Photo') }}
+                                    </flux:button>
+                                </div>
+                            </flux:modal>
+                        </div>
                     @endif
 
                     {{-- Success Messages --}}
