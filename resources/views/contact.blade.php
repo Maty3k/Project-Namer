@@ -71,12 +71,22 @@
         {{-- Contact Section --}}
         <main class="flex-grow py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
             <div class="container mx-auto max-w-6xl">
+                {{-- Back Button --}}
+                <div class="mb-8">
+                    <a href="{{ url()->previous() }}" class="inline-flex items-center gap-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                        <span class="font-medium">Back</span>
+                    </a>
+                </div>
+
                 <div class="grid lg:grid-cols-7 gap-12 lg:gap-16">
                     {{-- Left Column - Contact Info (2 columns) --}}
                     <div class="lg:col-span-2 space-y-8">
                         <div>
                             <h1 class="text-4xl sm:text-5xl font-bold mb-6">
-                                Get in <span class="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">Touch</span>
+                                Share Your <span class="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">Feedback</span>
                             </h1>
                             <p class="text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed">
                                 Have a question, feedback, or just want to say hello? We'd love to hear from you. Fill out the form and we'll get back to you as soon as possible.
