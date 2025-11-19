@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Mail\ContactFormMail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
@@ -32,18 +33,35 @@ class ContactController extends Controller
             'message' => ['required', 'string', 'max:5000'],
         ]);
 
-        // Send email to darius@artisan.build
-        Mail::to('darius@artisan.build')->send(
-            new ContactFormMail(
-                name: $validated['name'],
-                email: $validated['email'],
-                contactSubject: $validated['subject'],
-                contactMessage: $validated['message'],
-            )
-        );
+        try {
+            // Queue email for better reliability on production
+            Mail::to('darius@artisan.build')->queue(
+                new ContactFormMail(
+                    name: $validated['name'],
+                    email: $validated['email'],
+                    contactSubject: $validated['subject'],
+                    contactMessage: $validated['message'],
+                )
+            );
 
-        return redirect()
-            ->route('contact')
-            ->with('success', 'Thank you for your message! We\'ll get back to you as soon as possible.');
+            Log::info('Contact form email queued', [
+                'from' => $validated['email'],
+                'subject' => $validated['subject'],
+            ]);
+
+            return redirect()
+                ->route('contact')
+                ->with('success', 'Thank you for your message! We\'ll get back to you as soon as possible.');
+        } catch (\Exception $e) {
+            Log::error('Failed to queue contact form email', [
+                'error' => $e->getMessage(),
+                'from' => $validated['email'],
+                'subject' => $validated['subject'],
+            ]);
+
+            return redirect()
+                ->route('contact')
+                ->with('error', 'Sorry, there was an issue sending your message. Please try again later.');
+        }
     }
 }
