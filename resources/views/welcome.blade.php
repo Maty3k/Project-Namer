@@ -85,7 +85,7 @@
 
                 {{-- Subheadline --}}
                 <p class="text-xl sm:text-2xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-                    Our AI creates unique, memorable names for your business. We instantly check domain availability so you can launch faster.
+                    Let AI craft distinctive, memorable names tailored to your vision. See which domains are ready to claim in real time.
                 </p>
 
                 {{-- CTA Button --}}
