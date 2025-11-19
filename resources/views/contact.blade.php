@@ -67,71 +67,113 @@
 
     {{-- Contact Section --}}
     <section class="pt-32 pb-24 px-4 sm:px-6 lg:px-8">
-        <div class="container mx-auto max-w-2xl">
-            <div class="text-center mb-12">
-                <h1 class="text-4xl sm:text-5xl font-bold mb-4">Get in Touch</h1>
-                <p class="text-lg text-zinc-600 dark:text-zinc-400">
-                    Have a question or feedback? We'd love to hear from you.
-                </p>
-            </div>
-
-            <div class="bg-white dark:bg-zinc-900 rounded-2xl p-8 shadow-sm border border-zinc-200 dark:border-zinc-700">
-                <form action="#" method="POST" class="space-y-6">
-                    @csrf
-
-                    {{-- Name --}}
+        <div class="container mx-auto max-w-6xl">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-16">
+                {{-- Left Column - Contact Info --}}
+                <div class="flex flex-col justify-center space-y-8">
                     <div>
-                        <label for="name" class="block text-sm font-medium mb-2">Name</label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            required
-                            class="w-full px-4 py-3 rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all">
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
+                            Get in <span class="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">Touch</span>
+                        </h1>
+                        <p class="text-lg sm:text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                            Have a question, feedback, or just want to say hello? We'd love to hear from you. Fill out the form and we'll get back to you as soon as possible.
+                        </p>
                     </div>
 
-                    {{-- Email --}}
-                    <div>
-                        <label for="email" class="block text-sm font-medium mb-2">Email</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            required
-                            class="w-full px-4 py-3 rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all">
-                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-zinc-500 dark:text-zinc-400">Email us at</p>
+                                <p class="font-semibold">hello@brandify.com</p>
+                            </div>
+                        </div>
 
-                    {{-- Subject --}}
-                    <div>
-                        <label for="subject" class="block text-sm font-medium mb-2">Subject</label>
-                        <input
-                            type="text"
-                            id="subject"
-                            name="subject"
-                            required
-                            class="w-full px-4 py-3 rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-zinc-500 dark:text-zinc-400">Response time</p>
+                                <p class="font-semibold">Within 24 hours</p>
+                            </div>
+                        </div>
                     </div>
+                </div>
 
-                    {{-- Message --}}
-                    <div>
-                        <label for="message" class="block text-sm font-medium mb-2">Message</label>
-                        <textarea
-                            id="message"
-                            name="message"
-                            rows="6"
-                            required
-                            class="w-full px-4 py-3 rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all resize-none"></textarea>
-                    </div>
+                {{-- Right Column - Contact Form --}}
+                <div class="bg-white dark:bg-zinc-900 rounded-2xl p-8 lg:p-10 shadow-xl border-2 border-purple-100 dark:border-purple-900/30">
+                    <form action="#" method="POST" class="space-y-6">
+                        @csrf
 
-                    {{-- Submit Button --}}
-                    <div>
-                        <button
-                            type="submit"
-                            class="w-full px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl hover:scale-105">
-                            Send Message
-                        </button>
-                    </div>
-                </form>
+                        {{-- Name and Email Row --}}
+                        <div class="grid sm:grid-cols-2 gap-6">
+                            <div>
+                                <label for="name" class="block text-sm font-semibold mb-2">Name</label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    required
+                                    placeholder="John Doe"
+                                    class="w-full px-4 py-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-purple-600 focus:border-purple-600 transition-all">
+                            </div>
+
+                            <div>
+                                <label for="email" class="block text-sm font-semibold mb-2">Email</label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    required
+                                    placeholder="john@example.com"
+                                    class="w-full px-4 py-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-purple-600 focus:border-purple-600 transition-all">
+                            </div>
+                        </div>
+
+                        {{-- Subject --}}
+                        <div>
+                            <label for="subject" class="block text-sm font-semibold mb-2">Subject</label>
+                            <input
+                                type="text"
+                                id="subject"
+                                name="subject"
+                                required
+                                placeholder="How can we help?"
+                                class="w-full px-4 py-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-purple-600 focus:border-purple-600 transition-all">
+                        </div>
+
+                        {{-- Message --}}
+                        <div>
+                            <label for="message" class="block text-sm font-semibold mb-2">Message</label>
+                            <textarea
+                                id="message"
+                                name="message"
+                                rows="6"
+                                required
+                                placeholder="Tell us more about your question or feedback..."
+                                class="w-full px-4 py-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-purple-600 focus:border-purple-600 transition-all resize-none"></textarea>
+                        </div>
+
+                        {{-- Submit Button --}}
+                        <div>
+                            <button
+                                type="submit"
+                                class="w-full px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-3">
+                                <span>Send Message</span>
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </section>
