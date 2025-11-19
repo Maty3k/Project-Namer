@@ -90,7 +90,7 @@
     </nav>
 
     {{-- Hero Section --}}
-    <section class="pt-64 pb-48 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section class="pt-96 pb-48 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div class="container mx-auto max-w-6xl">
             <div class="text-center space-y-16">
                 {{-- Headline --}}
