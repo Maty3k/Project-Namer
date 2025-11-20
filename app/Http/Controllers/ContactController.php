@@ -41,10 +41,10 @@ class ContactController extends Controller
                 contactMessage: $validated['message'],
             );
 
-            // Send email synchronously (queue requires worker process)
-            Mail::to('darius@artisan.build')->send($mail);
+            // Queue email to avoid timeout (requires queue worker on production)
+            Mail::to('darius@artisan.build')->queue($mail);
 
-            Log::info('Contact form email sent', [
+            Log::info('Contact form email queued', [
                 'from' => $validated['email'],
                 'subject' => $validated['subject'],
             ]);
