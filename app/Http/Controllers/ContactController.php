@@ -41,17 +41,12 @@ class ContactController extends Controller
                 contactMessage: $validated['message'],
             );
 
-            // Queue in production, send immediately in local for testing
-            if (app()->environment('production')) {
-                Mail::to('darius@artisan.build')->queue($mail);
-            } else {
-                Mail::to('darius@artisan.build')->send($mail);
-            }
+            // Send email synchronously (queue requires worker process)
+            Mail::to('darius@artisan.build')->send($mail);
 
             Log::info('Contact form email sent', [
                 'from' => $validated['email'],
                 'subject' => $validated['subject'],
-                'queued' => app()->environment('production'),
             ]);
 
             return redirect()
