@@ -98,10 +98,15 @@ class OpenAILogoService
                 'status' => 'completed',
             ]);
 
-            // Increment completed logos count
-            $logoGeneration->incrementCompletedLogos();
+            // Count actual completed logos from database to avoid race conditions
+            $actualCompletedCount = $logoGeneration->generatedLogos()
+                ->where('status', 'completed')
+                ->count();
 
-            // Refresh the model to get the updated count (important for parallel processing)
+            // Update logos_completed to match actual count (fixes race conditions)
+            $logoGeneration->update(['logos_completed' => $actualCompletedCount]);
+
+            // Refresh the model to get the updated count
             $logoGeneration->refresh();
 
             // Update NameSuggestion with completed logos after EACH logo
@@ -109,7 +114,7 @@ class OpenAILogoService
             $this->updateNameSuggestionWithLogos($logoGeneration);
 
             // Check if all logos are complete
-            if ($logoGeneration->logos_completed >= $logoGeneration->total_logos_requested) {
+            if ($actualCompletedCount >= $logoGeneration->total_logos_requested) {
                 $logoGeneration->markAsCompleted();
             }
         } catch (\Exception $e) {
