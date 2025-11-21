@@ -42,7 +42,7 @@ class ContactController extends Controller
             );
 
             // Queue email to avoid timeout (requires queue worker on production)
-            Mail::to('darius@artisan.build')->queue($mail);
+            Mail::to('03matei@gmail.com')->queue($mail);
 
             Log::info('Contact form email queued', [
                 'from' => $validated['email'],
