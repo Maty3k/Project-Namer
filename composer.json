@@ -18,6 +18,7 @@
         "livewire/volt": "^1.7.0",
         "pragmarx/google2fa": "^8.0",
         "pragmarx/google2fa-qrcode": "^3.0",
+        "resend/resend-laravel": "^1.0",
         "spatie/dns": "^2.7",
         "spatie/laravel-medialibrary": "^11.14",
         "symfony/yaml": "^7.0"
