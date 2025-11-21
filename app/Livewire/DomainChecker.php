@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
+use App\Jobs\GenerateLogosJob;
+use App\Models\LogoGeneration;
 use App\Services\DomainCheckService;
 use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -24,6 +27,60 @@ class DomainChecker extends Component
     public bool $isChecking = false;
 
     public ?string $errorMessage = null;
+
+    /**
+     * Check if any domain is available.
+     */
+    #[Computed]
+    public function hasAvailableDomain(): bool
+    {
+        foreach ($this->domainResults as $result) {
+            if ($result['available'] === true) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Generate logos for the checked name and redirect to gallery.
+     */
+    public function generateLogoForName(): void
+    {
+        if ($this->cleanName === '' || ! auth()->check()) {
+            return;
+        }
+
+        try {
+            // Create logo generation record
+            $logoGeneration = LogoGeneration::create([
+                'user_id' => auth()->id(),
+                'session_id' => session()->getId(),
+                'business_name' => $this->cleanName,
+                'business_description' => "Logo for {$this->cleanName}",
+                'generation_mode' => 'creative',
+                'status' => 'processing',
+                'total_logos_requested' => 4,
+                'logos_completed' => 0,
+            ]);
+
+            // Dispatch logo generation job
+            dispatch(new GenerateLogosJob($logoGeneration));
+
+            // Redirect to the logo gallery for this generation
+            $this->redirect(route('logo.gallery', ['logoGeneration' => $logoGeneration->id]));
+
+        } catch (\Exception $e) {
+            Log::error('Logo generation from domain checker failed', [
+                'name' => $this->cleanName,
+                'error' => $e->getMessage(),
+                'user_id' => auth()->id(),
+            ]);
+
+            $this->errorMessage = 'Failed to start logo generation. Please try again.';
+        }
+    }
 
     /**
      * @return array<string, array<int, string>>

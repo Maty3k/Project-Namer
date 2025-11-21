@@ -170,6 +170,29 @@
                     @endforeach
                 </div>
 
+                <!-- Generate Logo Button (shown when at least one domain is available) -->
+                @if($this->hasAvailableDomain)
+                    <div class="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-700
+                                sm:mt-6 sm:pt-6">
+                        <div class="text-center">
+                            <p class="text-xs text-zinc-600 dark:text-zinc-400 mb-3
+                                      sm:text-sm sm:mb-4">
+                                Domain available! Ready to create your brand?
+                            </p>
+                            <flux:button
+                                wire:click="generateLogoForName"
+                                variant="primary"
+                                class="w-full justify-center text-sm
+                                       sm:w-auto"
+                            >
+                                <flux:icon.sparkles class="w-4 h-4
+                                                          sm:w-5 sm:h-5" />
+                                <span>Generate Logo for "{{ $cleanName }}"</span>
+                            </flux:button>
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Info Message -->
                 <div class="mt-4 p-2.5 rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800
                             sm:mt-6 sm:p-4">
