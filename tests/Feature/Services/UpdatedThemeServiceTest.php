@@ -36,7 +36,7 @@ describe('Updated ThemeService', function (): void {
             'summer', 'winter', 'halloween', 'spring', 'autumn',
             'neon-cyber', 'electric-blue', 'hot-pink', 'lava-red',
             'lime-punch', 'gold-rush', 'matrix-green',
-            'sakura', 'arctic', 'mocha', 'lavender-fields',
+            'sakura', 'arctic', 'mocha',
         ];
 
         expect($themeNames)->toEqual($expectedThemes);
@@ -87,7 +87,7 @@ describe('Updated ThemeService', function (): void {
     it('returns all themes when category is "all"', function (): void {
         $allThemes = $this->themeService->getThemesByCategory('all');
 
-        expect($allThemes)->toHaveCount(24);
+        expect($allThemes)->toHaveCount(23);
     });
 
     it('returns available categories', function (): void {

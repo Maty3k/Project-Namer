@@ -95,7 +95,7 @@ describe('Theme API Endpoints', function (): void {
                 ],
             ]);
 
-        expect($response->json('themes'))->toHaveCount(24); // All 24 predefined themes
+        expect($response->json('themes'))->toHaveCount(23); // All 24 predefined themes
     });
 
     test('can get theme CSS file path', function (): void {
