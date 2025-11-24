@@ -266,14 +266,6 @@ final class ThemeService
                 'preview_url' => '/images/theme-previews/mocha.png',
                 'category' => 'elegant',
             ],
-            [
-                'name' => 'lavender-fields',
-                'display_name' => 'Lavender Fields',
-                'theme_name' => 'lavender-fields',
-                'is_dark_mode' => false,
-                'preview_url' => '/images/theme-previews/lavender-fields.svg',
-                'category' => 'elegant',
-            ],
         ];
     }
 
