@@ -41,11 +41,11 @@ class ContactController extends Controller
                 contactMessage: $validated['message'],
             );
 
-            // Send email synchronously for immediate delivery
+            // Queue email for background processing
             $recipientEmail = config('mail.contact_recipient', '03matei@gmail.com');
-            Mail::to($recipientEmail)->send($mail);
+            Mail::to($recipientEmail)->queue($mail);
 
-            Log::info('Contact form email sent', [
+            Log::info('Contact form email queued', [
                 'from' => $validated['email'],
                 'subject' => $validated['subject'],
             ]);
@@ -54,7 +54,7 @@ class ContactController extends Controller
                 ->route('contact')
                 ->with('success', 'Thank you for your message! We\'ll get back to you as soon as possible.');
         } catch (\Exception $e) {
-            Log::error('Failed to send contact form email', [
+            Log::error('Failed to queue contact form email', [
                 'error' => $e->getMessage(),
                 'from' => $validated['email'],
                 'subject' => $validated['subject'],
