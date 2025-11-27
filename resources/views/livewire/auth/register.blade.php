@@ -1,10 +1,10 @@
 <div class="space-y-8">
     <!-- Header -->
     <div class="space-y-2">
-        <h1 class="text-3xl font-bold text-slate-900 dark:text-white">
+        <h1 class="text-4xl font-bold text-slate-900 dark:text-white">
             Create your account
         </h1>
-        <p class="text-slate-600 dark:text-slate-400">
+        <p class="text-lg text-slate-600 dark:text-slate-400">
             Start generating amazing business names today
         </p>
     </div>
@@ -66,12 +66,12 @@
         </div>
 
         <!-- Terms -->
-        <p class="text-xs text-slate-500 dark:text-slate-400">
+        <p class="text-sm text-slate-500 dark:text-slate-400">
             By creating an account, you agree to our Terms of Service and Privacy Policy
         </p>
 
         <!-- Submit Button -->
-        <flux:button type="submit" variant="primary" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white">
+        <flux:button type="submit" variant="primary" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-base py-3">
             Create account
         </flux:button>
     </form>
@@ -93,7 +93,7 @@
         <flux:link
             :href="route('login')"
             wire:navigate
-            class="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+            class="font-semibold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
         >
             Sign in instead
         </flux:link>

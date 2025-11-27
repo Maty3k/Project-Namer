@@ -1,11 +1,11 @@
 <div class="space-y-8">
     <!-- Header -->
     <div class="space-y-2">
-        <h1 class="text-3xl font-bold text-slate-900 dark:text-white">
+        <h1 class="text-4xl font-bold text-slate-900 dark:text-white">
             Welcome back
         </h1>
-        <p class="text-slate-600 dark:text-slate-400">
-            Sign in to your account to continue
+        <p class="text-lg text-slate-600 dark:text-slate-400">
+            Sign in to continue creating amazing names
         </p>
     </div>
 
@@ -35,7 +35,7 @@
                     <flux:link
                         :href="route('password.request')"
                         wire:navigate
-                        class="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                        class="text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
                     >
                         Forgot password?
                     </flux:link>
@@ -57,7 +57,7 @@
         </div>
 
         <!-- Submit Button -->
-        <flux:button type="submit" variant="primary" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white">
+        <flux:button type="submit" variant="primary" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-base py-3">
             Sign in
         </flux:button>
     </form>
@@ -69,7 +69,7 @@
         </div>
         <div class="relative flex justify-center text-sm">
             <span class="px-4 bg-white dark:bg-slate-950 text-slate-500 dark:text-slate-400">
-                Don't have an account?
+                New to {{ config('app.name') }}?
             </span>
         </div>
     </div>
@@ -80,7 +80,7 @@
             <flux:link
                 :href="route('register')"
                 wire:navigate
-                class="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                class="font-semibold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
             >
                 Create an account
             </flux:link>
