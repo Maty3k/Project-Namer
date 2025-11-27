@@ -110,9 +110,8 @@ Route::middleware('api')->group(function (): void {
             Route::delete('{export}', [ExportController::class, 'destroy'])
                 ->name('api.exports.destroy');
 
-            // Authenticated download (read-only, no CSRF needed)
+            // Authenticated download (read-only, needs web middleware for session auth)
             Route::get('{uuid}/download', [ExportController::class, 'download'])
-                ->withoutMiddleware('web')
                 ->name('api.exports.download');
         });
     });
