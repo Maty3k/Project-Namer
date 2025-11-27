@@ -6,9 +6,35 @@
         @include('partials.head')
     </head>
     <body class="antialiased overflow-hidden">
-        <div class="h-screen grid grid-cols-2">
-            <!-- Left Panel - Black Background -->
-            <div class="flex flex-col justify-center items-center bg-black text-white relative overflow-hidden">
+        <div class="h-screen grid grid-cols-1 lg:grid-cols-2 relative">
+            <!-- Zigzag Divider (Desktop Only) -->
+            <div class="hidden lg:block absolute left-1/2 top-0 bottom-0 w-16 -ml-8 z-20 pointer-events-none">
+                <svg class="w-full h-full" viewBox="0 0 100 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- White section -->
+                    <polygon points="50,0 100,50 50,100 0,50" fill="white"/>
+                    <!-- Black section -->
+                    <polygon points="50,100 100,150 50,200 0,150" fill="black"/>
+                    <!-- White section -->
+                    <polygon points="50,200 100,250 50,300 0,250" fill="white"/>
+                    <!-- Black section -->
+                    <polygon points="50,300 100,350 50,400 0,350" fill="black"/>
+                    <!-- White section -->
+                    <polygon points="50,400 100,450 50,500 0,450" fill="white"/>
+                    <!-- Black section -->
+                    <polygon points="50,500 100,550 50,600 0,550" fill="black"/>
+                    <!-- White section -->
+                    <polygon points="50,600 100,650 50,700 0,650" fill="white"/>
+                    <!-- Black section -->
+                    <polygon points="50,700 100,750 50,800 0,750" fill="black"/>
+                    <!-- White section -->
+                    <polygon points="50,800 100,850 50,900 0,850" fill="white"/>
+                    <!-- Black section -->
+                    <polygon points="50,900 100,950 50,1000 0,950" fill="black"/>
+                </svg>
+            </div>
+
+            <!-- Left Panel - Black Background (Desktop Only) -->
+            <div class="hidden lg:flex flex-col justify-center items-center bg-black text-white relative overflow-hidden">
                 <div class="w-full max-w-2xl px-20 py-16 -mt-32">
 
                 <!-- Content -->
@@ -31,36 +57,24 @@
                     <!-- Features Grid -->
                     <div class="grid gap-24">
                         <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                </svg>
-                            </div>
+                            <span class="text-4xl text-white/60 leading-none">•</span>
                             <div>
-                                <h3 class="text-xl font-semibold mb-1">Lightning Fast</h3>
-                                <p class="text-white/80">Generate hundreds of names in seconds with AI</p>
+                                <h3 class="text-2xl font-semibold mb-2">Lightning Fast</h3>
+                                <p class="text-lg text-white/80">Generate hundreds of names in seconds with AI</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
+                            <span class="text-4xl text-white/60 leading-none">•</span>
                             <div>
-                                <h3 class="text-xl font-semibold mb-1">Domain Ready</h3>
-                                <p class="text-white/80">Instant availability checking across TLDs</p>
+                                <h3 class="text-2xl font-semibold mb-2">Domain Ready</h3>
+                                <p class="text-lg text-white/80">Instant availability checking across TLDs</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
-                                </svg>
-                            </div>
+                            <span class="text-4xl text-white/60 leading-none">•</span>
                             <div>
-                                <h3 class="text-xl font-semibold mb-1">Logo Inspiration</h3>
-                                <p class="text-white/80">Get AI-generated logo concepts instantly</p>
+                                <h3 class="text-2xl font-semibold mb-2">Logo Inspiration</h3>
+                                <p class="text-lg text-white/80">Get AI-generated logo concepts instantly</p>
                             </div>
                         </div>
                     </div>
@@ -69,20 +83,24 @@
             </div>
 
             <!-- Right Panel - White Background -->
-            <div class="flex items-center justify-center bg-white overflow-y-auto">
-                <div class="px-8 py-12 w-full max-w-md mx-auto">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-center bg-white overflow-y-auto">
+                <div class="w-full max-w-md mx-auto px-6 py-8 lg:px-8 lg:py-12">
                     <!-- Mobile Logo -->
-                    <div class="md:hidden mb-12 text-center">
-                        <a href="{{ route('home') }}" wire:navigate class="inline-flex flex-col items-center gap-4">
-                            <div class="w-20 h-20 bg-gradient-to-br from-indigo-600 to-pink-600 rounded-3xl flex items-center justify-center shadow-xl">
-                                <x-app-logo-icon class="w-10 h-10 text-white" />
+                    <div class="lg:hidden mb-8 text-center">
+                        <a href="{{ route('home') }}" wire:navigate class="inline-flex flex-col items-center gap-3">
+                            <div class="w-16 h-16 bg-gradient-to-br from-indigo-600 to-pink-600 rounded-2xl flex items-center justify-center shadow-xl">
+                                <x-app-logo-icon class="w-8 h-8 text-white" />
                             </div>
-                            <span class="text-3xl font-bold text-slate-900 dark:text-white">{{ config('app.name', 'Laravel') }}</span>
+                            <span class="text-2xl font-bold text-slate-900">{{ config('app.name', 'Laravel') }}</span>
                         </a>
                     </div>
 
                     <!-- Form Content -->
-                    {{ $slot }}
+                    <div class="flex-1 flex items-center lg:block">
+                        <div class="w-full">
+                            {{ $slot }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

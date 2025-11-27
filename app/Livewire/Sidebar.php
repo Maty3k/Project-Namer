@@ -132,6 +132,9 @@ class Sidebar extends Component
 
         // Save to session
         session(['sidebar.collapsed' => $this->collapsed]);
+
+        // Dispatch browser event for mobile menu to hide/show
+        $this->dispatch('sidebar-toggled', open: ! $this->collapsed);
     }
 
     /**
