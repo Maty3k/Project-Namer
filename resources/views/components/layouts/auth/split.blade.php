@@ -9,12 +9,12 @@
         <div class="h-screen grid grid-cols-2">
             <!-- Left Panel - Black Background -->
             <div class="flex flex-col justify-center items-center bg-black text-white relative overflow-hidden">
-                <div class="w-full max-w-2xl px-16 py-12">
+                <div class="w-full max-w-2xl px-12 py-12">
 
                 <!-- Content -->
                 <div class="relative z-10">
                     <!-- Logo -->
-                    <a href="{{ route('home') }}" wire:navigate class="inline-flex items-center gap-3 group mb-16">
+                    <a href="{{ route('home') }}" wire:navigate class="inline-flex items-center gap-3 group mb-12">
                         <div class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center transition-all group-hover:scale-110 group-hover:bg-white/30">
                             <x-app-logo-icon class="w-8 h-8" />
                         </div>
@@ -22,15 +22,15 @@
                     </a>
 
                     <!-- Hero Text -->
-                    <h1 class="text-6xl font-bold mb-6 leading-tight">
+                    <h1 class="text-5xl font-bold mb-5 leading-tight">
                         Generate Perfect Business Names
                     </h1>
-                    <p class="text-2xl text-white/90 mb-12 leading-relaxed">
+                    <p class="text-xl text-white/90 mb-10 leading-relaxed">
                         AI-powered naming that finds available domains in seconds
                     </p>
 
                     <!-- Features Grid -->
-                    <div class="grid gap-6">
+                    <div class="grid gap-5">
                         <div class="flex items-start gap-4">
                             <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
