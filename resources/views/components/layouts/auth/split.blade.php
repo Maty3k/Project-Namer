@@ -22,13 +22,10 @@
                     </a>
 
                     <!-- Hero Text -->
-                    <div class="space-y-6">
+                    <div>
                         <h1 class="text-6xl font-bold leading-tight">
                             Generate Perfect Business Names
                         </h1>
-                        <p class="text-2xl text-white/90 leading-relaxed">
-                            AI-powered naming that finds available domains in seconds
-                        </p>
                     </div>
 
                     <!-- Features Grid -->
