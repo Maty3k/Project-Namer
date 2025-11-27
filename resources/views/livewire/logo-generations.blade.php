@@ -138,8 +138,8 @@
                         </div>
 
                         {{-- Info --}}
-                        <div class="p-2.5 pr-16 bg-gray-50 dark:bg-gray-750 border-t-[3px] border-gray-300 dark:border-gray-600
-                                    sm:p-3 sm:pr-20">
+                        <div class="p-2.5 bg-gray-50 dark:bg-gray-750 border-t-[3px] border-gray-300 dark:border-gray-600 relative
+                                    sm:p-3">
                             <div class="flex items-center gap-1.5">
                                 <h3 class="text-xs font-semibold text-gray-900 dark:text-white truncate
                                            sm:text-sm">
@@ -171,36 +171,36 @@
                                     {{ $generation->created_at->diffForHumans() }}
                                 </p>
                             </div>
+
+                            {{-- Action Buttons --}}
+                            <div class="absolute bottom-2.5 right-2.5 flex gap-1
+                                        sm:bottom-3 sm:right-3 sm:gap-1">
+                                {{-- Share Button --}}
+                                <button
+                                    wire:click.prevent="$dispatch('openShareModal', { generationId: {{ $generation->id }} })"
+                                    class="p-1 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white rounded-md transition-all shadow-md hover:shadow-lg border border-primary-700 dark:border-primary-300 hover:scale-110 active:scale-95
+                                           sm:p-1.5"
+                                    title="Share project"
+                                >
+                                    <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                                    </svg>
+                                </button>
+
+                                {{-- Delete Button --}}
+                                <button
+                                    wire:click.prevent="confirmDelete({{ $generation->id }})"
+                                    class="p-1 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white rounded-md transition-all shadow-md hover:shadow-lg border border-red-700 dark:border-red-300 hover:scale-110 active:scale-95
+                                           sm:p-1.5"
+                                    title="Delete all logos"
+                                >
+                                    <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                         </a>
-
-                        {{-- Action Buttons --}}
-                        <div class="absolute bottom-1.5 right-1.5 z-10 flex gap-1
-                                    sm:bottom-2 sm:right-2 sm:gap-1">
-                            {{-- Share Button --}}
-                            <button
-                                wire:click.prevent="$dispatch('openShareModal', { generationId: {{ $generation->id }} })"
-                                class="p-1 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white rounded-md transition-all shadow-md hover:shadow-lg border border-primary-700 dark:border-primary-300 hover:scale-110 active:scale-95
-                                       sm:p-1.5"
-                                title="Share project"
-                            >
-                                <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
-                                </svg>
-                            </button>
-
-                            {{-- Delete Button --}}
-                            <button
-                                wire:click.prevent="confirmDelete({{ $generation->id }})"
-                                class="p-1 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white rounded-md transition-all shadow-md hover:shadow-lg border border-red-700 dark:border-red-300 hover:scale-110 active:scale-95
-                                       sm:p-1.5"
-                                title="Delete all logos"
-                            >
-                                <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                </svg>
-                            </button>
-                        </div>
                     </div>
                 @endforeach
             </div>
