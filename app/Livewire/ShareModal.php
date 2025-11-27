@@ -53,6 +53,9 @@ class ShareModal extends Component
     #[Validate]
     public bool $includeDomains = false;
 
+    #[Validate]
+    public bool $includeLogos = true;
+
     public ?string $exportUrl = null;
 
     public bool $isGenerating = false;
@@ -193,6 +196,7 @@ class ShareModal extends Component
                 'export_type' => $this->exportType,
                 'include_metadata' => $this->includeMetadata,
                 'include_domains' => $this->includeDomains,
+                'include_logos' => $this->includeLogos,
             ];
 
             $export = $exportService->createExport(auth()->user(), $exportData);
@@ -252,6 +256,7 @@ class ShareModal extends Component
         $this->exportType = 'pdf';
         $this->includeMetadata = true;
         $this->includeDomains = false;
+        $this->includeLogos = true;
         $this->exportUrl = null;
         $this->resetValidation();
     }

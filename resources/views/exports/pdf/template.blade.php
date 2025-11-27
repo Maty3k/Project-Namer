@@ -134,6 +134,30 @@
         </div>
     @endif
 
+    @if(isset($exportable->generatedLogos) && $exportable->generatedLogos->isNotEmpty())
+        <div class="section">
+            <div class="section-title">Generated Logos</div>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px;">
+                @foreach($exportable->generatedLogos as $logo)
+                    <div style="text-align: center; padding: 15px; border: 1px solid rgb(209 213 219); border-radius: 8px;">
+                        @if($logo->image_path && \Storage::exists($logo->image_path))
+                            <img src="{{ \Storage::path($logo->image_path) }}"
+                                 alt="Logo {{ $loop->iteration }}"
+                                 style="max-width: 100%; height: auto; max-height: 200px; margin-bottom: 10px; border-radius: 4px;">
+                        @endif
+                        <div style="font-size: 12px; color: rgb(107 114 128); margin-top: 8px;">
+                            <div><strong>Style:</strong> {{ ucfirst($logo->style ?? 'N/A') }}</div>
+                            @if($logo->color_scheme)
+                                <div><strong>Colors:</strong> {{ ucfirst(str_replace('_', ' ', $logo->color_scheme)) }}</div>
+                            @endif
+                            <div><strong>Created:</strong> {{ $logo->created_at?->format('M j, Y') ?? 'N/A' }}</div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     @if($include_metadata)
         <div class="section">
             <div class="section-title">Export Information</div>
