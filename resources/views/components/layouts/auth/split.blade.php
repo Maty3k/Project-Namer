@@ -127,7 +127,7 @@
 
                 <div class="relative z-20 mt-auto space-y-8">
                     <div class="h-1 w-24 rounded-full bg-white/30"></div>
-                    <blockquote class="space-y-4">
+                    <blockquote class="space-y-4 min-h-[120px]">
                         <flux:heading size="lg" class="text-2xl font-light leading-relaxed text-white/95">
                             &ldquo;{{ trim($message) }}&rdquo;
                         </flux:heading>
