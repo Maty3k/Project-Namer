@@ -9,28 +9,30 @@
         <div class="h-screen grid grid-cols-2">
             <!-- Left Panel - Black Background -->
             <div class="flex flex-col justify-center items-center bg-black text-white relative overflow-hidden">
-                <div class="w-full max-w-2xl px-12 py-12">
+                <div class="w-full max-w-2xl px-20 py-16">
 
                 <!-- Content -->
-                <div class="relative z-10">
+                <div class="relative z-10 space-y-16">
                     <!-- Logo -->
-                    <a href="{{ route('home') }}" wire:navigate class="inline-flex items-center gap-3 group mb-12">
-                        <div class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center transition-all group-hover:scale-110 group-hover:bg-white/30">
-                            <x-app-logo-icon class="w-8 h-8" />
+                    <a href="{{ route('home') }}" wire:navigate class="inline-flex items-center gap-4 group">
+                        <div class="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center transition-all group-hover:scale-110 group-hover:bg-white/30">
+                            <x-app-logo-icon class="w-9 h-9" />
                         </div>
-                        <span class="text-3xl font-bold">{{ config('app.name', 'Laravel') }}</span>
+                        <span class="text-4xl font-bold">{{ config('app.name', 'Laravel') }}</span>
                     </a>
 
                     <!-- Hero Text -->
-                    <h1 class="text-5xl font-bold mb-5 leading-tight">
-                        Generate Perfect Business Names
-                    </h1>
-                    <p class="text-xl text-white/90 mb-10 leading-relaxed">
-                        AI-powered naming that finds available domains in seconds
-                    </p>
+                    <div class="space-y-6">
+                        <h1 class="text-6xl font-bold leading-tight">
+                            Generate Perfect Business Names
+                        </h1>
+                        <p class="text-2xl text-white/90 leading-relaxed">
+                            AI-powered naming that finds available domains in seconds
+                        </p>
+                    </div>
 
                     <!-- Features Grid -->
-                    <div class="grid gap-5">
+                    <div class="grid gap-8">
                         <div class="flex items-start gap-4">
                             <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
