@@ -8,11 +8,11 @@
     <body class="antialiased overflow-hidden">
         <div class="h-screen grid grid-cols-2">
             <!-- Left Panel - Black Background -->
-            <div class="flex flex-col justify-center bg-black text-white relative overflow-hidden">
-                <div class="px-16 py-12">
+            <div class="flex flex-col justify-center items-center bg-black text-white relative overflow-hidden">
+                <div class="w-full max-w-2xl px-16 py-12">
 
                 <!-- Content -->
-                <div class="relative z-10 max-w-lg">
+                <div class="relative z-10">
                     <!-- Logo -->
                     <a href="{{ route('home') }}" wire:navigate class="inline-flex items-center gap-3 group mb-16">
                         <div class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center transition-all group-hover:scale-110 group-hover:bg-white/30">
