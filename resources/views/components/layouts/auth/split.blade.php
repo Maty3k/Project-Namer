@@ -5,10 +5,11 @@
     <head>
         @include('partials.head')
     </head>
-    <body class="antialiased">
-        <div class="min-h-screen grid lg:grid-cols-2">
+    <body class="antialiased overflow-hidden">
+        <div class="h-screen grid lg:grid-cols-2">
             <!-- Left Panel - Brand & Features -->
-            <div class="hidden lg:flex flex-col justify-center bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 p-16 text-white relative overflow-hidden">
+            <div class="hidden lg:flex flex-col justify-center bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white relative overflow-hidden">
+                <div class="px-16 py-12">
                 <!-- Animated Background Elements -->
                 <div class="absolute inset-0">
                     <div class="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
@@ -70,11 +71,12 @@
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
 
             <!-- Right Panel - Auth Form -->
-            <div class="flex items-center justify-center p-8 bg-white dark:bg-slate-950">
-                <div class="w-full max-w-md">
+            <div class="flex items-center justify-center bg-white dark:bg-slate-950 overflow-y-auto">
+                <div class="px-8 py-12 w-full max-w-md mx-auto">
                     <!-- Mobile Logo -->
                     <div class="lg:hidden mb-12 text-center">
                         <a href="{{ route('home') }}" wire:navigate class="inline-flex flex-col items-center gap-4">
