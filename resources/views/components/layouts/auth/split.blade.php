@@ -8,13 +8,8 @@
     <body class="antialiased overflow-hidden">
         <div class="h-screen grid lg:grid-cols-2">
             <!-- Left Panel - Brand & Features -->
-            <div class="hidden lg:flex flex-col justify-center bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white relative overflow-hidden">
+            <div class="hidden lg:flex flex-col justify-center bg-indigo-600 text-white relative overflow-hidden">
                 <div class="px-16 py-12">
-                <!-- Animated Background Elements -->
-                <div class="absolute inset-0">
-                    <div class="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
-                    <div class="absolute bottom-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
-                </div>
 
                 <!-- Content -->
                 <div class="relative z-10 max-w-lg">
