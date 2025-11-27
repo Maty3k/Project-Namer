@@ -17,7 +17,7 @@
 
                 <!-- Content -->
                 <div class="relative z-10 flex flex-col justify-center p-12 text-white w-full min-h-screen">
-                    <div class="space-y-12">
+                    <div class="space-y-8">
                         <!-- Logo and Brand -->
                         <div>
                             <a href="{{ route('home') }}" wire:navigate class="inline-flex items-center gap-3 group">
@@ -29,8 +29,8 @@
                         </div>
 
                         <!-- Main Content -->
-                        <div class="space-y-8">
-                            <div class="space-y-4">
+                        <div class="space-y-6">
+                            <div class="space-y-3">
                                 <h2 class="text-5xl font-bold leading-tight">
                                     Create amazing business names with AI
                                 </h2>
@@ -40,7 +40,7 @@
                             </div>
 
                             <!-- Features -->
-                            <div class="space-y-5">
+                            <div class="space-y-4 pt-2">
                                 <div class="flex items-center gap-4">
                                     <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,7 +69,7 @@
                         </div>
 
                         <!-- Footer -->
-                        <div class="text-sm text-white/70 pt-8">
+                        <div class="text-sm text-white/70 pt-4">
                             © {{ date('Y') }} {{ config('app.name', 'Laravel') }}. All rights reserved.
                         </div>
                     </div>
