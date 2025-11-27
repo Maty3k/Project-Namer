@@ -109,38 +109,54 @@
             })();
         </script>
     </head>
-    <body class="min-h-screen bg-white antialiased dark:bg-linear-to-b dark:from-neutral-950 dark:to-neutral-900">
+    <body class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 antialiased dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950">
         <div class="relative grid h-dvh flex-col items-center justify-center px-8 sm:px-0 lg:max-w-none lg:grid-cols-2 lg:px-0">
-            <div class="bg-muted relative hidden h-full flex-col p-10 text-white lg:flex dark:border-e dark:border-neutral-800">
-                <div class="absolute inset-0 bg-neutral-900"></div>
-                <a href="{{ route('home') }}" class="relative z-20 flex items-center text-lg font-medium" wire:navigate>
-                    <span class="flex h-10 w-10 items-center justify-center rounded-md">
-                        <x-app-logo-icon class="me-2 h-7 fill-current text-white" />
+            <div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 relative hidden h-full flex-col p-10 text-white lg:flex dark:from-indigo-900 dark:via-purple-900 dark:to-pink-900">
+                <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/95 via-purple-600/95 to-pink-600/95 dark:from-indigo-950/95 dark:via-purple-950/95 dark:to-pink-950/95"></div>
+
+                <a href="{{ route('home') }}" class="relative z-20 flex items-center text-lg font-medium group transition-transform duration-300 hover:scale-105" wire:navigate>
+                    <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/20 group-hover:shadow-lg">
+                        <x-app-logo-icon class="me-2 h-8 fill-current text-white" />
                     </span>
-                    {{ config('app.name', 'Laravel') }}
+                    <span class="ml-3 text-xl font-bold">{{ config('app.name', 'Laravel') }}</span>
                 </a>
 
                 @php
                     [$message, $author] = str(Illuminate\Foundation\Inspiring::quotes()->random())->explode('-');
                 @endphp
 
-                <div class="relative z-20 mt-auto">
-                    <blockquote class="space-y-2">
-                        <flux:heading size="lg">&ldquo;{{ trim($message) }}&rdquo;</flux:heading>
-                        <footer><flux:heading>{{ trim($author) }}</flux:heading></footer>
+                <div class="relative z-20 mt-auto space-y-8">
+                    <div class="h-1 w-24 rounded-full bg-white/30"></div>
+                    <blockquote class="space-y-4">
+                        <flux:heading size="lg" class="text-2xl font-light leading-relaxed text-white/95">
+                            &ldquo;{{ trim($message) }}&rdquo;
+                        </flux:heading>
+                        <footer class="flex items-center gap-3">
+                            <div class="h-px flex-1 bg-white/20"></div>
+                            <flux:heading class="text-sm font-medium text-white/80">{{ trim($author) }}</flux:heading>
+                        </footer>
                     </blockquote>
                 </div>
-            </div>
-            <div class="w-full lg:p-8">
-                <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-                    <a href="{{ route('home') }}" class="z-20 flex flex-col items-center gap-2 font-medium lg:hidden" wire:navigate>
-                        <span class="flex h-9 w-9 items-center justify-center rounded-md">
-                            <x-app-logo-icon class="size-9 fill-current text-black dark:text-white" />
-                        </span>
 
-                        <span class="sr-only">{{ config('app.name', 'Laravel') }}</span>
+                <div class="absolute bottom-10 right-10 opacity-10">
+                    <svg class="h-64 w-64" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="currentColor" d="M47.1,-57.1C59.9,-45.6,68.5,-28.9,71.4,-11.1C74.3,6.7,71.5,25.6,62.3,40.7C53.1,55.8,37.5,67.1,19.8,72.8C2.1,78.5,-17.7,78.6,-35.3,72.4C-52.9,66.2,-68.3,53.7,-76.2,37.4C-84.1,21.1,-84.5,1,-78.8,-16.5C-73.1,-34,-61.3,-48.9,-46.7,-60C-32.1,-71.1,-16.1,-78.4,0.7,-79.3C17.4,-80.2,34.3,-68.6,47.1,-57.1Z" transform="translate(100 100)" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="w-full lg:p-8 relative">
+                <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[420px]">
+                    <a href="{{ route('home') }}" class="z-20 flex flex-col items-center gap-3 font-medium lg:hidden mb-8 group" wire:navigate>
+                        <span class="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:shadow-xl">
+                            <x-app-logo-icon class="size-8 fill-current text-white" />
+                        </span>
+                        <span class="text-xl font-bold text-slate-900 dark:text-white">{{ config('app.name', 'Laravel') }}</span>
                     </a>
-                    {{ $slot }}
+
+                    <div class="rounded-2xl border border-slate-200 bg-white/80 backdrop-blur-xl shadow-2xl dark:bg-slate-900/80 dark:border-slate-800 p-8">
+                        {{ $slot }}
+                    </div>
                 </div>
             </div>
         </div>
