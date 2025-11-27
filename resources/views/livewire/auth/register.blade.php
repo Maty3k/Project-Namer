@@ -1,10 +1,10 @@
 <div class="space-y-8">
     <!-- Header -->
     <div class="space-y-2">
-        <h1 class="text-4xl font-bold text-slate-900 dark:text-white">
+        <h1 class="text-4xl font-bold text-slate-900">
             Create your account
         </h1>
-        <p class="text-lg text-slate-600 dark:text-slate-400">
+        <p class="text-lg text-slate-600">
             Start generating amazing business names today
         </p>
     </div>
@@ -66,7 +66,7 @@
         </div>
 
         <!-- Terms -->
-        <p class="text-sm text-slate-500 dark:text-slate-400">
+        <p class="text-sm text-slate-500">
             By creating an account, you agree to our Terms of Service and Privacy Policy
         </p>
 
@@ -82,7 +82,7 @@
             <div class="w-full border-t border-slate-300 dark:border-slate-700"></div>
         </div>
         <div class="relative flex justify-center text-sm">
-            <span class="px-4 bg-white dark:bg-slate-950 text-slate-500 dark:text-slate-400">
+            <span class="px-4 bg-white text-slate-500">
                 Already have an account?
             </span>
         </div>

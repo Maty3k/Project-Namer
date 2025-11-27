@@ -1,10 +1,10 @@
 <div class="space-y-8">
     <!-- Header -->
     <div class="space-y-2">
-        <h1 class="text-4xl font-bold text-slate-900 dark:text-white">
+        <h1 class="text-4xl font-bold text-slate-900">
             Welcome back
         </h1>
-        <p class="text-lg text-slate-600 dark:text-slate-400">
+        <p class="text-lg text-slate-600">
             Sign in to continue creating amazing names
         </p>
     </div>
@@ -68,7 +68,7 @@
             <div class="w-full border-t border-slate-300 dark:border-slate-700"></div>
         </div>
         <div class="relative flex justify-center text-sm">
-            <span class="px-4 bg-white dark:bg-slate-950 text-slate-500 dark:text-slate-400">
+            <span class="px-4 bg-white text-slate-500">
                 New to {{ config('app.name') }}?
             </span>
         </div>

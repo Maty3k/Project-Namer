@@ -6,9 +6,9 @@
         @include('partials.head')
     </head>
     <body class="antialiased overflow-hidden">
-        <div class="h-screen grid lg:grid-cols-2">
-            <!-- Left Panel - Brand & Features -->
-            <div class="hidden lg:flex flex-col justify-center bg-indigo-600 text-white relative overflow-hidden">
+        <div class="h-screen grid grid-cols-2">
+            <!-- Left Panel - Black Background -->
+            <div class="flex flex-col justify-center bg-black text-white relative overflow-hidden">
                 <div class="px-16 py-12">
 
                 <!-- Content -->
@@ -69,11 +69,11 @@
                 </div>
             </div>
 
-            <!-- Right Panel - Auth Form -->
-            <div class="flex items-center justify-center bg-white dark:bg-slate-950 overflow-y-auto">
+            <!-- Right Panel - White Background -->
+            <div class="flex items-center justify-center bg-white overflow-y-auto">
                 <div class="px-8 py-12 w-full max-w-md mx-auto">
                     <!-- Mobile Logo -->
-                    <div class="lg:hidden mb-12 text-center">
+                    <div class="md:hidden mb-12 text-center">
                         <a href="{{ route('home') }}" wire:navigate class="inline-flex flex-col items-center gap-4">
                             <div class="w-20 h-20 bg-gradient-to-br from-indigo-600 to-pink-600 rounded-3xl flex items-center justify-center shadow-xl">
                                 <x-app-logo-icon class="w-10 h-10 text-white" />
