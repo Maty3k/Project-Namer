@@ -110,7 +110,7 @@
         </script>
     </head>
     <body class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 antialiased dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950">
-        <div class="relative grid h-dvh flex-col items-center justify-center px-8 sm:px-0 lg:max-w-none lg:grid-cols-2 lg:px-0">
+        <div class="relative grid h-dvh lg:grid-cols-2">
             <div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 relative hidden h-full flex-col p-10 text-white lg:flex dark:from-indigo-900 dark:via-purple-900 dark:to-pink-900">
                 <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/95 via-purple-600/95 to-pink-600/95 dark:from-indigo-950/95 dark:via-purple-950/95 dark:to-pink-950/95"></div>
 
@@ -145,9 +145,9 @@
                 </div>
             </div>
 
-            <div class="w-full lg:p-8 relative flex items-center justify-center min-h-full">
-                <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[420px]">
-                    <a href="{{ route('home') }}" class="z-20 flex flex-col items-center gap-3 font-medium lg:hidden mb-8 group" wire:navigate>
+            <div class="flex items-center justify-center p-6 lg:p-8">
+                <div class="w-full max-w-[420px] space-y-6">
+                    <a href="{{ route('home') }}" class="flex flex-col items-center gap-3 font-medium lg:hidden mb-8 group" wire:navigate>
                         <span class="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:shadow-xl">
                             <x-app-logo-icon class="size-8 fill-current text-white" />
                         </span>
