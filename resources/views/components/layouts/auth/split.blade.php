@@ -12,7 +12,7 @@
                 <div class="w-full max-w-2xl px-20 py-16">
 
                 <!-- Content -->
-                <div class="relative z-10 space-y-16">
+                <div class="relative z-10 space-y-24">
                     <!-- Logo -->
                     <a href="{{ route('home') }}" wire:navigate class="inline-flex items-center gap-4 group">
                         <div class="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center transition-all group-hover:scale-110 group-hover:bg-white/30">
