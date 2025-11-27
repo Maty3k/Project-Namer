@@ -145,7 +145,7 @@
                 </div>
             </div>
 
-            <div class="flex flex-1 items-center justify-center p-6 lg:p-8 min-h-screen lg:min-h-0">
+            <div class="flex flex-1 items-center lg:justify-start justify-center p-6 lg:p-16 lg:pl-20 min-h-screen lg:min-h-0">
                 <div class="w-full max-w-[420px] space-y-6">
                     <a href="{{ route('home') }}" class="flex flex-col items-center gap-3 font-medium lg:hidden mb-8 group" wire:navigate>
                         <span class="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:shadow-xl">
