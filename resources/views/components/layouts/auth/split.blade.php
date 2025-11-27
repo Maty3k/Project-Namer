@@ -16,58 +16,62 @@
                 </div>
 
                 <!-- Content -->
-                <div class="relative z-10 flex flex-col justify-between p-12 text-white w-full">
-                    <!-- Logo and Brand -->
-                    <div>
-                        <a href="{{ route('home') }}" wire:navigate class="inline-flex items-center gap-3 group">
-                            <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center transition-transform group-hover:scale-110">
-                                <x-app-logo-icon class="w-7 h-7 text-white" />
-                            </div>
-                            <span class="text-2xl font-bold">{{ config('app.name', 'Laravel') }}</span>
-                        </a>
-                    </div>
+                <div class="relative z-10 flex flex-col justify-center p-12 text-white w-full min-h-screen">
+                    <div class="space-y-12">
+                        <!-- Logo and Brand -->
+                        <div>
+                            <a href="{{ route('home') }}" wire:navigate class="inline-flex items-center gap-3 group">
+                                <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center transition-transform group-hover:scale-110">
+                                    <x-app-logo-icon class="w-7 h-7 text-white" />
+                                </div>
+                                <span class="text-2xl font-bold">{{ config('app.name', 'Laravel') }}</span>
+                            </a>
+                        </div>
 
-                    <!-- Center Content -->
-                    <div class="space-y-6">
-                        <h2 class="text-4xl font-bold leading-tight">
-                            Create amazing business names with AI
-                        </h2>
-                        <p class="text-xl text-white/90 leading-relaxed">
-                            Generate unique, brandable names for your next project in seconds.
-                        </p>
+                        <!-- Main Content -->
+                        <div class="space-y-8">
+                            <div class="space-y-4">
+                                <h2 class="text-5xl font-bold leading-tight">
+                                    Create amazing business names with AI
+                                </h2>
+                                <p class="text-xl text-white/90 leading-relaxed">
+                                    Generate unique, brandable names for your next project in seconds.
+                                </p>
+                            </div>
 
-                        <!-- Features -->
-                        <div class="space-y-4 pt-6">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                    </svg>
+                            <!-- Features -->
+                            <div class="space-y-5">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="text-lg">AI-powered name generation</span>
                                 </div>
-                                <span class="text-lg">AI-powered name generation</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                    </svg>
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="text-lg">Domain availability checking</span>
                                 </div>
-                                <span class="text-lg">Domain availability checking</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                    </svg>
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="text-lg">Logo design inspiration</span>
                                 </div>
-                                <span class="text-lg">Logo design inspiration</span>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Footer -->
-                    <div class="text-sm text-white/70">
-                        © {{ date('Y') }} {{ config('app.name', 'Laravel') }}. All rights reserved.
+                        <!-- Footer -->
+                        <div class="text-sm text-white/70 pt-8">
+                            © {{ date('Y') }} {{ config('app.name', 'Laravel') }}. All rights reserved.
+                        </div>
                     </div>
                 </div>
             </div>
