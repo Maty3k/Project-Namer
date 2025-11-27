@@ -9,7 +9,7 @@
         <div class="h-screen grid grid-cols-2">
             <!-- Left Panel - Black Background -->
             <div class="flex flex-col justify-center items-center bg-black text-white relative overflow-hidden">
-                <div class="w-full max-w-2xl px-20 py-16">
+                <div class="w-full max-w-2xl px-20 py-16 -mt-20">
 
                 <!-- Content -->
                 <div class="relative z-10 space-y-24">
