@@ -195,7 +195,7 @@ final class ExportService
         // Load related data efficiently
         if (method_exists($exportable, 'generatedLogos') && ($validated['include_logos'] ?? false)) {
             /** @phpstan-ignore-next-line - Dynamic relationship loading based on method existence */
-            $exportable->load('generatedLogos.colorVariants');
+            $exportable->load('generatedLogos');
         }
 
         $pdf = Pdf::loadView('exports.pdf.template', $data);
