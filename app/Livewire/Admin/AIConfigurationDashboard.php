@@ -49,7 +49,7 @@ class AIConfigurationDashboard extends Component
     public function mount(): void
     {
         // Check if user is admin
-        if (! Auth::user()?->isAdmin()) {
+        if (! Auth::user()?->is_admin) {
             abort(403, 'Unauthorized access to AI configuration dashboard');
         }
 

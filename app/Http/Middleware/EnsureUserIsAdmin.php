@@ -15,7 +15,16 @@ class EnsureUserIsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! $request->user() || ! $request->user()->is_admin) {
+        $user = $request->user();
+
+        \Log::info('Admin middleware check', [
+            'has_user' => $user !== null,
+            'user_id' => $user?->id,
+            'is_admin' => $user?->is_admin,
+            'is_admin_type' => $user ? gettype($user->is_admin) : null,
+        ]);
+
+        if (! $user || ! $user->is_admin) {
             abort(403, 'Unauthorized access to admin panel');
         }
 

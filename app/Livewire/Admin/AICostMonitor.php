@@ -46,7 +46,7 @@ class AICostMonitor extends Component
      */
     public function mount(): void
     {
-        $this->isAdmin = Auth::user()?->isAdmin() ?? false;
+        $this->isAdmin = Auth::user()?->is_admin ?? false;
 
         if (! $this->isAdmin) {
             abort(403, 'Access denied. Admin privileges required.');
