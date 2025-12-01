@@ -28,6 +28,7 @@ use Illuminate\Support\Str;
  * @property string $current_theme
  * @property bool $prefers_dark_mode
  * @property bool $theme_auto_switch
+ * @property bool $is_admin
  * @property-read bool $two_factor_enabled
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LogoGeneration> $logoGenerations
  * @property-read int|null $logo_generations_count
@@ -107,6 +108,7 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
             'prefers_dark_mode' => 'boolean',
             'theme_auto_switch' => 'boolean',
+            'is_admin' => 'boolean',
         ];
     }
 
