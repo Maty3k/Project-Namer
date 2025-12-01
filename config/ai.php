@@ -14,20 +14,6 @@ return [
     */
 
     'models' => [
-        'openai-gpt-4' => [
-            'name' => 'GPT-4',
-            'provider' => 'openai',
-            'model_id' => 'gpt-4',
-            'enabled' => env('AI_GPT4_ENABLED', true),
-            'max_tokens' => 150,
-            'temperature' => 0.7,
-            'cost_per_1k_tokens' => 0.03,
-            'rate_limit_per_minute' => 60,
-            'capabilities' => ['text_generation', 'creative_writing'],
-            'description' => 'Most capable GPT model for high-quality name generation',
-            'maintenance_mode' => false,
-        ],
-
         'openai-gpt-3.5-turbo' => [
             'name' => 'GPT-3.5 Turbo',
             'provider' => 'openai',
@@ -39,34 +25,6 @@ return [
             'rate_limit_per_minute' => 90,
             'capabilities' => ['text_generation', 'fast_generation'],
             'description' => 'Fast and cost-effective model for name generation',
-            'maintenance_mode' => false,
-        ],
-
-        'anthropic-claude' => [
-            'name' => 'Claude',
-            'provider' => 'anthropic',
-            'model_id' => 'claude-3-sonnet-20240229',
-            'enabled' => env('AI_CLAUDE_ENABLED', false),
-            'max_tokens' => 150,
-            'temperature' => 0.7,
-            'cost_per_1k_tokens' => 0.015,
-            'rate_limit_per_minute' => 50,
-            'capabilities' => ['text_generation', 'nuanced_context'],
-            'description' => 'Context-aware model for thoughtful name suggestions',
-            'maintenance_mode' => false,
-        ],
-
-        'google-gemini' => [
-            'name' => 'Gemini Pro',
-            'provider' => 'google',
-            'model_id' => 'gemini-pro',
-            'enabled' => env('AI_GEMINI_ENABLED', false),
-            'max_tokens' => 150,
-            'temperature' => 0.8,
-            'cost_per_1k_tokens' => 0.0005,
-            'rate_limit_per_minute' => 120,
-            'capabilities' => ['text_generation', 'multilingual'],
-            'description' => 'Google\'s multimodal AI for diverse creative approaches',
             'maintenance_mode' => false,
         ],
 
@@ -83,6 +41,48 @@ return [
             'description' => 'X.AI\'s edgy, creative model with real-time knowledge',
             'maintenance_mode' => false,
         ],
+
+        'google-gemini' => [
+            'name' => 'Gemini Pro',
+            'provider' => 'google',
+            'model_id' => 'gemini-2.0-flash-exp',
+            'enabled' => env('AI_GEMINI_ENABLED', false),
+            'max_tokens' => 150,
+            'temperature' => 0.8,
+            'cost_per_1k_tokens' => 0.0005,
+            'rate_limit_per_minute' => 120,
+            'capabilities' => ['text_generation', 'multilingual'],
+            'description' => 'Google\'s multimodal AI for diverse creative approaches',
+            'maintenance_mode' => false,
+        ],
+
+        'anthropic-claude' => [
+            'name' => 'Claude',
+            'provider' => 'anthropic',
+            'model_id' => 'claude-3-5-sonnet-20241022',
+            'enabled' => env('AI_CLAUDE_ENABLED', false),
+            'max_tokens' => 150,
+            'temperature' => 0.7,
+            'cost_per_1k_tokens' => 0.015,
+            'rate_limit_per_minute' => 50,
+            'capabilities' => ['text_generation', 'nuanced_context'],
+            'description' => 'Context-aware model for thoughtful name suggestions',
+            'maintenance_mode' => false,
+        ],
+
+        'openai-dalle' => [
+            'name' => 'DALL-E 3 (Logo Generation)',
+            'provider' => 'openai',
+            'model_id' => 'dall-e-3',
+            'enabled' => env('AI_DALLE_ENABLED', true),
+            'max_tokens' => 0,
+            'temperature' => 0,
+            'cost_per_1k_tokens' => 0,
+            'rate_limit_per_minute' => 10,
+            'capabilities' => ['image_generation', 'logo_creation'],
+            'description' => 'AI-powered logo and image generation',
+            'maintenance_mode' => false,
+        ],
     ],
 
     /*
@@ -96,7 +96,7 @@ return [
 
     'settings' => [
         // Default model configuration
-        'default_model' => env('AI_DEFAULT_MODEL', 'openai-gpt-4'),
+        'default_model' => env('AI_DEFAULT_MODEL', 'openai-gpt-3.5-turbo'),
         'fallback_model' => env('AI_FALLBACK_MODEL', 'openai-gpt-3.5-turbo'),
 
         // Usage limits
