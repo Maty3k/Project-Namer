@@ -26,7 +26,7 @@ it('can check if a model is available', function (): void {
     // Mock API key availability
     Config::set('services.openai.api_key', 'test-key');
 
-    $isAvailable = $service->isModelAvailable('openai-gpt-4');
+    $isAvailable = $service->isModelAvailable('openai-gpt-3.5-turbo');
     expect($isAvailable)->toBeTrue();
 
     $isAvailable = $service->isModelAvailable('non-existent-model');
@@ -36,9 +36,9 @@ it('can check if a model is available', function (): void {
 it('can get model configuration', function (): void {
     $service = new AIConfigurationService;
 
-    $config = $service->getModelConfig('openai-gpt-4');
+    $config = $service->getModelConfig('openai-gpt-3.5-turbo');
     expect($config)->toBeArray()
-        ->and($config['name'])->toBe('GPT-4')
+        ->and($config['name'])->toBe('GPT-3.5 Turbo')
         ->and($config['provider'])->toBe('openai');
 
     $config = $service->getModelConfig('non-existent');
@@ -252,13 +252,13 @@ it('can get model status', function (): void {
 
     // Test with API key available
     Config::set('services.openai.api_key', 'test-key');
-    $status = $service->getModelStatus('openai-gpt-4');
+    $status = $service->getModelStatus('openai-gpt-3.5-turbo');
     expect($status)->toBe('available');
 
     // Test without API key
     Config::set('services.openai.api_key', null);
     Cache::forget('ai_models_config');
-    $status = $service->getModelStatus('openai-gpt-4');
+    $status = $service->getModelStatus('openai-gpt-3.5-turbo');
     expect($status)->toBe('missing_api_key');
 
     // Test non-existent model
