@@ -21,6 +21,7 @@
         "resend/resend-laravel": "^1.0",
         "spatie/dns": "^2.7",
         "spatie/laravel-medialibrary": "^11.14",
+        "spatie/laravel-sitemap": "^7.3",
         "symfony/yaml": "^7.0"
     },
     "require-dev": {

@@ -23,6 +23,11 @@ Route::get('/', fn () => view('welcome'))->name('home');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
+// Sitemap
+Route::get('/sitemap.xml', function () {
+    return response()->file(public_path('sitemap.xml'));
+})->name('sitemap');
+
 // Debug route for testing name generation
 Route::get('/test-generation', function () {
     $fallbackService = app(\App\Services\FallbackNameService::class);
