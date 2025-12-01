@@ -69,6 +69,20 @@ return [
             'description' => 'Google\'s multimodal AI for diverse creative approaches',
             'maintenance_mode' => false,
         ],
+
+        'xai-grok' => [
+            'name' => 'Grok',
+            'provider' => 'xai',
+            'model_id' => 'grok-beta',
+            'enabled' => env('AI_GROK_ENABLED', false),
+            'max_tokens' => 150,
+            'temperature' => 0.85,
+            'cost_per_1k_tokens' => 0.01,
+            'rate_limit_per_minute' => 60,
+            'capabilities' => ['text_generation', 'edgy_creative', 'real_time_data'],
+            'description' => 'X.AI\'s edgy, creative model with real-time knowledge',
+            'maintenance_mode' => false,
+        ],
     ],
 
     /*
