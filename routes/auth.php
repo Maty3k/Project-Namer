@@ -21,14 +21,14 @@ Route::middleware('guest')->group(function (): void {
 
 Route::middleware('auth')->group(function (): void {
     Route::get('verify-email', VerifyEmail::class)
-        ->name('custom.verification.notice');
+        ->name('verification.notice');
 
     Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
         ->middleware(['signed', 'throttle:6,1'])
-        ->name('custom.verification.verify');
+        ->name('verification.verify');
 
     Route::get('confirm-password', ConfirmPassword::class)
-        ->name('custom.password.confirm');
+        ->name('password.confirm');
 
     Route::get('two-factor-challenge', TwoFactorChallenge::class)
         ->name('two-factor.challenge');
