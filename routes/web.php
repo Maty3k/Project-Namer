@@ -112,6 +112,13 @@ Route::middleware(['auth'])->group(function (): void {
 
     // Share management
     Route::get('shares', fn () => view('shares.index'))->name('shares.index');
+
+    // Admin AI Configuration (requires admin)
+    Route::middleware(['admin'])->prefix('admin')->group(function (): void {
+        Route::get('ai-config', App\Livewire\Admin\AIConfigurationManager::class)->name('admin.ai-config');
+        Route::get('ai-dashboard', App\Livewire\Admin\AIConfigurationDashboard::class)->name('admin.ai-dashboard');
+        Route::get('ai-costs', App\Livewire\Admin\AICostMonitor::class)->name('admin.ai-costs');
+    });
 });
 
 require __DIR__.'/auth.php';

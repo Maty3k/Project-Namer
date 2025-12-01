@@ -21,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
+            'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
             'throttle.logos' => \Illuminate\Routing\Middleware\ThrottleRequests::class.':60,1',
             'throttle.downloads' => \Illuminate\Routing\Middleware\ThrottleRequests::class.':30,1',
             'throttle.shares' => \Illuminate\Routing\Middleware\ThrottleRequests::class.':10,1',
