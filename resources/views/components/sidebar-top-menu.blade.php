@@ -66,4 +66,32 @@
             {{ __('Keyboard Shortcuts') }}
         </flux:navlist.item>
     </flux:navlist.group>
+
+    @if(auth()->user()?->is_admin)
+    <flux:navlist.group :heading="__('Admin')" class="grid">
+        <flux:navlist.item icon="adjustments-horizontal"
+                           :href="route('admin.ai-config')"
+                           :current="request()->routeIs('admin.ai-config')"
+                           wire:navigate
+                           class="touch-target interactive focus-modern">
+            {{ __('AI Configuration') }}
+        </flux:navlist.item>
+
+        <flux:navlist.item icon="chart-bar"
+                           :href="route('admin.ai-dashboard')"
+                           :current="request()->routeIs('admin.ai-dashboard')"
+                           wire:navigate
+                           class="touch-target interactive focus-modern">
+            {{ __('AI Dashboard') }}
+        </flux:navlist.item>
+
+        <flux:navlist.item icon="currency-dollar"
+                           :href="route('admin.ai-costs')"
+                           :current="request()->routeIs('admin.ai-costs')"
+                           wire:navigate
+                           class="touch-target interactive focus-modern">
+            {{ __('AI Costs') }}
+        </flux:navlist.item>
+    </flux:navlist.group>
+    @endif
 </flux:navlist>
