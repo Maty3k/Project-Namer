@@ -100,7 +100,7 @@ describe('Complete Share Creation and Viewing Flow', function (): void {
             ->and($socialUrls['whatsapp'])->toContain('wa.me');
 
         // Step 3: Verify share URL is included in social URLs
-        foreach ($socialUrls as $platform => $url) {
+        foreach ($socialUrls as $url) {
             expect($url)->toContain($share->uuid);
         }
     });
@@ -338,7 +338,7 @@ describe('Export Generation and Download Flow', function (): void {
 
         $response->assertSuccessful();
 
-        expect(str_contains($response->headers->get('Content-Type'), 'text/csv'))->toBeTrue();
+        expect(str_contains((string) $response->headers->get('Content-Type'), 'text/csv'))->toBeTrue();
 
         $export->refresh();
         expect($export->download_count)->toBe(1);

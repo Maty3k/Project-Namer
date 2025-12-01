@@ -50,8 +50,7 @@ class ContactController extends Controller
                 'subject' => $validated['subject'],
             ]);
 
-            return redirect()
-                ->route('contact')
+            return to_route('contact')
                 ->with('success', 'Thank you for your message! We\'ll get back to you as soon as possible.');
         } catch (\Exception $e) {
             Log::error('Failed to queue contact form email', [
@@ -60,8 +59,7 @@ class ContactController extends Controller
                 'subject' => $validated['subject'],
             ]);
 
-            return redirect()
-                ->route('contact')
+            return to_route('contact')
                 ->with('error', 'Sorry, there was an issue sending your message. Please try again later.');
         }
     }

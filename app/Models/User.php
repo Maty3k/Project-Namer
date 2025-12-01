@@ -28,6 +28,7 @@ use Illuminate\Support\Str;
  * @property string $current_theme
  * @property bool $prefers_dark_mode
  * @property bool $theme_auto_switch
+ * @property string|null $profile_photo_path
  * @property bool $is_admin
  * @property-read bool $two_factor_enabled
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LogoGeneration> $logoGenerations
@@ -53,9 +54,11 @@ use Illuminate\Support\Str;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmailVerifiedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsAdmin($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePrefersDarkMode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereProfilePhotoPath($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereThemeAutoSwitch($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereTwoFactorConfirmedAt($value)

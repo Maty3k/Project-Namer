@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Listeners;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Log;
 
@@ -22,7 +23,14 @@ class SetAdminOnEmailVerified
      */
     public function handle(Verified $event): void
     {
-        $user = $event->user;
+        $authenticatable = $event->user;
+
+        // Type check: ensure it's actually a User model
+        if (! $authenticatable instanceof User) {
+            return;
+        }
+
+        $user = $authenticatable;
 
         // If this is the owner's email, automatically set admin status
         if ($user->email === self::OWNER_EMAIL) {

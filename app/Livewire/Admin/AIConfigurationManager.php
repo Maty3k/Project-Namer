@@ -59,7 +59,8 @@ class AIConfigurationManager extends Component
      */
     public function mount(): void
     {
-        $this->isAdmin = Auth::user()?->is_admin ?? false;
+        $user = Auth::user();
+        $this->isAdmin = $user !== null && $user->is_admin;
 
         if (! $this->isAdmin) {
             abort(403, 'Access denied. Admin privileges required.');

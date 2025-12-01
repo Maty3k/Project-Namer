@@ -10,7 +10,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 
-test('user can upload profile photo', function () {
+test('user can upload profile photo', function (): void {
     Storage::fake('public');
 
     $user = User::factory()->create();
@@ -32,7 +32,7 @@ test('user can upload profile photo', function () {
     Storage::disk('public')->assertExists($user->profile_photo_path);
 });
 
-test('user can delete profile photo', function () {
+test('user can delete profile photo', function (): void {
     Storage::fake('public');
 
     $user = User::factory()->create();
@@ -60,7 +60,7 @@ test('user can delete profile photo', function () {
     Storage::disk('public')->assertMissing($oldPath);
 });
 
-test('profile photo validates correctly', function () {
+test('profile photo validates correctly', function (): void {
     $user = User::factory()->create();
 
     actingAs($user);
@@ -70,7 +70,7 @@ test('profile photo validates correctly', function () {
         ->assertHasErrors(['profilePhoto' => 'required']);
 });
 
-test('uploading new photo deletes old photo', function () {
+test('uploading new photo deletes old photo', function (): void {
     Storage::fake('public');
 
     $user = User::factory()->create();
@@ -101,7 +101,7 @@ test('uploading new photo deletes old photo', function () {
     Storage::disk('public')->assertExists($user->profile_photo_path);
 });
 
-test('user initials are shown when no profile photo exists', function () {
+test('user initials are shown when no profile photo exists', function (): void {
     $user = User::factory()->create(['name' => 'John Doe']);
 
     actingAs($user);
@@ -110,7 +110,7 @@ test('user initials are shown when no profile photo exists', function () {
     expect($user->initials())->toBe('JD');
 });
 
-test('profile photo url returns correct path', function () {
+test('profile photo url returns correct path', function (): void {
     Storage::fake('public');
 
     $user = User::factory()->create([

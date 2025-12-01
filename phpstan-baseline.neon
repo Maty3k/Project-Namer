@@ -1,0 +1,115 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Method App\\Exceptions\\DeprecatedFileException\:\:render\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Exceptions/DeprecatedFileException.php
+
+		-
+			message: '#^Call to method getPromptData\(\) on an unknown class App\\Services\\PromptMarkdownService\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Jobs/RefineLogoJob.php
+
+		-
+			message: '#^Call to static method image\(\) on an unknown class EchoLabs\\Prism\\Facades\\Prism\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Jobs/RefineLogoJob.php
+
+		-
+			message: '#^Parameter \$promptMarkdownService of method App\\Jobs\\RefineLogoJob\:\:handle\(\) has invalid type App\\Services\\PromptMarkdownService\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Jobs/RefineLogoJob.php
+
+		-
+			message: '#^Property App\\Livewire\\Appearance\:\:\$selectedThemeData type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Livewire/Appearance.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\LogoGenerations\:\:\$logoGenerations\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/LogoGenerations.php
+
+		-
+			message: '#^Method App\\Livewire\\NameGeneratorDashboard\:\:checkForActiveLogoGeneration\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Livewire/NameGeneratorDashboard.php
+
+		-
+			message: '#^Method App\\Livewire\\NameGeneratorDashboard\:\:loadSearchHistory\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Livewire/NameGeneratorDashboard.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: app/Livewire/NameGeneratorDashboard.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\NameResultCard\:\:\$logoGenerationStatus\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/NameResultCard.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: app/Livewire/SessionSidebar.php
+
+		-
+			message: '#^Property App\\Livewire\\Settings\\Profile\:\:\$profilePhoto has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Settings/Profile.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\ShareManagement\:\:\$shares\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/ShareManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\ShareManagement\:\:getSharesProperty\(\) return type with generic interface Illuminate\\Contracts\\Pagination\\LengthAwarePaginator does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Livewire/ShareManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\ShareManagement\:\:\$queryString has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/ShareManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\ShareModal\:\:\$socialMediaUrls type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Livewire/ShareModal.php
+
+		-
+			message: '#^Class App\\Models\\CustomTheme uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/CustomTheme.php
+
+		-
+			message: '#^Method App\\Models\\CustomTheme\:\:user\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\User, App\\Models\\CustomTheme\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\User, \$this\(App\\Models\\CustomTheme\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/CustomTheme.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\CustomTheme\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/CustomTheme.php

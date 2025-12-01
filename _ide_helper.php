@@ -28023,6 +28023,36 @@ namespace App\Livewire\Settings {
             }
     }
 
+namespace App\Livewire\Admin {
+    /**
+     * AI Configuration Manager Livewire Component.
+     * 
+     * Admin interface for managing AI model configurations, system settings,
+     * and monitoring AI service health and performance.
+     *
+     */
+    class AIConfigurationManager extends \Livewire\Component {
+            }
+    /**
+     * AI Configuration Dashboard for Admin Users.
+     * 
+     * Provides interface for managing AI model availability, settings,
+     * and system configuration in real-time.
+     *
+     */
+    class AIConfigurationDashboard extends \Livewire\Component {
+            }
+    /**
+     * AI Cost Monitor Livewire Component.
+     * 
+     * Admin interface for monitoring AI costs, usage trends, budget limits,
+     * and user spending patterns.
+     *
+     */
+    class AICostMonitor extends \Livewire\Component {
+            }
+    }
+
 namespace App\Livewire\Auth {
     /**
      */
