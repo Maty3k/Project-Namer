@@ -26,41 +26,6 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 // Sitemap
 Route::get('/sitemap.xml', fn () => response()->file(public_path('sitemap.xml')))->name('sitemap');
 
-// Debug route for testing name generation
-Route::get('/test-generation', function () {
-    $fallbackService = app(\App\Services\FallbackNameService::class);
-    $names = $fallbackService->generateNames('innovative tech startup', 'creative', 5);
-
-    return response()->json([
-        'service' => 'working',
-        'names' => $names,
-        'count' => count($names),
-    ]);
-})->name('test-generation');
-
-// Debug route for testing email configuration
-Route::get('/test-email', function () {
-    try {
-        $config = [
-            'MAIL_MAILER' => config('mail.default'),
-            'MAIL_FROM_ADDRESS' => config('mail.from.address'),
-            'MAIL_FROM_NAME' => config('mail.from.name'),
-            'MAIL_CONTACT_RECIPIENT' => config('mail.contact_recipient'),
-            'RESEND_API_KEY' => env('RESEND_API_KEY') ? 'Set (***'.substr((string) env('RESEND_API_KEY'), -4).')' : 'NOT SET',
-        ];
-
-        return response()->json([
-            'config' => $config,
-            'status' => 'Configuration loaded',
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-        ], 500);
-    }
-})->name('test-email');
-
 // Public share routes
 Route::get('/share/{uuid}', [PublicShareController::class, 'show'])
     ->name('public-share.show');
